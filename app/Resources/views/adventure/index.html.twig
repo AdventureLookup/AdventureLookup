@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Adventures list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Edition</th>
+                <th>Year</th>
+                <th>Publisher</th>
+                <th>Numpages</th>
+                <th>Format</th>
+                <th>Author</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for adventure in adventures %}
+            <tr>
+                <td><a href="{{ path('adventure_show', { 'id': adventure.id }) }}">{{ adventure.id }}</a></td>
+                <td>{{ adventure.title }}</td>
+                <td>{{ adventure.edition }}</td>
+                <td>{{ adventure.year }}</td>
+                <td>{{ adventure.publisher }}</td>
+                <td>{{ adventure.numPages }}</td>
+                <td>{{ adventure.format }}</td>
+                <td>{{ adventure.author }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('adventure_show', { 'id': adventure.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('adventure_edit', { 'id': adventure.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('adventure_new') }}">Create a new adventure</a>
+        </li>
+    </ul>
+{% endblock %}
