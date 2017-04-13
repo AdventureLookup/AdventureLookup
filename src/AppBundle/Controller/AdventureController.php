@@ -3,6 +3,10 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Adventure;
+use AppBundle\Entity\TagName;
+use AppBundle\Listener\SearchIndexUpdater;
+use Doctrine\ORM\EntityManagerInterface;
+use Elasticsearch\ClientBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
@@ -20,15 +24,76 @@ class AdventureController extends Controller
      * @Route("/", name="adventure_index")
      * @Method("GET")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
+        $client = ClientBuilder::create()->build();
 
-        $adventures = $em->getRepository('AppBundle:Adventure')->findAll();
+        if ($request->query->has('q')) {
+            $q = $request->query->get('q');
 
-        return $this->render('adventure/index.html.twig', array(
+            $result = $client->search([
+                'index' => SearchIndexUpdater::INDEX,
+                'type' => SearchIndexUpdater::TYPE,
+                'body' => [
+                    'query' => [
+                        'multi_match' => [
+                            'query' => $q,
+                            'fields' => ['title', 'info_*']
+                        ]
+                    ]
+                ]
+            ]);
+            $adventures = $this->searchResultToAdventures($result, $em);
+        } else if ($request->query->has('filter')) {
+            $filters = $request->query->get('filter');
+
+            $matches = [];
+            foreach ($filters as $id => $filter) {
+                if ($id !== 'title' && !is_numeric($id)) {
+                    continue;
+                }
+                $content = $filter['content'];
+                if (empty($content)) {
+                    continue;
+                }
+
+                $field = is_integer($id) ? 'info_' . (int)$id : 'title';
+                $operator = $filter['operator'];
+
+                if (in_array($operator, ['gte', 'gt', 'lt', 'lte'])) {
+                    $matches[] = ['range' => [$field => [$operator => $content]]];
+                } else {
+                    $matches[] = ['match' => [$field => $content]];
+                }
+            }
+            if (empty($matches)) {
+                return $this->redirectToRoute('adventure_index');
+            } else {
+                $result = $client->search([
+                    'index' => SearchIndexUpdater::INDEX,
+                    'type' => SearchIndexUpdater::TYPE,
+                    'body' => [
+                        'query' => [
+                            'bool' => [
+                                "must" => $matches
+                            ]
+                        ]
+                    ]
+                ]);
+                $adventures = $this->searchResultToAdventures($result, $em);
+            }
+        } else {
+            $adventures = $em->getRepository('AppBundle:Adventure')->findAll();
+        }
+
+        $tagNames = $em->getRepository('AppBundle:TagName')->findAll();
+        array_unshift($tagNames, (new TagName())->setId('title')->setTitle('Title')->setSuggested(false));
+
+        return $this->render('adventure/index.html.twig', [
             'adventures' => $adventures,
-        ));
+            'tagNames' => $tagNames,
+        ]);
     }
 
     /**
@@ -132,5 +197,32 @@ class AdventureController extends Controller
             ->setMethod('DELETE')
             ->getForm()
         ;
+    }
+
+    /**
+     * @param array $result
+     * @param EntityManagerInterface $em
+     * @return array
+     */
+    private function searchResultToAdventures(array $result, EntityManagerInterface $em): array
+    {
+        dump($result);
+
+        $hits = $result['hits'];
+        $nHits = $hits['total'];
+        if ($nHits == 0) {
+            $adventures = [];
+        } else {
+            $ids = array_map(function ($hit) {
+                return $hit['_id'];
+            }, $hits['hits']);
+
+            $qb = $em->getRepository('AppBundle:Adventure')
+                ->createQueryBuilder('a');
+            $qb->where($qb->expr()->in('a.id', $ids));
+
+            $adventures = $qb->getQuery()->execute();
+        }
+        return $adventures;
     }
 }

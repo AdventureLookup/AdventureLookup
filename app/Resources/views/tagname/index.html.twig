@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1 class="my-5">Tags</h1>
+                <div class="alert alert-info">
+                    Tags are little pieces of information of each individual adventure. Creating a new tag will allow every adventure to supply information for this tag.
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Approved</th>
+                            <th>Type</th>
+                            <th class="text-right">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for tagName in tagNames %}
+                            <tr>
+                                <td>{{ tagName.title }}</td>
+                                <td>{% if not tagName.suggested %}Yes{% else %}No{% endif %}</td>
+                                <td>{{ tagName.type }}</td>
+                                <td class="text-right">
+                                    <a class="btn btn-sm btn-secondary" href="{{ path('tags_edit', { 'id': tagName.id }) }}">edit</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <a class="btn btn-outline-primary" href="{{ path('tags_new') }}">create a new tag</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

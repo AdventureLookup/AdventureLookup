@@ -3,11 +3,66 @@
     <head>
         <meta charset="UTF-8" />
         <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="stylesheet" href="{{ asset('assets/vendor/bootstrap/dist/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/vendor/select2/dist/css/select2.min.css') }}">
         {% block stylesheets %}{% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
+        <nav class="navbar navbar-toggleable-sm navbar-light bg-faded">
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="{{ path('homepage') }}">Adventure Lookup</a>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('adventure_index') }}">Adventures</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('tags_index') }}">Tags</a>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0" action="{{ path('adventure_index') }}" method="get">
+                    <input class="form-control mr-sm-2" type="text" name="q" placeholder="An adventure including...">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+        </nav>
+
+        {% if app.session.flashbag.peekAll is not empty %}
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        {% for label, messages in app.session.flashbag.all %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ label }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
         {% block body %}{% endblock %}
+
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col text-right">
+                        <hr />
+                        <p>Natural 20! Made by @cmfcmf.</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <script src="{{ asset('assets/vendor/jquery/dist/jquery.min.js') }}"></script>
+        <script src="{{ asset('assets/vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+        <script src="{{ asset('assets/vendor/select2/dist/js/select2.full.min.js') }}"></script>
         {% block javascripts %}{% endblock %}
     </body>
 </html>

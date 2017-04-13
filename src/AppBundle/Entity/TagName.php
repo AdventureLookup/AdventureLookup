@@ -42,6 +42,36 @@ class TagName
      */
     private $type;
 
+    /**
+     * @var TagContent[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\TagContent", mappedBy="tag", fetch="EXTRA_LAZY")
+     */
+    private $contents;
+
+    public function __construct()
+    {
+        $this->suggested = true;
+    }
+
+    public function __toString()
+    {
+        return $this->title;
+    }
+
+    /**
+     * Set id
+     *
+     * @param $id
+     *
+     * @return TagName
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
 
     /**
      * Get id
@@ -123,6 +153,26 @@ class TagName
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @return TagContent[]
+     */
+    public function getContents()
+    {
+        return $this->contents;
+    }
+
+    /**
+     * @param TagContent[] $contents
+     *
+     * @return TagName
+     */
+    public function setContents($contents)
+    {
+        $this->contents = $contents;
+
+        return $this;
     }
 }
 

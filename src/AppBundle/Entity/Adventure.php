@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -29,47 +30,35 @@ class Adventure
     private $title;
 
     /**
-     * @var string
+     * @var TagContent[]
      *
-     * @ORM\Column(name="edition", type="string", length=255)
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\TagContent", fetch="EAGER", mappedBy="adventure")
      */
-    private $edition;
+    private $info;
+
+    public function __construct()
+    {
+        $this->info = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->title;
+    }
 
     /**
-     * @var int
+     * Set id
      *
-     * @ORM\Column(name="year", type="integer")
-     */
-    private $year;
-
-    /**
-     * @var string
+     * @param integer $id
      *
-     * @ORM\Column(name="publisher", type="string", length=255, nullable=true)
+     * @return Adventure
      */
-    private $publisher;
+    public function setId($id)
+    {
+        $this->id = $id;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="num_pages", type="integer", nullable=true)
-     */
-    private $numPages;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="format", type="string", length=255, nullable=true)
-     */
-    private $format;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="author", type="string", length=255, nullable=true)
-     */
-    private $author;
-
+        return $this;
+    }
 
     /**
      * Get id
@@ -106,147 +95,28 @@ class Adventure
     }
 
     /**
-     * Set edition
-     *
-     * @param string $edition
+     * @return TagContent[]
+     */
+    public function getInfo()
+    {
+        return $this->info;
+    }
+
+    /**
+     * @param TagContent[] $info
      *
      * @return Adventure
      */
-    public function setEdition($edition)
+    public function setInfo($info)
     {
-        $this->edition = $edition;
+        $this->info = $info;
 
         return $this;
     }
 
-    /**
-     * Get edition
-     *
-     * @return string
-     */
-    public function getEdition()
+    public function addInfo(TagContent $info)
     {
-        return $this->edition;
-    }
-
-    /**
-     * Set year
-     *
-     * @param integer $year
-     *
-     * @return Adventure
-     */
-    public function setYear($year)
-    {
-        $this->year = $year;
-
-        return $this;
-    }
-
-    /**
-     * Get year
-     *
-     * @return int
-     */
-    public function getYear()
-    {
-        return $this->year;
-    }
-
-    /**
-     * Set publisher
-     *
-     * @param string $publisher
-     *
-     * @return Adventure
-     */
-    public function setPublisher($publisher)
-    {
-        $this->publisher = $publisher;
-
-        return $this;
-    }
-
-    /**
-     * Get publisher
-     *
-     * @return string
-     */
-    public function getPublisher()
-    {
-        return $this->publisher;
-    }
-
-    /**
-     * Set numPages
-     *
-     * @param integer $numPages
-     *
-     * @return Adventure
-     */
-    public function setNumPages($numPages)
-    {
-        $this->numPages = $numPages;
-
-        return $this;
-    }
-
-    /**
-     * Get numPages
-     *
-     * @return int
-     */
-    public function getNumPages()
-    {
-        return $this->numPages;
-    }
-
-    /**
-     * Set format
-     *
-     * @param string $format
-     *
-     * @return Adventure
-     */
-    public function setFormat($format)
-    {
-        $this->format = $format;
-
-        return $this;
-    }
-
-    /**
-     * Get format
-     *
-     * @return string
-     */
-    public function getFormat()
-    {
-        return $this->format;
-    }
-
-    /**
-     * Set author
-     *
-     * @param string $author
-     *
-     * @return Adventure
-     */
-    public function setAuthor($author)
-    {
-        $this->author = $author;
-
-        return $this;
-    }
-
-    /**
-     * Get author
-     *
-     * @return string
-     */
-    public function getAuthor()
-    {
-        return $this->author;
+        $this->info->add($info);
     }
 }
 

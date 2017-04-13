@@ -6,14 +6,14 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AdventureType extends AbstractType
+class TagNameType extends AbstractType
 {
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('title');
+        $builder->add('title')->add('suggested')->add('type');
     }
     
     /**
@@ -22,7 +22,7 @@ class AdventureType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Adventure'
+            'data_class' => 'AppBundle\Entity\TagName'
         ));
     }
 
@@ -31,7 +31,7 @@ class AdventureType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'appbundle_adventure';
+        return 'appbundle_tagname';
     }
 
 

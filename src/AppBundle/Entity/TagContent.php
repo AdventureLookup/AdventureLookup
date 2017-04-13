@@ -24,7 +24,7 @@ class TagContent
     /**
      * @var string
      *
-     * @ORM\Column(name="content", type="string", length=255)
+     * @ORM\Column(name="content", type="text")
      */
     private $content;
 
@@ -35,6 +35,24 @@ class TagContent
      */
     private $suggested;
 
+    /**
+     * @var TagName
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\TagName", inversedBy="contents", fetch="EAGER")
+     */
+    private $tag;
+
+    /**
+     * @var Adventure
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Adventure", inversedBy="info")
+     */
+    private $adventure;
+
+    public function __construct()
+    {
+        $this->suggested = true;
+    }
 
     /**
      * Get id
@@ -92,6 +110,47 @@ class TagContent
     public function getSuggested()
     {
         return $this->suggested;
+    }
+
+    /**
+     * @return TagName
+     */
+    public function getTag()
+    {
+        return $this->tag;
+    }
+
+    /**
+     * @param TagName $tag
+     *
+     * @return TagContent
+     */
+    public function setTag($tag)
+    {
+        $this->tag = $tag;
+
+        return $this;
+    }
+
+    /**
+     * @return Adventure
+     */
+    public function getAdventure()
+    {
+        return $this->adventure;
+    }
+
+    /**
+     * @param Adventure $adventure
+     *
+     * @return TagContent
+     */
+    public function setAdventure($adventure)
+    {
+        $this->adventure = $adventure;
+        $this->adventure->addInfo($this);
+
+        return $this;
     }
 }
 

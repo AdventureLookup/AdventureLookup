@@ -1,51 +1,76 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Adventures list</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1 class="mt-5">Adventure search</h1>
+                <p>Find adventures fitting your search term!</p>
+                <form method="get" action="{{ path('adventure_index') }}" class="bg-faded p-3 mb-3">
+                    <fieldset>
+                        <legend>Search everything</legend>
+                        <div class="input-group input-group-lg">
+                            <input class="form-control" type="text" value="{{ app.request.query.get('q', '') }}" placeholder="goblins, ring of protection, ..." />
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            </span>
+                        </div>
+                    </fieldset>
+                </form>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Edition</th>
-                <th>Year</th>
-                <th>Publisher</th>
-                <th>Numpages</th>
-                <th>Format</th>
-                <th>Author</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for adventure in adventures %}
-            <tr>
-                <td><a href="{{ path('adventure_show', { 'id': adventure.id }) }}">{{ adventure.id }}</a></td>
-                <td>{{ adventure.title }}</td>
-                <td>{{ adventure.edition }}</td>
-                <td>{{ adventure.year }}</td>
-                <td>{{ adventure.publisher }}</td>
-                <td>{{ adventure.numPages }}</td>
-                <td>{{ adventure.format }}</td>
-                <td>{{ adventure.author }}</td>
-                <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('adventure_show', { 'id': adventure.id }) }}">show</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('adventure_edit', { 'id': adventure.id }) }}">edit</a>
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+                <form method="get" action="{{ path('adventure_index')}}" class="bg-faded p-3">
+                    <fieldset>
+                        <legend>Advanced search</legend>
+                        {% set filter = app.request.query.get('filter') %}
+                        {% for tagName in tagNames %}
+                            <div class="form-group row">
+                                <label class="col-2 col-form-label" for="filter_{{ tagName.id }}">{{ tagName.title }}</label>
+                                <div class="col-2">
+                                    <select name="filter[{{ tagName.id }}][operator]" class="form-control">
+                                        <option {% if filter and filter[tagName.id]['operator'] == 'like' %}selected{% endif %} value="like">contains</option>
+                                        <option {% if filter and filter[tagName.id]['operator'] == 'gt' %}selected{% endif %} value="gt">&gt;</option>
+                                        <option {% if filter and filter[tagName.id]['operator'] == 'gte' %}selected{% endif %} value="gte">&gt;=</option>
+                                        <option {% if filter and filter[tagName.id]['operator'] == 'lt' %}selected{% endif %} value="lt">&lt;</option>
+                                        <option {% if filter and filter[tagName.id]['operator'] == 'lte' %}selected{% endif %} value="lte">&lt;=</option>
+                                    </select>
+                                </div>
+                                <div class="col-8">
+                                    <input id="filter_{{ tagName.id }}" name="filter[{{ tagName.id }}][content]" class="form-control" value="{{ filter[tagName.id]['content']|default('') }}">
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <button type="submit" class="btn btn-lg btn-primary">Search</button>
+                    </fieldset>
+                </form>
 
-    <ul>
-        <li>
-            <a href="{{ path('adventure_new') }}">Create a new adventure</a>
-        </li>
-    </ul>
+                <h2 class="my-5" id="search-results">Results</h2>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Title</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for adventure in adventures %}
+                            <tr>
+                                <td>
+                                    <a href="{{ path('adventure_show', { 'id': adventure.id }) }}">
+                                        {{ adventure.title }}
+                                    </a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr class="table-danger">
+                                <td>We're sorry. Apparently there is no adventure matching your search :(</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <a class="btn btn-outline-success" href="{{ path('adventure_new') }}">Add a new adventure</a>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -1,56 +1,48 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Adventure</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1 class="my-5">{{ adventure.title }}</h1>
 
-    <table>
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ adventure.id }}</td>
-            </tr>
-            <tr>
-                <th>Title</th>
-                <td>{{ adventure.title }}</td>
-            </tr>
-            <tr>
-                <th>Edition</th>
-                <td>{{ adventure.edition }}</td>
-            </tr>
-            <tr>
-                <th>Year</th>
-                <td>{{ adventure.year }}</td>
-            </tr>
-            <tr>
-                <th>Publisher</th>
-                <td>{{ adventure.publisher }}</td>
-            </tr>
-            <tr>
-                <th>Numpages</th>
-                <td>{{ adventure.numPages }}</td>
-            </tr>
-            <tr>
-                <th>Format</th>
-                <td>{{ adventure.format }}</td>
-            </tr>
-            <tr>
-                <th>Author</th>
-                <td>{{ adventure.author }}</td>
-            </tr>
-        </tbody>
-    </table>
+                <table class="table">
+                    <tbody>
+                    {% for info in adventure.info %}
+                    <tr {% if info.suggested %}class="table-warning"{% endif %}>
+                        <th>{{ info.tag.title }}</th>
+                        <td>
+                            {{ info.content }}
+                            <a class="btn btn-sm btn-secondary" href="{{ path('adventure_info_edit', {id: info.id}) }}">edit</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th>Add information</th>
+                        <td>
+                            <a class="btn btn-info btn-sm" href="{{ path('adventure_info_new', {id: adventure.id}) }}">Add info</a>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
 
-    <ul>
-        <li>
-            <a href="{{ path('adventure_index') }}">Back to the list</a>
-        </li>
-        <li>
-            <a href="{{ path('adventure_edit', { 'id': adventure.id }) }}">Edit</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
-        </li>
-    </ul>
+                <h3 class="mt-3">Other actions</h3>
+                <ul>
+                    <li>
+                        <a href="{{ path('adventure_index') }}">Back to the list</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('adventure_edit', { 'id': adventure.id }) }}">Edit</a>
+                    </li>
+                    <li>
+                        {{ form_start(delete_form) }}
+                        <input class="btn btn-sm btn-danger" type="submit" value="Delete">
+                        {{ form_end(delete_form) }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 {% endblock %}

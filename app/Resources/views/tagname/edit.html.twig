@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1 class="my-5">Edit tag</h1>
+
+                {{ form_start(edit_form) }}
+                {{ form_widget(edit_form) }}
+                <input class="btn btn-primary" type="submit" value="Edit" />
+                {{ form_end(edit_form) }}
+
+                <h3 class="mt-3">Other actions</h3>
+                <ul>
+                    <li>
+                        <a href="{{ path('tags_index') }}">Back to the list</a>
+                    </li>
+                    <li>
+                        {{ form_start(delete_form) }}
+                        <input type="submit" value="Delete this tag" class="btn btn-danger btn-sm">
+                        {{ form_end(delete_form) }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
