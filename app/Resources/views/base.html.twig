@@ -23,6 +23,18 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('tags_index') }}">Tags</a>
                     </li>
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('logout') }}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('login') }}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('user_registration') }}">Create Account</a>
+                        </li>
+                    {% endif %}
                 </ul>
                 <form class="form-inline my-2 my-lg-0" action="{{ path('adventure_index') }}" method="get">
                     <input class="form-control mr-sm-2" type="text" name="q" placeholder="An adventure including...">
