@@ -40,7 +40,7 @@ class TagData implements FixtureInterface
     {
         $tag = new TagName();
         $tag->setTitle($title);
-        $tag->setSuggested(false);
+        $tag->setApproved(false);
         $tag->setType($type);
 
         $manager->persist($tag);

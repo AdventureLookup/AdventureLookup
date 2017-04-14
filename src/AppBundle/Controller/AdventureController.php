@@ -88,7 +88,7 @@ class AdventureController extends Controller
         }
 
         $tagNames = $em->getRepository('AppBundle:TagName')->findAll();
-        array_unshift($tagNames, (new TagName())->setId('title')->setTitle('Title')->setSuggested(false));
+        array_unshift($tagNames, (new TagName())->setId('title')->setTitle('Title')->setApproved(false));
 
         return $this->render('adventure/index.html.twig', [
             'adventures' => $adventures,

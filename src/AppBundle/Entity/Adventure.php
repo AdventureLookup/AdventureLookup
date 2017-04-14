@@ -30,6 +30,13 @@ class Adventure
     private $title;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="approved", type="boolean")
+     */
+    private $approved;
+
+    /**
      * @var TagContent[]
      *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\TagContent", fetch="EAGER", mappedBy="adventure")
@@ -39,6 +46,7 @@ class Adventure
     public function __construct()
     {
         $this->info = new ArrayCollection();
+        $this->approved = false;
     }
 
     public function __toString()
@@ -117,6 +125,26 @@ class Adventure
     public function addInfo(TagContent $info)
     {
         $this->info->add($info);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isApproved(): bool
+    {
+        return $this->approved;
+    }
+
+    /**
+     * @param bool $approved
+     *
+     * @return Adventure
+     */
+    public function setApproved(bool $approved): Adventure
+    {
+        $this->approved = $approved;
+
+        return $this;
     }
 }
 

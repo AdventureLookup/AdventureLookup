@@ -9,7 +9,7 @@
                 <table class="table">
                     <tbody>
                     {% for info in adventure.info %}
-                    <tr {% if info.suggested %}class="table-warning"{% endif %}>
+                    <tr {% if not info.approved %}class="table-warning"{% endif %}>
                         <th>{{ info.tag.title }}</th>
                         <td>
                             {{ info.content }}

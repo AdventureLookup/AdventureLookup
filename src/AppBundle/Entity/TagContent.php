@@ -31,9 +31,9 @@ class TagContent
     /**
      * @var bool
      *
-     * @ORM\Column(name="suggested", type="boolean")
+     * @ORM\Column(name="approved", type="boolean")
      */
-    private $suggested;
+    private $approved;
 
     /**
      * @var TagName
@@ -51,7 +51,7 @@ class TagContent
 
     public function __construct()
     {
-        $this->suggested = true;
+        $this->approved = false;
     }
 
     /**
@@ -89,27 +89,27 @@ class TagContent
     }
 
     /**
-     * Set suggested
+     * Set approved
      *
-     * @param boolean $suggested
+     * @param boolean $approved
      *
      * @return TagContent
      */
-    public function setSuggested($suggested)
+    public function setApproved(bool $approved): TagContent
     {
-        $this->suggested = $suggested;
+        $this->approved = $approved;
 
         return $this;
     }
 
     /**
-     * Get suggested
+     * Is approved
      *
      * @return bool
      */
-    public function getSuggested()
+    public function isApproved(): bool 
     {
-        return $this->suggested;
+        return $this->approved;
     }
 
     /**

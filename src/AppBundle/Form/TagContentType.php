@@ -20,7 +20,7 @@ class TagContentType extends AbstractType
             ->add('content', null, [
                 'required' => true
             ])
-            ->add('suggested', null, [
+            ->add('approved', null, [
                 'required' => false
             ]);
     }
