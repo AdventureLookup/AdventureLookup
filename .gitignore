@@ -15,3 +15,6 @@
 /vendor/
 /web/bundles/
 /web/assets/vendor/
+/node_modules
+/web/assets/bundle.js
+/web/assets/styles.css

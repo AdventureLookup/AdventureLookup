@@ -1,7 +1,19 @@
 {
   "dependencies": {
+    "babel-core": "^6.24.1",
+    "babel-loader": "^6.4.1",
     "bootstrap": "4.0.0-alpha.6",
+    "css-loader": "^0.28.0",
+    "extract-text-webpack-plugin": "^2.1.0",
     "font-awesome": "^4.7.0",
-    "select2": "^4.0.3"
+    "node-sass": "^4.5.2",
+    "sass-loader": "^6.0.3",
+    "select2": "^4.0.3",
+    "style-loader": "^0.16.1",
+    "webpack": "^2.4.1",
+  },
+  "scripts": {
+    "build": "webpack",
+    "dev": "webpack --watch"
   }
 }
