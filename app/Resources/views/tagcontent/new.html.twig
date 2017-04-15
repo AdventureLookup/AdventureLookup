@@ -11,7 +11,7 @@
                 {{ form_row(form.content) }}
                 {{ form_widget(form.saveAndAdd) }}
                 {{ form_widget(form.save) }}
-                <a href="{{ path('adventure_show', {id: tagContent.adventure.id}) }}" class="btn btn-secondary" role="button">Cancel</a>
+                <a href="{{ path('adventure_show', {slug: tagContent.adventure.slug}) }}" class="btn btn-secondary" role="button">Cancel</a>
                 {{ form_end(form) }}
             </div>
         </div>
@@ -34,16 +34,24 @@
             }
         })(jQuery);
 
-
-
         $(function () {
+            $('#appbundle_tagcontent_tag')
+                .select2()
+                .on('select2:select', function(){
+                    $(this).focus();
+                })
+            ;
+
             $('#appbundle_tagcontent_content').changeElementType("select");
             $('#appbundle_tagcontent_content')
                 .removeAttr('type')
                 .select2({
                     'tags': true,
                     ajax: {
-                        url: "{{ path('field_content_search', {id: tagContent.tag.id}) }}",
+                        url: function () {
+                            return "{{ path('field_content_search', {id: '__ID__'}) }}"
+                                .replace(/__ID__/g, $('#appbundle_tagcontent_tag').val());
+                        },
                         dataType: 'json',
                         delay: 250,
                         data: function (params) {

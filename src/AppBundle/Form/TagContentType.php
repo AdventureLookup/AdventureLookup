@@ -20,7 +20,7 @@ class TagContentType extends AbstractType
         $builder
             ->add('tag', null, [
                 'required' => true,
-                'disabled' => true
+                'disabled' => $options['isEdit']
             ])
             ->add('content', TextType::class, [
                 'required' => true,

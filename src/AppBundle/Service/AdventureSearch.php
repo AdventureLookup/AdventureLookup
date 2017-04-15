@@ -134,7 +134,7 @@ class AdventureSearch
     private function searchResultsToAdventureDocuments(array $result): array
     {
         return array_map(function ($hit) {
-            return new AdventureDocument($hit['_id'], $hit['_source']['title'], [], $hit['_score']);
+            return new AdventureDocument($hit['_id'], $hit['_source']['title'], $hit['_source']['slug'], [], $hit['_score']);
         }, $result['hits']['hits']);
     }
 }

@@ -9,14 +9,17 @@ class AdventureDocument
 
     private $title;
 
+    private $slug;
+
     private $score;
 
     private $info;
 
-    public function __construct(int $id, string $title, array $info, float $score = 0.0)
+    public function __construct(int $id, string $title, string $slug, array $info, float $score = 0.0)
     {
         $this->id = $id;
         $this->title = $title;
+        $this->slug = $slug;
         $this->score = $score;
         $this->info = $info;
     }
@@ -35,7 +38,7 @@ class AdventureDocument
             $info[$key]['contents'][] = $fieldContent;
         }
 
-        return new static($adventure->getId(), $adventure->getTitle(), $info);
+        return new static($adventure->getId(), $adventure->getTitle(), $adventure->getSlug(), $info);
     }
 
     /**
@@ -68,5 +71,13 @@ class AdventureDocument
     public function getScore(): float
     {
         return $this->score;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSlug(): string
+    {
+        return $this->slug;
     }
 }

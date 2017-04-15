@@ -64,7 +64,7 @@ class TagContentController extends Controller
                 ]);
             }
 
-            return $this->redirectToRoute('adventure_show', array('id' => $tagContent->getAdventure()->getId()));
+            return $this->redirectToRoute('adventure_show', ['slug' => $tagContent->getAdventure()->getSlug()]);
         }
 
         return $this->render('tagcontent/new.html.twig', array(
@@ -89,7 +89,7 @@ class TagContentController extends Controller
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('adventure_show', array('id' => $tagContent->getAdventure()->getId()));
+            return $this->redirectToRoute('adventure_show', ['slug' => $tagContent->getAdventure()->getSlug()]);
         }
 
         return $this->render('tagcontent/edit.html.twig', array(
@@ -117,7 +117,7 @@ class TagContentController extends Controller
             $em->flush();
         }
 
-        return $this->redirectToRoute('adventure_show', ['id' => $tagContent->getAdventure()->getId()]);
+        return $this->redirectToRoute('adventure_show', ['slug' => $tagContent->getAdventure()->getSlug()]);
     }
 
     /**

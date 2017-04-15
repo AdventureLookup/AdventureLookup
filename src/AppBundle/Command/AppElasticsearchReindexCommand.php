@@ -46,6 +46,9 @@ class AppElasticsearchReindexCommand extends ContainerAwareCommand
             'title' => [
                 'type' => 'string'
             ],
+            'slug' => [
+                'enabled' => false
+            ]
         ];
         /** @var TagName[] $tagNames */
         $tagNames = $em->getRepository(TagName::class)->findAll();

@@ -15,7 +15,10 @@ class AdventureSerializer
 {
     public function toElasticDocument(Adventure $adventure): array
     {
-        $ser = ['title' => $adventure->getTitle()];
+        $ser = [
+            'title' => $adventure->getTitle(),
+            'slug' => $adventure->getSlug(),
+        ];
 
         foreach($adventure->getInfo() as $info) {
             $tag = $info->getTag();

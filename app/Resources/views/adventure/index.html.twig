@@ -72,7 +72,7 @@
                         {% for adventure in adventures %}
                             <tr>
                                 <td>
-                                    <a href="{{ path('adventure_show', { 'id': adventure.id }) }}">
+                                    <a href="{{ path('adventure_show', { 'slug': adventure.slug }) }}">
                                         {{ adventure.title }} ({{ adventure.score }})
                                     </a>
                                 </td>

@@ -107,3 +107,4 @@ stof_doctrine_extensions:
     orm:
         default:
             loggable: true
+            sluggable: true

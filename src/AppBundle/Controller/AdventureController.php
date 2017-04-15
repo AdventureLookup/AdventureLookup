@@ -72,7 +72,7 @@ class AdventureController extends Controller
             $em->persist($adventure);
             $em->flush();
 
-            return $this->redirectToRoute('adventure_show', array('id' => $adventure->getId()));
+            return $this->redirectToRoute('adventure_show', ['slug' => $adventure->getSlug()]);
         }
 
         return $this->render('adventure/new.html.twig', array(
@@ -84,7 +84,7 @@ class AdventureController extends Controller
     /**
      * Finds and displays a adventure entity.
      *
-     * @Route("/{id}", name="adventure_show")
+     * @Route("/{slug}", name="adventure_show")
      * @Method("GET")
      */
     public function showAction(Adventure $adventure)
