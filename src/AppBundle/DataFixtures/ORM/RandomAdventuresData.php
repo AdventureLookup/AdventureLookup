@@ -41,7 +41,7 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
                 if ($tag->getType() == 'integer') {
                     $info->setContent($faker->year);
                 } else if ($tag->getType() == 'boolean') {
-                    $info->setContent((string)$faker->boolean);
+                    $info->setContent($faker->boolean ? '1' : '0');
                 } else {
                     $info->setContent($faker->text(200));
                 }

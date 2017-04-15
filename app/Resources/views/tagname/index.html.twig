@@ -26,7 +26,9 @@
                                 <td>{% if tagName.approved %}Yes{% else %}No{% endif %}</td>
                                 <td>{{ tagName.type }}</td>
                                 <td class="text-right">
-                                    <a class="btn btn-sm btn-secondary" href="{{ path('tags_edit', { 'id': tagName.id }) }}">edit</a>
+                                    {% if is_granted('ROLE_CURATOR') %}
+                                        <a class="btn btn-sm btn-secondary" href="{{ path('tags_edit', { 'id': tagName.id }) }}">edit</a>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
@@ -34,7 +36,9 @@
                     </table>
                 </div>
 
-                <a class="btn btn-outline-primary" href="{{ path('tags_new') }}">create a new tag</a>
+                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                    <a class="btn btn-outline-primary" href="{{ path('tags_new') }}">create a new tag</a>
+                {% endif %}
             </div>
         </div>
     </div>

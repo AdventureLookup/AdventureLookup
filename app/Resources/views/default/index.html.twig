@@ -16,15 +16,15 @@
         <div class="row text-center my-5">
             <div class="col">
                 <h5>&hellip;something with lots of <em>Goblins</em> and a <em>Beholder</em> in the <em>Underdark</em>.</h5>
-                <a href="" class="btn btn-sm btn-outline-primary">Find adventures</a>
+                <a href="{{ path('adventure_index', {q: 'goblins, beholder, underdark'}) }}" class="btn btn-sm btn-outline-primary">Find adventures</a>
             </div>
             <div class="col">
                 <h5 class="mb-3">&hellip;an adventure for <em>a big party</em> of <em>third level</em> involving a <em>Ring of Protection</em>.</h5>
-                <a href="" class="btn btn-sm btn-outline-primary">Find adventures</a>
+                <a href="{{ path('adventure_index', {q: 'ring of protection'}) }}" class="btn btn-sm btn-outline-primary">Find adventures</a>
             </div>
             <div class="col">
                 <h5 class="mb-3">&hellip;an idea of how to integrate the <em>City of Dis</em> and a bunch of <em>Skeletons</em>.</h5>
-                <a href="" class="btn btn-sm btn-outline-primary">Find adventures</a>
+                <a href="{{ path('adventure_index', {q: 'city of dis, skeletons'}) }}" class="btn btn-sm btn-outline-primary">Find adventures</a>
             </div>
         </div>
     </div>

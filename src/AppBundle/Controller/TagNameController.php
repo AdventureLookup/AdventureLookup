@@ -3,6 +3,9 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\TagName;
+use AppBundle\Listener\SearchIndexUpdater;
+use Elasticsearch\ClientBuilder;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
@@ -36,6 +39,7 @@ class TagNameController extends Controller
      *
      * @Route("/new", name="tags_new")
      * @Method({"GET", "POST"})
+     * @Security("is_granted('ROLE_USER')")
      */
     public function newAction(Request $request)
     {
@@ -62,6 +66,7 @@ class TagNameController extends Controller
      *
      * @Route("/{id}/edit", name="tags_edit")
      * @Method({"GET", "POST"})
+     * @Security("is_granted('ROLE_CURATOR')")
      */
     public function editAction(Request $request, TagName $tagName)
     {
@@ -87,6 +92,7 @@ class TagNameController extends Controller
      *
      * @Route("/{id}", name="tags_delete")
      * @Method("DELETE")
+     * @Security("is_granted('ROLE_CURATOR')")
      */
     public function deleteAction(Request $request, TagName $tagName)
     {

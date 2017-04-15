@@ -7,10 +7,85 @@
                 <h1 class="my-5">Add info to "{{ tagContent.adventure.title }}"</h1>
 
                 {{ form_start(form) }}
-                {{ form_widget(form) }}
-                <input class="btn btn-primary" type="submit" value="Create" />
+                {{ form_row(form.tag) }}
+                {{ form_row(form.content) }}
+                {{ form_widget(form.saveAndAdd) }}
+                {{ form_widget(form.save) }}
+                <a href="{{ path('adventure_show', {id: tagContent.adventure.id}) }}" class="btn btn-secondary" role="button">Cancel</a>
                 {{ form_end(form) }}
             </div>
         </div>
     </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        (function($) {
+            $.fn.changeElementType = function(newType) {
+                var attrs = {};
+
+                $.each(this[0].attributes, function(idx, attr) {
+                    attrs[attr.nodeName] = attr.nodeValue;
+                });
+
+                this.replaceWith(function() {
+                    return $("<" + newType + "/>", attrs).append($(this).contents());
+                });
+            }
+        })(jQuery);
+
+
+
+        $(function () {
+            $('#appbundle_tagcontent_content').changeElementType("select");
+            $('#appbundle_tagcontent_content')
+                .removeAttr('type')
+                .select2({
+                    'tags': true,
+                    ajax: {
+                        url: "{{ path('field_content_search', {id: tagContent.tag.id}) }}",
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                q: params.term,
+                                page: params.page
+                            };
+                        },
+                        processResults: function (data, params) {
+                            // parse the results into the format expected by Select2
+                            // since we are using custom formatting functions we do not need to
+                            // alter the remote JSON data, except to indicate that infinite
+                            // scrolling can be used
+                            params.page = params.page || 1;
+
+                            var results = [];
+                            for (var i = 0; i < data.results.length; i++) {
+                                var result = data.results[i];
+                                results.push({id: result, text: result});
+                            }
+
+                            return {
+                                results: results,
+                                pagination: {
+                                    more: (params.page * 2) < data.total
+                                }
+                            };
+                        },
+                        cache: true
+                    },
+                    minimumInputLength: 1,
+                    templateResult: function (result) {
+                        return result.text;
+                    },
+                    templateSelection: function (result) {
+                        return result.text;
+                    },
+                })
+                .on('select2:select', function(){
+                    $(this).focus();
+                })
+            ;
+        });
+    </script>
 {% endblock %}

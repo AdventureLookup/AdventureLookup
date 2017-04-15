@@ -9,3 +9,7 @@ services:
          autowire: true
          tags:
              - { name: doctrine.event_subscriber, connection: default }
+
+    adventure_search:
+        class: AppBundle\Service\AdventureSearch
+        autowire: true

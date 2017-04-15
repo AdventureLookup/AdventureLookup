@@ -5,6 +5,9 @@
         <div class="row">
             <div class="col">
                 <h1 class="my-5">New adventure</h1>
+                {% if not adventure.approved %}
+                    <div class="alert alert-warning">Your new adventure will need approval from a curator.</div>
+                {% endif %}
 
                 {{ form_start(form) }}
                 {{ form_widget(form) }}

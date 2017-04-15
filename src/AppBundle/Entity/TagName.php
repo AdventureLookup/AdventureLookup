@@ -43,6 +43,27 @@ class TagName
     private $type;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="string", length=255)
+     */
+    private $description;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="example", type="string", length=255)
+     */
+    private $example;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="use_as_filter", type="boolean")
+     */
+    private $useAsFilter;
+
+    /**
      * @var TagContent[]
      *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\TagContent", mappedBy="tag", fetch="EXTRA_LAZY")
@@ -53,6 +74,7 @@ class TagName
     {
         $this->approved = false;
         $this->type = 'text';
+        $this->useAsFilter = false;
     }
 
     public function __toString()
@@ -154,6 +176,60 @@ class TagName
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     * @return TagName
+     */
+    public function setDescription(string $description): TagName
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getExample(): string
+    {
+        return $this->example;
+    }
+
+    /**
+     * @param string $example
+     * @return TagName
+     */
+    public function setExample(string $example): TagName
+    {
+        $this->example = $example;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUseAsFilter(): bool
+    {
+        return $this->useAsFilter;
+    }
+
+    /**
+     * @param bool $useAsFilter
+     * @return TagName
+     */
+    public function setUseAsFilter(bool $useAsFilter): TagName
+    {
+        $this->useAsFilter = $useAsFilter;
+        return $this;
     }
 
     /**

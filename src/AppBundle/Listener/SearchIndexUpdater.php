@@ -75,14 +75,7 @@ class SearchIndexUpdater implements EventSubscriber
             return;
         }
 
-        $response = $this->client->index([
-            'index' => self::INDEX,
-            'type' => self::TYPE,
-            'id' => $adventure->getId(),
-            'body' => $this->serializer->toElasticDocument($adventure)
-        ]);
-
-        // @TODO: Log errors
+        $this->update($adventure);
     }
 
     private function deleteSearchIndex(LifecycleEventArgs $args)
@@ -117,5 +110,22 @@ class SearchIndexUpdater implements EventSubscriber
             $entity = $entity->getAdventure();
         }
         return $entity;
+    }
+
+    /**
+     * @param Adventure $adventure
+     */
+    public function update(Adventure $adventure)
+    {
+        $response = $this->client->index([
+            'index' => self::INDEX,
+            'type' => self::TYPE,
+            'id' => $adventure->getId(),
+            'body' => $this->serializer->toElasticDocument($adventure)
+        ]);
+
+        // @TODO: Log errors
+
+        $this->logger->critical(var_export($response, true));
     }
 }

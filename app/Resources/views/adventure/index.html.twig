@@ -5,12 +5,16 @@
         <div class="row">
             <div class="col">
                 <h1 class="mt-5">Adventure search</h1>
+                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                    <a class="mb-3 float-right btn btn-outline-success" href="{{ path('adventure_new') }}">Add a new adventure</a>
+                {% endif %}
                 <p>Find adventures fitting your search term!</p>
+                <div class="clearfix"></div>
                 <form method="get" action="{{ path('adventure_index') }}" class="bg-faded p-3 mb-3">
                     <fieldset>
                         <legend>Search everything</legend>
                         <div class="input-group input-group-lg">
-                            <input class="form-control" type="text" value="{{ app.request.query.get('q', '') }}" placeholder="goblins, ring of protection, ..." />
+                            <input class="form-control" name="q" type="text" value="{{ app.request.query.get('q', '') }}" placeholder="goblins, ring of protection, ..." />
                             <span class="input-group-btn">
                                 <button type="submit" class="btn btn-primary">Search</button>
                             </span>
@@ -18,28 +22,41 @@
                     </fieldset>
                 </form>
 
-                <form method="get" action="{{ path('adventure_index')}}" class="bg-faded p-3">
+                <form method="post" action="{{ path('adventure_index')}}" class="bg-faded p-3">
                     <fieldset>
-                        <legend>Advanced search</legend>
-                        {% set filter = app.request.query.get('filter') %}
-                        {% for tagName in tagNames %}
-                            <div class="form-group row">
-                                <label class="col-2 col-form-label" for="filter_{{ tagName.id }}">{{ tagName.title }}</label>
-                                <div class="col-2">
-                                    <select name="filter[{{ tagName.id }}][operator]" class="form-control">
-                                        <option {% if filter and filter[tagName.id]['operator'] == 'like' %}selected{% endif %} value="like">contains</option>
-                                        <option {% if filter and filter[tagName.id]['operator'] == 'gt' %}selected{% endif %} value="gt">&gt;</option>
-                                        <option {% if filter and filter[tagName.id]['operator'] == 'gte' %}selected{% endif %} value="gte">&gt;=</option>
-                                        <option {% if filter and filter[tagName.id]['operator'] == 'lt' %}selected{% endif %} value="lt">&lt;</option>
-                                        <option {% if filter and filter[tagName.id]['operator'] == 'lte' %}selected{% endif %} value="lte">&lt;=</option>
-                                    </select>
+                        <legend>Advanced search <button type="button" id="toggle-adv-search" class="btn btn-sm btn-secondary" role="button">toggle</button></legend>
+                        <div id="advanced-search" {% if not filter %}class="d-none"{% endif %}>
+                            {% for tagName in tagNames %}
+                                <div class="form-group row">
+                                    <label class="col-2 col-form-label-sm col-form-label" for="filter_{{ tagName.id }}">{{ tagName.title }}</label>
+                                    <div class="col-2">
+                                        <select name="f[{{ tagName.id }}][o]" class="form-control-sm form-control">
+                                            {% if tagName.type in ['text', 'string'] %}
+                                                <option {% if filter and filter[tagName.id]['o'] == 'like' %}selected{% endif %} value="like">contains</option>
+                                            {% elseif tagName.type == 'integer' %}
+                                                <option {% if filter and filter[tagName.id]['o'] == 'gt' %}selected{% endif %} value="gt">&gt;</option>
+                                                <option {% if filter and filter[tagName.id]['o'] == 'gte' %}selected{% endif %} value="gte">&gt;=</option>
+                                                <option {% if filter and filter[tagName.id]['o'] == 'lt' %}selected{% endif %} value="lt">&lt;</option>
+                                                <option {% if filter and filter[tagName.id]['o'] == 'lte' %}selected{% endif %} value="lte">&lt;=</option>
+                                            {% endif %}
+                                            {% if tagName.type in ['boolean'] %}
+                                                <option {% if filter and filter[tagName.id]['o'] == 'eq' %}selected{% endif %} value="eq">equals</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                    <div class="col-8">
+                                        <input id="filter_{{ tagName.id }}" name="f[{{ tagName.id }}][c]"
+                                               class="form-control-sm form-control adv-search-input"
+                                               value="{{ filter[tagName.id]['c']|default('') }}"
+                                        >
+                                        <small class="form-text text-muted">
+                                            {{ tagName.description }}. Example: <code>{{ tagName.example }}</code>
+                                        </small>
+                                    </div>
                                 </div>
-                                <div class="col-8">
-                                    <input id="filter_{{ tagName.id }}" name="filter[{{ tagName.id }}][content]" class="form-control" value="{{ filter[tagName.id]['content']|default('') }}">
-                                </div>
-                            </div>
-                        {% endfor %}
-                        <button type="submit" class="btn btn-lg btn-primary">Search</button>
+                            {% endfor %}
+                            <button type="submit" class="btn btn-lg btn-primary">Search</button>
+                        </div>
                     </fieldset>
                 </form>
 
@@ -56,7 +73,7 @@
                             <tr>
                                 <td>
                                     <a href="{{ path('adventure_show', { 'id': adventure.id }) }}">
-                                        {{ adventure.title }}
+                                        {{ adventure.title }} ({{ adventure.score }})
                                     </a>
                                 </td>
                             </tr>
@@ -68,9 +85,20 @@
                         </tbody>
                     </table>
                 </div>
-
-                <a class="btn btn-outline-success" href="{{ path('adventure_new') }}">Add a new adventure</a>
             </div>
         </div>
     </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(function () {
+            if ($('#advanced-search').hasClass('d-none')) {
+                $('#advanced-search').hide();
+            }
+            $('#toggle-adv-search').on('click', function () {
+                $('#advanced-search').removeClass('d-none').fadeToggle();
+            });
+        });
+    </script>
 {% endblock %}

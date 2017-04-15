@@ -4,25 +4,30 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\TagContent;
+use AppBundle\Entity\TagName;
+use AppBundle\Listener\SearchIndexUpdater;
+use Elasticsearch\ClientBuilder;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Tagcontent controller.
- *
- * @Route("/adventure-info")
  */
 class TagContentController extends Controller
 {
     /**
      * Creates a new tagContent entity.
      *
-     * @Route("/{id}/new", name="adventure_info_new")
+     * @Route("/adventures/{id}/info/new", name="adventure_info_new")
      * @Method({"GET", "POST"})
+     * @Security("is_granted('ROLE_USER')")
      *
      * @param Request $request
      * @param Adventure $adventure
@@ -31,15 +36,33 @@ class TagContentController extends Controller
      */
     public function newAction(Request $request, Adventure $adventure)
     {
+        $em = $this->getDoctrine()->getManager();
+        $field = $em->getRepository(TagName::class)->find(
+            $request->query->get('fieldId')
+        );
+
         $tagContent = new Tagcontent();
         $tagContent->setAdventure($adventure);
-        $form = $this->createForm('AppBundle\Form\TagContentType', $tagContent);
+        $tagContent->setTag($field);
+        if ($this->isGranted('ROLE_CURATOR')) {
+            $tagContent->setApproved(true);
+        }
+        $form = $this->createForm('AppBundle\Form\TagContentType', $tagContent, ['isEdit' => false]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($tagContent);
             $em->flush();
+
+            $this->addFlash('success', 'Information saved!');
+
+            if ($form->get('saveAndAdd')->isClicked()) {
+                return $this->redirectToRoute('adventure_info_new', [
+                    'id' => $tagContent->getAdventure()->getId(),
+                    'fieldId' => $field->getId(),
+                ]);
+            }
 
             return $this->redirectToRoute('adventure_show', array('id' => $tagContent->getAdventure()->getId()));
         }
@@ -53,13 +76,14 @@ class TagContentController extends Controller
     /**
      * Displays a form to edit an existing tagContent entity.
      *
-     * @Route("/{id}/edit", name="adventure_info_edit")
+     * @Route("/adventure-info/{id}/edit", name="adventure_info_edit")
      * @Method({"GET", "POST"})
+     * @Security("is_granted('ROLE_CURATOR')")
      */
     public function editAction(Request $request, TagContent $tagContent)
     {
         $deleteForm = $this->createDeleteForm($tagContent);
-        $editForm = $this->createForm('AppBundle\Form\TagContentType', $tagContent);
+        $editForm = $this->createForm('AppBundle\Form\TagContentType', $tagContent, ['isEdit' => true]);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
@@ -78,8 +102,9 @@ class TagContentController extends Controller
     /**
      * Deletes a tagContent entity.
      *
-     * @Route("/{id}", name="adventure_info_delete")
+     * @Route("/adventure-info/{id}", name="adventure_info_delete")
      * @Method("DELETE")
+     * @Security("is_granted('ROLE_CURATOR')")
      */
     public function deleteAction(Request $request, TagContent $tagContent)
     {
@@ -93,6 +118,56 @@ class TagContentController extends Controller
         }
 
         return $this->redirectToRoute('adventure_show', ['id' => $tagContent->getAdventure()->getId()]);
+    }
+
+    /**
+     * @Route("/adventure-info/{id}/search", name="field_content_search")
+     *
+     * @param TagName $tagName
+     * @return JsonResponse
+     */
+    public function fieldContentSearchAction(Request $request, TagName $tagName)
+    {
+        $client = ClientBuilder::create()->build();
+
+        $q = $request->query->get('q');
+
+        $fieldName = 'info_' . $tagName->getId();
+        $size = 2;
+        $response = $client->search([
+            'index' => SearchIndexUpdater::INDEX,
+            'type' => SearchIndexUpdater::TYPE,
+            'body' => [
+                'query' => [
+                    'match_phrase_prefix' => [
+                        $fieldName => $q
+                    ]
+                ],
+                'size' => $size,
+                'from' => ($request->query->get('page', 1) - 1) * $size,
+                '_source' => false,
+                "highlight" => [
+                    'pre_tags' => [''],
+                    'post_tags' => [''],
+                    'fields' => [
+                        $fieldName => new \stdClass()
+                    ]
+                ],
+            ]
+        ]);
+
+        $results = [
+            'total' => $response['hits']['total'],
+            'results' => []
+        ];
+        foreach($response['hits']['hits'] as $hit) {
+            $highlights = array_unique($hit['highlight']['info_' . $tagName->getId()]);
+            foreach ($highlights as $highlight) {
+                $results['results'][] = $highlight;
+            }
+        }
+
+        return new JsonResponse($results);
     }
 
     /**
