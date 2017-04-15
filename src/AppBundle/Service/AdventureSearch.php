@@ -75,8 +75,6 @@ class AdventureSearch
             ]
         ]);
 
-        dump($result);
-
         return $this->searchResultsToAdventureDocuments($result);
     }
 
