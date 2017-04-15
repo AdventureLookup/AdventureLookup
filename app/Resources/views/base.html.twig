@@ -9,7 +9,7 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
-        <nav class="navbar navbar-toggleable-sm navbar-light bg-faded">
+        <nav class="navbar navbar-toggleable-sm navbar-light bg-faded mb-3">
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -37,7 +37,7 @@
                     {% endif %}
                 </ul>
                 <form class="form-inline my-2 my-lg-0" action="{{ path('adventure_index') }}" method="get">
-                    <input class="form-control mr-sm-2" type="text" name="q" placeholder="An adventure including...">
+                    <input class="form-control mr-sm-2" type="text" name="q" placeholder="An adventure including..." value="{{ app.request.query.get('q', '') }}">
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                 </form>
             </div>

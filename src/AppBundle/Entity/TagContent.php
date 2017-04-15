@@ -4,12 +4,14 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * TagContent
  *
  * @ORM\Table(name="tag_content")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\TagContentRepository")
+ * @Gedmo\Loggable
  */
 class TagContent
 {
@@ -27,6 +29,7 @@ class TagContent
      *
      * @ORM\Column(name="content", type="text")
      * @Assert\NotBlank()
+     * @Gedmo\Versioned()
      */
     private $content;
 
