@@ -99,6 +99,8 @@ class AdventureSearch
         /** @var TagName[] $fields */
         $fields = $qb->getQuery()->execute();
 
+        $fieldUtils = new FieldUtils();
+
         $matches = [];
         foreach ($filters as $id => $filter) {
             if ($id !== 'title' && !is_numeric($id)) {
@@ -109,7 +111,7 @@ class AdventureSearch
                 continue;
             }
 
-            $field = is_integer($id) ? 'info_' . (int)$id : 'title';
+            $field = $fieldUtils->getFieldNameById($id);
             $operator = $filter['o'];
 
             if (in_array($operator, ['gte', 'gt', 'lt', 'lte'])) {
@@ -175,8 +177,9 @@ class AdventureSearch
         //return $results;
 
         // Old version using match_phrase_prefix
+        $fieldUtils = new FieldUtils();
 
-        $fieldName = 'info_' . $field->getId();
+        $fieldName = $fieldUtils->getFieldName($field);
         $size = 10;
 
         $response = $this->client->search([
@@ -205,7 +208,7 @@ class AdventureSearch
             if (!isset($hit['highlight'])) {
                 continue;
             }
-            $highlights = array_unique($hit['highlight']['info_' . $field->getId()]);
+            $highlights = array_unique($hit['highlight'][$fieldUtils->getFieldName($field)]);
             foreach ($highlights as $highlight) {
                 if (!in_array($highlight, $results)) {
                     $results[] = $highlight;
@@ -224,15 +227,14 @@ class AdventureSearch
     public function aggregateMostCommonValues(array $fields, int $max = 3): array
     {
         $aggregations = [];
+        $fieldUtils = new FieldUtils();
         foreach ($fields as $fieldEntity) {
-            $elasticField = 'info_' . $fieldEntity->getId();
-            if ($fieldEntity->getType() == 'text') {
+            $elasticField = $fieldUtils->getFieldNameForAggregation($fieldEntity);
+            if (!$elasticField) {
+                // This field cannot be aggregated.
                 continue;
             }
-            if ($fieldEntity->getType() == 'string') {
-                $elasticField .= '.keyword';
-            }
-            $aggregations['info_' . $fieldEntity->getId()] = [
+            $aggregations[$fieldUtils->getFieldNameById($fieldEntity)] = [
                 'terms' => [
                     'field' => $elasticField,
                     'size' => $max
@@ -278,9 +280,6 @@ class AdventureSearch
             $infoArr = [];
             foreach ($infos as $id => $info) {
                 $id = substr($id, strlen('info_'));
-                if (strpos($id, '_') !== false) {
-                    continue;
-                }
                 $infoArr[$id] = [
                     'meta' => $fields[$id],
                     'contents' => $info

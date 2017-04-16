@@ -5,6 +5,7 @@ namespace AppBundle\Command;
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\TagName;
 use AppBundle\Listener\SearchIndexUpdater;
+use AppBundle\Service\FieldUtils;
 use Elasticsearch\ClientBuilder;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -56,41 +57,14 @@ class AppElasticsearchReindexCommand extends ContainerAwareCommand
                 'enabled' => false
             ]
         ];
+
+        $fieldUtils = new FieldUtils();
+
         /** @var TagName[] $tagNames */
         $tagNames = $em->getRepository(TagName::class)->findAll();
         foreach ($tagNames as $tagName) {
             $fieldName = 'info_' . $tagName->getId();
-            switch ($tagName->getType()) {
-                case 'text':
-                    $mappings[$fieldName] = [
-                        'type' => 'text',
-                    ];
-                    break;
-                case 'string':
-                    $mappings[$fieldName] = [
-                        'type' => 'text',
-                        'fields' => [
-                            'keyword' => [
-                                'type' => 'keyword',
-                                'ignore_above' => 256,
-                            ]
-                        ]
-                    ];
-                    break;
-                case 'integer':
-                    $mappings[$fieldName] = [
-                        'type' => 'integer',
-                    ];
-                    break;
-                case 'boolean':
-                    $mappings[$fieldName] = [
-                        'type' => 'boolean',
-                    ];
-                    break;
-                default:
-                    $output->writeln('Unknown tag type ' . $tagName->getType());
-                    return;
-            }
+            $mappings[$fieldName] = $fieldUtils->generateMappingFor($tagName->getType());
         }
 
         $client->indices()->putMapping([

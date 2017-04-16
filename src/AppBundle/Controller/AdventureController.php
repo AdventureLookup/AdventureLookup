@@ -6,6 +6,7 @@ use AppBundle\Entity\Adventure;
 use AppBundle\Entity\AdventureDocument;
 use AppBundle\Entity\TagName;
 use AppBundle\Listener\SearchIndexUpdater;
+use AppBundle\Service\FieldUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Elasticsearch\ClientBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -51,7 +52,8 @@ class AdventureController extends Controller
             'adventures' => $adventures,
             'tagNames' => $tagNames,
             'mostCommonValues' => $mostCommonValues,
-            'filter' => $request->get('f', false)
+            'filter' => $request->get('f', false),
+            'fieldUtils' => new FieldUtils()
         ]);
     }
 

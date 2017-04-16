@@ -7,6 +7,7 @@ use AppBundle\Entity\TagContent;
 use AppBundle\Entity\TagName;
 use AppBundle\Form\TagContentType;
 use AppBundle\Listener\SearchIndexUpdater;
+use AppBundle\Service\FieldUtils;
 use Elasticsearch\ClientBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -101,6 +102,22 @@ class TagContentController extends Controller
         }
 
         return $this->redirectToRoute('adventure_show', ['slug' => $tagContent->getAdventure()->getSlug()]);
+    }
+
+    /**
+     * @Route("/adventure-info/title/search")
+     *
+     * @return JsonResponse
+     */
+    public function fieldContentSearchTitleAction(Request $request)
+    {
+        $q = $request->query->get('q');
+
+        $field = (new FieldUtils())->getTitleField();
+
+        $results = $this->get('adventure_search')->autocompleteFieldContent($field, $q);
+
+        return new JsonResponse($results);
     }
 
     /**

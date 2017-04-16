@@ -6,6 +6,7 @@ namespace AppBundle\DataFixtures\ORM;
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\TagContent;
 use AppBundle\Entity\TagName;
+use AppBundle\Service\FieldUtils;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,6 +30,7 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
         /** @var ManagerRegistry $doctrine */
         $doctrine = $this->container->get('doctrine');
 
+        /** @var TagName[] $tags */
         $tags = $doctrine->getRepository('AppBundle:TagName')->findAll();
 
         $faker = Faker\Factory::create();
@@ -37,6 +39,8 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
         $doctrine->getManager()->getEventManager()->removeEventSubscriber(
             $this->container->get('search_index_updater')
         );
+
+        $fieldUtils = new FieldUtils();
 
         for ($i = 0; $i < 200; $i++) {
             $adventure = new Adventure();
@@ -49,16 +53,8 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
                         ->setAdventure($adventure)
                         ->setTag($tag)
                         ->setApproved(true);
-                    if ($this->customFaker($tag, $info, $faker)) {
-                        // Do nothing.
-                    } else if ($tag->getType() == 'integer') {
-                        $info->setContent($faker->numberBetween(1, 10));
-                    } else if ($tag->getType() == 'boolean') {
-                        $info->setContent($faker->boolean ? '1' : '0');
-                    } else if ($tag->getType() == 'string') {
-                        $info->setContent($faker->name);
-                    } else {
-                        $info->setContent($faker->realText(2000));
+                    if (!$this->customFaker($tag, $info, $faker)) {
+                        $info->setContent($fieldUtils->getFakerContent($faker, $tag->getType()));
                     }
                     $manager->persist($info);
 
@@ -88,9 +84,6 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
                     'German',
                     'Italian'
                 ]);
-            },
-            'Link' => function (Faker\Generator $faker) {
-                return $faker->url;
             },
             'System / Edition' => function (Faker\Generator $faker) {
                 return $faker->randomElement([

@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\TagContent;
 use AppBundle\Entity\TagName;
+use AppBundle\Service\FieldUtils;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -29,27 +30,8 @@ class TagContentType extends AbstractType
             'disabled' => true,
             'class' => TagName::class
         ]);
-        switch ($options['type']) {
-            default:
-            case 'string':
-                $builder->add('content', TextType::class, [
-                    'required' => true,
-                ]);
-                break;
-            case 'integer':
-                $builder->add('content', IntegerType::class, [
-                    'required' => true,
-                ]);
-                break;
-            case 'text':
-                $builder->add('content', TextareaType::class, [
-                    'required' => true,
-                    'attr' => [
-                        'rows' => 20
-                    ]
-                ]);
-                break;
-        }
+        $fieldUtils = new FieldUtils();
+        $fieldUtils->buildEditForm($options['type'], $builder);
         $builder->add('approved', null, [
             'required' => false
         ]);

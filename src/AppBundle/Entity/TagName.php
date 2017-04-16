@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * TagName
@@ -33,6 +34,7 @@ class TagName
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255, unique=true)
+     * @Assert\NotBlank()
      */
     private $title;
 
@@ -54,6 +56,7 @@ class TagName
      * @var string
      *
      * @ORM\Column(name="description", type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $description;
 
@@ -61,6 +64,7 @@ class TagName
      * @var string
      *
      * @ORM\Column(name="example", type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $example;
 
@@ -81,7 +85,7 @@ class TagName
     /**
      * @var TagContent[]
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\TagContent", mappedBy="tag", fetch="EXTRA_LAZY")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\TagContent", mappedBy="tag", fetch="EXTRA_LAZY", orphanRemoval=true)
      */
     private $contents;
 

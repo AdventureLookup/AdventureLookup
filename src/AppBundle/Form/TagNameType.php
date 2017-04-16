@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\TagName;
+use AppBundle\Service\FieldUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -29,15 +30,16 @@ class TagNameType extends AbstractType
             ])
             ->add('showInSearchResults', CheckboxType::class, [
                 'required' => false
-            ])
-            ->add('type', ChoiceType::class, [
+            ]);
+        if (!$options['isEdit']) {
+            $fieldUtils = new FieldUtils();
+            $builder->add('type', ChoiceType::class, [
                 'required' => true,
                 'expanded' => true,
                 'multiple' => false,
-                'choices' => [
-                    'string' => 'string', 'integer' => 'integer', 'boolean' => 'boolean', 'multiline, long text' => 'text'
-                ]
+                'choices' => $fieldUtils->getFieldNameDescriptions(),
             ]);
+        }
     }
     
     /**
@@ -45,9 +47,11 @@ class TagNameType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => TagName::class
-        ]);
+        $resolver
+            ->setDefaults([
+                'data_class' => TagName::class
+            ])
+            ->setRequired(['isEdit']);
     }
 
     /**

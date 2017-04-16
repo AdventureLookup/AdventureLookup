@@ -5,7 +5,9 @@ namespace AppBundle\Listener;
 
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\TagContent;
+use AppBundle\Entity\TagName;
 use AppBundle\Service\AdventureSerializer;
+use AppBundle\Service\FieldUtils;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Elasticsearch\Client;
@@ -61,6 +63,9 @@ class SearchIndexUpdater implements EventSubscriber
 
     public function postPersist(LifecycleEventArgs $args)
     {
+        if ($args->getEntity() instanceof TagName) {
+            $this->addMapping($args->getEntity());
+        }
         return $this->updateSearchIndex($args);
     }
 
@@ -132,5 +137,22 @@ class SearchIndexUpdater implements EventSubscriber
         // @TODO: Log errors
 
         $this->logger->critical(var_export($response, true));
+    }
+
+    private function addMapping(TagName $field)
+    {
+        $fieldUtils = new FieldUtils();
+
+        $response = $this->client->indices()->putMapping([
+            'index' => self::INDEX,
+            'type' => self::TYPE,
+            'body' => [
+                'properties' => [
+                    $fieldUtils->getFieldName($field) => $fieldUtils->generateMappingFor($field->getType())
+                ]
+            ]
+        ]);
+
+        // @TODO: Log errors
     }
 }

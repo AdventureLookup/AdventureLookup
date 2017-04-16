@@ -19,6 +19,7 @@ class AdventureSerializer
             'title' => $adventure->getTitle(),
             'slug' => $adventure->getSlug(),
         ];
+        $fieldUtils = new FieldUtils();
 
         foreach($adventure->getInfo() as $info) {
             $tag = $info->getTag();
@@ -27,20 +28,7 @@ class AdventureSerializer
                 $ser[$key] = [];
             }
             $content = $info->getContent();
-            switch ($tag->getType()) {
-                case 'boolean':
-                    $ser[$key][] = (bool)$content;
-                    break;
-                /** @noinspection PhpMissingBreakStatementInspection */
-                default:
-                case 'string':
-                case 'text':
-                    $ser[$key][] = $content;
-                    break;
-                case 'integer':
-                    $ser[$key][] = (int)$content;
-                    break;
-            }
+            $ser[$key][] = $fieldUtils->serialize($tag->getType(), $content);
         }
 
         return $ser;

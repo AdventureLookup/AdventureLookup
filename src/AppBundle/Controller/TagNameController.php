@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\TagName;
+use AppBundle\Form\TagNameType;
 use AppBundle\Listener\SearchIndexUpdater;
 use Elasticsearch\ClientBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -45,7 +46,7 @@ class TagNameController extends Controller
     public function newAction(Request $request)
     {
         $tagName = new TagName();
-        $form = $this->createForm('AppBundle\Form\TagNameType', $tagName);
+        $form = $this->createForm(TagNameType::class, $tagName, ['isEdit' => false]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -71,7 +72,7 @@ class TagNameController extends Controller
     public function editAction(Request $request, TagName $tagName)
     {
         $deleteForm = $this->createDeleteForm($tagName);
-        $editForm = $this->createForm('AppBundle\Form\TagNameType', $tagName);
+        $editForm = $this->createForm(TagNameType::class, $tagName, ['isEdit' => true]);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {

@@ -5,8 +5,13 @@
     <ul>
         {% for content in field.contents %}
             <li>
-                {% if field.meta.type not in ['text', 'url'] %}
-                    <a href="{{ path('adventure_index', {f: {(field.meta.id): {o: 'eq', c: content.content}}}) }}#search-results">
+                {% if field.meta.type not in ['text'] %}
+                    {% if field.meta.type == 'url' %}
+                        {% set path = content.content %}
+                    {% else %}
+                        {% set path = path('adventure_index', {f: {(field.meta.id): {o: 'eq', c: content.content}}}) ~ '#search-results' %}
+                    {% endif %}
+                    <a href="{{ path }}">
                 {% endif %}
                 {{ content.content|nl2br }}
                 {% if field.meta.type not in ['text', 'url'] %}

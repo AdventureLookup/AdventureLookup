@@ -95,7 +95,7 @@ class TagData implements FixtureInterface
             'Link',
             'Links to legitimate sites where the module can be procured',
             'dmsguild.com/drivethrurpg links',
-            'string',
+            'url',
             $manager
         );
 
