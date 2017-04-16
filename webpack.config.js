@@ -3,14 +3,23 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
-  entry: './app/Resources/webpack/index.js',
+  entry: {
+    main: './app/Resources/webpack/index.js',
+  },
   output: {
-    filename: 'bundle.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'web/assets')
   },
   module: {
     rules: [
-      {test: /\.(js|jsx)$/, use: 'babel-loader'},
+      {
+        test: /\.(js|jsx)$/,
+        exclude: [/node_modules/],
+        use: [{
+          loader: 'babel-loader',
+          options: { presets: ['es2015'] }
+        }]
+      },
       {
         test: /\.(scss|css)$/,
         use: ExtractTextPlugin.extract({
@@ -20,10 +29,14 @@ module.exports = {
           ]
         })
       },
+      // the url-loader uses DataUrls.
+      { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url-loader?limit=10000&mimetype=application/font-woff&publicPath=/assets/' },
+      // the file-loader emits files.
+      { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file-loader?publicPath=/assets/' },
     ]
   },
   plugins: [
-    new webpack.optimize.UglifyJsPlugin(),
+    //new webpack.optimize.UglifyJsPlugin(),
     new webpack.ProvidePlugin({
       $: "jquery",
       jQuery: "jquery",

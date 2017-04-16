@@ -27,7 +27,24 @@ class AdventureSerializer
                 $ser[$key] = [];
             }
             $content = $info->getContent();
-            $ser[$key][] = $tag->getType() == 'boolean' ? (bool)$content : $content;
+            switch ($tag->getType()) {
+                case 'boolean':
+                    $ser[$key][] = (bool)$content;
+                    break;
+                /** @noinspection PhpMissingBreakStatementInspection */
+                case 'string':
+                if (!isset($ser[$key . '_s'])) {
+                    $ser[$key . '_s'] = [];
+                }
+                $ser[$key . '_s'][] = $content;
+                default:
+                case 'text':
+                    $ser[$key][] = $content;
+                    break;
+                case 'integer':
+                    $ser[$key][] = (int)$content;
+                    break;
+            }
         }
 
         return $ser;

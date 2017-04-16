@@ -50,7 +50,7 @@
                                                value="{{ filter[tagName.id]['c']|default('') }}"
                                         >
                                         <small class="form-text text-muted">
-                                            {{ tagName.description }}. Example: <code>{{ tagName.example }}</code>
+                                            {{ tagName.description }}. Example: <code>{{ mostCommonValues['info_' ~ tagName.id]|default([tagName.example])|join(', ') }}</code>
                                         </small>
                                     </div>
                                 </div>

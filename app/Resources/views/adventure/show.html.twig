@@ -21,14 +21,16 @@
                                             <li>
                                                 {{ content.content|nl2br }}
                                                 {% if not content.approved %}<span class="badge badge-warning">needs approval</span>{% endif %}
-                                                {% if is_granted('ROLE_USER') %}
-                                                    <a class="btn btn-sm btn-secondary" href="{{ path('adventure_info_new', {id: adventure.id, fieldId: content.tag.id}) }}">add</a>
-                                                {% endif %}
                                                 {% if is_granted('ROLE_CURATOR') %}
                                                     <a class="btn btn-sm btn-secondary" href="{{ path('adventure_info_edit', {id: content.id}) }}">edit</a>
                                                 {% endif %}
                                             </li>
                                         {% endfor %}
+                                        {% if is_granted('ROLE_USER') %}
+                                            <li>
+                                                <a class="btn btn-sm btn-secondary" href="{{ path('adventure_info_new', {id: adventure.id, fieldId: field.meta.id}) }}">add</a>
+                                            </li>
+                                        {% endif %}
                                     </ul>
                                 </td>
                             </tr>

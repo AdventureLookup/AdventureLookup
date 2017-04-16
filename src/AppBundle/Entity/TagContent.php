@@ -25,6 +25,14 @@ class TagContent
     private $id;
 
     /**
+     * @var int
+     *
+     * @ORM\Version
+     * @ORM\Column(name="version", type="integer")
+     */
+    private $version;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="content", type="text")
@@ -156,6 +164,14 @@ class TagContent
         $this->adventure->addInfo($this);
 
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getVersion(): int
+    {
+        return $this->version;
     }
 }
 

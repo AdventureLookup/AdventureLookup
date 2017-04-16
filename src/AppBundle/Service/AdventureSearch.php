@@ -4,6 +4,7 @@ namespace AppBundle\Service;
 
 
 use AppBundle\Entity\AdventureDocument;
+use AppBundle\Entity\TagName;
 use AppBundle\Listener\SearchIndexUpdater;
 use Elasticsearch\ClientBuilder;
 
@@ -125,6 +126,108 @@ class AdventureSearch
         ]);
 
         return $this->searchResultsToAdventureDocuments($result);
+    }
+
+    public function autocompleteFieldContent(TagName $field, string $q): array
+    {
+        // Using the completion suggester returns duplicate documents...
+        //$fieldName = 'info_' . $field->getId() . '_s';
+        //$response = $this->client->suggest([
+        //    'index' => SearchIndexUpdater::INDEX,
+        //    'body' => [
+        //        'suggest' => [
+        //            'prefix' => $q,
+        //            'completion' => [
+        //                'field' => $fieldName,
+        //                'fuzzy' => new \stdClass()
+        //            ]
+        //        ],
+        //    ]
+        //]);
+        //$results = [
+        //    'total' => count($response['suggest'][0]['options']),
+        //    'results' => []
+        //];
+        //foreach($response['suggest'][0]['options'] as $suggestion) {
+        //    $results['results'][] = $suggestion['text'];
+        //}
+        //return $results;
+
+        // Old version using match_phrase_prefix
+
+        $fieldName = 'info_' . $field->getId();
+        $size = 10;
+
+        $response = $this->client->search([
+            'index' => SearchIndexUpdater::INDEX,
+            'type' => SearchIndexUpdater::TYPE,
+            'body' => [
+                'query' => [
+                    'match_phrase_prefix' => [
+                        $fieldName => $q
+                    ]
+                ],
+                'size' => $size,
+                '_source' => false,
+                "highlight" => [
+                    'pre_tags' => [''],
+                    'post_tags' => [''],
+                    'fields' => [
+                        $fieldName => new \stdClass()
+                    ]
+                ],
+            ]
+        ]);
+
+        $results = [
+            'total' => 0,
+            'results' => []
+        ];
+        foreach($response['hits']['hits'] as $hit) {
+            $highlights = array_unique($hit['highlight']['info_' . $field->getId()]);
+            foreach ($highlights as $highlight) {
+                if (!in_array($highlight, $results['results'])) {
+                    $results['results'][] = $highlight;
+                }
+            }
+        }
+        $results['total'] = count($results['results']);
+
+        return $results;
+    }
+
+    /**
+     * @param TagName[] $fields
+     * @return array
+     */
+    public function aggregateMostCommonValues(array $fields): array
+    {
+        $aggregations = [];
+        foreach ($fields as $field) {
+            $aggregations['info_' . $field->getId()] = [
+                'terms' => [
+                    'field' => 'info_' . $field->getId() . '.keyword',
+                    'size' => 3
+                ]
+            ];
+        }
+
+        $response = $this->client->search([
+            'index' => SearchIndexUpdater::INDEX,
+            'type' => SearchIndexUpdater::TYPE,
+            'body' => [
+                'size' => 0,
+                'aggregations' => $aggregations
+            ],
+            'request_cache' => true,
+        ]);
+
+        $results = [];
+        foreach ($response['aggregations'] as $field => $aggregation) {
+            $results[$field] = array_column($aggregation['buckets'], 'key');
+        }
+
+        return $results;
     }
 
     /**

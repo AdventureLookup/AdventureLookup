@@ -44,7 +44,13 @@ class AppElasticsearchReindexCommand extends ContainerAwareCommand
 
         $mappings = [
             'title' => [
-                'type' => 'string'
+                'type' => 'string',
+                'fields' => [
+                    'keyword' => [
+                        'type' => 'keyword',
+                        'ignore_above' => 256,
+                    ]
+                ]
             ],
             'slug' => [
                 'enabled' => false
@@ -57,22 +63,28 @@ class AppElasticsearchReindexCommand extends ContainerAwareCommand
             switch ($tagName->getType()) {
                 case 'text':
                     $mappings[$fieldName] = [
-                        'type' => 'string'
+                        'type' => 'string', // text?
                     ];
                     break;
                 case 'string':
                     $mappings[$fieldName] = [
-                        'type' => 'keyword',
+                        'type' => 'string',
+                        'fields' => [
+                            'keyword' => [
+                                'type' => 'keyword',
+                                'ignore_above' => 256,
+                            ]
+                        ]
                     ];
                     break;
                 case 'integer':
                     $mappings[$fieldName] = [
-                        'type' => 'integer'
+                        'type' => 'integer',
                     ];
                     break;
                 case 'boolean':
                     $mappings[$fieldName] = [
-                        'type' => 'boolean'
+                        'type' => 'boolean',
                     ];
                     break;
                 default:

@@ -22,6 +22,14 @@ class TagName
     private $id;
 
     /**
+     * @var int
+     *
+     * @ORM\Version
+     * @ORM\Column(name="version", type="integer")
+     */
+    private $version;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255, unique=true)
@@ -250,6 +258,14 @@ class TagName
         $this->contents = $contents;
 
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getVersion(): int
+    {
+        return $this->version;
     }
 }
 

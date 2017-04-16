@@ -123,49 +123,14 @@ class TagContentController extends Controller
     /**
      * @Route("/adventure-info/{id}/search", name="field_content_search")
      *
-     * @param TagName $tagName
+     * @param TagName $field
      * @return JsonResponse
      */
-    public function fieldContentSearchAction(Request $request, TagName $tagName)
+    public function fieldContentSearchAction(Request $request, TagName $field)
     {
-        $client = ClientBuilder::create()->build();
-
         $q = $request->query->get('q');
 
-        $fieldName = 'info_' . $tagName->getId();
-        $size = 2;
-        $response = $client->search([
-            'index' => SearchIndexUpdater::INDEX,
-            'type' => SearchIndexUpdater::TYPE,
-            'body' => [
-                'query' => [
-                    'match_phrase_prefix' => [
-                        $fieldName => $q
-                    ]
-                ],
-                'size' => $size,
-                'from' => ($request->query->get('page', 1) - 1) * $size,
-                '_source' => false,
-                "highlight" => [
-                    'pre_tags' => [''],
-                    'post_tags' => [''],
-                    'fields' => [
-                        $fieldName => new \stdClass()
-                    ]
-                ],
-            ]
-        ]);
-
-        $results = [
-            'total' => $response['hits']['total'],
-            'results' => []
-        ];
-        foreach($response['hits']['hits'] as $hit) {
-            $highlights = array_unique($hit['highlight']['info_' . $tagName->getId()]);
-            foreach ($highlights as $highlight) {
-                $results['results'][] = $highlight;
-            }
-        }
+        $results = $this->get('adventure_search')->autocompleteFieldContent($field, $q);
 
         return new JsonResponse($results);
     }

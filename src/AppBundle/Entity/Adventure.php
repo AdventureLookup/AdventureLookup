@@ -24,6 +24,14 @@ class Adventure
     private $id;
 
     /**
+     * @var int
+     *
+     * @ORM\Version
+     * @ORM\Column(name="version", type="integer")
+     */
+    private $version;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255, unique=true)
@@ -162,6 +170,14 @@ class Adventure
     public function getSlug(): string
     {
         return $this->slug;
+    }
+
+    /**
+     * @return int
+     */
+    public function getVersion(): int
+    {
+        return $this->version;
     }
 }
 

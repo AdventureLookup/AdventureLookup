@@ -42,11 +42,15 @@ class AdventureController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $tagNames = $em->getRepository('AppBundle:TagName')->findAll();
+
+        $mostCommonValues = $search->aggregateMostCommonValues($tagNames);
+
         array_unshift($tagNames, (new TagName())->setId('title')->setTitle('Title')->setApproved(false)->setExample('Against the Cult of the Reptile God')->setDescription('The title of the adventure'));
 
         return $this->render('adventure/index.html.twig', [
             'adventures' => $adventures,
             'tagNames' => $tagNames,
+            'mostCommonValues' => $mostCommonValues,
             'filter' => $request->request->get('f', false)
         ]);
     }
