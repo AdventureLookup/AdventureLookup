@@ -99,6 +99,7 @@ class User implements AdvancedUserInterface, \Serializable
             $this->username,
             $this->password,
             $this->isActive,
+            $this->roles,
         ]);
     }
 
@@ -110,6 +111,7 @@ class User implements AdvancedUserInterface, \Serializable
             $this->username,
             $this->password,
             $this->isActive,
+            $this->roles,
         ) = unserialize($serialized);
     }
 

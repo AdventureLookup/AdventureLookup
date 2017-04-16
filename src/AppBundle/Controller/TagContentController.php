@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\TagContent;
 use AppBundle\Entity\TagName;
+use AppBundle\Form\TagContentType;
 use AppBundle\Listener\SearchIndexUpdater;
 use Elasticsearch\ClientBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -37,39 +38,15 @@ class TagContentController extends Controller
     public function newAction(Request $request, Adventure $adventure)
     {
         $em = $this->getDoctrine()->getManager();
-        $field = $em->getRepository(TagName::class)->find(
+        $fields = $em->getRepository(TagName::class)->findAll();
+        $selectedField = $em->getRepository(TagName::class)->find(
             $request->query->get('fieldId')
         );
 
-        $tagContent = new Tagcontent();
-        $tagContent->setAdventure($adventure);
-        $tagContent->setTag($field);
-        if ($this->isGranted('ROLE_CURATOR')) {
-            $tagContent->setApproved(true);
-        }
-        $form = $this->createForm('AppBundle\Form\TagContentType', $tagContent, ['isEdit' => false]);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($tagContent);
-            $em->flush();
-
-            $this->addFlash('success', 'Information saved!');
-
-            if ($form->get('saveAndAdd')->isClicked()) {
-                return $this->redirectToRoute('adventure_info_new', [
-                    'id' => $tagContent->getAdventure()->getId(),
-                    'fieldId' => $field->getId(),
-                ]);
-            }
-
-            return $this->redirectToRoute('adventure_show', ['slug' => $tagContent->getAdventure()->getSlug()]);
-        }
-
         return $this->render('tagcontent/new.html.twig', array(
-            'tagContent' => $tagContent,
-            'form' => $form->createView(),
+            'fields' => $fields,
+            'selected' => $selectedField,
+            'adventure' => $adventure,
         ));
     }
 
@@ -79,11 +56,17 @@ class TagContentController extends Controller
      * @Route("/adventure-info/{id}/edit", name="adventure_info_edit")
      * @Method({"GET", "POST"})
      * @Security("is_granted('ROLE_CURATOR')")
+     *
+     * @param Request $request
+     * @param TagContent $tagContent
+     * @return RedirectResponse|Response
      */
     public function editAction(Request $request, TagContent $tagContent)
     {
         $deleteForm = $this->createDeleteForm($tagContent);
-        $editForm = $this->createForm('AppBundle\Form\TagContentType', $tagContent, ['isEdit' => true]);
+        $editForm = $this->createForm(TagContentType::class, $tagContent, [
+            'type' => $tagContent->getTag()->getType()
+        ]);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {

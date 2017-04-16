@@ -1,6 +1,4 @@
-import "typeahead.js/dist/typeahead.jquery";
 import Bloodhound from "typeahead.js/dist/bloodhound";
-import "typeahead.js-bootstrap4-css/typeaheadjs.css";
 import toastr from "toastr";
 
 (function () {
@@ -13,6 +11,19 @@ import toastr from "toastr";
     const adventureUrl = $page.data('adventure-url');
     const saveUrl = $page.data('content-save-url');
     const prefix = 'appbundle_tagcontent';
+
+    const $saveAndAddButton = $('#' + prefix + '_saveAndAdd');
+    const $saveButton = $('#' + prefix + '_save');
+    $saveAndAddButton.on('click', (evt) => {
+        evt.preventDefault();
+        saveChanges($saveAndAddButton);
+    });
+    $saveButton.on('click', (evt) => {
+        evt.preventDefault();
+        saveChanges($saveButton, () => {
+            document.location.href = adventureUrl;
+        });
+    });
 
     const $tagSelection = $('#' + prefix + '_tag');
     $tagSelection.select2({
@@ -27,9 +38,6 @@ import toastr from "toastr";
         $(this).focus();
         changeContent($(this).select2('data')[0]['text'].split('|')[1]);
     });
-
-    const $content = $('#' + prefix + '_content');
-    $content.remove();
 
     $tagSelection.parent().after(`
 <div content="form-group">
@@ -68,6 +76,11 @@ import toastr from "toastr";
                 break;
         }
         $contentInput = $(`#${prefix}_content`);
+        $contentInput.keypress(function (e) {
+            if (e.which === 13) {
+                saveChanges();
+            }
+        });
 
         function createStringField() {
             $contentContainer.append(`
@@ -111,25 +124,17 @@ import toastr from "toastr";
     changeContent($tagSelection.select2('data')[0]['text'].split('|')[1]);
     $contentInput.focus();
 
-    const $saveAndAddButton = $('#' + prefix + '_saveAndAdd');
-    const $saveButton = $('#' + prefix + '_save');
-    $saveAndAddButton.on('click', (evt) => {
-        evt.preventDefault();
-        saveChanges();
-    });
-    $saveButton.on('click', (evt) => {
-        evt.preventDefault();
-        saveChanges(() => {
-            document.location.href = adventureUrl;
-        });
-    });
-
-    function saveChanges(done) {
+    function saveChanges($btn, done) {
         if ($contentInput.val().length === 0) {
             toastr['error']('Content cannot be empty!');
             return;
         }
+        if (!$btn) {
+            $btn = $saveButton;
+        }
 
+        $btn.prop('disabled', true);
+        $contentInput.prop('readonly', true);
         $.ajax(saveUrl, {
             data: {
                 fieldId: $tagSelection.val(),
@@ -149,9 +154,9 @@ import toastr from "toastr";
         }).fail(() => {
             toastr['error']('Sorry, something went wrong.', 'Your changes could not be saved.');
         }).always(() => {
-            $contentInput.attr('readonly', false);
+            $contentInput.prop('readonly', false);
+            $btn.prop('disabled', false);
             $contentInput.focus();
         });
-        $contentInput.attr('readonly', true);
     }
 })();

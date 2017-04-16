@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -23,37 +24,40 @@ class TagContentType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add('tag', EntityType::class, [
-                'required' => true,
-                'disabled' => $options['isEdit'],
-                'choice_label' => function (TagName $field) {
-                    return $field->getTitle() . '|' . $field->getType();
-                },
-                'class' => TagName::class
-            ])
-            ->add('content', HiddenType::class, [
-                'required' => true,
-            ]);
-        if ($options['isEdit']) {
-            $builder->add('approved', null, [
-                'required' => false
-            ]);
+        $builder->add('tag', EntityType::class, [
+            'required' => true,
+            'disabled' => true,
+            'class' => TagName::class
+        ]);
+        switch ($options['type']) {
+            default:
+            case 'string':
+                $builder->add('content', TextType::class, [
+                    'required' => true,
+                ]);
+                break;
+            case 'integer':
+                $builder->add('content', IntegerType::class, [
+                    'required' => true,
+                ]);
+                break;
+            case 'text':
+                $builder->add('content', TextareaType::class, [
+                    'required' => true,
+                    'attr' => [
+                        'rows' => 20
+                    ]
+                ]);
+                break;
         }
+        $builder->add('approved', null, [
+            'required' => false
+        ]);
 
-        if (!$options['isEdit']) {
-            $builder->add('saveAndAdd', SubmitType::class, [
-                'label' => 'Save and add more information',
-                'attr' => [
-                    'class' => 'btn btn-primary',
-                    'role' => 'button'
-                ]
-            ]);
-        }
         $builder->add('save', SubmitType::class, [
-            'label' => 'Save and return to adventure',
+            'label' => 'Save',
             'attr' => [
-                'class' => 'btn ' . ($options['isEdit'] ? 'btn-primary' : 'btn-secondary'),
+                'class' => 'btn btn-primary',
                 'role' => 'button'
             ]
         ]);
@@ -68,8 +72,7 @@ class TagContentType extends AbstractType
             ->setDefaults([
                 'data_class' => TagContent::class
             ])
-            ->setRequired(['isEdit'])
-        ;
+            ->setRequired(['type']);
     }
 
     /**

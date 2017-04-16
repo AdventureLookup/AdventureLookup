@@ -1,18 +1,31 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container" id="page--add-content" data-adventure-url="{{ url('adventure_show', {slug: tagContent.adventure.slug}) }}" data-content-save-url="{{ path('adventure_info_new_ajax', {id: tagContent.adventure.id}) }}" data-content-search-url="{{ path('field_content_search', {id: '__ID__', q: '__Q__'}) }}">
+    <div class="container" id="page--add-content" data-adventure-url="{{ url('adventure_show', {slug: adventure.slug}) }}" data-content-save-url="{{ path('adventure_info_new_ajax', {id: adventure.id}) }}" data-content-search-url="{{ path('field_content_search', {id: '__ID__', q: '__Q__'}) }}">
         <div class="row">
             <div class="col">
-                <h1 class="my-5">Add info to "{{ tagContent.adventure.title }}"</h1>
+                <h1 class="my-5">Add info to "{{ adventure.title }}"</h1>
 
-                {{ form_start(form) }}
-                {{ form_row(form.tag) }}
-                {{ form_row(form.content) }}
-                {{ form_widget(form.saveAndAdd) }}
-                {{ form_widget(form.save) }}
-                <a href="{{ path('adventure_show', {slug: tagContent.adventure.slug}) }}" class="btn btn-secondary" role="button">Cancel</a>
-                {{ form_end(form) }}
+                <div class="form-group">
+                    <label class="control-label required" for="appbundle_tagcontent_tag">Tag</label>
+                    <select id="appbundle_tagcontent_tag" class="form-control">
+                        {% for field in fields %}
+                            <option value="{{ field.id }}" {% if selected.id == field.id %}selected{% endif %}>{{ field.title }}|{{ field.type }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div content="form-group">
+                    <div id="tag-content-placeholder" class="mb-3"></div>
+                </div>
+
+                <button type="button" id="appbundle_tagcontent_saveAndAdd" class="btn btn-primary btn" role="button">
+                    Save and add more information
+                </button>
+                <button type="button" id="appbundle_tagcontent_save" class="btn btn-secondary btn" role="button">
+                    Save and return to adventure
+                </button>
+                <a href="{{ path('adventure_show', {slug: adventure.slug}) }}" class="btn btn-secondary" role="button">Cancel</a>
+                {# TODO: CSRF token #}
             </div>
         </div>
     </div>

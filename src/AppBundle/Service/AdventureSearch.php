@@ -202,6 +202,9 @@ class AdventureSearch
 
         $results = [];
         foreach($response['hits']['hits'] as $hit) {
+            if (!isset($hit['highlight'])) {
+                continue;
+            }
             $highlights = array_unique($hit['highlight']['info_' . $field->getId()]);
             foreach ($highlights as $highlight) {
                 if (!in_array($highlight, $results)) {

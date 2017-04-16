@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container">
+    <div class="container" id="page--search-adventures" data-search-url="{{ path('field_content_search', {id: '__ID__', q: '__Q__'}) }}">
         <div class="row">
             <div class="col">
                 <h1 class="mt-5">Adventure search</h1>
@@ -19,6 +19,7 @@
                                 <button type="submit" class="btn btn-primary">Search</button>
                             </span>
                         </div>
+                        <small class="form-text text-muted">Things you type in here will be split at <code>,</code> and then ORed. Use the advanced search if you want to AND your terms</small>
                     </fieldset>
                 </form>
 
@@ -49,6 +50,7 @@
                                         <input id="filter_{{ tagName.id }}" name="f[{{ tagName.id }}][c]"
                                                class="form-control-sm form-control adv-search-input"
                                                value="{{ filter[tagName.id]['c']|default('') }}"
+                                               data-id="{{ tagName.id }}"
                                         >
                                         <small class="form-text text-muted">
                                             {{ tagName.description }}. Example: <code>{{ mostCommonValues['info_' ~ tagName.id]|default([tagName.example])|join(', ') }}</code>
@@ -85,17 +87,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
-{% block javascripts %}
-    {{ parent() }}
-    <script>
-        $(function () {
-            if ($('#advanced-search').hasClass('d-none')) {
-                $('#advanced-search').hide();
-            }
-            $('#toggle-adv-search').on('click', function () {
-                $('#advanced-search').removeClass('d-none').fadeToggle();
-            });
-        });
-    </script>
 {% endblock %}

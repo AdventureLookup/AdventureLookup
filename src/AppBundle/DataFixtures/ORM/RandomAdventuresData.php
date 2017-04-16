@@ -43,23 +43,29 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
             $adventure->setTitle($faker->text(120));
 
             foreach ($tags as $tag) {
-                $info = new TagContent();
-                $info
-                    ->setAdventure($adventure)
-                    ->setTag($tag)
-                    ->setApproved(true);
-                if ($this->customFaker($tag, $info, $faker)) {
-                    // Do nothing.
-                } else if ($tag->getType() == 'integer') {
-                    $info->setContent($faker->numberBetween(1, 10));
-                } else if ($tag->getType() == 'boolean') {
-                    $info->setContent($faker->boolean ? '1' : '0');
-                } else if ($tag->getType() == 'string') {
-                    $info->setContent($faker->name);
-                } else {
-                    $info->setContent($faker->realText(2000));
+                for ($j = 0; $j < 2; $j++) {
+                    $info = new TagContent();
+                    $info
+                        ->setAdventure($adventure)
+                        ->setTag($tag)
+                        ->setApproved(true);
+                    if ($this->customFaker($tag, $info, $faker)) {
+                        // Do nothing.
+                    } else if ($tag->getType() == 'integer') {
+                        $info->setContent($faker->numberBetween(1, 10));
+                    } else if ($tag->getType() == 'boolean') {
+                        $info->setContent($faker->boolean ? '1' : '0');
+                    } else if ($tag->getType() == 'string') {
+                        $info->setContent($faker->name);
+                    } else {
+                        $info->setContent($faker->realText(2000));
+                    }
+                    $manager->persist($info);
+
+                    if (!in_array($tag->getTitle(), ['NPCs', 'Author', 'Creatures', 'Items'])) {
+                        break;
+                    }
                 }
-                $manager->persist($info);
             }
 
             $manager->persist($adventure);

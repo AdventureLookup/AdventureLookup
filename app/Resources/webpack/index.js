@@ -4,9 +4,12 @@ import 'select2/dist/css/select2.css';
 import 'select2/dist/js/select2.full.js';
 import toastr from 'toastr/toastr';
 import 'toastr/toastr.scss';
+import "typeahead.js/dist/typeahead.jquery";
+import "typeahead.js-bootstrap4-css/typeaheadjs.css";
 import './style.scss';
 
 import './add-content.js';
+import './search.js';
 
 
 toastr.options = {
