@@ -8,7 +8,9 @@
             <hr class="my-4">
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores at aut doloribus magnam optio unde!</p>
             <p class="lead">
-                <a class="btn btn-primary btn-lg" href="{{ path('adventure_index') }}" role="button">Search database</a>
+                <a class="btn btn-primary btn-lg" href="{{ path('adventure_index') }}" role="button">
+                    <i class="fa fa-search"></i> Search database
+                </a>
             </p>
         </div>
     </div>
@@ -20,7 +22,7 @@
             </div>
             <div class="col">
                 <h5 class="mb-3">&hellip;an adventures featuring <em>litches</em>.</h5>
-                <a href="{{ path('adventure_index', {q: 'litch'}) }}" class="btn btn-sm btn-outline-primary">Find adventures</a>
+                <a href="{{ path('adventure_index', {q: 'litches'}) }}" class="btn btn-sm btn-outline-primary">Find adventures</a>
             </div>
             <div class="col">
                 <h5 class="mb-3">&hellip;an idea of how to integrate the <em>City of Dis</em> and a bunch of <em>Skeletons</em>.</h5>

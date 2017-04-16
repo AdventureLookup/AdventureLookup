@@ -87,7 +87,7 @@ class TagName
 
     public function __construct()
     {
-        $this->approved = false;
+        $this->approved = true;
         $this->type = 'text';
         $this->useAsFilter = false;
         $this->showInSearchResults = false;
@@ -165,7 +165,7 @@ class TagName
      *
      * @return bool
      */
-    public function isApproved(): bool
+    public function isApproved()
     {
         return $this->approved;
     }
@@ -197,7 +197,7 @@ class TagName
     /**
      * @return string
      */
-    public function getDescription(): string
+    public function getDescription()
     {
         return $this->description;
     }
@@ -215,7 +215,7 @@ class TagName
     /**
      * @return string
      */
-    public function getExample(): string
+    public function getExample()
     {
         return $this->example;
     }
@@ -233,7 +233,7 @@ class TagName
     /**
      * @return bool
      */
-    public function isUseAsFilter(): bool
+    public function isUseAsFilter()
     {
         return $this->useAsFilter;
     }
@@ -271,7 +271,7 @@ class TagName
     /**
      * @return int
      */
-    public function getVersion(): int
+    public function getVersion()
     {
         return $this->version;
     }
@@ -279,7 +279,7 @@ class TagName
     /**
      * @return bool
      */
-    public function isShowInSearchResults(): bool
+    public function isShowInSearchResults()
     {
         return $this->showInSearchResults;
     }

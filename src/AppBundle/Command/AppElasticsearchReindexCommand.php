@@ -44,7 +44,7 @@ class AppElasticsearchReindexCommand extends ContainerAwareCommand
 
         $mappings = [
             'title' => [
-                'type' => 'string',
+                'type' => 'text',
                 'fields' => [
                     'keyword' => [
                         'type' => 'keyword',
@@ -63,12 +63,12 @@ class AppElasticsearchReindexCommand extends ContainerAwareCommand
             switch ($tagName->getType()) {
                 case 'text':
                     $mappings[$fieldName] = [
-                        'type' => 'string', // text?
+                        'type' => 'text',
                     ];
                     break;
                 case 'string':
                     $mappings[$fieldName] = [
-                        'type' => 'string',
+                        'type' => 'text',
                         'fields' => [
                             'keyword' => [
                                 'type' => 'keyword',

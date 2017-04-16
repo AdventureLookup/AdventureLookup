@@ -10,6 +10,7 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
+use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Psr\Log\LoggerInterface;
 
 class SearchIndexUpdater implements EventSubscriber
@@ -81,17 +82,21 @@ class SearchIndexUpdater implements EventSubscriber
     private function deleteSearchIndex(LifecycleEventArgs $args)
     {
         $adventure = $this->getAdventure($args);
-        if (!$adventure) {
+        if (!$adventure || !$adventure->getId()) {
             return;
         }
 
         $client = ClientBuilder::create()->build();
 
-        $response = $client->delete([
-            'index' => self::INDEX,
-            'type' => self::TYPE,
-            'id' => $adventure->getId(),
-        ]);
+        try {
+            $response = $client->delete([
+                'index' => self::INDEX,
+                'type' => self::TYPE,
+                'id' => $adventure->getId(),
+            ]);
+        } catch (Missing404Exception $e) {
+
+        }
 
         // @TODO: Log errors
     }

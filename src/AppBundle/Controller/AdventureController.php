@@ -33,8 +33,8 @@ class AdventureController extends Controller
 
         if ($request->query->has('q') && !empty($request->query->get('q', ''))) {
             $adventures = $search->searchAll($request->query->get('q'));
-        } else if ($request->request->has('f')) {
-            $filters = $request->request->get('f');
+        } else if ($request->request->has('f') || $request->query->has('f')) {
+            $filters = $request->get('f');
             $adventures = $search->searchFilter($filters);
         } else {
             $adventures = $search->all();
@@ -51,7 +51,7 @@ class AdventureController extends Controller
             'adventures' => $adventures,
             'tagNames' => $tagNames,
             'mostCommonValues' => $mostCommonValues,
-            'filter' => $request->request->get('f', false)
+            'filter' => $request->get('f', false)
         ]);
     }
 
@@ -122,7 +122,7 @@ class AdventureController extends Controller
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('adventure_edit', array('id' => $adventure->getId()));
+            return $this->redirectToRoute('adventure_show', ['slug' => $adventure->getSlug()]);
         }
 
         return $this->render('adventure/edit.html.twig', array(

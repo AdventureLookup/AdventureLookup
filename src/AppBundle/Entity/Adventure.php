@@ -56,7 +56,7 @@ class Adventure
     /**
      * @var TagContent[]
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\TagContent", fetch="EAGER", mappedBy="adventure")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\TagContent", fetch="EAGER", mappedBy="adventure", orphanRemoval=true)
      */
     private $info;
 

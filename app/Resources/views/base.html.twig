@@ -19,10 +19,12 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('adventure_index') }}">Adventures</a>
                     </li>
-                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                    {% if is_granted('ROLE_CURATOR') %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('tags_index') }}">Tags</a>
                         </li>
+                    {% endif %}
+                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('logout') }}">Logout</a>
                         </li>

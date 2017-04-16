@@ -8,17 +8,14 @@
 
                 {{ form_start(edit_form) }}
                 {{ form_widget(edit_form) }}
-                <input class="btn btn-primary" type="submit" value="Edit" />
+                <input class="btn btn-primary" type="submit" role="button" value="Save" />
                 {{ form_end(edit_form) }}
 
                 <h3 class="mt-3">Other actions</h3>
                 <ul>
                     <li>
-                        <a href="{{ path('tags_index') }}">Back to the list</a>
-                    </li>
-                    <li>
                         {{ form_start(delete_form) }}
-                        <input type="submit" value="Delete this tag" class="btn btn-danger btn-sm">
+                        <input type="submit" value="Delete this tag" class="btn btn-danger btn-sm" role="button" onclick="return confirm('Do you really want to delete this tag?')">
                         {{ form_end(delete_form) }}
                     </li>
                 </ul>

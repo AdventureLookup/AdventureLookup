@@ -27,9 +27,6 @@ class TagNameType extends AbstractType
             ->add('example', TextType::class, [
                 'required' => false
             ])
-            ->add('approved', CheckboxType::class, [
-                'required' => false
-            ])
             ->add('showInSearchResults', CheckboxType::class, [
                 'required' => false
             ])
@@ -38,7 +35,7 @@ class TagNameType extends AbstractType
                 'expanded' => true,
                 'multiple' => false,
                 'choices' => [
-                    'string' => 'string', 'text' => 'text', 'integer' => 'integer', 'boolean' => 'boolean'
+                    'string' => 'string', 'integer' => 'integer', 'boolean' => 'boolean', 'multiline, long text' => 'text'
                 ]
             ]);
     }

@@ -32,15 +32,16 @@
                                     <div class="col-2">
                                         <select name="f[{{ tagName.id }}][o]" class="form-control-sm form-control">
                                             {% if tagName.type in ['text', 'string'] %}
-                                                <option {% if filter and filter[tagName.id]['o'] == 'like' %}selected{% endif %} value="like">contains</option>
+                                                <option {% if filter[tagName.id]|default(false) and filter[tagName.id]['o'] == 'like' %}selected{% endif %} value="like">contains</option>
                                             {% elseif tagName.type == 'integer' %}
-                                                <option {% if filter and filter[tagName.id]['o'] == 'gt' %}selected{% endif %} value="gt">&gt;</option>
-                                                <option {% if filter and filter[tagName.id]['o'] == 'gte' %}selected{% endif %} value="gte">&gt;=</option>
-                                                <option {% if filter and filter[tagName.id]['o'] == 'lt' %}selected{% endif %} value="lt">&lt;</option>
-                                                <option {% if filter and filter[tagName.id]['o'] == 'lte' %}selected{% endif %} value="lte">&lt;=</option>
+                                                <option {% if filter[tagName.id]|default(false) and filter[tagName.id]['o'] == 'eq' %}selected{% endif %} value="eq">=</option>
+                                                <option {% if filter[tagName.id]|default(false) and filter[tagName.id]['o'] == 'gt' %}selected{% endif %} value="gt">&gt;</option>
+                                                <option {% if filter[tagName.id]|default(false) and filter[tagName.id]['o'] == 'gte' %}selected{% endif %} value="gte">&gt;=</option>
+                                                <option {% if filter[tagName.id]|default(false) and filter[tagName.id]['o'] == 'lt' %}selected{% endif %} value="lt">&lt;</option>
+                                                <option {% if filter[tagName.id]|default(false) and filter[tagName.id]['o'] == 'lte' %}selected{% endif %} value="lte">&lt;=</option>
                                             {% endif %}
-                                            {% if tagName.type in ['boolean'] %}
-                                                <option {% if filter and filter[tagName.id]['o'] == 'eq' %}selected{% endif %} value="eq">equals</option>
+                                            {% if tagName.type in ['string', 'boolean'] %}
+                                                <option {% if filter[tagName.id]|default(false) and filter[tagName.id]['o'] == 'eq' %}selected{% endif %} value="eq">equals</option>
                                             {% endif %}
                                         </select>
                                     </div>

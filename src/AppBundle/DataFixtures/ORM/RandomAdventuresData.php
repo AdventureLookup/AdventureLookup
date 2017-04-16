@@ -153,19 +153,20 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
                 ]);
             },
             'Region' => function (Faker\Generator $faker) {
-                return $faker->randomElement(explode(', ', 'Aeskeem, Aevhyr Anganor, Ardur, Aurna, Awk, Bahli, Balk, Belka, Benere, Borune, Bre\'gyn, Briggs, Brourd, Cahathic, Camas, Catip, Cerios, Cerran, Chathoc, Chetatyr, Clarmont, Criik, Dater Bass, Danto, Delthestal, Dhariy, Dinal, Dnher, Entnab, Eshul, Evarz, Exaple, Falkland, Fhalk, Figlomere, Forlen, Fortena, Gan, Ghonyg, Ginad, Giud, Gorge, Gourne, Gynnikt, Hashma, Haug, Havaco, Hevali, Hiwhe, Idierz, Iget, Inan, Inteka, Ivester, Jyshmon, Kallak, Khand, Khees, Khis, Krynn, La\'poch, Leore, Libernab, Loevlee, Loria, Manto, Memnon, Mohrin, Nabrynn, Najal (soft j), Nanduka, Nareik, Nexur, Noydhea, Ocea, Ofer, Omine, Opake, Parthin, Phorquard, Phyion, Piegar, Pikuko, Qa, Qar\'ul, Rankino, Rath, Rith, Ravan, Rhutyne, Rogure, Rush Valley, Sallow Valley, Santhica, Sar\'ukt, Scholl, Scretob, Shaal, Shorol, Siel, Speld, Stoeln, Sypes, T\'Narg, Toi, Tranda, Tribliko, Uth\'nuul, Vaargh, Verdival, Verios, Washougal, Wyshnal, Xing, Xyron, Yerda, Zaramon, Zreall, Zubair'));
+                return $faker->randomElement(explode(', ', 'Aeskeem, Aevhyr Anganor, Ardur, Aurna, Awk, Bahli, Balk, Belka, Benere, Borune, Bre\'gyn, Briggs, Brourd, Cahathic, Camas, Catip, Cerios, Cerran, Chathoc, Chetatyr, Clarmont, Criik, Dater Bass, Danto, Delthestal, Dhariy, Dinal, Dnher, Entnab, Eshul, Evarz, Exaple, Falkland, Fhalk, Figlomere, Forlen, Fortena, Gan, Ghonyg, Ginad, Giud, Gorge, Gourne, Gynnikt, Hashma, Haug, Havaco, Hevali, Hiwhe, Idierz, Iget, Inan, Inteka, Ivester, Jyshmon, Kallak, Khand, Khees, Khis, Krynn, La\'poch, Leore, Libernab, Loevlee, Loria, Manto, Memnon, Mohrin, Nabrynn, Najal (soft j), Nanduka, Nareik, Nexur, Noydhea, Ocea, Ofer, Omine, Opake, Parthin, Phorquard, Phyion, Piegar, Pikuko, Qa, Qar\'ul, Rankino, Rath, Rith, Ravan, Rhutyne, Rogure, Rush Valley, Sallow Valley, Santhica, Sar\'ukt, Scholl, Scretob, Shaal, Shorol, Siel, Speld, Stoeln, Sypes, T\'Narg, Toi, Tranda, Tribliko, Uth\'nuul, Vaargh, Verdival, Verios, Washougal, Wyshnal, Xing, Xyron, Yerda, Zaramon, Zreall, Zubair, City of Dis'));
             },
             'Environment' => function (Faker\Generator $faker) {
                 return $faker->randomElement([
                     'Underground',
+                    'Underdark',
+                    'Urban',
                     'Aquatic',
-                    'Deserts',
-                    'Forests',
+                    'Desert',
+                    'Forest',
                     'Hills',
-                    'Marshes',
+                    'Marsh',
                     'Mountains',
                     'Plains',
-                    'City',
                 ]);
             },
             'Magic Level' => function (Faker\Generator $faker) {
@@ -223,6 +224,10 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
                     'Adult Arrowhawk',
                     'Adult Black Dragon',
                     'Adult Blue Dragon',
+                    'Goblins',
+                    'Skeletons',
+                    'Beholder',
+                    'Litches'
                 ]);
             },
         ];

@@ -5,16 +5,26 @@
     <ul>
         {% for content in field.contents %}
             <li>
+                {% if field.meta.type not in ['text', 'url'] %}
+                    <a href="{{ path('adventure_index', {f: {(field.meta.id): {o: 'eq', c: content.content}}}) }}">
+                {% endif %}
                 {{ content.content|nl2br }}
+                {% if field.meta.type not in ['text', 'url'] %}
+                    </a>
+                {% endif %}
                 {% if not content.approved %}<span class="badge badge-warning">needs approval</span>{% endif %}
                 {% if is_granted('ROLE_CURATOR') %}
-                    <a class="btn btn-sm btn-secondary" href="{{ path('adventure_info_edit', {id: content.id}) }}">edit</a>
+                    <a href="{{ path('adventure_info_edit', {id: content.id}) }}">
+                        <i class="fa fa-edit" title="edit"></i>
+                    </a>
                 {% endif %}
             </li>
         {% endfor %}
         {% if is_granted('ROLE_USER') %}
             <li>
-                <a class="btn btn-sm btn-secondary" href="{{ path('adventure_info_new', {id: adventure.id, fieldId: field.meta.id}) }}">add</a>
+                <a href="{{ path('adventure_info_new', {id: adventure.id, fieldId: field.meta.id}) }}">
+                    <i class="fa fa-plus" title="add"></i>
+                </a>
             </li>
         {% endif %}
     </ul>
@@ -58,11 +68,10 @@
                     {% else %}
                         <p>You need to <a href="{{ path('login') }}">log in</a> to add and edit information.</p>
                     {% endif %}
-                        <a href="{{ path('adventure_index') }}">Back to the list</a>
                     {% if is_granted('ROLE_CURATOR') %}
-                        <a href="{{ path('adventure_edit', { 'id': adventure.id }) }}">Edit</a>
+                        <a class="btn btn-secondary btn-sm my-3" href="{{ path('adventure_edit', { 'id': adventure.id }) }}">Edit adventure title</a>
                         {{ form_start(delete_form) }}
-                        <input class="btn btn-sm btn-danger" type="submit" value="Delete">
+                        <input class="btn btn-sm btn-danger mt-3" type="submit" value="Delete" role="button" onclick="return confirm('Do you really want to delete this adventure?')">
                         {{ form_end(delete_form) }}
                     {% endif %}
                 </div>

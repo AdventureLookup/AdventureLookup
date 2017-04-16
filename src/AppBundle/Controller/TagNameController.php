@@ -14,6 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component
  * Tagname controller.
  *
  * @Route("tags")
+ * @Security("is_granted('ROLE_CURATOR')")
  */
 class TagNameController extends Controller
 {
@@ -40,11 +41,10 @@ class TagNameController extends Controller
      *
      * @Route("/new", name="tags_new")
      * @Method({"GET", "POST"})
-     * @Security("is_granted('ROLE_USER')")
      */
     public function newAction(Request $request)
     {
-        $tagName = new Tagname();
+        $tagName = new TagName();
         $form = $this->createForm('AppBundle\Form\TagNameType', $tagName);
         $form->handleRequest($request);
 
@@ -53,7 +53,7 @@ class TagNameController extends Controller
             $em->persist($tagName);
             $em->flush();
 
-            return $this->redirectToRoute('tags_index', array('id' => $tagName->getId()));
+            return $this->redirectToRoute('tags_index');
         }
 
         return $this->render('tagname/new.html.twig', array(
@@ -67,7 +67,6 @@ class TagNameController extends Controller
      *
      * @Route("/{id}/edit", name="tags_edit")
      * @Method({"GET", "POST"})
-     * @Security("is_granted('ROLE_CURATOR')")
      */
     public function editAction(Request $request, TagName $tagName)
     {
@@ -93,7 +92,6 @@ class TagNameController extends Controller
      *
      * @Route("/{id}", name="tags_delete")
      * @Method("DELETE")
-     * @Security("is_granted('ROLE_CURATOR')")
      */
     public function deleteAction(Request $request, TagName $tagName)
     {

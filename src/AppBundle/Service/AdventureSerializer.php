@@ -32,12 +32,8 @@ class AdventureSerializer
                     $ser[$key][] = (bool)$content;
                     break;
                 /** @noinspection PhpMissingBreakStatementInspection */
-                case 'string':
-                if (!isset($ser[$key . '_s'])) {
-                    $ser[$key . '_s'] = [];
-                }
-                $ser[$key . '_s'][] = $content;
                 default:
+                case 'string':
                 case 'text':
                     $ser[$key][] = $content;
                     break;

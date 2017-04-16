@@ -92,6 +92,13 @@ class AdventureSearch
      */
     public function searchFilter(array $filters)
     {
+        $qb = $this->em->createQueryBuilder();
+        $qb
+            ->select('f')
+            ->from(TagName::class, 'f', 'f.id');
+        /** @var TagName[] $fields */
+        $fields = $qb->getQuery()->execute();
+
         $matches = [];
         foreach ($filters as $id => $filter) {
             if ($id !== 'title' && !is_numeric($id)) {
@@ -108,6 +115,10 @@ class AdventureSearch
             if (in_array($operator, ['gte', 'gt', 'lt', 'lte'])) {
                 $matches[] = ['range' => [$field => [$operator => $content]]];
             } else if ($operator == 'eq') {
+                $fieldEntity = $fields[$id];
+                if ($fieldEntity->getType() == 'string') {
+                    $field .= '.keyword';
+                }
                 $matches[] = ['term' => [$field => $content]];
             } else {
                 $matches[] = ['match' => [$field => $content]];
@@ -204,15 +215,23 @@ class AdventureSearch
 
     /**
      * @param TagName[] $fields
+     * @param int $max
      * @return array
      */
     public function aggregateMostCommonValues(array $fields, int $max = 3): array
     {
         $aggregations = [];
-        foreach ($fields as $field) {
-            $aggregations['info_' . $field->getId()] = [
+        foreach ($fields as $fieldEntity) {
+            $elasticField = 'info_' . $fieldEntity->getId();
+            if ($fieldEntity->getType() == 'text') {
+                continue;
+            }
+            if ($fieldEntity->getType() == 'string') {
+                $elasticField .= '.keyword';
+            }
+            $aggregations['info_' . $fieldEntity->getId()] = [
                 'terms' => [
-                    'field' => 'info_' . $field->getId() . '.keyword',
+                    'field' => $elasticField,
                     'size' => $max
                 ]
             ];

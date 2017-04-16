@@ -4,6 +4,9 @@
     <div class="container">
         <div class="row">
             <div class="col">
+                {% if is_granted('ROLE_CURATOR') %}
+                    <a class="float-right mt-5 btn btn-outline-primary" href="{{ path('tags_new') }}">create a new tag</a>
+                {% endif %}
                 <h1 class="my-5">Tags</h1>
                 <div class="alert alert-info">
                     Tags are little pieces of information of each individual adventure. Creating a new tag will allow every adventure to supply information for this tag.
@@ -41,10 +44,6 @@
                         </tbody>
                     </table>
                 </div>
-
-                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                    <a class="btn btn-outline-primary" href="{{ path('tags_new') }}">create a new tag</a>
-                {% endif %}
             </div>
         </div>
     </div>
