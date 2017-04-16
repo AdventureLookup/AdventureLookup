@@ -1,6 +1,7 @@
 import "typeahead.js/dist/typeahead.jquery";
 import Bloodhound from "typeahead.js/dist/bloodhound";
 import "typeahead.js-bootstrap4-css/typeaheadjs.css";
+import toastr from "toastr";
 
 (function () {
     const $page = $('#page--add-content');
@@ -9,7 +10,8 @@ import "typeahead.js-bootstrap4-css/typeaheadjs.css";
     }
 
     const searchUrl = $page.data('content-search-url');
-
+    const adventureUrl = $page.data('adventure-url');
+    const saveUrl = $page.data('content-save-url');
     const prefix = 'appbundle_tagcontent';
 
     const $tagSelection = $('#' + prefix + '_tag');
@@ -36,6 +38,7 @@ import "typeahead.js-bootstrap4-css/typeaheadjs.css";
 </div>
 `);
 
+    let $contentInput;
 
     const $contentContainer = $('#tag-content-placeholder');
     function changeContent(type) {
@@ -64,6 +67,7 @@ import "typeahead.js-bootstrap4-css/typeaheadjs.css";
 `);
                 break;
         }
+        $contentInput = $(`#${prefix}_content`);
 
         function createStringField() {
             $contentContainer.append(`
@@ -75,7 +79,7 @@ import "typeahead.js-bootstrap4-css/typeaheadjs.css";
 </div>
 `);
             const content = new Bloodhound({
-                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+                datumTokenizer: Bloodhound.tokenizers.whitespace,
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
                 remote: {
                     url: searchUrl,
@@ -85,19 +89,17 @@ import "typeahead.js-bootstrap4-css/typeaheadjs.css";
                             .replace(/__Q__/g, query);
                         return settings;
                     },
-                    transform: (response) => {
-                        console.log(response);
-                        return response.results;
-                    }
-                }
+                },
+                sufficient: 20
             });
 
             $(`#${prefix}_content`).typeahead({
-                minLength: 2,
+                minLength: 0,
                 highlight: true
             }, {
                 name: 'content',
                 source: content,
+                limit: 20
             }).bind('typeahead:asyncrequest', (evt) => {
                 $('#content-search-spinner').fadeIn();
             }).bind('typeahead:asyncreceive', (evt) => {
@@ -107,4 +109,49 @@ import "typeahead.js-bootstrap4-css/typeaheadjs.css";
     }
 
     changeContent($tagSelection.select2('data')[0]['text'].split('|')[1]);
+    $contentInput.focus();
+
+    const $saveAndAddButton = $('#' + prefix + '_saveAndAdd');
+    const $saveButton = $('#' + prefix + '_save');
+    $saveAndAddButton.on('click', (evt) => {
+        evt.preventDefault();
+        saveChanges();
+    });
+    $saveButton.on('click', (evt) => {
+        evt.preventDefault();
+        saveChanges(() => {
+            document.location.href = adventureUrl;
+        });
+    });
+
+    function saveChanges(done) {
+        if ($contentInput.val().length === 0) {
+            toastr['error']('Content cannot be empty!');
+            return;
+        }
+
+        $.ajax(saveUrl, {
+            data: {
+                fieldId: $tagSelection.val(),
+                content: $contentInput.attr('type') === 'checkbox' ? $contentInput.prop('checked') : $contentInput.val()
+            },
+            method: 'POST'
+        }).done(() => {
+            if ($contentInput.attr('type') === 'checkbox') {
+                $contentInput.prop('checked', false);
+            } else {
+                $contentInput.val('');
+            }
+            toastr['success']('Changes saved!');
+            if (done) {
+                done();
+            }
+        }).fail(() => {
+            toastr['error']('Sorry, something went wrong.', 'Your changes could not be saved.');
+        }).always(() => {
+            $contentInput.attr('readonly', false);
+            $contentInput.focus();
+        });
+        $contentInput.attr('readonly', true);
+    }
 })();

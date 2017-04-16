@@ -8,8 +8,8 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
-        <nav class="navbar navbar-toggleable-sm navbar-light bg-faded mb-3">
-            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-toggleable-sm navbar-light bg-faded">
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" role="button">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <a class="navbar-brand" href="{{ path('homepage') }}">Adventure Lookup</a>
@@ -19,10 +19,10 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('adventure_index') }}">Adventures</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('tags_index') }}">Tags</a>
-                    </li>
                     {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('tags_index') }}">Tags</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('logout') }}">Logout</a>
                         </li>
@@ -30,20 +30,17 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('login') }}">Login</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('user_registration') }}">Create Account</a>
-                        </li>
                     {% endif %}
                 </ul>
-                <form class="form-inline my-2 my-lg-0" action="{{ path('adventure_index') }}" method="get">
+                <form class="form-inline" action="{{ path('adventure_index') }}" method="get">
                     <input class="form-control mr-sm-2" type="text" name="q" placeholder="An adventure including..." value="{{ app.request.query.get('q', '') }}">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit" role="button">Search</button>
                 </form>
             </div>
         </nav>
 
         {% if app.session.flashbag.peekAll is not empty %}
-            <div class="container">
+            <div class="container mb-4 mt-3">
                 <div class="row">
                     <div class="col">
                         {% for label, messages in app.session.flashbag.all %}
@@ -65,7 +62,7 @@
                 <div class="row">
                     <div class="col text-right">
                         <hr />
-                        <p>Natural 20! Made by @cmfcmf.</p>
+                        <p>Natural 20! Made by <a href="https://github.com/cmfcmf">@cmfcmf.</a></p>
                     </div>
                 </div>
             </div>

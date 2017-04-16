@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% macro print_field(field) %}
+{% macro print_field(field, adventure) %}
     <strong {% if not field.meta.approved %}class="bg-warning"{% endif %}>{{ field.meta.title }}:</strong>
     <ul>
         {% for content in field.contents %}
@@ -26,54 +26,45 @@
             <div class="col">
                 <h1 class="my-5">{{ adventure.title }}</h1>
                 {% if adventure.info is empty %}
-                    <div class="alert alert-info">This adventure is currently pretty much without information. Click the 'Add info' button below multiple times to start supplying the first bits and pieces.</div>
+                    <div class="alert alert-info">This adventure is currently pretty much without information. Click the 'Add' button below to start supplying the first bits and pieces.</div>
                 {% endif %}
 
                 <ul class="adventure-show--details list-unstyled">
                     {% for field in adventure.info if field.meta.type != 'text' %}
-                        <li>{{ macros.print_field(field) }}</li>
+                        <li>{{ macros.print_field(field, adventure) }}</li>
                     {% endfor %}
                 </ul>
                 <ul class="list-unstyled">
                     {% for field in adventure.info if field.meta.type == 'text' %}
-                        <li>{{ macros.print_field(field) }}</li>
+                        <li>{{ macros.print_field(field, adventure) }}</li>
                     {% endfor %}
                 </ul>
 
                 <div class="bg-faded p-3">
                     <h3 class="mt-3">Other actions</h3>
-                    <ul>
-                        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                            <li>
-                                <form method="get" action="{{ path('adventure_info_new', {id: adventure.id}) }}" class="form-inline">
-                                    <select name="fieldId" id="add-info" class="form-control form-control-sm">
-                                        {% for field in fieldNames %}
-                                            <option value="{{ field.id }}">{{ field.title }}</option>
-                                        {% endfor %}
-                                    </select>
+                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                        <form method="get" action="{{ path('adventure_info_new', {id: adventure.id}) }}" class="form-inline">
+                            <label for="add-info" class="mr-1">Add information:</label>
+                            <select name="fieldId" id="add-info" class="form-control form-control-sm">
+                                {% for field in fieldNames %}
+                                    <option value="{{ field.id }}">{{ field.title }}</option>
+                                {% endfor %}
+                            </select>
 
-                                    <button type="submit" role="button" class="btn btn-info btn-sm">
-                                        Add
-                                    </button>
-                                </form>
-                            </li>
-                        {% else %}
-                            <li>You need to <a href="{{ path('login') }}">log in</a> to add and edit information.</li>
-                        {% endif %}
-                        <li>
-                            <a href="{{ path('adventure_index') }}">Back to the list</a>
-                        </li>
-                        {% if is_granted('ROLE_CURATOR') %}
-                            <li>
-                                <a href="{{ path('adventure_edit', { 'id': adventure.id }) }}">Edit</a>
-                            </li>
-                            <li>
-                                {{ form_start(delete_form) }}
-                                <input class="btn btn-sm btn-danger" type="submit" value="Delete">
-                                {{ form_end(delete_form) }}
-                            </li>
-                        {% endif %}
-                    </ul>
+                            <button type="submit" role="button" class="btn btn-info btn-sm">
+                                Add
+                            </button>
+                        </form>
+                    {% else %}
+                        <p>You need to <a href="{{ path('login') }}">log in</a> to add and edit information.</p>
+                    {% endif %}
+                        <a href="{{ path('adventure_index') }}">Back to the list</a>
+                    {% if is_granted('ROLE_CURATOR') %}
+                        <a href="{{ path('adventure_edit', { 'id': adventure.id }) }}">Edit</a>
+                        {{ form_start(delete_form) }}
+                        <input class="btn btn-sm btn-danger" type="submit" value="Delete">
+                        {{ form_end(delete_form) }}
+                    {% endif %}
                 </div>
             </div>
         </div>

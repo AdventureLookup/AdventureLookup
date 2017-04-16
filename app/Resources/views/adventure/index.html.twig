@@ -67,10 +67,10 @@
                         <div class="card-block">
                             <h4 class="card-title">
                                 <a href="{{ path('adventure_show', { 'slug': adventure.slug }) }}">
-                                    {{ adventure.title }} ({{ adventure.score }})
+                                    {{ adventure.title }}
                                 </a>
                             </h4>
-                            <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                            <h6 class="card-subtitle mb-2 text-muted">Search score: {{ adventure.score }}</h6>
                             <ul class="adventure-info-list">
                                 {% for info in adventure.info if info.meta.showInSearchResults %}
                                     <li><strong>{{ info.meta.title }}</strong>: {{ info.contents|join(',') }}</li>

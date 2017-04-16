@@ -38,7 +38,7 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
             $this->container->get('search_index_updater')
         );
 
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 200; $i++) {
             $adventure = new Adventure();
             $adventure->setTitle($faker->text(120));
 

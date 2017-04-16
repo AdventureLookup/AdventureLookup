@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container" id="page--add-content" data-content-search-url="{{ path('field_content_search', {id: '__ID__', q: '__Q__'}) }}">
+    <div class="container" id="page--add-content" data-adventure-url="{{ url('adventure_show', {slug: tagContent.adventure.slug}) }}" data-content-save-url="{{ path('adventure_info_new_ajax', {id: tagContent.adventure.id}) }}" data-content-search-url="{{ path('field_content_search', {id: '__ID__', q: '__Q__'}) }}">
         <div class="row">
             <div class="col">
                 <h1 class="my-5">Add info to "{{ tagContent.adventure.title }}"</h1>

@@ -4,7 +4,8 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                <h1 class="my-5">Login</h1>
+                <h1 class="mt-5">Login</h1>
+                <p class="mb-3">If you haven't created an account yet, head over to <a href="{{ path('user_registration') }}">the registration page!</a></p>
 
                 {% if error %}
                     <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>

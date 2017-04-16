@@ -25,3 +25,17 @@
     column-count: 4;
   }
 }
+
+.start--jumbo-1 {
+  color: white;
+  background: linear-gradient(rgba(0, 0, 0, 0.7),rgba(0, 0, 0, 0.7)), url('./img/books_small.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.start--jumbo-2 {
+  color: white;
+  background: linear-gradient(rgba(0, 0, 0, 0.7),rgba(0, 0, 0, 0.7)), url('./img/globus_small.jpg');
+  background-size: cover;
+  background-position: center;
+}

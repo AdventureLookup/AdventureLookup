@@ -137,6 +137,9 @@ class AdventureSearch
 
     public function autocompleteFieldContent(TagName $field, string $q): array
     {
+        if ($q === '') {
+            return current($this->aggregateMostCommonValues([$field], 10));
+        }
         // Using the completion suggester returns duplicate documents...
         //$fieldName = 'info_' . $field->getId() . '_s';
         //$response = $this->client->suggest([
@@ -186,19 +189,15 @@ class AdventureSearch
             ]
         ]);
 
-        $results = [
-            'total' => 0,
-            'results' => []
-        ];
+        $results = [];
         foreach($response['hits']['hits'] as $hit) {
             $highlights = array_unique($hit['highlight']['info_' . $field->getId()]);
             foreach ($highlights as $highlight) {
-                if (!in_array($highlight, $results['results'])) {
-                    $results['results'][] = $highlight;
+                if (!in_array($highlight, $results)) {
+                    $results[] = $highlight;
                 }
             }
         }
-        $results['total'] = count($results['results']);
 
         return $results;
     }
@@ -207,14 +206,14 @@ class AdventureSearch
      * @param TagName[] $fields
      * @return array
      */
-    public function aggregateMostCommonValues(array $fields): array
+    public function aggregateMostCommonValues(array $fields, int $max = 3): array
     {
         $aggregations = [];
         foreach ($fields as $field) {
             $aggregations['info_' . $field->getId()] = [
                 'terms' => [
                     'field' => 'info_' . $field->getId() . '.keyword',
-                    'size' => 3
+                    'size' => $max
                 ]
             ];
         }

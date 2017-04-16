@@ -136,6 +136,36 @@ class TagContentController extends Controller
     }
 
     /**
+     * @Route("/adventures/{id}/info/new/ajax", name="adventure_info_new_ajax")
+     * @Method({"POST"})
+     * @Security("is_granted('ROLE_USER')")
+     *
+     * @param Request $request
+     * @param Adventure $adventure
+     * @return JsonResponse
+     */
+    public function newAjaxAction(Request $request, Adventure $adventure)
+    {
+        $fieldId = $request->request->get('fieldId');
+        $content = $request->request->get('content');
+
+        $em = $this->getDoctrine()->getManager();
+        $field = $em->getRepository(TagName::class)->find($fieldId);
+
+        $contentEntity = new TagContent();
+        $contentEntity
+            ->setAdventure($adventure)
+            ->setApproved($this->isGranted('ROLE_CURATOR'))
+            ->setContent($content)
+            ->setTag($field);
+
+        $em->persist($contentEntity);
+        $em->flush();
+
+        return new JsonResponse();
+    }
+
+    /**
      * Creates a form to delete a tagContent entity.
      *
      * @param TagContent $tagContent The tagContent entity
