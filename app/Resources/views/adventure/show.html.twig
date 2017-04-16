@@ -14,7 +14,7 @@
                     <a href="{{ path }}">
                 {% endif %}
                 {{ content.content|nl2br }}
-                {% if field.meta.type not in ['text', 'url'] %}
+                {% if field.meta.type not in ['text'] %}
                     </a>
                 {% endif %}
                 {% if not content.approved %}<span class="badge badge-warning">needs approval</span>{% endif %}
