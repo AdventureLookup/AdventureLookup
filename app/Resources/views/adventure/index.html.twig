@@ -10,7 +10,7 @@
                 {% endif %}
                 <p>Find adventures fitting your search term!</p>
                 <div class="clearfix"></div>
-                <form method="get" action="{{ path('adventure_index') }}" class="bg-faded p-3 mb-3">
+                <form method="get" action="{{ url('adventure_index') }}#search-results" class="bg-faded p-3 mb-3">
                     <fieldset>
                         <legend>Search everything</legend>
                         <div class="input-group input-group-lg">
@@ -23,7 +23,7 @@
                     </fieldset>
                 </form>
 
-                <form method="post" action="{{ path('adventure_index')}}" class="bg-faded p-3">
+                <form method="post" action="{{ url('adventure_index')}}#search-results" class="bg-faded p-3">
                     <fieldset>
                         <legend>Advanced search <button type="button" id="toggle-adv-search" class="btn btn-sm btn-secondary" role="button">toggle</button></legend>
                         <div id="advanced-search" {% if not filter %}class="d-none"{% endif %}>
