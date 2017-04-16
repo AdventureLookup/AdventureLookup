@@ -5,6 +5,7 @@
     "babel-preset-es2015": "^6.24.1",
     "bootstrap": "4.0.0-alpha.6",
     "css-loader": "^0.28.0",
+    "cssnano": "^3.10.0",
     "extract-text-webpack-plugin": "^2.1.0",
     "file-loader": "^0.11.1",
     "font-awesome": "^4.7.0",
