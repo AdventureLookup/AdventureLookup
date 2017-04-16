@@ -16,6 +16,9 @@
                             <th>Title</th>
                             <th>Approved</th>
                             <th>Type</th>
+                            <th>Description</th>
+                            <th>Example</th>
+                            <th>Show in search results</th>
                             <th class="text-right">Actions</th>
                         </tr>
                         </thead>
@@ -25,6 +28,9 @@
                                 <td>{{ tagName.title }}</td>
                                 <td>{% if tagName.approved %}Yes{% else %}No{% endif %}</td>
                                 <td>{{ tagName.type }}</td>
+                                <td>{{ tagName.description }}</td>
+                                <td>{{ tagName.example }}</td>
+                                <td>{% if tagName.showInSearchResults %}Yes{% else %}No{% endif %}</td>
                                 <td class="text-right">
                                     {% if is_granted('ROLE_CURATOR') %}
                                         <a class="btn btn-sm btn-secondary" href="{{ path('tags_edit', { 'id': tagName.id }) }}">edit</a>

@@ -72,6 +72,13 @@ class TagName
     private $useAsFilter;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(type="boolean")
+     */
+    private $showInSearchResults;
+
+    /**
      * @var TagContent[]
      *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\TagContent", mappedBy="tag", fetch="EXTRA_LAZY")
@@ -83,6 +90,7 @@ class TagName
         $this->approved = false;
         $this->type = 'text';
         $this->useAsFilter = false;
+        $this->showInSearchResults = false;
     }
 
     public function __toString()
@@ -266,6 +274,26 @@ class TagName
     public function getVersion(): int
     {
         return $this->version;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isShowInSearchResults(): bool
+    {
+        return $this->showInSearchResults;
+    }
+
+    /**
+     * @param bool $showInSearchResults
+     *
+     * @return TagName
+     */
+    public function setShowInSearchResults(bool $showInSearchResults)
+    {
+        $this->showInSearchResults = $showInSearchResults;
+
+        return $this;
     }
 }
 

@@ -9,6 +9,7 @@ use AppBundle\Entity\TagName;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Faker;
@@ -25,12 +26,17 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
      */
     public function load(ObjectManager $manager)
     {
-        /** @var EntityManagerInterface $em */
-        $em = $this->container->get('doctrine');
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $this->container->get('doctrine');
 
-        $tags = $em->getRepository('AppBundle:TagName')->findAll();
+        $tags = $doctrine->getRepository('AppBundle:TagName')->findAll();
 
         $faker = Faker\Factory::create();
+
+        // Disable indexing temporarily.
+        $doctrine->getManager()->getEventManager()->removeEventSubscriber(
+            $this->container->get('search_index_updater')
+        );
 
         for ($i = 0; $i < 50; $i++) {
             $adventure = new Adventure();

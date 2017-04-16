@@ -1,0 +1,27 @@
+@import './bootstrap.scss';
+
+.adventure-info-list {
+  column-count: 1;
+  column-gap: 40px;
+
+  @media (min-width: map-get($grid-breakpoints, md)) {
+    column-count: 2;
+  }
+  @media (min-width: map-get($grid-breakpoints, lg)) {
+    column-count: 3;
+  }
+}
+
+.adventure-show--details {
+  column-count: 1;
+
+  @media (min-width: map-get($grid-breakpoints, md)) {
+    column-count: 2;
+  }
+  @media (min-width: map-get($grid-breakpoints, lg)) {
+    column-count: 3;
+  }
+  @media (min-width: map-get($grid-breakpoints, xl)) {
+    column-count: 4;
+  }
+}

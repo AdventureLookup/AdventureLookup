@@ -55,36 +55,32 @@
                                     </div>
                                 </div>
                             {% endfor %}
-                            <button type="submit" class="btn btn-lg btn-primary">Search</button>
+                            <button type="submit" class="btn btn-lg btn-primary" role="button">Search</button>
                         </div>
                     </fieldset>
                 </form>
 
                 <h2 class="my-5" id="search-results">Results</h2>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th>Title</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for adventure in adventures %}
-                            <tr>
-                                <td>
-                                    <a href="{{ path('adventure_show', { 'slug': adventure.slug }) }}">
-                                        {{ adventure.title }} ({{ adventure.score }})
-                                    </a>
-                                </td>
-                            </tr>
-                        {% else %}
-                            <tr class="table-danger">
-                                <td>We're sorry. Apparently there is no adventure matching your search :(</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+
+                {% for adventure in adventures %}
+                    <div class="card mb-3">
+                        <div class="card-block">
+                            <h4 class="card-title">
+                                <a href="{{ path('adventure_show', { 'slug': adventure.slug }) }}">
+                                    {{ adventure.title }} ({{ adventure.score }})
+                                </a>
+                            </h4>
+                            <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                            <ul class="adventure-info-list">
+                                {% for info in adventure.info if info.meta.showInSearchResults %}
+                                    <li><strong>{{ info.meta.title }}</strong>: {{ info.contents|join(',') }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger">We're sorry. Apparently there is no adventure matching your search :(</div>
+                {% endfor %}
             </div>
         </div>
     </div>

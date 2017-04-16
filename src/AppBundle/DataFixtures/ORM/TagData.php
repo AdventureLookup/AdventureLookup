@@ -55,7 +55,8 @@ class TagData implements FixtureInterface
             'Publisher of the module',
             'Wizards of the Coast, Sword & Sorcery',
             'string',
-            $manager
+            $manager,
+            true
         );
         $this->createTag('# of Pages',
             'Total page count of all written material in the module or at least primary string',
@@ -104,14 +105,16 @@ class TagData implements FixtureInterface
             'The system the game was designed for and the edition of that system if there is one.',
             'D&D 3.5, Pathfinder, 13th Age',
             'string',
-            $manager
+            $manager,
+            true
         );
         $this->createTag(
             'Setting',
             'The narrative universe the module is set in.',
             'Forgotten Realms, Dark Sun',
             'string',
-            $manager
+            $manager,
+            true
         );
         $this->createTag(
             'Region',
@@ -125,7 +128,8 @@ class TagData implements FixtureInterface
             'The different types of environs the module will take place in',
             'Urban, Forest, Swamp, Cavern, Dungeon, Temple',
             'string',
-            $manager
+            $manager,
+            true
         );
         $this->createTag(
             'Adventure Set / Storyline',
@@ -135,7 +139,7 @@ class TagData implements FixtureInterface
             $manager
         );
         $this->createTag('Description',
-            'Brief description of the module',
+            'Description of the module',
             'The master of Ravenloft is having guests for dinner, and you are invited.',
             'text',
             $manager
@@ -162,7 +166,8 @@ class TagData implements FixtureInterface
             'The minimum level characters are expected to be when taking part in the module',
             '5',
             'integer',
-            $manager
+            $manager,
+            true
         );
         $this->createTag('Final level',
             'The expected final level the characters at the end of the module',
@@ -180,7 +185,8 @@ class TagData implements FixtureInterface
             'How many players of the specified levels the module is balanced against',
             '4',
             'integer',
-            $manager
+            $manager,
+            true
         );
         $this->createTag('Max. # of PCs',
             'How many players of the specified levels the module is balanced against',
@@ -224,14 +230,15 @@ class TagData implements FixtureInterface
         $manager->flush();
     }
 
-    private function createTag($title, $desc, $example, $type, ObjectManager $manager)
+    private function createTag($title, $desc, $example, $type, ObjectManager $manager, bool $showInSearchResults = false)
     {
         $tag = new TagName();
         $tag->setTitle($title)
             ->setApproved(true)
             ->setType($type)
             ->setDescription($desc)
-            ->setExample($example);
+            ->setExample($example)
+            ->setShowInSearchResults($showInSearchResults);
 
         $manager->persist($tag);
     }

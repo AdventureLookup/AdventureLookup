@@ -1,6 +1,26 @@
 {% extends 'base.html.twig' %}
 
+{% macro print_field(field) %}
+    <strong {% if not field.meta.approved %}class="bg-warning"{% endif %}>{{ field.meta.title }}:</strong>
+    <ul>
+        {% for content in field.contents %}
+            <li>
+                {{ content.content|nl2br }}
+                {% if not content.approved %}<span class="badge badge-warning">needs approval</span>{% endif %}
+                {% if is_granted('ROLE_CURATOR') %}
+                    <a class="btn btn-sm btn-secondary" href="{{ path('adventure_info_edit', {id: content.id}) }}">edit</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+        {% if is_granted('ROLE_USER') %}
+            <li>
+                <a class="btn btn-sm btn-secondary" href="{{ path('adventure_info_new', {id: adventure.id, fieldId: field.meta.id}) }}">add</a>
+            </li>
+        {% endif %}
+    </ul>
+{% endmacro %}
 {% block body %}
+    {% import _self as macros %}
     <div class="container">
         <div class="row">
             <div class="col">
@@ -9,62 +29,37 @@
                     <div class="alert alert-info">This adventure is currently pretty much without information. Click the 'Add info' button below multiple times to start supplying the first bits and pieces.</div>
                 {% endif %}
 
-                <div class="table-responsive">
-                    <table class="table table-sm">
-                        <tbody>
-                        {% for field in adventure.info %}
-                            <tr {% if not field.meta.approved %}class="table-warning"{% endif %}>
-                                <th>{{ field.meta.title }}</th>
-                                <td>
-                                    <ul>
-                                        {% for content in field.contents %}
-                                            <li>
-                                                {{ content.content|nl2br }}
-                                                {% if not content.approved %}<span class="badge badge-warning">needs approval</span>{% endif %}
-                                                {% if is_granted('ROLE_CURATOR') %}
-                                                    <a class="btn btn-sm btn-secondary" href="{{ path('adventure_info_edit', {id: content.id}) }}">edit</a>
-                                                {% endif %}
-                                            </li>
-                                        {% endfor %}
-                                        {% if is_granted('ROLE_USER') %}
-                                            <li>
-                                                <a class="btn btn-sm btn-secondary" href="{{ path('adventure_info_new', {id: adventure.id, fieldId: field.meta.id}) }}">add</a>
-                                            </li>
-                                        {% endif %}
-                                    </ul>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                        <tfoot>
-                        <tr>
-                            <th>Add information</th>
-                            <td>
-                                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                                    <form method="get" action="{{ path('adventure_info_new', {id: adventure.id}) }}" class="form-inline">
-                                        <select name="fieldId" id="add-info" class="form-control form-control-sm">
-                                            {% for field in fieldNames %}
-                                                <option value="{{ field.id }}">{{ field.title }}</option>
-                                            {% endfor %}
-                                        </select>
-
-                                        <button type="submit" role="button" class="btn btn-info btn-sm">
-                                            Add
-                                        </button>
-                                    </form>
-
-                                {% else %}
-                                    You need to <a href="{{ path('login') }}">log in</a> to add and edit information.
-                                {% endif %}
-                            </td>
-                        </tr>
-                        </tfoot>
-                    </table>
-                </div>
+                <ul class="adventure-show--details list-unstyled">
+                    {% for field in adventure.info if field.meta.type != 'text' %}
+                        <li>{{ macros.print_field(field) }}</li>
+                    {% endfor %}
+                </ul>
+                <ul class="list-unstyled">
+                    {% for field in adventure.info if field.meta.type == 'text' %}
+                        <li>{{ macros.print_field(field) }}</li>
+                    {% endfor %}
+                </ul>
 
                 <div class="bg-faded p-3">
                     <h3 class="mt-3">Other actions</h3>
                     <ul>
+                        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                            <li>
+                                <form method="get" action="{{ path('adventure_info_new', {id: adventure.id}) }}" class="form-inline">
+                                    <select name="fieldId" id="add-info" class="form-control form-control-sm">
+                                        {% for field in fieldNames %}
+                                            <option value="{{ field.id }}">{{ field.title }}</option>
+                                        {% endfor %}
+                                    </select>
+
+                                    <button type="submit" role="button" class="btn btn-info btn-sm">
+                                        Add
+                                    </button>
+                                </form>
+                            </li>
+                        {% else %}
+                            <li>You need to <a href="{{ path('login') }}">log in</a> to add and edit information.</li>
+                        {% endif %}
                         <li>
                             <a href="{{ path('adventure_index') }}">Back to the list</a>
                         </li>

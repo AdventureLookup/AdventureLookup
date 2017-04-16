@@ -21,7 +21,16 @@ class TagNameType extends AbstractType
             ->add('title', TextType::class, [
                 'required' => true
             ])
+            ->add('description', TextType::class, [
+                'required' => false
+            ])
+            ->add('example', TextType::class, [
+                'required' => false
+            ])
             ->add('approved', CheckboxType::class, [
+                'required' => false
+            ])
+            ->add('showInSearchResults', CheckboxType::class, [
                 'required' => false
             ])
             ->add('type', ChoiceType::class, [
@@ -29,7 +38,7 @@ class TagNameType extends AbstractType
                 'expanded' => true,
                 'multiple' => false,
                 'choices' => [
-                    'text' => 'text', 'integer' => 'integer', 'boolean' => 'boolean'
+                    'string' => 'string', 'text' => 'text', 'integer' => 'integer', 'boolean' => 'boolean'
                 ]
             ]);
     }

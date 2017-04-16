@@ -6,6 +6,7 @@ namespace AppBundle\Service;
 use AppBundle\Entity\AdventureDocument;
 use AppBundle\Entity\TagName;
 use AppBundle\Listener\SearchIndexUpdater;
+use Doctrine\ORM\EntityManagerInterface;
 use Elasticsearch\ClientBuilder;
 
 class AdventureSearch
@@ -15,9 +16,15 @@ class AdventureSearch
      */
     private $client;
 
-    public function __construct()
+    /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+
+    public function __construct(EntityManagerInterface $em)
     {
         $this->client = ClientBuilder::create()->build();
+        $this->em = $em;
     }
 
     /**
@@ -236,8 +243,30 @@ class AdventureSearch
      */
     private function searchResultsToAdventureDocuments(array $result): array
     {
-        return array_map(function ($hit) {
-            return new AdventureDocument($hit['_id'], $hit['_source']['title'], $hit['_source']['slug'], [], $hit['_score']);
+        $qb = $this->em->createQueryBuilder();
+        $qb
+            ->select('f')
+            ->from(TagName::class, 'f', 'f.id');
+        $fields = $qb->getQuery()->execute();
+
+        return array_map(function ($hit) use ($fields) {
+            $infos = $hit['_source'];
+            unset($infos['slug']);
+            unset($infos['title']);
+
+            $infoArr = [];
+            foreach ($infos as $id => $info) {
+                $id = substr($id, strlen('info_'));
+                if (strpos($id, '_') !== false) {
+                    continue;
+                }
+                $infoArr[$id] = [
+                    'meta' => $fields[$id],
+                    'contents' => $info
+                ];
+            }
+
+            return new AdventureDocument($hit['_id'], $hit['_source']['title'], $hit['_source']['slug'], $infoArr, $hit['_score']);
         }, $result['hits']['hits']);
     }
 }

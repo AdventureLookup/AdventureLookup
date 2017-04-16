@@ -27,6 +27,7 @@ class TagNameController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+        /** @var TagName[] $tagNames */
         $tagNames = $em->getRepository('AppBundle:TagName')->findAll();
 
         return $this->render('tagname/index.html.twig', array(
