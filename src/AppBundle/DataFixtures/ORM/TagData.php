@@ -113,8 +113,7 @@ class TagData implements FixtureInterface
             'The narrative universe the module is set in.',
             'Forgotten Realms, Dark Sun',
             'string',
-            $manager,
-            true
+            $manager
         );
         $this->createTag(
             'Region',
@@ -218,13 +217,15 @@ class TagData implements FixtureInterface
             'Whether or not tactical maps are provided',
             '1 or 0',
             'boolean',
-            $manager
+            $manager,
+            true
         );
         $this->createTag('Handouts',
             'Whether or not handouts are provided',
             '1 or 0',
             'boolean',
-            $manager
+            $manager,
+            true
         );
 
         $manager->flush();

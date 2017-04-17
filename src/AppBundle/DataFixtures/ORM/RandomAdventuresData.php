@@ -112,7 +112,11 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
                 ]);
             },
             'Publisher' => function (Faker\Generator $faker) {
-                return $faker->company;
+                return $faker->randomElement([
+                    'Wizards of the Coast',
+                    'Other',
+                    'Unicorns Inc.',
+                ]);
             },
             'Setting' => function (Faker\Generator $faker) {
                 return $faker->randomElement([
