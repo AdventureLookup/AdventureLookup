@@ -4,7 +4,10 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\User;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -23,6 +26,17 @@ class UserType extends AbstractType
                 'first_options'  => array('label' => 'Password'),
                 'second_options' => array('label' => 'Repeat Password'),
             ))
+            ->add('curator', CheckboxType::class, [
+                'label' => 'Check this if you want to be a curator (later, only selected people would be allowed to be curators, this is here just for demo purposes.)',
+                'mapped' => false,
+                'required' => false,
+            ])->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+                /** @var User $user */
+                $user = $event->getData();
+                if ($event->getForm()->get('curator')->getData()) {
+                    $user->setRoles(['ROLE_USER', 'ROLE_CURATOR']);
+                }
+            })
         ;
     }
 
