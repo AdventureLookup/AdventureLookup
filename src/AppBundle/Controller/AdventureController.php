@@ -32,10 +32,34 @@ class AdventureController extends Controller
     {
         $search = $this->get('adventure_search');
 
+        $filters = false;
+
         if ($request->query->has('q') && !empty($request->query->get('q', ''))) {
             $adventures = $search->searchAll($request->query->get('q'));
         } else if ($request->request->has('f') || $request->query->has('f')) {
-            $filters = $request->get('f');
+            $filters = [];
+            $all = array_merge($request->query->all(), $request->request->all());
+            foreach ($all as $k => $v) {
+                if ($k == 'f') {
+                    continue;
+                }
+                if ($k[0] == 'f' && is_numeric($k[1]) || substr($k, 1, strlen('title')) == 'title') {
+                    $id = substr($k, 1);
+                    $key = 'c';
+                    if (strrpos($k, 'o') !== false) {
+                        $id = substr($id, 0, -1);
+                        $key = 'o';
+                    }
+
+                    if (!isset($filters[$id])) {
+                        $filters[$id] = [
+                            'o' => 'eq'
+                        ];
+                    }
+                    $filters[$id][$key] = $v;
+                }
+            }
+
             $adventures = $search->searchFilter($filters);
         } else {
             $adventures = $search->all();
@@ -46,13 +70,15 @@ class AdventureController extends Controller
 
         $mostCommonValues = $search->aggregateMostCommonValues($tagNames);
 
+        dump($mostCommonValues);
+
         array_unshift($tagNames, (new TagName())->setId('title')->setTitle('Title')->setApproved(false)->setExample('Against the Cult of the Reptile God')->setDescription('The title of the adventure'));
 
         return $this->render('adventure/index.html.twig', [
             'adventures' => $adventures,
             'tagNames' => $tagNames,
             'mostCommonValues' => $mostCommonValues,
-            'filter' => $request->get('f', false),
+            'filter' => $filters,
             'fieldUtils' => new FieldUtils()
         ]);
     }

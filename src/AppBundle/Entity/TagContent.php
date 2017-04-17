@@ -62,6 +62,23 @@ class TagContent
      */
     private $adventure;
 
+    /**
+     * @var string
+     *
+     * @Gedmo\Blameable(on="create")
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $createdBy;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     * @Gedmo\Blameable(on="change", field={"content"})
+     */
+    private $changedBy;
+
+
     public function __construct()
     {
         $this->approved = false;

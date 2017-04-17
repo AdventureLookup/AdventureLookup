@@ -63,14 +63,19 @@ class SearchIndexUpdater implements EventSubscriber
 
     public function postPersist(LifecycleEventArgs $args)
     {
-        if ($args->getEntity() instanceof TagName) {
-            $this->addMapping($args->getEntity());
+        $entity = $args->getEntity();
+        if ($entity instanceof TagName) {
+            return $this->addMapping($entity);
         }
         return $this->updateSearchIndex($args);
     }
 
     public function postRemove(LifecycleEventArgs $args)
     {
+        $entity = $args->getEntity();
+        if ($entity instanceof TagName) {
+            return $this->removeMappingAndData($entity);
+        }
         return $this->deleteSearchIndex($args);
     }
 
@@ -135,8 +140,6 @@ class SearchIndexUpdater implements EventSubscriber
         ]);
 
         // @TODO: Log errors
-
-        $this->logger->critical(var_export($response, true));
     }
 
     private function addMapping(TagName $field)
@@ -152,6 +155,36 @@ class SearchIndexUpdater implements EventSubscriber
                 ]
             ]
         ]);
+
+        // @TODO: Log errors
+    }
+
+    private function removeMappingAndData(TagName $field)
+    {
+        $fieldUtils = new FieldUtils();
+
+        // Remove data
+        $response = $this->client->updateByQuery([
+            'index' => self::INDEX,
+            'type' => self::TYPE,
+            'body' => [
+                'script' => [
+                    'inline' => 'ctx._source.remove("' . $fieldUtils->getFieldName($field) . '")',
+                ],
+                'query' => [
+                    'bool' => [
+                        'must' => [
+                            'exists' => [
+                                'field' => $fieldUtils->getFieldName($field)
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+        // Remove mapping
+        // Apparently, it is impossible to delete a mapping.
+        // https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-delete-mapping.html
 
         // @TODO: Log errors
     }

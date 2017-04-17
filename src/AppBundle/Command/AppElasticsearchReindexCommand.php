@@ -9,6 +9,7 @@ use AppBundle\Service\FieldUtils;
 use Elasticsearch\ClientBuilder;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -77,13 +78,21 @@ class AppElasticsearchReindexCommand extends ContainerAwareCommand
             ]
         ]);
         $output->writeln('Created mappings');
+        $output->writeln('Reindexing documents');
 
         $searchIndexUpdater = $this->getContainer()->get('search_index_updater');
 
         $adventures = $em->getRepository(Adventure::class)->findAll();
+        $progress = new ProgressBar($output, count($adventures));
+        $progress->start();
+
         foreach($adventures as $adventure) {
             $searchIndexUpdater->update($adventure);
+            $progress->advance();
         }
-        $output->writeln('Indexed documents.');
+
+        $progress->finish();
+        $output->writeln('');
+        $output->writeln('Reindexed documents.');
     }
 }

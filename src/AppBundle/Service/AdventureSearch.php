@@ -234,7 +234,7 @@ class AdventureSearch
                 // This field cannot be aggregated.
                 continue;
             }
-            $aggregations[$fieldUtils->getFieldNameById($fieldEntity)] = [
+            $aggregations[$fieldUtils->getFieldName($fieldEntity)] = [
                 'terms' => [
                     'field' => $elasticField,
                     'size' => $max

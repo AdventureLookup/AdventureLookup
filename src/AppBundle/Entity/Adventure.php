@@ -60,6 +60,22 @@ class Adventure
      */
     private $info;
 
+    /**
+     * @var string
+     *
+     * @Gedmo\Blameable(on="create")
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $createdBy;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     * @Gedmo\Blameable(on="change", field={"title"})
+     */
+    private $updatedBy;
+
     public function __construct()
     {
         $this->info = new ArrayCollection();

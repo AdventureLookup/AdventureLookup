@@ -23,15 +23,16 @@
                     </fieldset>
                 </form>
 
-                <form method="post" action="{{ url('adventure_index')}}#search-results" class="bg-faded p-3">
+                <form method="post" action="{{ url('adventure_index')}}#search-results" class="bg-faded p-3" id="adv-search-form">
                     <fieldset>
+                        <input type="hidden" name="f" value="1" />
                         <legend>Advanced search <button type="button" id="toggle-adv-search" class="btn btn-sm btn-secondary" role="button">toggle</button></legend>
                         <div id="advanced-search" {% if not filter %}class="d-none"{% endif %}>
                             {% for tagName in tagNames %}
                                 <div class="form-group row">
                                     <label class="col-2 col-form-label-sm col-form-label" for="filter_{{ tagName.id }}">{{ tagName.title }}</label>
                                     <div class="col-2">
-                                        <select name="f[{{ tagName.id }}][o]" class="form-control-sm form-control">
+                                        <select name="f{{ tagName.id }}o" class="form-control-sm form-control">
                                             {% for op in fieldUtils.allowedSearchOperations(tagName.type) %}
                                                 <option {% if filter[tagName.id]|default(false) and filter[tagName.id]['o'] == op.id %}selected{% endif %} value="{{ op.id }}">
                                                     {{ op.desc }}
@@ -40,7 +41,8 @@
                                         </select>
                                     </div>
                                     <div class="col-8">
-                                        <input id="filter_{{ tagName.id }}" name="f[{{ tagName.id }}][c]"
+                                        <input id="filter_{{ tagName.id }}"
+                                               name="f{{ tagName.id }}"
                                                class="form-control-sm form-control adv-search-input"
                                                value="{{ filter[tagName.id]['c']|default('') }}"
                                                data-id="{{ tagName.id }}"

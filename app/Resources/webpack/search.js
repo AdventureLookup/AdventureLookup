@@ -14,7 +14,6 @@ import Bloodhound from "typeahead.js/dist/bloodhound";
         $('#advanced-search').removeClass('d-none').fadeToggle();
     });
 
-
     initTypeahead();
     function initTypeahead() {
         $('.adv-search-input').each(function() {
