@@ -9,7 +9,7 @@
                     {% if field.meta.type == 'url' %}
                         {% set path = content.content %}
                     {% else %}
-                        {% set path = path('adventure_index', {f: {(field.meta.id): {o: 'eq', c: content.content}}}) ~ '#search-results' %}
+                        {% set path = path('adventure_index', {'f': 1, ('f' ~ field.meta.id): content.content}) ~ '#search-results' %}
                     {% endif %}
                     <a href="{{ path }}">
                 {% endif %}

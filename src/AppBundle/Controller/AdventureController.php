@@ -70,8 +70,6 @@ class AdventureController extends Controller
 
         $mostCommonValues = $search->aggregateMostCommonValues($tagNames);
 
-        dump($mostCommonValues);
-
         array_unshift($tagNames, (new TagName())->setId('title')->setTitle('Title')->setApproved(false)->setExample('Against the Cult of the Reptile God')->setDescription('The title of the adventure'));
 
         return $this->render('adventure/index.html.twig', [

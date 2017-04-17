@@ -77,7 +77,7 @@ import toastr from "toastr";
         }
         $contentInput = $(`#${prefix}_content`);
         $contentInput.keypress(function (e) {
-            if (e.which === 13) {
+            if (e.which === 13 && $contentInput.get(0).tagName.toLowerCase() === 'input') {
                 saveChanges();
             }
         });
