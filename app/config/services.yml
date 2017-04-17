@@ -13,3 +13,8 @@ services:
     adventure_search:
         class: AppBundle\Service\AdventureSearch
         autowire: true
+
+    app.image_type_extension:
+        class: AppBundle\Form\Extension\HelpTypeExtension
+        tags:
+            - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\FormType }

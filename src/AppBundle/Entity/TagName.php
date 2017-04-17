@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Service\FieldUtils;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -109,7 +110,7 @@ class TagName
     public function __construct()
     {
         $this->approved = true;
-        $this->type = 'text';
+        $this->type = FieldUtils::defaultType;
         $this->useAsFilter = false;
         $this->showInSearchResults = false;
     }

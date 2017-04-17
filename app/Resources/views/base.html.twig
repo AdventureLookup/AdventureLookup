@@ -21,7 +21,7 @@
                     </li>
                     {% if is_granted('ROLE_CURATOR') %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path('tags_index') }}">Tags</a>
+                            <a class="nav-link" href="{{ path('tags_index') }}">Fields</a>
                         </li>
                     {% endif %}
                     {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}

@@ -7,10 +7,10 @@
                 <h1 class="my-5">Add info to "{{ adventure.title }}"</h1>
 
                 <div class="form-group">
-                    <label class="control-label required" for="appbundle_tagcontent_tag">Tag</label>
+                    <label class="control-label required" for="appbundle_tagcontent_tag">Field</label>
                     <select id="appbundle_tagcontent_tag" class="form-control">
                         {% for field in fields %}
-                            <option value="{{ field.id }}" {% if selected.id == field.id %}selected{% endif %}>{{ field.title }}|{{ field.type }}</option>
+                            <option data-type="{{ field.type }}" data-description="{{ field.description }}" data-example="{{ field.example }}" value="{{ field.id }}" {% if selected.id == field.id %}selected{% endif %}>{{ field.title }}</option>
                         {% endfor %}
                     </select>
                 </div>

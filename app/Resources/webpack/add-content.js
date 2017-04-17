@@ -25,18 +25,17 @@ import toastr from "toastr";
         });
     });
 
+
+    function fieldSelected(data) {
+        const $option = $(data[0]['element']);
+        changeContent($option.data('type'), $option.data('description'), $option.data('example'));
+    }
+
     const $tagSelection = $('#' + prefix + '_tag');
-    $tagSelection.select2({
-        'templateResult': (result) => {
-            return result.text.split('|')[0];
-        },
-        'templateSelection': (result) => {
-            return result.text.split('|')[0];
-        }
-    });
+    $tagSelection.select2();
     $tagSelection.on('select2:select', function(){
         $(this).focus();
-        changeContent($(this).select2('data')[0]['text'].split('|')[1]);
+        fieldSelected($(this).select2('data'));
     });
 
     $tagSelection.parent().after(`
@@ -49,7 +48,7 @@ import toastr from "toastr";
     let $contentInput;
 
     const $contentContainer = $('#tag-content-placeholder');
-    function changeContent(type) {
+    function changeContent(type, description, example) {
         $contentContainer.empty();
         switch (type) {
             default:
@@ -58,7 +57,7 @@ import toastr from "toastr";
                 break;
             case 'text':
                 $contentContainer.append(`
-<textarea id="${prefix}_content" name="${prefix}[content]" required="required" class="form-control" rows="20">
+<textarea id="${prefix}_content" name="${prefix}[content]" required="required" class="form-control" rows="15">
 
 </textarea>
 `);
@@ -75,6 +74,12 @@ import toastr from "toastr";
 `);
                 break;
         }
+        $contentContainer.prepend($('<small class="form-text text-muted"></small>').text('Example: ' + example));
+        $contentContainer.prepend($('<small class="form-text text-muted"></small>').text(description));
+        $contentContainer.append(`
+        <small class="form-text text-muted">If the adventure has multiple creatures, authors, etc., only insert one at a time and then hit 'Save and add more information' to insert the next one.</small>
+        <small class="form-text text-muted">You can hit ENTER to quickly save the fields's content.</small>
+`);
         $contentInput = $(`#${prefix}_content`);
         $contentInput.keypress(function (e) {
             if (e.which === 13 && $contentInput.get(0).tagName.toLowerCase() === 'input') {
@@ -114,14 +119,14 @@ import toastr from "toastr";
                 source: content,
                 limit: 20
             }).bind('typeahead:asyncrequest', (evt) => {
-                $('#content-search-spinner').fadeIn();
+                //$('#content-search-spinner').fadeIn();
             }).bind('typeahead:asyncreceive', (evt) => {
-                $('#content-search-spinner').fadeOut();
+                //$('#content-search-spinner').fadeOut();
             });
         }
     }
 
-    changeContent($tagSelection.select2('data')[0]['text'].split('|')[1]);
+    fieldSelected($tagSelection.select2('data'));
     $contentInput.focus();
 
     function saveChanges($btn, done) {
@@ -135,6 +140,7 @@ import toastr from "toastr";
 
         $btn.prop('disabled', true);
         $contentInput.prop('readonly', true);
+        $('#content-search-spinner').fadeIn();
         $.ajax(saveUrl, {
             data: {
                 fieldId: $tagSelection.val(),
@@ -157,6 +163,7 @@ import toastr from "toastr";
             $contentInput.prop('readonly', false);
             $btn.prop('disabled', false);
             $contentInput.focus();
+            $('#content-search-spinner').fadeOut();
         });
     }
 })();

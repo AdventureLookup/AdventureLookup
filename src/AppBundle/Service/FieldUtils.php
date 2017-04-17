@@ -12,6 +12,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class FieldUtils
 {
+    const defaultType = 'string';
+
     public function getFieldNames(): array
     {
         return ['string', 'text', 'integer', 'boolean', 'url'];

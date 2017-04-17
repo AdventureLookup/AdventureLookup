@@ -27,9 +27,10 @@ class UserType extends AbstractType
                 'second_options' => array('label' => 'Repeat Password'),
             ))
             ->add('curator', CheckboxType::class, [
-                'label' => 'Check this if you want to be a curator (later, only selected people would be allowed to be curators, this is here just for demo purposes.)',
+                'label' => 'Be a curator',
                 'mapped' => false,
                 'required' => false,
+                'help' => 'Check this if you want to be a curator (later, only selected people would be allowed to be curators, this is here just for demo purposes).'
             ])->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
                 /** @var User $user */
                 $user = $event->getData();
