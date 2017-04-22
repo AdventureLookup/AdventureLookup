@@ -56,6 +56,7 @@ class TagData implements FixtureInterface
             'Wizards of the Coast, Sword & Sorcery',
             'string',
             $manager,
+            true,
             true
         );
         $this->createTag('# of Pages',
@@ -106,6 +107,7 @@ class TagData implements FixtureInterface
             'D&D 3.5, Pathfinder, 13th Age',
             'string',
             $manager,
+            true,
             true
         );
         $this->createTag(
@@ -128,6 +130,7 @@ class TagData implements FixtureInterface
             'Urban, Forest, Swamp, Cavern, Dungeon, Temple',
             'string',
             $manager,
+            true,
             true
         );
         $this->createTag(
@@ -166,7 +169,7 @@ class TagData implements FixtureInterface
             '5',
             'integer',
             $manager,
-            false
+            true
         );
         $this->createTag('Final level',
             'The expected final level the characters at the end of the module',
@@ -185,7 +188,7 @@ class TagData implements FixtureInterface
             '4',
             'integer',
             $manager,
-            false
+            true
         );
         $this->createTag('Max. # of PCs',
             'How many players of the specified levels the module is balanced against',
@@ -218,6 +221,7 @@ class TagData implements FixtureInterface
             '1 or 0',
             'boolean',
             $manager,
+            true,
             true
         );
         $this->createTag('Handouts',
@@ -225,13 +229,14 @@ class TagData implements FixtureInterface
             '1 or 0',
             'boolean',
             $manager,
+            true,
             true
         );
 
         $manager->flush();
     }
 
-    private function createTag($title, $desc, $example, $type, ObjectManager $manager, bool $showInSearchResults = false)
+    private function createTag($title, $desc, $example, $type, ObjectManager $manager, bool $showInSearchResults = false, bool $useAsFilter = false)
     {
         $tag = new TagName();
         $tag->setTitle($title)
@@ -239,6 +244,7 @@ class TagData implements FixtureInterface
             ->setType($type)
             ->setDescription($desc)
             ->setExample($example)
+            ->setUseAsFilter($useAsFilter)
             ->setShowInSearchResults($showInSearchResults);
 
         $manager->persist($tag);

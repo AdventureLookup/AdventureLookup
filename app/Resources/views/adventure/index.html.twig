@@ -38,7 +38,7 @@
                                 <div class="col-9">
                                     <select class="form-control mb-3" id="filter-selection" title="Add search filter">
                                         <option value="">Add Filter</option>
-                                        {% for field in tagNames if not (field.showInSearchResults or searchFilter[field.id]|default({e: false})['e']) %}
+                                        {% for field in tagNames if not (field.useAsFilter or searchFilter[field.id]|default({e: false})['e']) %}
                                             <option value="{{ field.id }}">{{ field.title }}</option>
                                         {% endfor %}
                                     </select>
@@ -49,7 +49,7 @@
                             </div>
                             {% for field in tagNames if field.type not in ['url'] %}
                                 {% set filter = searchFilter[field.id]|default([]) %}
-                                {% set show = (field.showInSearchResults or searchFilter[field.id]|default({e: false})['e']) %}
+                                {% set show = (field.useAsFilter or searchFilter[field.id]|default({e: false})['e']) %}
                                 <div class="card mb-3 filter-card{% if not show %} d-none{% endif %}" id="filter-{{ field.id }}">
                                     <input type="hidden" name="f[{{ field.id }}][e]" value="{{ show ? '1' : '0' }}" id="filter-{{ field.id }}-enabled">
                                     <div class="card-block">
@@ -159,7 +159,17 @@
                                         <h6 class="card-subtitle mb-2 text-muted">Search score: {{ adventure.score }}</h6>
                                         <ul class="adventure-info-list">
                                             {% for info in adventure.info if info.meta.showInSearchResults %}
-                                                <li><strong>{{ info.meta.title }}</strong>: {{ info.contents|join(',') }}</li>
+                                                <li>
+                                                    <strong>{{ info.meta.title }}</strong>:
+                                                    {% for content in info.contents -%}
+                                                        {%- if info.meta.type == 'boolean' -%}
+                                                            {{- content ? 'yes' : 'no' -}}
+                                                        {%- else -%}
+                                                            {{- content -}}
+                                                        {%- endif -%}
+                                                        {%- if not loop.last %}, {% endif -%}
+                                                    {%- endfor -%}
+                                                </li>
                                             {% endfor %}
                                         </ul>
                                     </div>

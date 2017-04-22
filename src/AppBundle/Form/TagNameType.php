@@ -30,7 +30,8 @@ class TagNameType extends AbstractType
                 'help' => 'Please choose carefully. You will not be able to change the field type later on! Please note: Each field can be added to adventures multiple times. That\'s why the appropriate field type for a list of monsters would be \'string\': Each monster name itself fits perfectly in a simple string.'
             ]);
         }
-        $builder->add('description', TextType::class, [
+        $builder
+            ->add('description', TextType::class, [
                 'help' => 'Give some more insight into what exactly shall be saved in the field.'
             ])
             ->add('example', TextType::class, [
@@ -39,6 +40,10 @@ class TagNameType extends AbstractType
             ->add('showInSearchResults', CheckboxType::class, [
                 'required' => false,
                 'help' => 'Whether or not this field is showed directly in the search results.'
+            ])
+            ->add('useAsFilter', CheckboxType::class, [
+                'required' => false,
+                'help' => 'Whether or not this field will show up as a default filter while searching.'
             ]);
     }
     

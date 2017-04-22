@@ -22,6 +22,7 @@
                             <th>Description</th>
                             <th>Example</th>
                             <th>Show in search results</th>
+                            <th>Use as default filter</th>
                             <th>Usages</th>
                             <th class="text-right">Actions</th>
                         </tr>
@@ -35,6 +36,7 @@
                                 <td>{{ tagName.description }}</td>
                                 <td>{{ tagName.example }}</td>
                                 <td>{% if tagName.showInSearchResults %}Yes{% else %}No{% endif %}</td>
+                                <td>{% if tagName.useAsFilter %}Yes{% else %}No{% endif %}</td>
                                 <td>{{ tagName.contents|length }}</td>
                                 <td class="text-right">
                                     {% if is_granted('ROLE_CURATOR') %}
