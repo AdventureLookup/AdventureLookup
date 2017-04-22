@@ -137,7 +137,7 @@
                                                 {% for value in filter['v']|default([]) if value != '' and value not in valuesUsed %}
                                                     {{ macros.filter_checkbox(field, value, true, 0, false) }}
                                                 {% endfor %}
-                                                {% if buckets|length >= showMoreAfter %}
+                                                {% if buckets|length > showMoreAfter %}
                                                     <span class="show-more text-info text-center">more</span>
                                                 {% endif %}
                                             </div>
