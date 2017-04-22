@@ -28,108 +28,18 @@ class AdventureSearch
     }
 
     /**
-     * @return AdventureDocument[]
-     */
-    public function all()
-    {
-        $result = $this->client->search([
-            'index' => SearchIndexUpdater::INDEX,
-            'type' => SearchIndexUpdater::TYPE,
-            'body' => [
-                'query' => [
-                    'match_all' => new \stdClass()
-                ],
-                'size' => 10000
-            ]
-        ]);
-
-        return $this->searchResultsToAdventureDocuments($result);
-    }
-
-    /**
      * @param string $q
-     * @return AdventureDocument[]
-     */
-    public function searchAll(string $q)
-    {
-        $terms = explode(',', $q);
-
-        $queries = [];
-        foreach($terms as $term) {
-            if (trim($term) == "") {
-                continue;
-            }
-            $queries[] = [
-                'multi_match' => [
-                    'query' => $term,
-                    'fields' => ['title', 'info_*'],
-                    'lenient' => true,
-                    'type' => 'phrase'
-                ]
-            ];
-        }
-
-        $result = $this->client->search([
-            'index' => SearchIndexUpdater::INDEX,
-            'type' => SearchIndexUpdater::TYPE,
-            'body' => [
-                'query' => [
-                    'bool' => [
-                        'must' => $queries
-                    ],
-                ],
-                'min_score' => 1,
-                'size' => 100
-            ]
-        ]);
-
-        return $this->searchResultsToAdventureDocuments($result);
-    }
-
-    /**
      * @param array $filters
      * @return AdventureDocument[]
      */
-    public function searchFilter(array $filters)
+    public function search(string $q, array $filters)
     {
-        $qb = $this->em->createQueryBuilder();
-        $qb
-            ->select('f')
-            ->from(TagName::class, 'f', 'f.id');
-        /** @var TagName[] $fields */
-        $fields = $qb->getQuery()->execute();
-
-        $fieldUtils = new FieldUtils();
-
         $matches = [];
-        foreach ($filters as $id => $filter) {
-            if ($id !== 'title' && !is_numeric($id)) {
-                continue;
-            }
-            $content = $filter['c'];
-            if ($content === "") {
-                continue;
-            }
-
-            $field = $fieldUtils->getFieldNameById($id);
-            $operator = $filter['o'];
-
-            if (in_array($operator, ['gte', 'gt', 'lt', 'lte'])) {
-                $matches[] = ['range' => [$field => [$operator => $content]]];
-            } else if ($operator == 'eq') {
-                $fieldEntity = $fields[$id];
-                if ($fieldEntity->getType() == 'string') {
-                    $field .= '.keyword';
-                }
-                $matches[] = ['term' => [$field => $content]];
-            } else {
-                $matches[] = ['match' => [$field => $content]];
-            }
-        }
+        $matches = $this->qMatches($q, $matches);
+        $matches = $this->filterMatches($filters, $matches);
         if (empty($matches)) {
-            return $this->all();
+            $matches = ['match_all' => new \stdClass()];
         }
-
 
         $result = $this->client->search([
             'index' => SearchIndexUpdater::INDEX,
@@ -140,12 +50,13 @@ class AdventureSearch
                         "must" => $matches
                     ]
                 ],
-                'min_score' => 1,
-                'size' => 100
-            ]
+                'size' => 1000,
+                'aggs' => $this->fieldAggregations(),
+            ],
+            'explain' => true,
         ]);
 
-        return $this->searchResultsToAdventureDocuments($result);
+        return [$this->searchResultsToAdventureDocuments($result), $result['aggregations']];
     }
 
     public function autocompleteFieldContent(TagName $field, string $q): array
@@ -260,6 +171,19 @@ class AdventureSearch
         return $results;
     }
 
+    public function getStats()
+    {
+        return $this->client->search([
+            'index' => SearchIndexUpdater::INDEX,
+            'type' => SearchIndexUpdater::TYPE,
+            'body' => [
+                '_source' => false,
+                'size' => 0,
+                'aggs' => $this->fieldAggregations()
+            ]
+        ])['aggregations'];
+    }
+
     /**
      * @param array $result
      * @return AdventureDocument[]
@@ -288,5 +212,178 @@ class AdventureSearch
 
             return new AdventureDocument($hit['_id'], $hit['_source']['title'], $hit['_source']['slug'], $infoArr, $hit['_score']);
         }, $result['hits']['hits']);
+    }
+
+    /**
+     * @return array
+     */
+    private function fieldAggregations(): array
+    {
+        $fieldUtils = new FieldUtils();
+        $fields = $this->em->getRepository(TagName::class)->findAll();
+        $fields[] = $fieldUtils->getTitleField();
+        $aggs = [];
+        foreach ($fields as $field) {
+            $fieldName = $fieldUtils->getFieldNameForAggregation($field);
+            switch ($field->getType()) {
+                case 'integer':
+                    $aggs['max_' . $field->getId()] = [
+                        'max' => [
+                            'field' => $fieldName
+                        ],
+                    ];
+                    $aggs['min_' . $field->getId()] = [
+                        'min' => [
+                            'field' => $fieldName
+                        ],
+                    ];
+                    break;
+                case 'boolean':
+                    $aggs['vals_' . $field->getId()] = [
+                        'terms' => [
+                            'field' => $fieldName
+                        ]
+                    ];
+                    break;
+                case 'string':
+                    $aggs['vals_' . $field->getId()] = [
+                        'terms' => [
+                            'field' => $fieldName,
+                            'size' => 20
+                        ]
+                    ];
+                    break;
+            }
+        }
+        return $aggs;
+    }
+
+    /**
+     * @param string $q
+     * @param $matches
+     * @return array
+     */
+    private function qMatches(string $q, $matches): array
+    {
+        $fields = $this->getFields();
+        $fieldUtils = new FieldUtils();
+        $fields = array_filter($fields, function (TagName $field) use ($fieldUtils) {
+            return $fieldUtils->isPartOfQSearch($field->getType());
+        });
+        $fields = array_map(function (TagName $field) use ($fieldUtils) {
+            return $fieldUtils->getFieldNameById($field->getId());
+        }, $fields);
+        $fields = array_values($fields);
+
+        $terms = explode(',', $q);
+        $qMatches = [];
+        foreach ($terms as $term) {
+            if (trim($term) == "") {
+                continue;
+            }
+            $qMatches[] = [
+                'multi_match' => [
+                    'query' => $term,
+                    'fields' => $fields,
+                    'type' => 'phrase'
+                ]
+            ];
+        }
+        if (!empty($qMatches)) {
+            $matches[] = [
+                'bool' => [
+                    'must' => $qMatches
+                ]
+            ];
+        }
+        return $matches;
+    }
+
+    /**
+     * @param array $filters
+     * @return array
+     */
+    private function filterMatches(array $filters, array $matches): array
+    {
+        $fieldUtils = new FieldUtils();
+        $fields = $this->getFields();
+
+        foreach ($filters as $id => $filter) {
+            if ($id !== 'title' && !is_numeric($id)) {
+                continue;
+            }
+            if ($filter['e'] != '1') {
+                continue;
+            }
+            $values = isset($filter['v']) ? (array)$filter['v'] : [];
+            if (count($values) == 0) {
+                continue;
+            }
+
+            $booleanOperator = isset($filter['b']) ? $filter['b'] : 'AND';
+            if (!in_array($booleanOperator, ['AND', 'OR'], true)) {
+                $booleanOperator = 'AND';
+            }
+
+            $filterMatches = [];
+            foreach ($values as $key => $value) {
+                if ($value === '') {
+                    continue;
+                }
+                $fieldName = $fieldUtils->getFieldNameById($id);
+                $fieldEntity = $fields[$id];
+
+                if (in_array($key, ['min', 'max'], true) && is_numeric($value)) {
+                    $filterMatches[] = [
+                        'range' => [
+                            $fieldName => [
+                                $key == 'min' ? 'gte' : 'lte' => $value,
+                            ]
+                        ]
+                    ];
+                #} else if (in_array($fieldEntity->getType(), ['string', 'text'])) {
+                #    $filterMatches[] = ['match' => [$field => $value]];
+                } else {
+                    if ($fieldEntity->getType() == 'string') {
+                        $fieldName .= '.keyword';
+                    }
+                    $filterMatches[] = ['term' => [$fieldName => $value]];
+                }
+            }
+
+            if (count($filterMatches) > 0) {
+                if ($booleanOperator == 'OR') {
+                    $matches[] = [
+                        'bool' => [
+                            'should' => $filterMatches,
+                            'minimum_should_match' => 1,
+                        ]
+                    ];
+                } else {
+                    $matches[] = [
+                        'bool' => [
+                            'must' => $filterMatches
+                        ]
+                    ];
+                }
+            }
+        }
+        return $matches;
+    }
+
+    /**
+     * @return TagName[]
+     */
+    private function getFields(): array
+    {
+        $qb = $this->em->createQueryBuilder();
+        $qb
+            ->select('f')
+            ->from(TagName::class, 'f', 'f.id');
+        /** @var TagName[] $fields */
+        $fields = $qb->getQuery()->execute();
+        $fields['title'] = (new FieldUtils())->getTitleField();
+
+        return $fields;
     }
 }

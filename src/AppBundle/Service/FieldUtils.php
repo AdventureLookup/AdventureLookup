@@ -177,6 +177,12 @@ class FieldUtils
     {
         return (new TagName())
             ->setId('title')
+            ->setTitle('Title')
+            ->setApproved(true)
+            ->setUseAsFilter(false)
+            ->setShowInSearchResults(false)
+            ->setDescription('The title of the adventure')
+            ->setExample('Against the cult of the reptile god')
             ->setType('string');
     }
 
@@ -201,5 +207,10 @@ class FieldUtils
             $field = 'info_' . $id;
         }
         return $field;
+    }
+
+    public function isPartOfQSearch(string $type): bool
+    {
+        return in_array($type, ['text', 'string'], true);
     }
 }

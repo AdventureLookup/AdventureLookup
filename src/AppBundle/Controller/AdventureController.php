@@ -5,14 +5,12 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\AdventureDocument;
 use AppBundle\Entity\TagName;
-use AppBundle\Listener\SearchIndexUpdater;
 use AppBundle\Service\FieldUtils;
-use Doctrine\ORM\EntityManagerInterface;
-use Elasticsearch\ClientBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -30,54 +28,27 @@ class AdventureController extends Controller
      */
     public function indexAction(Request $request)
     {
+        $fieldUtils = new FieldUtils();
         $search = $this->get('adventure_search');
 
-        $filters = false;
-
-        if ($request->query->has('q') && !empty($request->query->get('q', ''))) {
-            $adventures = $search->searchAll($request->query->get('q'));
-        } else if ($request->request->has('f') || $request->query->has('f')) {
-            $filters = [];
-            $all = array_merge($request->query->all(), $request->request->all());
-            foreach ($all as $k => $v) {
-                if ($k == 'f') {
-                    continue;
-                }
-                if ($k[0] == 'f' && is_numeric($k[1]) || substr($k, 1, strlen('title')) == 'title') {
-                    $id = substr($k, 1);
-                    $key = 'c';
-                    if (strrpos($k, 'o') !== false) {
-                        $id = substr($id, 0, -1);
-                        $key = 'o';
-                    }
-
-                    if (!isset($filters[$id])) {
-                        $filters[$id] = [
-                            'o' => 'eq'
-                        ];
-                    }
-                    $filters[$id][$key] = $v;
-                }
-            }
-
-            $adventures = $search->searchFilter($filters);
-        } else {
-            $adventures = $search->all();
-        }
+        $q = $request->get('q', '');
+        $filters = $request->get('f', []);
+        list($adventures, $stats) = $search->search($q, $filters);
 
         $em = $this->getDoctrine()->getManager();
         $tagNames = $em->getRepository('AppBundle:TagName')->findAll();
+        array_unshift($tagNames, $fieldUtils->getTitleField());
 
-        $mostCommonValues = $search->aggregateMostCommonValues($tagNames);
-
-        array_unshift($tagNames, (new TagName())->setId('title')->setTitle('Title')->setApproved(false)->setExample('Against the Cult of the Reptile God')->setDescription('The title of the adventure'));
+        $exampleValues = $search->aggregateMostCommonValues($tagNames);
 
         return $this->render('adventure/index.html.twig', [
             'adventures' => $adventures,
+            'exampleValues' => $exampleValues,
+            'stats' => $stats,
             'tagNames' => $tagNames,
-            'mostCommonValues' => $mostCommonValues,
-            'filter' => $filters,
-            'fieldUtils' => new FieldUtils()
+            'searchFilter' => $filters,
+            'q' => $q,
+            'fieldUtils' => new FieldUtils(),
         ]);
     }
 

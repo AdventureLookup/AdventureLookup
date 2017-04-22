@@ -1731,6 +1731,10 @@ jquery@>=1.7, jquery@>=1.9.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.2.1.tgz#5c4d9de652af6cd0a770154a631bba12b015c787"
 
+jquery@~2.1.4:
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-2.1.4.tgz#228bde698a0c61431dc2630a6a154f15890d2317"
+
 js-base64@^2.1.9:
   version "2.1.9"
   resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.1.9.tgz#f0e80ae039a4bd654b5f281fc93f04a914a7fcce"
@@ -2168,6 +2172,10 @@ normalize-url@^1.4.0:
     prepend-http "^1.0.0"
     query-string "^4.1.0"
     sort-keys "^1.0.0"
+
+nouislider@^9.2.0:
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/nouislider/-/nouislider-9.2.0.tgz#e87c507de2b0b4d075038b5a42547c7dbbebaf69"
 
 "npmlog@0 || 1 || 2 || 3 || 4", npmlog@^4.0.0, npmlog@^4.0.2:
   version "4.0.2"
@@ -2713,6 +2721,12 @@ readdirp@^2.0.0:
     minimatch "^3.0.2"
     readable-stream "^2.0.2"
     set-immediate-shim "^1.0.1"
+
+readmore-js@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/readmore-js/-/readmore-js-2.1.0.tgz#0cf33cfc6f1f06af2a58e8e4fc4704db8c77fb57"
+  dependencies:
+    jquery "~2.1.4"
 
 redent@^1.0.0:
   version "1.0.0"
