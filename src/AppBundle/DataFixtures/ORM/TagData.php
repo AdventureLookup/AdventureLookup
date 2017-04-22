@@ -166,7 +166,7 @@ class TagData implements FixtureInterface
             '5',
             'integer',
             $manager,
-            true
+            false
         );
         $this->createTag('Final level',
             'The expected final level the characters at the end of the module',
@@ -185,7 +185,7 @@ class TagData implements FixtureInterface
             '4',
             'integer',
             $manager,
-            true
+            false
         );
         $this->createTag('Max. # of PCs',
             'How many players of the specified levels the module is balanced against',
