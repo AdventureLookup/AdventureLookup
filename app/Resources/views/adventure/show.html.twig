@@ -5,11 +5,11 @@
     <ul>
         {% for content in field.contents %}
             <li>
-                {% if field.meta.type not in ['text'] %}
+                {% if field.meta.type in ['string', 'url'] %}
                     {% if field.meta.type == 'url' %}
                         {% set path = content.content %}
                     {% else %}
-                        {% set path = path('adventure_index', {'f': 1, ('f' ~ field.meta.id): content.content}) ~ '#search-results' %}
+                        {% set path = path('adventure_index', {'f': 1, ('f[' ~ field.meta.id ~ '][e]'): '1', ('f[' ~ field.meta.id ~ '][v]'): content.content}) ~ '#search-results' %}
                     {% endif %}
                     <a href="{{ path }}">
                 {% endif %}
