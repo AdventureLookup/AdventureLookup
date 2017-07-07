@@ -55,6 +55,9 @@
                                 <textarea class="form-control" id="appbundle_adventure_field_{{ fieldType.id }}" rows="10" name="fields[{{ fieldType.id }}][]"></textarea>
                             {% endif %}
                             <small class="form-text text-muted">{{ fieldType.description }}</small>
+                            {% if fieldType.example %}
+                                <small class="form-text text-muted">Example: <em>{{ fieldType.example }}</em></small>
+                            {% endif %}
                         </div>
                     {% endfor %}
 
