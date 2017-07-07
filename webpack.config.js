@@ -34,7 +34,7 @@ module.exports = {
       { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url-loader?limit=10000&mimetype=application/font-woff&publicPath=/assets/' },
       // the file-loader emits files.
       { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file-loader?publicPath=/assets/' },
-      { test: /\.(png|jpeg|jpg)$/, loader: 'file-loader?publicPath=/assets/' },
+      { test: /\.(png|jpeg|jpg|gif)$/, loader: 'file-loader?publicPath=/assets/' },
     ]
   },
   plugins: [
