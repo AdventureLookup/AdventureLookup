@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -105,13 +106,34 @@ class TagContentController extends Controller
     }
 
     /**
+     * @Route("/adventure-info/similar-titles", name="similar_titles_search")
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function findSimilarTitlesAction(Request $request)
+    {
+        $q = $request->query->get('q', false);
+        if ($q === false) {
+            throw new NotFoundHttpException();
+        }
+
+        $results = $this->get('adventure_search')->similarTitles($q);
+
+        return new JsonResponse($results);
+    }
+
+    /**
      * @Route("/adventure-info/title/search")
      *
      * @return JsonResponse
      */
     public function fieldContentSearchTitleAction(Request $request)
     {
-        $q = $request->query->get('q');
+        $q = $request->query->get('q', false);
+        if ($q === false) {
+            throw new NotFoundHttpException();
+        }
 
         $field = (new FieldUtils())->getTitleField();
 

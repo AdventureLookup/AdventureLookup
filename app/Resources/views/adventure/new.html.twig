@@ -1,20 +1,25 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container">
+    <div class="container" id="page--create-adventure" data-similar-titles-url="{{ path('similar_titles_search') }}">
         <div class="row">
             <div class="col">
                 <h1 class="my-5">New adventure</h1>
                 {% if not adventure.approved %}
-                    <div class="alert alert-warning">Your new adventure will need approval from a curator.</div>
+                    <div class="alert alert-info">Your new adventure will need approval from a curator.</div>
                 {% endif %}
 
                 {{ form_start(form) }}
                 {{ form_widget(form) }}
+
+                <div class="alert alert-warning hidden-xs-up similar-adventures-warning">
+                    <strong>It looks like there already are adventures with a similar title. Please make sure not to duplicate them!</strong>
+                    <ul class="similar-adventures-list"></ul>
+                </div>
+
                 <input class="btn btn-primary" type="submit" value="Create" />
                 {{ form_end(form) }}
             </div>
         </div>
     </div>
-
 {% endblock %}

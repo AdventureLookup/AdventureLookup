@@ -59,6 +59,39 @@ class AdventureSearch
         return [$this->searchResultsToAdventureDocuments($result), $result['aggregations']];
     }
 
+    public function similarTitles($title): array
+    {
+        if ($title === '') {
+            return [];
+        }
+
+        $fieldUtils = new FieldUtils();
+
+        $result = $this->client->search([
+            'index' => SearchIndexUpdater::INDEX,
+            'type' => SearchIndexUpdater::TYPE,
+            'body' => [
+                'query' => [
+                    'match' => [
+                        $fieldUtils->getFieldNameById('title') => [
+                            'query' => $title,
+                            'operator' => 'and',
+                        ]
+                    ]
+                ],
+                '_source' => [
+                    'title',
+                    'slug'
+                ],
+                'size' => 10,
+            ],
+        ]);
+
+        return array_map(function ($hit) {
+            return $hit['_source'];
+        }, $result['hits']['hits']);
+    }
+
     public function autocompleteFieldContent(TagName $field, string $q): array
     {
         if ($q === '') {

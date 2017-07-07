@@ -10,6 +10,7 @@ import './style.scss';
 
 import './add-content.js';
 import './search.js';
+import './adventure-create.js';
 
 
 toastr.options = {
@@ -28,4 +29,4 @@ toastr.options = {
     "hideEasing": "linear",
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
-}
+};
