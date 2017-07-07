@@ -54,7 +54,7 @@
                                     <input type="hidden" name="f[{{ field.id }}][e]" value="{{ show ? '1' : '0' }}" id="filter-{{ field.id }}-enabled">
                                     <div class="card-block">
                                         {% if field.type in ['string'] %}
-                                            <select class="small float-right" name="f[{{ field.id }}][b]" title="Boolean operator">
+                                            <select class="small float-right" name="f[{{ field.id }}][b]" title="AND: All checked items must be part of the adventure. OR: At least one of the checked items must be part of the adventure">
                                                 <option{% if filter['b']|default('') == 'AND' %} selected{% endif %}>AND</option>
                                                 <option{% if filter['b']|default('') == 'OR' %} selected{% endif %}>OR</option>
                                             </select>
@@ -142,6 +142,7 @@
                                                 {% endif %}
                                             </div>
                                         {% endif %}
+                                        <button type="submit" class="btn btn-secondary pull-right btn-sm" role="button">Apply</button>
                                     </div>
                                 </div>
                             {% endfor %}
