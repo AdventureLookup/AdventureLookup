@@ -4,6 +4,7 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/xenial64"
   config.vm.network "forwarded_port", guest: 8000, host: 8000
+  config.vm.network "forwarded_port", guest: 9200, host: 9200
 
   config.vm.synced_folder ".", "/vagrant", :nfs => true, :mount_options => ['nolock,vers=3,udp,noatime']
   config.vm.network "private_network", type: "dhcp"
@@ -63,8 +64,11 @@ Vagrant.configure("2") do |config|
      rm elasticsearch-5.5.0.deb
      service elasticsearch start
 
-     # Decrease Elasticsearch memory to 256MB
+     ### Development Elasticsearch settings:
+     # Decrease memory to 256MB
      sed -i -e 's/2g/256m/g' /etc/elasticsearch/jvm.options
+     # Listen on 0.0.0.0
+     echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
 
      echo "cd /vagrant" >> /home/ubuntu/.bashrc
   SHELL
