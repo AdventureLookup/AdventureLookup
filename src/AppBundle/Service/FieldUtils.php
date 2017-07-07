@@ -139,6 +139,7 @@ class FieldUtils
                 $builder->add('content', TextType::class, [
                     'required' => true,
                 ]);
+                return;
             case 'url':
                 $builder->add('content', UrlType::class, [
                     'required' => true,
