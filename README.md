@@ -11,12 +11,12 @@ After downloading and installing Vagrant and VirtualBox, clone this repository a
 Execute the following commands to finish the installation:
 ```
 # Install PHP dependencies
-composer install
+composer install -n
 
 # Install Frontend dependencies
-yarn install
+yarn install --no-bin-links
 nodejs node_modules/node-sass/scripts/install.js
-npm rebuild node-sass
+npm rebuild node-sass --no-bin-links
 
 # Setup database
 php bin/console doctrine:migrations:migrate
@@ -24,7 +24,7 @@ php bin/console doctrine:migrations:migrate
 # Create Elasticsearch index
 php bin/console app:elasticsearch:reindex
 
-# Import dummy adventures (optional)
+# Import dummy adventures
 php bin/console doctrine:fixtures:load --fixtures src/AppBundle/DataFixtures/ORM/TagData.php --fixtures src/AppBundle/DataFixtures/ORM/RandomAdventuresData.php -n
 php bin/console app:elasticsearch:reindex
 ```
@@ -32,12 +32,15 @@ php bin/console app:elasticsearch:reindex
 # Running the application
 
 ```
-# Start development server on port 8000
+# Start Symfony development server on port 8000 to run the application
 php bin/console server:start 0.0.0.0
 
-# Start webpack server
-yarn run dev
+# Start webpack to watch changes to assets and recompile them
+nodejs node_modules/webpack/bin/webpack --watch --progress
 ```
+
+The application is now running at http://localhost:8000/app_dev.php.
+Elasticsearch can be accessed at http://localhost:9200.
 
 # Running the application in production
 
