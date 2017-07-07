@@ -39,6 +39,31 @@ php bin/console server:start 0.0.0.0
 yarn run dev
 ```
 
+# Running the application in production
+
+Install `apache2` and `libapache2-mod-php7.0`. Create a VHost like this:
+```
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/html/AdventureLookup/web
+    <Directory /var/www/html/AdventureLookup/web>
+        AllowOverride All
+        Order Allow,Deny
+        Allow from All
+        <IfModule mod_rewrite.c>
+            Options -MultiViews
+            RewriteEngine On
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteRule ^(.*)$ app.php [QSA,L]
+        </IfModule>
+    </Directory>
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
+
+Also make sure to run `mysql_secure_installation` and adjust `/etc/apache2/conf-enabled/security.conf`!
+
 # Tools used
 
 - Ubuntu 16.04 as the server
