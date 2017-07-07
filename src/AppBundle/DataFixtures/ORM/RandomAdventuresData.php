@@ -135,6 +135,9 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
                     'Milestones', 'XP'
                 ]);
             },
+            'Level Range' => function (Faker\Generator $faker) {
+                return $faker->randomElement(['low', 'medium', 'high']);
+            },
             'Notable Items' => function (Faker\Generator $faker) {
                 return $faker->randomElement([
                     'Arcane Door',
