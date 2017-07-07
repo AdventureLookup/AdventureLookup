@@ -20,7 +20,7 @@
             <div class="col">
                 <h1 class="mt-5">Adventure search</h1>
                 {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                    <a class="mb-3 float-right btn btn-outline-success" href="{{ path('adventure_new') }}">Add a new adventure</a>
+                    <a class="mb-3 float-right btn btn-success" href="{{ path('adventure_new') }}">Add a new adventure</a>
                 {% endif %}
                 <p>Find adventures fitting your search term!</p>
                 <div class="clearfix"></div>
