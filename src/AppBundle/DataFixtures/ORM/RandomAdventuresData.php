@@ -86,15 +86,7 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
                 ]);
             },
             'System / Edition' => function (Faker\Generator $faker) {
-                return $faker->randomElement([
-                    'DnD 2e',
-                    'DnD 3e',
-                    'DnD 3.5e',
-                    'DnD 4e',
-                    'DnD 5e',
-                    'Pathfinder',
-                    'Advanced DnD',
-                ]);
+                return $faker->randomElement(explode(', ', "OD&D, AD&D, BECMI. AD&D 2, 3rd Edition, 3.5, Pathfinder, 4th Edition, 4th Essentials, 5th Edition, OSR, DCC"));
             },
             'Availability' => function (Faker\Generator $faker) {
                 return $faker->randomElement([
@@ -112,65 +104,16 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
                 ]);
             },
             'Publisher' => function (Faker\Generator $faker) {
-                return $faker->randomElement([
-                    'Wizards of the Coast',
-                    'Other',
-                    'Unicorns Inc.',
-                ]);
+                return $faker->randomElement(explode(', ', 'TSR, WotC, Paizo, Goodman Games, Necromancer Games, Judge\'s Guild'));
             },
             'Setting' => function (Faker\Generator $faker) {
-                return $faker->randomElement([
-                    'Birthright',
-                    'Blackmoor',
-                    'Council of Wyrms',
-                    'Dark Sun',
-                    'Dragon Fist',
-                    'Dragonlance',
-                    'Time of the Dragon',
-                    'Eberron',
-                    'Forgotten Realms',
-                    'Al-Qadim',
-                    'The Horde',
-                    'Kara-Tur',
-                    'Malatra: The Living Jungle',
-                    'Maztica',
-                    'Ghostwalk',
-                    'Greyhawk',
-                    'Jakandor',
-                    'Kingdoms of Kalamar',
-                    'Lankhmar',
-                    'Mahasarpa',
-                    'Mystara',
-                    'Hollow World',
-                    'Savage Coast',
-                    'Nentir Vale',
-                    'Pelinore',
-                    'Planescape',
-                    'Ravenloft',
-                    'Masque of the Red Death',
-                    'Rokugan',
-                    'Spelljammer',
-                    'Thunder Rift',
-                    'Warcraft',
-                    'Wilderlands of High Fantasy'
-                ]);
+                return $faker->randomElement(explode(', ', 'Greyhawk, Blackmoor, Dragonlance, Forgotten Realms, Mystara, Dark Sun, Birthright, Eberron, Ravenloft'));
             },
             'Region' => function (Faker\Generator $faker) {
                 return $faker->randomElement(explode(', ', 'Aeskeem, Aevhyr Anganor, Ardur, Aurna, Awk, Bahli, Balk, Belka, Benere, Borune, Bre\'gyn, Briggs, Brourd, Cahathic, Camas, Catip, Cerios, Cerran, Chathoc, Chetatyr, Clarmont, Criik, Dater Bass, Danto, Delthestal, Dhariy, Dinal, Dnher, Entnab, Eshul, Evarz, Exaple, Falkland, Fhalk, Figlomere, Forlen, Fortena, Gan, Ghonyg, Ginad, Giud, Gorge, Gourne, Gynnikt, Hashma, Haug, Havaco, Hevali, Hiwhe, Idierz, Iget, Inan, Inteka, Ivester, Jyshmon, Kallak, Khand, Khees, Khis, Krynn, La\'poch, Leore, Libernab, Loevlee, Loria, Manto, Memnon, Mohrin, Nabrynn, Najal (soft j), Nanduka, Nareik, Nexur, Noydhea, Ocea, Ofer, Omine, Opake, Parthin, Phorquard, Phyion, Piegar, Pikuko, Qa, Qar\'ul, Rankino, Rath, Rith, Ravan, Rhutyne, Rogure, Rush Valley, Sallow Valley, Santhica, Sar\'ukt, Scholl, Scretob, Shaal, Shorol, Siel, Speld, Stoeln, Sypes, T\'Narg, Toi, Tranda, Tribliko, Uth\'nuul, Vaargh, Verdival, Verios, Washougal, Wyshnal, Xing, Xyron, Yerda, Zaramon, Zreall, Zubair, City of Dis'));
             },
             'Environment' => function (Faker\Generator $faker) {
-                return $faker->randomElement([
-                    'Underground',
-                    'Underdark',
-                    'Urban',
-                    'Aquatic',
-                    'Desert',
-                    'Forest',
-                    'Hills',
-                    'Marsh',
-                    'Mountains',
-                    'Plains',
-                ]);
+                return $faker->randomElement(explode(', ', 'Dungeon, Wilderness, Swamp, City, Town, Ship, Underdark, Underwater, Stronghold, Planes'));
             },
             'Magic Level' => function (Faker\Generator $faker) {
                 return $faker->randomElement([
