@@ -6,7 +6,14 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 8000, host: 8000
   config.vm.network "forwarded_port", guest: 9200, host: 9200
 
-  config.vm.synced_folder ".", "/vagrant", :nfs => true, :mount_options => ['nolock,vers=3,udp,noatime']
+  if Vagrant::Util::Platform.windows? then
+    puts "Windows OS detected - using slow shared folders."
+    config.vm.synced_folder ".", "/vagrant"
+  else
+    puts "Non-Windows OS detected - using nfs to share folder."
+    config.vm.synced_folder ".", "/vagrant", :nfs => true
+  end
+
   config.vm.network "private_network", type: "dhcp"
 
   config.vm.provider "virtualbox" do |vb|
