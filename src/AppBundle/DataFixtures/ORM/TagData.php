@@ -16,6 +16,8 @@ class TagData implements FixtureInterface
      */
     public function load(ObjectManager $manager)
     {
+        // Adventure title is always there.
+
         // General information
         $this->createTag(
             'Author',
@@ -24,87 +26,18 @@ class TagData implements FixtureInterface
             'string',
             $manager
         );
-
         $this->createTag(
-            'Designer',
-            'Names of people with design credits on the module',
-            'Mike Mearls, Jeremy Crawford ',
-            'string',
-            $manager
-        );
-        $this->createTag(
-            'Cover Artist',
-            'Names of any artists involved with the cover artwork for the module',
-            'Raymond Swanland',
-            'string',
-            $manager
-        );
-        $this->createTag('Interior Artist',
-            'Names of any artists involved with the page artwork for the module',
-            'Tom Babbey, Daren Bader, John-Paul Balmet',
-            'string',
-            $manager
-        );
-        $this->createTag('Map Artist',
-            'Names of any artists involved in creating maps for the module',
-            'Mike Schley',
-            'string',
-            $manager
-        );
-        $this->createTag('Publisher',
-            'Publisher of the module',
-            'Wizards of the Coast, Sword & Sorcery',
+            'System / Edition',
+            'The system the game was designed for and the edition of that system if there is one.',
+            'D&D 3.5, Pathfinder, 13th Age',
             'string',
             $manager,
             true,
             true
         );
-        $this->createTag('# of Pages',
-            'Total page count of all written material in the module or at least primary string',
-            '192',
-            'integer',
-            $manager
-        );
-        $this->createTag('Year of Release',
-            'Year the module was published',
-            '2016',
-            'integer',
-            $manager
-        );
-        $this->createTag(
-            'Language',
-            'List of any languages the module is available in',
-            'English, Italian, German',
-            'string',
-            $manager
-        );
-        $this->createTag(
-            'Availability',
-            'What is the current avilability of the module',
-            'In Print, Out of Print, Print on Demand, Digital',
-            'string',
-            $manager
-        );
-        $this->createTag(
-            'Available Formats',
-            'The different formats the module is available in',
-            'PDF, Epub, Paper',
-            'string',
-            $manager
-        );
-        $this->createTag(
-            'Link',
-            'Links to legitimate sites where the module can be procured',
-            'dmsguild.com/drivethrurpg links',
-            'url',
-            $manager
-        );
-
-        // Adventure setting
-        $this->createTag(
-            'System / Edition',
-            'The system the game was designed for and the edition of that system if there is one.',
-            'D&D 3.5, Pathfinder, 13th Age',
+        $this->createTag('Publisher',
+            'Publisher of the module',
+            'Wizards of the Coast, Sword & Sorcery',
             'string',
             $manager,
             true,
@@ -117,27 +50,62 @@ class TagData implements FixtureInterface
             'string',
             $manager
         );
-        $this->createTag(
-            'Region',
-            'The region within the modules universe that it takes place',
-            'Sword Coast, Great Salt Flats',
+        $this->createTag('Min. Starting Level',
+            'The minimum level characters are expected to be when taking part in the module',
+            '5',
+            'integer',
+            $manager,
+            true
+        );
+        $this->createTag('Max. Starting Level',
+            'The maximum level characters are expected to be when taking part in the module',
+            '17',
+            'integer',
+            $manager
+        );
+        $this->createTag('Level Range',
+            'In case no min. / max. starting levels but rather low/medium/high are given',
+            'low, medium, high',
             'string',
             $manager
         );
+        $this->createTag('Suitable for Solo Play',
+            'Whether or not this is suited to be played solo.',
+            '1 or 0',
+            'boolean',
+            $manager);
+        $this->createTag('Length (# of Pages)',
+            'Total page count of all written material in the module or at least primary string',
+            '192',
+            'integer',
+            $manager
+        );
+        $this->createTag('Includes Pregenerated Characters',
+            'Whether or not this contains character sheets.',
+            '1 or 0',
+            'boolean',
+            $manager);
         $this->createTag(
             'Environment',
-            'The different types of environs the module will take place in',
-            'Urban, Forest, Swamp, Cavern, Dungeon, Temple',
+            'The different types of environments the module will take place in',
+            'Dungeon, Wilderness, Swamp, City, Town, Ship, Underdark, Underwater, Stronghold, Planes',
             'string',
             $manager,
             true,
             true
         );
         $this->createTag(
-            'Adventure Set / Storyline',
-            'The set of modules or narrative the module is part of',
-            'Rise of the Runelords/Rise of Tiamat/Heroic Standalone',
-            'string',
+            'Link',
+            'Links to legitimate sites where the module can be procured. Make sure to include http:// oder https:// !',
+            'dmsguild.com / drivethrurpg links',
+            'url',
+            $manager
+        );
+        $this->createTag(
+            'Thumbnail',
+            'URL of the thumbnail image. Make sure to include http:// oder https:// !',
+            '',
+            'url',
             $manager
         );
         $this->createTag('Description',
@@ -146,73 +114,17 @@ class TagData implements FixtureInterface
             'text',
             $manager
         );
-        $this->createTag('Magic Level',
-            'How prevalent is magic and access to magic items within the module',
-            'Low Magic, High Magic, Magitech',
-            'string',
-            $manager
-        );
-        $this->createTag('Alignment',
-            'The alignment the participating characters expected to have',
-            'Chaotic, Evil, Any',
-            'string',
-            $manager
-        );
-        $this->createTag('Race / Social Class',
-            'The race or social standing chatacters are expected to belong to',
-            'Elves, Dwarves, Nobles, Aristocracy',
-            'string',
-            $manager
-        );
-        $this->createTag('Min. Starting Level',
-            'The minimum level characters are expected to be when taking part in the module',
-            '5',
-            'integer',
-            $manager,
-            true
-        );
-        $this->createTag('Final level',
-            'The expected final level the characters at the end of the module',
-            '17',
-            'integer',
-            $manager
-        );
-        $this->createTag('Level progression',
-            'The means by which the players advance in level during the module',
-            'Milestones, XP',
-            'string',
-            $manager
-        );
-        $this->createTag('Min. # of PCs',
-            'How many players of the specified levels the module is balanced against',
-            '4',
-            'integer',
-            $manager,
-            true
-        );
-        $this->createTag('Max. # of PCs',
-            'How many players of the specified levels the module is balanced against',
-            '6',
-            'integer',
-            $manager
-        );
 
         // DM details
-        $this->createTag('Items',
-            'The various notable magic items or non-magic items that are obtained in the module',
-            'Horn of Wonders, Crown of Andor',
+        $this->createTag('Notable Items',
+            'The notable magic or non-magic items that are obtained in the module. Only include named items, don\'t include a +1 sword.',
+            'Decanter of Endless Water, Sword of Kas, Elven Cloak',
             'string',
             $manager
         );
-        $this->createTag('NPCs',
-            'The various types of NPCs featuring in the module',
-            'Raistlin Majere, King Osric',
-            'string',
-            $manager
-        );
-        $this->createTag('Creatures',
-            'The various types of creatures featuring in the module',
-            'Skeletons, Orcs, Goblins',
+        $this->createTag('Monsters',
+            'The various types of creatures featured in the module',
+            'Skeleton, Orc, Blue Dragon, Hill Giant',
             'string',
             $manager
         );

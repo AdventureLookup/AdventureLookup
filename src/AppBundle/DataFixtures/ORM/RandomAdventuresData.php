@@ -58,7 +58,7 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
                     }
                     $manager->persist($info);
 
-                    if (!in_array($tag->getTitle(), ['NPCs', 'Author', 'Creatures', 'Items'])) {
+                    if (!in_array($tag->getTitle(), ['NPCs', 'Author', 'Monsters', 'Notable Items'])) {
                         break;
                     }
                 }
@@ -72,7 +72,7 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
     private function customFaker(TagName $tag, TagContent $info, Faker\Generator $faker)
     {
         $fakes = [
-            '# of Pages' => function (Faker\Generator $faker) {
+            'Length (# of Pages)' => function (Faker\Generator $faker) {
                 return $faker->numberBetween(20, 200);
             },
             'Year of Release' => function (Faker\Generator $faker) {
@@ -192,7 +192,7 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
                     'Milestones', 'XP'
                 ]);
             },
-            'Items' => function (Faker\Generator $faker) {
+            'Notable Items' => function (Faker\Generator $faker) {
                 return $faker->randomElement([
                     'Arcane Door',
                     'Arcane Lock Box',
@@ -213,7 +213,7 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
             'NPCs' => function (Faker\Generator $faker) {
                 return $faker->name;
             },
-            'Creatures' => function (Faker\Generator $faker) {
+            'Monsters' => function (Faker\Generator $faker) {
                 return $faker->randomElement([
                     'Aasimar',
                     'Aboleth',

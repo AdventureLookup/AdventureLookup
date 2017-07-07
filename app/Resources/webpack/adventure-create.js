@@ -20,14 +20,16 @@ function debounce(func, wait, immediate) {
 }
 
 (function () {
+    const DEBOUNCE = 250;
     const $page = $('#page--create-adventure');
     if (!$page.length) {
         return;
     }
 
     const similarTitlesUrl = $page.data('similar-titles-url');
+    const searchUrl = $page.data('search-url');
 
-    let $title = $('#appbundle_adventure_title');
+    let $title = $('#appbundle_adventure_field_title');
     $title.on('change keyup paste', debounce(function (e) {
         $.getJSON(similarTitlesUrl, {
             q: $(this).val()
@@ -50,5 +52,94 @@ function debounce(func, wait, immediate) {
                 similarAdventuresWarning.removeClass('hidden-xs-up');
             }
         })
-    }, 500));
+    }, DEBOUNCE));
+
+    $('select.adventure-field').each(function () {
+        const $select = $(this);
+        $select.selectize({
+            create: true,
+            //sortField: 'title',
+            valueField: 'title',
+            labelField: 'title',
+            maxItems: null,
+            preload: 'focus',
+            searchField: 'title',
+            render: {
+                option: function(item, escape) {
+                    return '<div>' + escape(item.title) + '</div>';
+                }
+            },
+            //score: function(search) {
+            //    var score = this.getScoreFunction(search);
+            //    return function(item) {
+            //        return score(item) * (1 + Math.min(item.watchers / 100, 1));
+            //    };
+            //},
+            load: function(query, callback) {
+                $.ajax({
+                    url: searchUrl.replace(/__ID__/g, $select.data('id')),
+                    data: {
+                        q: query
+                    },
+                    type: 'GET',
+                    error: function() {
+                        callback();
+                    },
+                    success: function(res) {
+                        callback(res.map((content) => {return {'title': content}}),);
+                    }
+                });
+            }
+        });
+        /*$(this).select2({
+            tags: true,
+            minimumInputLength: 1,
+            ajax: {
+               url: searchUrl.replace(/__ID__/g, $(this).data('id')),
+                   //.replace(/__Q__/g, $(this).val()),
+               dataType: 'json',
+               delay: DEBOUNCE,
+               data: function (params) {
+                   return {
+                       q: params.term,
+                       page: params.page
+                   };
+               },
+               processResults: function (data, params) {
+                   // parse the results into the format expected by Select2
+                   // since we are using custom formatting functions we do not need to
+                   // alter the remote JSON data, except to indicate that infinite
+                   // scrolling can be used
+                   console.log(data);
+                   params.page = params.page || 1;
+
+                   return {
+                       results: data.map((content) => {return {'id': content, 'text': content}}),
+                       pagination: {
+                           more: false //(params.page * 30) < data.total_count
+                       }
+                   };
+               },
+               cache: true
+           },
+           createTag: function (params) {
+               return {
+                   id: params.term,
+                   text: params.term,
+                   newOption: true
+               }
+           },
+           templateResult: function (data) {
+               var $result = $("<span></span>");
+
+               $result.text(data.text);
+
+               if (data.newOption) {
+                   $result.append(" <em>(new)</em>");
+               }
+
+               return $result;
+           }
+       });*/
+    });
 })();
