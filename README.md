@@ -29,6 +29,8 @@ php bin/console doctrine:fixtures:load --fixtures src/AppBundle/DataFixtures/ORM
 php bin/console app:elasticsearch:reindex
 ```
 
+If you didn't use Vagrant and use an existing MySQL database, adjust the `app/config/parameters.yml` file to match your database credentials.
+
 # Running the application
 
 ```
