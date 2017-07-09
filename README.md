@@ -46,6 +46,8 @@ Elasticsearch can be accessed at http://localhost:9200.
 
 # Running the application in production
 
+## Apache configuration
+
 Install `apache2` and `libapache2-mod-php7.0`. Create a VHost like this:
 ```
 <VirtualHost *:80>
@@ -67,7 +69,16 @@ Install `apache2` and `libapache2-mod-php7.0`. Create a VHost like this:
 </VirtualHost>
 ```
 
-Also make sure to run `mysql_secure_installation` and adjust `/etc/apache2/conf-enabled/security.conf`!
+For more information about server configuration, checkout the [Symfony guide on server config](https://symfony.com/doc/current/setup/web_server_configuration.html).
+Also, adjust adjust `/etc/apache2/conf-enabled/security.conf` to make Apache production-ready.
+
+### Permissions
+
+Make sure to read the [Symfony guide on permissions](https://symfony.com/doc/current/setup/file_permissions.html) if you run into permission problems.
+
+## MySQL
+
+Make sure to run `mysql_secure_installation`. Adjust port, username, host and password in `app/config/parameters.yml`.
 
 # Tools used
 
