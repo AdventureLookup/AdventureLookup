@@ -31,6 +31,9 @@ php bin/console app:elasticsearch:reindex
 
 If you didn't use Vagrant and use an existing MySQL database, adjust the `app/config/parameters.yml` file to match your database credentials.
 
+# Prepare web assets for EasyAdmin
+php bin/console assets:install --symlink
+
 # Running the application
 
 ```

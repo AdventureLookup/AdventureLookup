@@ -10,7 +10,7 @@ parameters:
 
 framework:
     #esi: ~
-    #translator: { fallbacks: ['%locale%'] }
+    translator: { fallbacks: ['%locale%'] }
     secret: '%secret%'
     router:
         resource: '%kernel.root_dir%/config/routing.yml'
@@ -109,3 +109,20 @@ stof_doctrine_extensions:
             loggable: true
             sluggable: true
             blameable: true
+
+easy_admin:
+    entities:
+        Adventure:
+            class: AppBundle\Entity\Adventure
+            label: 'Adventures'
+            list:
+                title: "Adventures"
+                fields: ['id', 'title', 'approved', 'info']
+            edit:
+                fields: ['id', 'title']
+
+        User:
+            class: AppBundle\Entity\User
+            label: 'Users'
+            list:
+                title: "Users"
