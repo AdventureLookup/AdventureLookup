@@ -149,8 +149,7 @@
                         </div>
                         <div class="col-9">
                             <h2 id="search-results">{{ adventures|length }} adventures found</h2>
-                            <!-- BEGIN ADVENTURE LIST -->
-                            {% for adventure in adventures %}                            
+                            {% for adventure in adventures %}
                                 <div class="card mb-3">
                                     <div class="card-block">
                                         <h4 class="card-title">
@@ -158,44 +157,22 @@
                                                 {{ adventure.title }}
                                             </a>
                                         </h4>
-                                        <!--h6 class="card-subtitle mb-2 text-muted">Search score: {{ adventure.score }}</h6-->
-                                        <!--pre>
-                                            {{ dump(adventure.info) }}
-                                        </pre-->
-
-                                        <!-- IDEALLY, THERE WOULD BE A FUNCTION THAT CREATES A SHORT DESCRIPTION THAT COULD BE DIRECTLY REFERENCED, INSTEAD OF DOING THIS .info... HACK -->
-                                        <p>{{ adventure.info.14.contents.0|length > 250 ? adventure.info.14.contents.0|slice(0,250) ~ '...' : adventure.info.14.contents.0 }}</p>
-                                        <hr>
-                                        <!-- Quick look info -->
-                                        <div class="container-fluid row justify-content-center">
-                                            <div class="col-2 text-center">
-                                                <i class="fa fa-gear"></i>
-                                                <p class="text-muted mb-2">System</p>
-                                                <h6>{{adventure.info.2.contents.0}}</h6>
-                                            </div>
-                                            <div class="col-2 text-center">
-                                                <i class="fa fa-globe"></i>
-                                                <p class="text-muted mb-2">Setting</p>
-                                                <h6>{{adventure.info.4.contents.0}}</h6>
-                                            </div>
-                                            <div class="col-2 text-center">
-                                                <i class="fa fa-flag"></i>
-                                                <p class="text-muted mb-2">Level</p>
-                                                <h6>{{adventure.info.5.contents.0}}-{{adventure.info.6.contents.0}}</h6>
-                                            </div>
-                                            <div class="col-2 text-center">
-                                                <i class="fa fa-tree"></i>
-                                                <p class="text-muted mb-2">Environment</p>
-                                                <h6>{{adventure.info.11.contents.0}}</h6>
-                                            </div>
-                                            <div class="col-2 text-center">
-                                                <i class="fa fa-map"></i>
-                                                <p class="text-muted mb-2">Tactical Maps</p>
-                                                <h6>{% if adventure.info.17.contents.0 %}Yes{% else %}No{% endif%}</h6>
-                                            </div>
-                                        </div> 
-                                        <!-- End quick look info -->
-
+                                        <h6 class="card-subtitle mb-2 text-muted">Search score: {{ adventure.score }}</h6>
+                                        <ul class="adventure-info-list">
+                                            {% for info in adventure.info if info.meta.showInSearchResults %}
+                                                <li>
+                                                    <strong>{{ info.meta.title }}</strong>:
+                                                    {% for content in info.contents -%}
+                                                        {%- if info.meta.type == 'boolean' -%}
+                                                            {{- content ? 'yes' : 'no' -}}
+                                                        {%- else -%}
+                                                            {{- content -}}
+                                                        {%- endif -%}
+                                                        {%- if not loop.last %}, {% endif -%}
+                                                    {%- endfor -%}
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
                                     </div>
                                 </div>
                             {% else %}
