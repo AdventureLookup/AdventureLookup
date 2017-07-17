@@ -111,6 +111,7 @@ stof_doctrine_extensions:
             blameable: true
 
 easy_admin:
+    site_name: 'Adventure Lookup'
     entities:
         Adventure:
             class: AppBundle\Entity\Adventure

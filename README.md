@@ -13,6 +13,9 @@ Execute the following commands to finish the installation:
 # Install PHP dependencies
 composer install -n
 
+Note: You might get a warning that composer.json and composer.lock are out of sync. This will happen if you haven't yet installed the EasyAdmin bundle. If you get this warning run:
+composer update javiereguiluz/easyadmin-bundle
+
 # Install Frontend dependencies
 yarn install --no-bin-links
 nodejs node_modules/node-sass/scripts/install.js
@@ -30,9 +33,6 @@ php bin/console app:elasticsearch:reindex
 ```
 
 If you didn't use Vagrant and use an existing MySQL database, adjust the `app/config/parameters.yml` file to match your database credentials.
-
-# Prepare web assets for EasyAdmin
-php bin/console assets:install --symlink
 
 # Running the application
 
