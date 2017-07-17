@@ -8,6 +8,7 @@
                 {% if not adventure.approved %}
                     <div class="alert alert-info">Your new adventure will need approval from a curator.</div>
                 {% endif %}
+                <div class="alert alert-warning">AdventureLookup is for D&D and it's clones. Not other systems/genres.</div>
 
                 <form action="{{ path('adventure_new') }}" method="post" id="create-adventure-form">
                     <div>
