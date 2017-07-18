@@ -53,7 +53,6 @@
                                 <div class="card mb-3 filter-card{% if not show %} d-none{% endif %}" id="filter-{{ field.id }}">
                                     <input type="hidden" name="f[{{ field.id }}][e]" value="{{ show ? '1' : '0' }}" id="filter-{{ field.id }}-enabled">
                                     <div class="card-block">
-
                                         <h4 class="card-title">{{ field.title }}</h4>
                                         <p class="card-text small">{{ field.description }}</p>
                                         {% if field.type == 'boolean' %}
