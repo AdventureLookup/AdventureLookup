@@ -15,8 +15,9 @@ cd AdventureLookup
  
 # Create and provision the VM
 vagrant up
-
-Then execute `vagrant up` to create and boot the VM. This will take a bit longer on the initial boot. When the VM has booted, execute `vagrant ssh` to SSH into the VM. You should be right inside the `/vagrant` folder which contains all the application's files.
+ 
+# Log into the VM
+vagrant ssh
 ```
 
 Execute the following commands to finish the installation:
