@@ -15,7 +15,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component
  * Tagname controller.
  *
  * @Route("/fields")
- * @Security("is_granted('ROLE_CURATOR')")
+ * @Security("is_granted('ROLE_ADMIN')")
  */
 class TagNameController extends Controller
 {

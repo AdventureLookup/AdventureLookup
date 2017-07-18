@@ -37,7 +37,7 @@ class FieldUtils
             case 'string':
                 return $faker->name;
             case 'url':
-                return $faker->url;
+                return $faker->imageUrl(260, 300, null, false);
             case 'text':
                 return $faker->realText(2000);
         }
