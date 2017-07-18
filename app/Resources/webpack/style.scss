@@ -1,5 +1,12 @@
 @import './bootstrap.scss';
 
+.adv-info {
+  background-color: whitesmoke;
+  padding: 1rem;
+  margin: 0rem;
+  width: 100%;
+}
+
 .adventure-info-list {
   column-count: 1;
   column-gap: 40px;
