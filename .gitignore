@@ -18,3 +18,4 @@ web/assets/vendor/
 
 npm-debug.log
 ubuntu-*.log
+yarn-error.log
