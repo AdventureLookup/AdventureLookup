@@ -153,49 +153,45 @@
                             {% for adventure in adventures %}                            
                                 <div class="card mb-3">
                                     <div class="card-block">
+                                        <img src="{{ adventure.thumbnailUrl.0 }}" class="ml-1 pull-right" style="max-width: 120px; max-height: 140px;" />
                                         <h4 class="card-title">
                                             <a href="{{ path('adventure_show', { 'slug': adventure.slug }) }}">
                                                 {{ adventure.title }}
                                             </a>
                                         </h4>
                                         <!--h6 class="card-subtitle mb-2 text-muted">Search score: {{ adventure.score }}</h6-->
-                                        <!--pre>
-                                            {{ dump(adventure.info) }}
-                                        </pre-->
-
-                                        <!-- IDEALLY, THERE WOULD BE A FUNCTION THAT CREATES A SHORT DESCRIPTION THAT COULD BE DIRECTLY REFERENCED, INSTEAD OF DOING THIS .info... HACK -->
-                                        <p>{{ adventure.info.14.contents.0|length > 250 ? adventure.info.14.contents.0|slice(0,250) ~ '...' : adventure.info.14.contents.0 }}</p>
+                                        <p>{{ adventure.description.0|easyadmin_truncate(250) }}</p>
+                                        <div class="clearfix"></div>
                                         <hr>
                                         <!-- Quick look info -->
                                         <div class="container-fluid row justify-content-center">
                                             <div class="col-2 text-center">
                                                 <i class="fa fa-gear"></i>
                                                 <p class="text-muted mb-2">System</p>
-                                                <h6>{{adventure.info.2.contents.0}}</h6>
+                                                <h6>{{adventure.system.0}}</h6>
                                             </div>
                                             <div class="col-2 text-center">
                                                 <i class="fa fa-globe"></i>
                                                 <p class="text-muted mb-2">Setting</p>
-                                                <h6>{{adventure.info.4.contents.0}}</h6>
+                                                <h6>{{adventure.setting.0}}</h6>
                                             </div>
                                             <div class="col-2 text-center">
                                                 <i class="fa fa-flag"></i>
                                                 <p class="text-muted mb-2">Level</p>
-                                                <h6>{{adventure.info.5.contents.0}}-{{adventure.info.6.contents.0}}</h6>
+                                                <h6>{{adventure.minStartingLevel.0}}-{{adventure.maxStartingLevel.0}}</h6>
                                             </div>
                                             <div class="col-2 text-center">
                                                 <i class="fa fa-tree"></i>
                                                 <p class="text-muted mb-2">Environment</p>
-                                                <h6>{{adventure.info.11.contents.0}}</h6>
+                                                <h6>{{adventure.environments|join(', ')}}</h6>
                                             </div>
                                             <div class="col-2 text-center">
                                                 <i class="fa fa-map"></i>
                                                 <p class="text-muted mb-2">Tactical Maps</p>
-                                                <h6>{% if adventure.info.17.contents.0 %}Yes{% else %}No{% endif%}</h6>
+                                                <h6>{% if adventure.tacticalMaps.0 %}Yes{% else %}No{% endif%}</h6>
                                             </div>
-                                        </div> 
+                                        </div>
                                         <!-- End quick look info -->
-
                                     </div>
                                 </div>
                             {% else %}
