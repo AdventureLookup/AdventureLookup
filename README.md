@@ -6,27 +6,35 @@ Repository of Adventure Lookup, proposed by [/u/mattcolville](https://www.reddit
 
 To get you up and running quickly, you should use [Vagrant](https://vagrantup.com) and [VirtualBox](https://virtualbox.org) to start up a VM with all the dependencies preinstalled.
 
-After downloading and installing Vagrant and VirtualBox, clone this repository and navigate into the folder. Then execute `vagrant up` to create and boot the VM. This will take a bit longer on the initial boot. When the VM has booted, execute `vagrant ssh` to SSH into the VM. You should be right inside the `/vagrant` folder which contains all the application's files.
+After downloading and installing Vagrant and VirtualBox:
+```
+# Clone the repo to your local machine (this is readonly; you need to fork if you want write)
+git clone git@github.com:AdventureLookup/AdventureLookup.git
+ 
+cd AdventureLookup
+ 
+# Create and provision the VM
+vagrant up
+
+Then execute `vagrant up` to create and boot the VM. This will take a bit longer on the initial boot. When the VM has booted, execute `vagrant ssh` to SSH into the VM. You should be right inside the `/vagrant` folder which contains all the application's files.
+```
 
 Execute the following commands to finish the installation:
 ```
 # Install PHP dependencies
 composer install -n
-
-Note: You might get a warning that composer.json and composer.lock are out of sync. This will happen if you haven't yet installed the EasyAdmin bundle. If you get this warning run:
-composer update javiereguiluz/easyadmin-bundle
-
+ 
 # Install Frontend dependencies
-yarn install --no-bin-links
+yarn install
 nodejs node_modules/node-sass/scripts/install.js
 npm rebuild node-sass --no-bin-links
-
+ 
 # Setup database
 php bin/console doctrine:migrations:migrate
-
+ 
 # Create Elasticsearch index
 php bin/console app:elasticsearch:reindex
-
+ 
 # Import dummy adventures
 php bin/console doctrine:fixtures:load --fixtures src/AppBundle/DataFixtures/ORM/TagData.php --fixtures src/AppBundle/DataFixtures/ORM/RandomAdventuresData.php -n
 php bin/console app:elasticsearch:reindex
@@ -38,10 +46,12 @@ If you didn't use Vagrant and use an existing MySQL database, adjust the `app/co
 
 ```
 # Start Symfony development server on port 8000 to run the application
+# Must be run inside the virtual machine you used `vagrant ssh` to get into earlier
 php bin/console server:start 0.0.0.0
-
+ 
 # Start webpack to watch changes to assets and recompile them
-nodejs node_modules/webpack/bin/webpack --watch --progress
+# Can be run inside the virtual machine or outside of the virtual machine
+npm run dev
 ```
 
 The application is now running at http://localhost:8000/app_dev.php.

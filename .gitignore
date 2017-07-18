@@ -4,15 +4,17 @@ app/config/parameters.yml
 build/
 node_modules/
 phpunit.xml
+var/bootstrap.php.cache
 var/cache/*
 !var/cache/.gitkeep
 /var/logs/*
 !var/logs/.gitkeep
 /var/sessions/*
 !var/sessions/.gitkeep
-!var/SymfonyRequirements.php
 vendor/
 web/bundles/
 web/assets/
 web/assets/vendor/
 
+npm-debug.log
+ubuntu-*.log
