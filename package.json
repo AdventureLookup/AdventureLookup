@@ -1,7 +1,8 @@
 {
   "scripts": {
     "build": "webpack",
-    "dev": "webpack -w"
+    "dev": "webpack -w",
+    "prod": "webpack -p"
   },
   "dependencies": {
     "babel-core": "^6.24.1",
