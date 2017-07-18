@@ -16,4 +16,5 @@ web/bundles/
 web/assets/
 web/assets/vendor/
 
+npm-debug.log
 ubuntu-*.log
