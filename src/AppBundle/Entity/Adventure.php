@@ -35,6 +35,12 @@ class Adventure
     private $version;
 
     /**
+     * @var Setting
+     * @ORM\ManyToOne(targetEntity="Setting")
+     */
+    private $setting;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255, unique=true)
@@ -113,6 +119,24 @@ class Adventure
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return Setting
+     */
+    public function getSetting()
+    {
+        return $this->setting;
+    }
+
+    /**
+     * @param Setting $setting
+     * @return Adventure
+     */
+    public function setSetting(Setting $setting)
+    {
+        $this->setting = $setting;
+        return $this;
     }
 
     /**
