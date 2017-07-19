@@ -293,6 +293,8 @@ class AdventureSearch
     }
 
     /**
+     * Find adventures matching the free-text search query
+     *
      * @param string $q
      * @param $matches
      * @return array
@@ -308,6 +310,7 @@ class AdventureSearch
             return $fieldUtils->getFieldNameById($field->getId());
         }, $fields);
         $fields = array_values($fields);
+        $fields[] = 'setting';
 
         $terms = explode(',', $q);
         $qMatches = [];
