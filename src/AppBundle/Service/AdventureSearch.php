@@ -233,6 +233,7 @@ class AdventureSearch
             $infos = $hit['_source'];
             unset($infos['slug']);
             unset($infos['title']);
+            unset($infos['setting']);
 
             $infoArr = [];
             foreach ($infos as $id => $info) {
@@ -243,7 +244,7 @@ class AdventureSearch
                 ];
             }
 
-            return new AdventureDocument($hit['_id'], $hit['_source']['title'], $hit['_source']['slug'], $infoArr, $hit['_score']);
+            return new AdventureDocument($hit['_id'], $hit['_source']['setting'], $hit['_source']['title'], $hit['_source']['slug'], $infoArr, $hit['_score']);
         }, $result['hits']['hits']);
     }
 

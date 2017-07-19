@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: cmfcm
- * Date: 13.04.2017
- * Time: 19:06
- */
 
 namespace AppBundle\Service;
 
@@ -16,6 +10,7 @@ class AdventureSerializer
     public function toElasticDocument(Adventure $adventure): array
     {
         $ser = [
+            'setting' => $adventure->getSetting()->getName(),
             'title' => $adventure->getTitle(),
             'slug' => $adventure->getSlug(),
         ];

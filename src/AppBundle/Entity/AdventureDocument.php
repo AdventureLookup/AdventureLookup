@@ -110,9 +110,10 @@ class AdventureDocument
      */
     private $foundIn;
 
-    public function __construct(int $id, string $title, string $slug, array $info, float $score = 0.0)
+    public function __construct(int $id, string $setting, string $title, string $slug, array $info, float $score = 0.0)
     {
         $this->id = $id;
+        $this->setting = $setting;
         $this->title = $title;
         $this->slug = $slug;
         $this->score = $score;
@@ -122,7 +123,6 @@ class AdventureDocument
             'Author' => 'author',
             'System / Edition' => 'system',
             'Publisher' => 'publisher',
-            'Setting' => 'setting',
             'Min. Starting Level' => 'minStartingLevel',
             'Max. Starting Level' => 'maxStartingLevel',
             'Level Range' => 'levelRange',
@@ -164,7 +164,7 @@ class AdventureDocument
             $info[$key]['contents'][] = $fieldContent;
         }
 
-        return new static($adventure->getId(), $adventure->getTitle(), $adventure->getSlug(), $info);
+        return new static($adventure->getId(), $adventure->getSetting()->getName(), $adventure->getTitle(), $adventure->getSlug(), $info);
     }
 
     /**
