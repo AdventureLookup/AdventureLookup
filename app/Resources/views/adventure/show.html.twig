@@ -74,7 +74,7 @@
                         <p>You need to <a href="{{ path('login') }}">log in</a> to add and edit information.</p>
                     {% endif %}
                     {% if is_granted('ROLE_CURATOR') %}
-                        <a class="btn btn-secondary btn-sm my-3" href="{{ path('adventure_edit', { 'id': adventure.id }) }}">Edit adventure title</a>
+                        <a class="btn btn-secondary btn-sm my-3" href="{{ path('adventure_edit', { 'id': adventure.id }) }}">Edit adventure</a>
                         {{ form_start(delete_form) }}
                         <input class="btn btn-sm btn-danger mt-3" type="submit" value="Delete" role="button" onclick="return confirm('Do you really want to delete this adventure?')">
                         {{ form_end(delete_form) }}
