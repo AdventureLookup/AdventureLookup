@@ -44,7 +44,7 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
 
         for ($i = 0; $i < 200; $i++) {
             $adventure = new Adventure();
-            $adventure->setTitle($faker->text(120));
+            $adventure->setTitle($faker->catchPhrase);
 
             foreach ($tags as $tag) {
                 for ($j = 0; $j < 2; $j++) {
