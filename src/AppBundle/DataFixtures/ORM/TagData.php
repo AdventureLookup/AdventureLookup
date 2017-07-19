@@ -29,9 +29,6 @@ class TagData implements FixtureInterface
         );
         $this->createTag('Publisher', 'Publisher of the module', 'WotC, Goodman Games', 'string', explode(', ', 'TSR, WotC, Paizo, Goodman Games, Necromancer Games, Judge\'s Guild'), $manager, true, true
         );
-        $this->createTag(
-            'Setting', 'The narrative universe the module is set in.', 'Forgotten Realms, Dark Sun', 'string', explode(', ', 'Greyhawk, Blackmoor, Dragonlance, Forgotten Realms, Mystara, Dark Sun, Birthright, Eberron, Ravenloft'), $manager
-        );
         $this->createTag('Min. Starting Level', 'The minimum level characters are expected to be when taking part in the module', '5', 'integer', [], $manager, true
         );
         $this->createTag('Max. Starting Level', 'The maximum level characters are expected to be when taking part in the module', '17', 'integer', [], $manager
