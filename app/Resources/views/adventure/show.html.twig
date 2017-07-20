@@ -38,15 +38,83 @@
     {% import _self as macros %}
     <div class="container">
         <div class="row">
-            <div class="col">
+            <div class="col adventure-show--details">
                 <h1 class="my-5">{{ adventure.title }}</h1>
-                {% if adventure.info is empty %}
-                    <div class="alert alert-info">This adventure is currently pretty much without information. Click the 'Add' button below to start supplying the first bits and pieces.</div>
+                {% if adventure.thumbnailUrl %}
+                    <img src="{{ adventure.thumbnailUrl }}" class="ml-1 pull-right" style="max-width: 120px; max-height: 140px;" />
                 {% endif %}
+                <p>{{ adventure.description }}</p>
+                <div class="clearfix"></div>
+                <div class="row">
+                    <div class="col">
+                        <h6>Written By</h6>
+                        ...
+                    </div>
+                    <div class="col">
+                        <h6>Published By</h6>
+                        ...
+                    </div>
+                    <div class="col">
+                        <h6># Of Pages</h6>
+                        {{ adventure.numPages }}
+                    </div>
+                </div>
+                <div class="row">
+                    {% if adventure.link %}
+                        <div class="col">
+                            <h6>Link</h6>
+                            <a href="{{ adventure.link|e('html_attr') }}">{{ adventure.link }}</a>
+                        </div>
+                    {% endif %}
+                    <div class="col">
+                        <h6>Found In</h6>
+                        {{ adventure.foundIn }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h6>System</h6>
+                        ...
+                    </div>
+                    <div class="col">
+                        <h6>Setting</h6>
+                        {{ adventure.setting }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h6>Starting Level Range</h6>
+                        {{ adventure.startingLevelRange }}
+                    </div>
+                    <div class="col">
+                        <h6>Min. Starting Level</h6>
+                        {{ adventure.minStartingLevel }}
+                    </div>
+                    <div class="col">
+                        <h6>Max. Starting Level</h6>
+                        {{ adventure.maxStartingLevel }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h6>Handouts?</h6>
+                        {{ adventure.handouts|bool2str }}
+                    </div>
+                    <div class="col">
+                        <h6>Tactical Maps?</h6>
+                        {{ adventure.tacticalMaps|bool2str }}
+                    </div>
+                    <div class="col">
+                        <h6>Soloable?</h6>
+                        {{ adventure.soloable|bool2str }}
+                    </div>
+                    <div class="col">
+                        <h6>Includes Characters?</h6>
+                        {{ adventure.pregeneratedCharacters|bool2str }}
+                    </div>
+                </div>
 
-                <div class="mb-2"><b>Setting</b>: {{ adventure.setting }}</div>
-
-                <ul class="adventure-show--details list-unstyled">
+                <ul class="adventure-show--details-old list-unstyled">
                     {% for field in adventure.info if field.meta.type != 'text' %}
                         <li>{{ macros.print_field(field, adventure) }}</li>
                     {% endfor %}

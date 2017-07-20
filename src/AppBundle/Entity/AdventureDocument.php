@@ -43,7 +43,7 @@ class AdventureDocument
     /**
      * @var integer
      */
-    private $levelRange;
+    private $startingLevelRange;
 
     /**
      * @var boolean
@@ -110,35 +110,53 @@ class AdventureDocument
      */
     private $foundIn;
 
-    public function __construct(int $id, string $setting, string $title, string $slug, array $info, float $score = 0.0)
+    public function __construct(
+        int $id,
+        string $setting,
+        string $title,
+        string $description = null,
+        string $slug,
+        int $minStartingLevel = null,
+        int $maxStartingLevel = null,
+        string $startingLevelRange = null,
+        int $numPages = null,
+        string $foundIn = null,
+        string $link = null,
+        string $thumbnailUrl = null,
+        bool $soloable = null,
+        bool $pregeneratedCharacters = null,
+        bool $tacticalMaps = null,
+        bool $handouts = null,
+        array $info = [],
+        float $score = 0.0)
     {
         $this->id = $id;
         $this->setting = $setting;
         $this->title = $title;
+        $this->description = $description;
         $this->slug = $slug;
         $this->score = $score;
         $this->info = $info;
+        $this->minStartingLevel = $minStartingLevel;
+        $this->maxStartingLevel = $maxStartingLevel;
+        $this->startingLevelRange = $startingLevelRange;
+        $this->numPages = $numPages;
+        $this->foundIn = $foundIn;
+        $this->link = $link;
+        $this->thumbnailUrl = $thumbnailUrl;
+        $this->soloable = $soloable;
+        $this->pregeneratedCharacters = $pregeneratedCharacters;
+        $this->tacticalMaps = $tacticalMaps;
+        $this->handouts = $handouts;
 
         $map = [
             'Author' => 'author',
             'System / Edition' => 'system',
             'Publisher' => 'publisher',
-            'Min. Starting Level' => 'minStartingLevel',
-            'Max. Starting Level' => 'maxStartingLevel',
-            'Level Range' => 'levelRange',
-            'Suitable for Solo Play' => 'soloable',
-            'Length (# of Pages)' => 'numPages',
-            'Includes Pregenerated Characters' => 'pregeneratedCharacters',
             'Environment' => 'environments',
-            'Link' => 'link',
-            'Thumbnail' => 'thumbnailUrl',
-            'Description' => 'description',
             'Notable Items' => 'notableItems',
             'Monsters' => 'monsters',
-            'Tactical Maps' => 'tacticalMaps',
-            'Handouts' => 'handouts',
             'Villains' => 'villains',
-            'Found in ' => 'foundIn'
         ];
 
         foreach ($info as $infoObj) {
@@ -164,7 +182,25 @@ class AdventureDocument
             $info[$key]['contents'][] = $fieldContent;
         }
 
-        return new static($adventure->getId(), $adventure->getSetting()->getName(), $adventure->getTitle(), $adventure->getSlug(), $info);
+        return new static(
+            $adventure->getId(),
+            $adventure->getSetting()->getName(),
+            $adventure->getTitle(),
+            $adventure->getDescription(),
+            $adventure->getSlug(),
+            $adventure->getMinStartingLevel(),
+            $adventure->getMaxStartingLevel(),
+            $adventure->getStartingLevelRange(),
+            $adventure->getNumPages(),
+            $adventure->getFoundIn(),
+            $adventure->getLink(),
+            $adventure->getThumbnailUrl(),
+            $adventure->isSoloable(),
+            $adventure->hasPregeneratedCharacters(),
+            $adventure->hasTacticalMaps(),
+            $adventure->hasHandouts(),
+            $info
+        );
     }
 
     /**
@@ -250,9 +286,9 @@ class AdventureDocument
     /**
      * @return int
      */
-    public function getLevelRange()
+    public function getStartingLevelRange()
     {
-        return $this->levelRange;
+        return $this->startingLevelRange;
     }
 
     /**

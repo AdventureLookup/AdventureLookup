@@ -231,9 +231,21 @@ class AdventureSearch
 
         return array_map(function ($hit) use ($fields) {
             $infos = $hit['_source'];
-            unset($infos['slug']);
-            unset($infos['title']);
             unset($infos['setting']);
+            unset($infos['title']);
+            unset($infos['description']);
+            unset($infos['slug']);
+            unset($infos['minStartingLevel']);
+            unset($infos['maxStartingLevel']);
+            unset($infos['startingLevelRange']);
+            unset($infos['numPages']);
+            unset($infos['foundIn']);
+            unset($infos['link']);
+            unset($infos['thumbnailUrl']);
+            unset($infos['soloable']);
+            unset($infos['pregeneratedCharacters']);
+            unset($infos['tacticalMaps']);
+            unset($infos['handouts']);
 
             $infoArr = [];
             foreach ($infos as $id => $info) {
@@ -244,7 +256,26 @@ class AdventureSearch
                 ];
             }
 
-            return new AdventureDocument($hit['_id'], $hit['_source']['setting'], $hit['_source']['title'], $hit['_source']['slug'], $infoArr, $hit['_score']);
+            return new AdventureDocument(
+                $hit['_id'],
+                $hit['_source']['setting'],
+                $hit['_source']['title'],
+                $hit['_source']['description'],
+                $hit['_source']['slug'],
+                $hit['_source']['minStartingLevel'],
+                $hit['_source']['maxStartingLevel'],
+                $hit['_source']['startingLevelRange'],
+                $hit['_source']['numPages'],
+                $hit['_source']['foundIn'],
+                $hit['_source']['link'],
+                $hit['_source']['thumbnailUrl'],
+                $hit['_source']['soloable'],
+                $hit['_source']['pregeneratedCharacters'],
+                $hit['_source']['tacticalMaps'],
+                $hit['_source']['handouts'],
+                $infoArr,
+                $hit['_score']
+            );
         }, $result['hits']['hits']);
     }
 
@@ -311,6 +342,8 @@ class AdventureSearch
         }, $fields);
         $fields = array_values($fields);
         $fields[] = 'setting';
+        $fields[] = 'description';
+        $fields[] = 'foundIn';
 
         $terms = explode(',', $q);
         $qMatches = [];
