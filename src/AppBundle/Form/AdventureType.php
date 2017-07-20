@@ -57,6 +57,10 @@ class AdventureType extends AbstractType
                 'help' => 'Total page count of all written material in the module or at least primary string.',
                 'label' => 'Length (# of Pages)'
             ])
+            ->add('foundIn', TextType::class, [
+                'required' => false,
+                'help' => 'The magazine, site, etc. the adventure can be found in.'
+            ])
             ->add('link', UrlType::class, [
                 'required' => false,
                 'help' => 'Links to legitimate sites where the module can be procured.'
