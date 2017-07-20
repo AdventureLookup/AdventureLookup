@@ -233,6 +233,7 @@ class AdventureSearch
             $infos = $hit['_source'];
             unset($infos['slug']);
             unset($infos['title']);
+            unset($infos['setting']);
 
             $infoArr = [];
             foreach ($infos as $id => $info) {
@@ -243,7 +244,7 @@ class AdventureSearch
                 ];
             }
 
-            return new AdventureDocument($hit['_id'], $hit['_source']['title'], $hit['_source']['slug'], $infoArr, $hit['_score']);
+            return new AdventureDocument($hit['_id'], $hit['_source']['setting'], $hit['_source']['title'], $hit['_source']['slug'], $infoArr, $hit['_score']);
         }, $result['hits']['hits']);
     }
 
@@ -292,6 +293,8 @@ class AdventureSearch
     }
 
     /**
+     * Find adventures matching the free-text search query
+     *
      * @param string $q
      * @param $matches
      * @return array
@@ -307,6 +310,7 @@ class AdventureSearch
             return $fieldUtils->getFieldNameById($field->getId());
         }, $fields);
         $fields = array_values($fields);
+        $fields[] = 'setting';
 
         $terms = explode(',', $q);
         $qMatches = [];
