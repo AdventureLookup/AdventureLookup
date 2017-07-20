@@ -20,6 +20,14 @@
 }
 
 .adventure-show--details {
+  .col {
+    padding-bottom: 1em;
+    padding-top: 1em;
+    outline: 1px solid #cdcdcd;
+  }
+}
+
+.adventure-show--details-old {
   column-count: 1;
 
   @media (min-width: map-get($grid-breakpoints, md)) {

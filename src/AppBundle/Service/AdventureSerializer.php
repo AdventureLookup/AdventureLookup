@@ -12,7 +12,20 @@ class AdventureSerializer
         $ser = [
             'setting' => $adventure->getSetting()->getName(),
             'title' => $adventure->getTitle(),
+            'description' => $adventure->getDescription(),
             'slug' => $adventure->getSlug(),
+            'minStartingLevel' => $adventure->getMinStartingLevel(),
+            'maxStartingLevel' => $adventure->getMaxStartingLevel(),
+            'startingLevelRange' => $adventure->getStartingLevelRange(),
+            'numPages' => $adventure->getNumPages(),
+            'foundIn' => $adventure->getFoundIn(),
+            'link' => $adventure->getLink(),
+            'thumbnailUrl' => $adventure->getThumbnailUrl(),
+            'soloable' => $adventure->isSoloable(),
+            'pregeneratedCharacters' => $adventure->hasPregeneratedCharacters(),
+            'tacticalMaps' => $adventure->hasTacticalMaps(),
+            'handouts' => $adventure->hasHandouts(),
+
         ];
         $fieldUtils = new FieldUtils();
 
