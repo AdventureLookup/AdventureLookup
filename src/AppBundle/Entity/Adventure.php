@@ -54,7 +54,7 @@ class Adventure
     /**
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      * @Gedmo\Versioned()
      */
     private $description;
@@ -97,7 +97,7 @@ class Adventure
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Gedmo\Versioned()
      */
     private $foundIn;
@@ -521,7 +521,7 @@ class Adventure
     /**
      * @return string
      */
-    public function getDescription(): string
+    public function getDescription()
     {
         return $this->description;
     }
@@ -541,7 +541,7 @@ class Adventure
     /**
      * @return string
      */
-    public function getFoundIn(): string
+    public function getFoundIn()
     {
         return $this->foundIn;
     }

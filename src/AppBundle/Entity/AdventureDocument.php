@@ -114,7 +114,7 @@ class AdventureDocument
         int $id,
         string $setting,
         string $title,
-        string $description,
+        string $description = null,
         string $slug,
         int $minStartingLevel = null,
         int $maxStartingLevel = null,
