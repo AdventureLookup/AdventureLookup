@@ -8,6 +8,7 @@ use AppBundle\Entity\Author;
 use AppBundle\Entity\Edition;
 use AppBundle\Entity\Environment;
 use AppBundle\Entity\Item;
+use AppBundle\Entity\Monster;
 use AppBundle\Entity\NPC;
 use AppBundle\Entity\Publisher;
 use AppBundle\Entity\Setting;
@@ -60,6 +61,8 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
         $publishers = $doctrine->getRepository('AppBundle:Publisher')->findAll();
         /** @var Setting[] $settings */
         $settings = $doctrine->getRepository('AppBundle:Setting')->findAll();
+        /** @var Monster[] $monsters */
+        $monsters = $doctrine->getRepository('AppBundle:Monster')->findAll();
 
         $faker = Faker\Factory::create();
 
@@ -87,7 +90,8 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
                 ->setItems(new ArrayCollection($faker->randomElements($items, $faker->numberBetween(0, 5))))
                 ->setNpcs(new ArrayCollection($faker->randomElements($npcs, $faker->numberBetween(0, 6))))
                 ->setPublisher($faker->randomElement($publishers))
-                ->setSetting($faker->randomElement($settings));
+                ->setSetting($faker->randomElement($settings))
+                ->setMonsters(new ArrayCollection($faker->randomElements($monsters, $faker->numberBetween(0, 20))));
 
             if ($faker->boolean()) {
                 $adventure->setStartingLevelRange($faker->randomElement([

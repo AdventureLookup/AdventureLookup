@@ -7,6 +7,7 @@ use AppBundle\Entity\Adventure;
 use AppBundle\Entity\Author;
 use AppBundle\Entity\Environment;
 use AppBundle\Entity\Item;
+use AppBundle\Entity\Monster;
 use AppBundle\Entity\NPC;
 
 class AdventureSerializer
@@ -21,6 +22,7 @@ class AdventureSerializer
             'npcs' => $adventure->getNpcs()->map(function (NPC $npc) { return $npc->getName(); })->toArray(),
             'publisher' => $adventure->getPublisher()->getName(),
             'setting' => $adventure->getSetting()->getName(),
+            'monsters' => $adventure->getMonsters()->map(function (Monster $monster) { return $monster->getName(); })->toArray(),
 
             'title' => $adventure->getTitle(),
             'description' => $adventure->getDescription(),
@@ -36,7 +38,6 @@ class AdventureSerializer
             'pregeneratedCharacters' => $adventure->hasPregeneratedCharacters(),
             'tacticalMaps' => $adventure->hasTacticalMaps(),
             'handouts' => $adventure->hasHandouts(),
-
         ];
         $fieldUtils = new FieldUtils();
 

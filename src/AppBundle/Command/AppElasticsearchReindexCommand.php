@@ -73,6 +73,7 @@ class AppElasticsearchReindexCommand extends ContainerAwareCommand
             'npcs' => self::FIELD_STRING,
             'publisher' => self::FIELD_STRING,
             'setting' => self::FIELD_STRING,
+            'monsters' => self::FIELD_STRING,
 
             'title' => self::FIELD_STRING,
             'description' => self::FIELD_TEXT,

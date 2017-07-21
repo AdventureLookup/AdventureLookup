@@ -51,6 +51,11 @@ class AdventureDocument
     private $setting;
 
     /**
+     * @var string[]
+     */
+    private $monsters;
+
+    /**
      * @var integer
      */
     private $minStartingLevel;
@@ -96,11 +101,6 @@ class AdventureDocument
     private $description;
 
     /**
-     * @var string[]
-     */
-    private $monsters;
-
-    /**
      * @var boolean
      */
     private $tacticalMaps;
@@ -124,6 +124,7 @@ class AdventureDocument
         array $npcs,
         string $publisher,
         string $setting,
+        array $monsters,
         string $title,
         string $description = null,
         string $slug,
@@ -149,6 +150,7 @@ class AdventureDocument
         $this->npcs = $npcs;
         $this->publisher = $publisher;
         $this->setting = $setting;
+        $this->monsters = $monsters;
         $this->title = $title;
         $this->description = $description;
         $this->slug = $slug;
@@ -208,6 +210,7 @@ class AdventureDocument
             $adventure->getNpcs()->map(function (NPC $npc) { return $npc->getName(); })->toArray(),
             $adventure->getPublisher()->getName(),
             $adventure->getSetting()->getName(),
+            $adventure->getMonsters()->map(function (Monster $monster) { return $monster->getName(); })->toArray(),
             $adventure->getTitle(),
             $adventure->getDescription(),
             $adventure->getSlug(),

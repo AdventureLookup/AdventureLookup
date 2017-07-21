@@ -7,6 +7,7 @@ use AppBundle\Entity\Author;
 use AppBundle\Entity\Edition;
 use AppBundle\Entity\Environment;
 use AppBundle\Entity\Item;
+use AppBundle\Entity\Monster;
 use AppBundle\Entity\NPC;
 use AppBundle\Entity\Publisher;
 use AppBundle\Entity\Setting;
@@ -89,6 +90,13 @@ class AdventureType extends AbstractType
                 'class' => Setting::class,
                 'multiple' => false,
                 'choice_label' => 'name',
+            ])
+            ->add('monsters', EntityType::class, [
+                'help' => 'The various types of creatures featured in the module.',
+                'required' => false,
+                'class' => Monster::class,
+                'multiple' => true,
+                'choice_label' => 'name'
             ])
             ->add('minStartingLevel', NumberType::class, [
                 'help' => 'The minimum level characters are expected to be when taking part in the module.',

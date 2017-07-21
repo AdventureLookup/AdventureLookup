@@ -4,12 +4,16 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Monster
  *
  * @ORM\Table(name="monster")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\MonsterRepository")
+ * @UniqueEntity("name")
  */
 class Monster
 {
@@ -32,6 +36,7 @@ class Monster
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, unique=true)
+     * @Assert\NotBlank()
      */
     private $name;
 
@@ -41,6 +46,22 @@ class Monster
      * @ORM\Column(name="is_unique", type="boolean")
      */
     private $isUnique = false;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     * @Gedmo\Blameable(on="create")
+     */
+    private $createdBy;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     * @Gedmo\Blameable(on="update")
+     */
+    private $updatedBy;
 
     public function __construct()
     {

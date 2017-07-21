@@ -16,11 +16,11 @@
                     <div class="data-row">
                         <div class="col">
                             <div class="label">Written By</div>
-                            ...
+                            {{ adventure.authors|join(', ') }}
                         </div>
                         <div class="col">
                             <div class="label">Published By</div>
-                            ...
+                            {{ adventure.publisher }}
                         </div>
                         <div class="col">
                             <div class="label"># Of Pages</div>
@@ -41,8 +41,8 @@
                     </div>
                     <div class="data-row">
                         <div class="col">
-                            <div class="label">System</div>
-                            ...
+                            <div class="label">System / Edition</div>
+                            {{ adventure.edition }}
                         </div>
                         <div class="col">
                             <div class="label">Setting</div>
@@ -105,47 +105,24 @@
                         <div class="col">
                             <div class="label">BBEG & Monsters</div>
                             <ul>
-                                {#% for monster in adventure.monsters %}
+                                {% for monster in adventure.monsters %}
                                     <li>{{ monster }}</li>
-                                {% endfor %#}
+                                {% endfor %}
                             </ul>
                         </div>
                     </div>
                 </div>
-
-                <ul class="adventure-show--details-old list-unstyled">
-                    {% for field in adventure.info if field.meta.type != 'text' %}
-                        <li>{{ macros.print_field(field, adventure) }}</li>
-                    {% endfor %}
-                </ul>
-                <ul class="list-unstyled">
-                    {% for field in adventure.info if field.meta.type == 'text' %}
-                        <li>{{ macros.print_field(field, adventure) }}</li>
-                    {% endfor %}
-                </ul>
-
-                <div class="bg-faded p-3">
-                    {% if is_granted('ROLE_CURATOR') %}
+                {% if is_granted('ROLE_CURATOR') %}
+                    <div class="bg-faded p-3">
                         <a class="btn btn-secondary btn-sm my-3"
                            href="{{ path('adventure_edit', { 'id': adventure.id }) }}">Edit adventure</a>
                         {{ form_start(delete_form) }}
                         <input class="btn btn-sm btn-danger mt-3" type="submit" value="Delete" role="button"
                                onclick="return confirm('Do you really want to delete this adventure?')">
                         {{ form_end(delete_form) }}
-                    {% endif %}
-                </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
-{% endblock %}
-{% block javascripts %}
-    <script>
-        $(function () {
-            $('#add-info')
-                .select2()
-                .on('select2:select', function () {
-                    $(this).focus();
-                });
-        })
-    </script>
 {% endblock %}

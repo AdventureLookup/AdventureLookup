@@ -89,6 +89,13 @@ class Adventure
     private $setting;
 
     /**
+     * @var Monster[]|Collection
+     * @ORM\ManyToMany(targetEntity="Monster")
+     * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
+     */
+    private $monsters;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255, unique=true)
@@ -244,6 +251,7 @@ class Adventure
         $this->environments = new ArrayCollection();
         $this->items = new ArrayCollection();
         $this->npcs = new ArrayCollection();
+        $this->monsters = new ArrayCollection();
 
         $this->approved = false;
     }
@@ -406,6 +414,24 @@ class Adventure
     public function setSetting(Setting $setting)
     {
         $this->setting = $setting;
+        return $this;
+    }
+
+    /**
+     * @return Monster[]|Collection
+     */
+    public function getMonsters()
+    {
+        return $this->monsters;
+    }
+
+    /**
+     * @param Monster[]|Collection $monsters
+     * @return Adventure
+     */
+    public function setMonsters($monsters)
+    {
+        $this->monsters = $monsters;
         return $this;
     }
 

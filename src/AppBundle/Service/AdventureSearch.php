@@ -239,6 +239,7 @@ class AdventureSearch
                 $hit['_source']['npcs'],
                 $hit['_source']['publisher'],
                 $hit['_source']['setting'],
+                $hit['_source']['monsters'],
                 $hit['_source']['title'],
                 $hit['_source']['description'],
                 $hit['_source']['slug'],
@@ -328,6 +329,7 @@ class AdventureSearch
         $fields[] = 'npcs';
         $fields[] = 'publisher';
         $fields[] = 'setting';
+        $fields[] = 'monsters';
         $fields[] = 'description';
         $fields[] = 'foundIn';
 
