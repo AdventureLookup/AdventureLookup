@@ -4,12 +4,15 @@ namespace AppBundle\Entity;
 
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Edition
  *
  * @ORM\Table(name="edition")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\EditionRepository")
+ * @UniqueEntity("name")
  */
 class Edition
 {
@@ -26,6 +29,7 @@ class Edition
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, unique=true)
+     * @Assert\NotBlank()
      */
     private $name;
 
