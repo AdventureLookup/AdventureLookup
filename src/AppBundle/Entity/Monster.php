@@ -58,6 +58,20 @@ class Monster
     }
 
     /**
+     * Add a monster type
+     *
+     * @param MonsterType $type
+     * @return $this
+     */
+    public function addType(MonsterType $type)
+    {
+        $type->addMonster($this);
+        $this->types[] = $type;
+
+        return $this;
+    }
+
+    /**
      * Get monster types
      *
      * @return ArrayCollection
