@@ -75,7 +75,7 @@ class MonsterType
     /**
      * Get monsters
      *
-     * @return ArrayCollection
+     * @return Monster[]|ArrayCollection
      */
     public function getMonsters()
     {
