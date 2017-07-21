@@ -16,9 +16,29 @@ class AdventureDocument
     private $info;
 
     /**
+     * @var string[]
+     */
+    private $authors;
+
+    /**
      * @var string
      */
-    private $system;
+    private $edition;
+
+    /**
+     * @var string[]
+     */
+    private $environments;
+
+    /**
+     * @var string[]
+     */
+    private $items;
+
+    /**
+     * @var string[]
+     */
+    private $npcs;
 
     /**
      * @var string
@@ -61,11 +81,6 @@ class AdventureDocument
     private $pregeneratedCharacters;
 
     /**
-     * @var string[]
-     */
-    private $environments;
-
-    /**
      * @var string
      */
     private $link;
@@ -83,11 +98,6 @@ class AdventureDocument
     /**
      * @var string[]
      */
-    private $notableItems;
-
-    /**
-     * @var string[]
-     */
     private $monsters;
 
     /**
@@ -101,17 +111,18 @@ class AdventureDocument
     private $handouts;
 
     /**
-     * @var string[]
-     */
-    private $villains;
-
-    /**
      * @var string
      */
     private $foundIn;
 
     public function __construct(
         int $id,
+        array $authors,
+        string $edition,
+        array $environments,
+        array $items,
+        array $npcs,
+        string $publisher,
         string $setting,
         string $title,
         string $description = null,
@@ -131,6 +142,12 @@ class AdventureDocument
         float $score = 0.0)
     {
         $this->id = $id;
+        $this->authors = $authors;
+        $this->edition = $edition;
+        $this->environments = $environments;
+        $this->items = $items;
+        $this->npcs = $npcs;
+        $this->publisher = $publisher;
         $this->setting = $setting;
         $this->title = $title;
         $this->description = $description;
@@ -184,6 +201,12 @@ class AdventureDocument
 
         return new static(
             $adventure->getId(),
+            $adventure->getAuthors()->map(function (Author $author) { return $author->getName(); })->toArray(),
+            $adventure->getEdition()->getName(),
+            $adventure->getEnvironments()->map(function (Environment $environment) { return $environment->getName(); })->toArray(),
+            $adventure->getItems()->map(function (Item $item) { return $item->getName(); })->toArray(),
+            $adventure->getNpcs()->map(function (NPC $npc) { return $npc->getName(); })->toArray(),
+            $adventure->getPublisher()->getName(),
             $adventure->getSetting()->getName(),
             $adventure->getTitle(),
             $adventure->getDescription(),
@@ -244,11 +267,43 @@ class AdventureDocument
     }
 
     /**
+     * @return string[]
+     */
+    public function getAuthors(): array
+    {
+        return $this->authors;
+    }
+
+    /**
      * @return string
      */
-    public function getSystem()
+    public function getEdition(): string
     {
-        return $this->system;
+        return $this->edition;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getEnvironments(): array
+    {
+        return $this->environments;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getItems(): array
+    {
+        return $this->items;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getNpcs(): array
+    {
+        return $this->npcs;
     }
 
     /**
@@ -310,17 +365,9 @@ class AdventureDocument
     /**
      * @return bool
      */
-    public function isPregeneratedCharacters()
+    public function hasPregeneratedCharacters()
     {
         return $this->pregeneratedCharacters;
-    }
-
-    /**
-     * @return \string[]
-     */
-    public function getEnvironments()
-    {
-        return $this->environments;
     }
 
     /**
@@ -350,14 +397,6 @@ class AdventureDocument
     /**
      * @return \string[]
      */
-    public function getNotableItems()
-    {
-        return $this->notableItems;
-    }
-
-    /**
-     * @return \string[]
-     */
     public function getMonsters()
     {
         return $this->monsters;
@@ -377,14 +416,6 @@ class AdventureDocument
     public function isHandouts()
     {
         return $this->handouts;
-    }
-
-    /**
-     * @return \string[]
-     */
-    public function getVillains()
-    {
-        return $this->villains;
     }
 
     /**

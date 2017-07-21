@@ -37,7 +37,15 @@ php bin/console doctrine:migrations:migrate
 php bin/console app:elasticsearch:reindex
  
 # Import dummy adventures
-php bin/console doctrine:fixtures:load --fixtures src/AppBundle/DataFixtures/ORM/SettingsData.php --fixtures src/AppBundle/DataFixtures/ORM/TagData.php --fixtures src/AppBundle/DataFixtures/ORM/RandomAdventuresData.php -n
+php bin/console doctrine:fixtures:load \
+    --fixtures src/AppBundle/DataFixtures/ORM/AuthorsData.php \
+    --fixtures src/AppBundle/DataFixtures/ORM/EditionsData.php \
+    --fixtures src/AppBundle/DataFixtures/ORM/EnvironmentsData.php \
+    --fixtures src/AppBundle/DataFixtures/ORM/ItemsData.php \
+    --fixtures src/AppBundle/DataFixtures/ORM/NPCsData.php \
+    --fixtures src/AppBundle/DataFixtures/ORM/PublishersData.php \
+    --fixtures src/AppBundle/DataFixtures/ORM/SettingsData.php \
+    --fixtures src/AppBundle/DataFixtures/ORM/RandomAdventuresData.php
 php bin/console app:elasticsearch:reindex
 ```
 

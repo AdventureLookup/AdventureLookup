@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -34,6 +35,48 @@ class Adventure
      * @ORM\Column(name="version", type="integer")
      */
     private $version;
+
+    /**
+     * @var Author[]|Collection
+     * @ORM\ManyToMany(targetEntity="Author")
+     * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
+     */
+    private $authors;
+
+    /**
+     * @var Edition
+     * @ORM\ManyToOne(targetEntity="Edition")
+     * @Gedmo\Versioned()
+     */
+    private $edition;
+
+    /**
+     * @var Environment[]|Collection
+     * @ORM\ManyToMany(targetEntity="Environment")
+     * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
+     */
+    private $environments;
+
+    /**
+     * @var Item[]|Collection
+     * @ORM\ManyToMany(targetEntity="Item")
+     * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
+     */
+    private $items;
+
+    /**
+     * @var NPC[]|Collection
+     * @ORM\ManyToMany(targetEntity="NPC")
+     * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
+     */
+    private $npcs;
+
+    /**
+     * @var Publisher
+     * @ORM\ManyToOne(targetEntity="Publisher")
+     * @Gedmo\Versioned()
+     */
+    private $publisher;
 
     /**
      * @var Setting
@@ -193,6 +236,12 @@ class Adventure
     public function __construct()
     {
         $this->info = new ArrayCollection();
+
+        $this->authors = new ArrayCollection();
+        $this->environments = new ArrayCollection();
+        $this->items = new ArrayCollection();
+        $this->npcs = new ArrayCollection();
+
         $this->approved = false;
     }
 
@@ -223,6 +272,120 @@ class Adventure
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return Author[]|Collection
+     */
+    public function getAuthors(): Collection
+    {
+        return $this->authors;
+    }
+
+    /**
+     * @param Author[] $authors
+     *
+     * @return Adventure
+     */
+    public function setAuthors($authors)
+    {
+        $this->authors = $authors;
+        return $this;
+    }
+
+    /**
+     * @return Edition
+     */
+    public function getEdition()
+    {
+        return $this->edition;
+    }
+
+    /**
+     * @param Edition $edition
+     *
+     * @return Adventure
+     */
+    public function setEdition($edition)
+    {
+        $this->edition = $edition;
+        return $this;
+    }
+
+    /**
+     * @return Environment[]|Collection
+     */
+    public function getEnvironments(): Collection
+    {
+        return $this->environments;
+    }
+
+    /**
+     * @param Environment[] $environments
+     *
+     * @return Adventure
+     */
+    public function setEnvironments($environments)
+    {
+        $this->environments = $environments;
+        return $this;
+    }
+
+    /**
+     * @return Item[]|Collection
+     */
+    public function getItems(): Collection
+    {
+        return $this->items;
+    }
+
+    /**
+     * @param Item[] $items
+     *
+     * @return Adventure
+     */
+    public function setItems($items)
+    {
+        $this->items = $items;
+        return $this;
+    }
+
+    /**
+     * @return NPC[]|Collection
+     */
+    public function getNpcs(): Collection
+    {
+        return $this->npcs;
+    }
+
+    /**
+     * @param NPC[] $npcs
+     *
+     * @return Adventure
+     */
+    public function setNpcs($npcs)
+    {
+        $this->npcs = $npcs;
+        return $this;
+    }
+
+    /**
+     * @return Publisher
+     */
+    public function getPublisher()
+    {
+        return $this->publisher;
+    }
+
+    /**
+     * @param Publisher $publisher
+     *
+     * @return Adventure
+     */
+    public function setPublisher($publisher)
+    {
+        $this->publisher = $publisher;
+        return $this;
     }
 
     /**

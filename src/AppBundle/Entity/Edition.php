@@ -6,12 +6,12 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Setting
+ * Edition
  *
- * @ORM\Table(name="setting")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\SettingRepository")
+ * @ORM\Table(name="edition")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\EditionRepository")
  */
-class Setting
+class Edition
 {
     /**
      * @var int
@@ -28,6 +28,13 @@ class Setting
      * @ORM\Column(name="name", type="string", length=255, unique=true)
      */
     private $name;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="position", type="integer")
+     */
+    private $position;
 
     /**
      * @var string
@@ -61,7 +68,7 @@ class Setting
      *
      * @param string $name
      *
-     * @return Setting
+     * @return Edition
      */
     public function setName($name)
     {
@@ -78,6 +85,30 @@ class Setting
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set position
+     *
+     * @param integer $position
+     *
+     * @return Edition
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    /**
+     * Get position
+     *
+     * @return int
+     */
+    public function getPosition()
+    {
+        return $this->position;
     }
 }
 

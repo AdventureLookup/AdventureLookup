@@ -6,12 +6,12 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Setting
+ * Environment
  *
- * @ORM\Table(name="setting")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\SettingRepository")
+ * @ORM\Table(name="environment")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\EnvironmentRepository")
  */
-class Setting
+class Environment
 {
     /**
      * @var int
@@ -61,7 +61,7 @@ class Setting
      *
      * @param string $name
      *
-     * @return Setting
+     * @return Environment
      */
     public function setName($name)
     {

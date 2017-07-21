@@ -48,11 +48,11 @@
                 <div class="row">
                     <div class="col">
                         <h6>Written By</h6>
-                        ...
+                        {{ adventure.authors|join(', ') }}
                     </div>
                     <div class="col">
                         <h6>Published By</h6>
-                        ...
+                        {{ adventure.publisher }}
                     </div>
                     <div class="col">
                         <h6># Of Pages</h6>
@@ -73,8 +73,8 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <h6>System</h6>
-                        ...
+                        <h6>System / Edition</h6>
+                        {{ adventure.edition }}
                     </div>
                     <div class="col">
                         <h6>Setting</h6>
@@ -111,6 +111,36 @@
                     <div class="col">
                         <h6>Includes Characters?</h6>
                         {{ adventure.pregeneratedCharacters|bool2str }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h6>Notable Items</h6>
+                        <ul>
+                            {% for item in adventure.items %}
+                                <li>{{ item }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h6>Notable NPCs</h6>
+                        <ul>
+                            {% for npc in adventure.npcs %}
+                                <li>{{ npc }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h6>Monsters</h6>
+                        <ul>
+                            {#% for monster in adventure.monsters %}
+                                <li>{{ monster }}</li>
+                            {% endfor %#}
+                        </ul>
                     </div>
                 </div>
 
