@@ -4,15 +4,14 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
- * MonsterType
+ * Monster
  *
- * @ORM\Table(name="monster_type")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\MonsterTypeRepository")
+ * @ORM\Table(name="monster")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\MonsterRepository")
  */
-class MonsterType
+class Monster
 {
     /**
      * @var int
@@ -24,9 +23,10 @@ class MonsterType
     private $id;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Monster", mappedBy="types")
+     * @ORM\ManyToMany(targetEntity="MonsterType", inversedBy="monsters")
+     * @ORM\JoinTable(name="monster_monstertype")
      */
-    private $monsters;
+    private $types;
 
     /**
      * @var string
@@ -36,12 +36,11 @@ class MonsterType
     private $name;
 
     /**
-     * @var string
+     * @var bool
      *
-     * @Gedmo\Slug(fields={"name"}, updatable=false)
-     * @ORM\Column(length=128, unique=true)
+     * @ORM\Column(name="is_unique", type="boolean")
      */
-    private $slug;
+    private $isUnique = false;
 
     public function __construct()
     {
@@ -53,19 +52,19 @@ class MonsterType
      *
      * @return int
      */
-    public function getId(): int
+    public function getId()
     {
         return $this->id;
     }
 
     /**
-     * Get monsters
+     * Get monster types
      *
      * @return ArrayCollection
      */
-    public function getMonsters()
+    public function getTypes()
     {
-        return $this->monsters;
+        return $this->types;
     }
 
     /**
@@ -73,9 +72,9 @@ class MonsterType
      *
      * @param string $name
      *
-     * @return MonsterType
+     * @return Monster
      */
-    public function setName(string $name)
+    public function setName($name)
     {
         $this->name = $name;
 
@@ -87,17 +86,33 @@ class MonsterType
      *
      * @return string
      */
-    public function getName(): string
+    public function getName()
     {
         return $this->name;
     }
 
     /**
-     * @return string
+     * Set isUnique
+     *
+     * @param boolean $isUnique
+     *
+     * @return Monster
      */
-    public function getSlug(): string
+    public function setIsUnique($isUnique)
     {
-        return $this->slug;
+        $this->isUnique = $isUnique;
+
+        return $this;
+    }
+
+    /**
+     * Get isUnique
+     *
+     * @return bool
+     */
+    public function getIsUnique()
+    {
+        return $this->isUnique;
     }
 }
 
