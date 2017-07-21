@@ -42,8 +42,6 @@ class Version20170721075547 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_9E858E0F74281A5E ON adventure (edition_id)');
         $this->addSql('CREATE INDEX IDX_9E858E0F40C86FCE ON adventure (publisher_id)');
         $this->addSql('ALTER TABLE setting ADD created_by VARCHAR(255) DEFAULT NULL, ADD updated_by VARCHAR(255) DEFAULT NULL');
-        $this->addSql('ALTER TABLE user RENAME INDEX uniq_1483a5e9f85e0677 TO UNIQ_8D93D649F85E0677');
-        $this->addSql('ALTER TABLE user RENAME INDEX uniq_1483a5e9e7927c74 TO UNIQ_8D93D649E7927C74');
     }
 
     /**
@@ -74,7 +72,5 @@ class Version20170721075547 extends AbstractMigration
         $this->addSql('DROP INDEX IDX_9E858E0F40C86FCE ON adventure');
         $this->addSql('ALTER TABLE adventure DROP edition_id, DROP publisher_id');
         $this->addSql('ALTER TABLE setting DROP created_by, DROP updated_by');
-        $this->addSql('ALTER TABLE user RENAME INDEX uniq_8d93d649f85e0677 TO UNIQ_1483A5E9F85E0677');
-        $this->addSql('ALTER TABLE user RENAME INDEX uniq_8d93d649e7927c74 TO UNIQ_1483A5E9E7927C74');
     }
 }
