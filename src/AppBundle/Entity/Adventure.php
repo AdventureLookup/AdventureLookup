@@ -45,7 +45,8 @@ class Adventure
 
     /**
      * @var Edition
-     * @ORM\ManyToOne(targetEntity="Edition")
+     * @ORM\ManyToOne(targetEntity="Edition", fetch="EAGER")
+     * @Assert\NotBlank()
      * @Gedmo\Versioned()
      */
     private $edition;
@@ -73,14 +74,16 @@ class Adventure
 
     /**
      * @var Publisher
-     * @ORM\ManyToOne(targetEntity="Publisher")
+     * @ORM\ManyToOne(targetEntity="Publisher", fetch="EAGER")
+     * @Assert\NotBlank()
      * @Gedmo\Versioned()
      */
     private $publisher;
 
     /**
      * @var Setting
-     * @ORM\ManyToOne(targetEntity="Setting")
+     * @ORM\ManyToOne(targetEntity="Setting", fetch="EAGER")
+     * @Assert\NotBlank()
      * @Gedmo\Versioned()
      */
     private $setting;
