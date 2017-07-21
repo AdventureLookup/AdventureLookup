@@ -4,18 +4,16 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\AdventureDocument;
-use AppBundle\Entity\TagContent;
-use AppBundle\Entity\TagName;
+use AppBundle\Form\AdventureType;
 use AppBundle\Service\FieldUtils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Csrf\CsrfToken;
-use Symfony\Component\Validator\Constraints\Url;
 
 /**
  * Adventure controller.
@@ -62,6 +60,10 @@ class AdventureController extends Controller
      * @Route("/new", name="adventure_new")
      * @Method({"GET", "POST"})
      * @Security("is_granted('ROLE_USER')")
+     *
+     * @param Request $request
+     * @param UserInterface $user
+     * @return RedirectResponse|Response
      */
     public function newAction(Request $request, UserInterface $user)
     {
@@ -70,79 +72,21 @@ class AdventureController extends Controller
         if ($isCurator) {
             $adventure->setApproved(true);
         }
-        $em = $this->getDoctrine()->getManager();
-        $fieldTypes = $em->getRepository(TagName::class)->findAll();
 
-        if ($request->isMethod('POST')) {
-            $csrfTokenManager = $this->get('security.csrf.token_manager');
-            if (!$csrfTokenManager->isTokenValid(new CsrfToken('new_adventure', $request->request->get('_csrf_token')))) {
-                throw new InvalidCsrfTokenException();
-            }
-            $fields = $request->request->get('fields', []);
+        $form = $this->createForm(AdventureType::class, $adventure);
+        $form->handleRequest($request);
 
-            $title = $fields['title'];
-            $adventure->setTitle($title);
-            unset($fields['title']);
-
-            $validator = $this->get('validator');
-            $errors = $validator->validate($adventure);
-            if (count($errors) > 0) {
-                print 'Damn!';
-                exit;
-            }
-
-            $fieldUtils = new FieldUtils();
-            foreach ($fields as $id => $contents) {
-                foreach ($fieldTypes as $fieldType) {
-                    if ($fieldType->getId() == $id) {
-                        $type = $fieldType->getType();
-                        foreach ($contents as $content) {
-                            $fieldContent = new TagContent();
-                            $valid = true;
-                            switch ($type) {
-                                case 'boolean':
-                                    if (!in_array($content, ['0', '1'], true)) {
-                                        $valid = false;
-                                    }
-                                    break;
-                                case 'url':
-                                    if (!filter_var($content, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED | FILTER_FLAG_HOST_REQUIRED)) {
-                                        $valid = false;
-                                    }
-                                    break;
-                                case 'text':
-                                case 'string':
-                                    if (trim($content) === '') {
-                                        $valid = false;
-                                    }
-                                default:
-                                    break;
-                            }
-                            if ($valid) {
-                                if ($isCurator) {
-                                    $fieldContent->setApproved(true);
-                                }
-                                $fieldContent->setTag($fieldType);
-                                $fieldContent->setContent($fieldUtils->serialize($type, $content));
-                                $fieldContent->setAdventure($adventure);
-                                $em->persist($fieldContent);
-                            }
-                        }
-                        break;
-                    }
-                }
-            }
-
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
             $em->persist($adventure);
             $em->flush();
 
             return $this->redirectToRoute('adventure_show', ['slug' => $adventure->getSlug()]);
         }
 
-
         return $this->render('adventure/new.html.twig', array(
             'adventure' => $adventure,
-            'fieldTypes' => $fieldTypes
+            'form' => $form->createView(),
         ));
     }
 
@@ -154,15 +98,12 @@ class AdventureController extends Controller
      */
     public function showAction(Adventure $adventure)
     {
-        $em = $this->getDoctrine()->getManager();
-        $fieldNames = $em->getRepository(TagName::class)->findAll();
         $deleteForm = $this->createDeleteForm($adventure);
 
         $adventure = AdventureDocument::fromAdventure($adventure);
 
         return $this->render('adventure/show.html.twig', array(
             'adventure' => $adventure,
-            'fieldNames' => $fieldNames,
             'delete_form' => $deleteForm->createView(),
         ));
     }
