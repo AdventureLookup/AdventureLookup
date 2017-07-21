@@ -7,7 +7,7 @@ use AppBundle\Entity\Publisher;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class PublishersData implements FixtureInterface
+class PublisherData implements FixtureInterface
 {
     /**
      * Load a standard list of environments

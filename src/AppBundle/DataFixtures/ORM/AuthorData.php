@@ -7,7 +7,7 @@ use AppBundle\Entity\Author;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class AuthorsData implements FixtureInterface
+class AuthorData implements FixtureInterface
 {
     /**
      * Load a standard list of authors

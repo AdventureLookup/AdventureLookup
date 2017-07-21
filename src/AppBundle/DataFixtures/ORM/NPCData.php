@@ -8,7 +8,7 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Faker;
 
-class NPCsData implements FixtureInterface
+class NPCData implements FixtureInterface
 {
     /**
      * Load a standard list of environments

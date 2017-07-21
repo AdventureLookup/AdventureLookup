@@ -7,7 +7,7 @@ use AppBundle\Entity\Edition;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class EditionsData implements FixtureInterface
+class EditionData implements FixtureInterface
 {
     const SORT_GAP = 10;
 

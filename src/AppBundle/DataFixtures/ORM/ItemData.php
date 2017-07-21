@@ -7,7 +7,7 @@ use AppBundle\Entity\Item;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class ItemsData implements FixtureInterface
+class ItemData implements FixtureInterface
 {
     /**
      * Load a standard list of environments

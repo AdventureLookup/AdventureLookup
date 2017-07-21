@@ -12,6 +12,7 @@ use AppBundle\Entity\NPC;
 use AppBundle\Entity\Publisher;
 use AppBundle\Entity\Setting;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
@@ -19,9 +20,21 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Faker;
 
-class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
+class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, DependentFixtureInterface
 {
     use ContainerAwareTrait;
+
+    /**
+     * This method must return an array of fixtures classes
+     * on which the implementing class depends on
+     *
+     * @return array
+     */
+    public function getDependencies()
+    {
+        return [AuthorData::class, EditionData::class, EnvironmentData::class, ItemData::class, MonsterData::class,
+            NPCData::class, PublisherData::class, SettingData::class];
+    }
 
     /**
      * Load data fixtures with the passed EntityManager

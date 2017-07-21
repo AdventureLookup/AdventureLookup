@@ -4,12 +4,24 @@ namespace AppBundle\DataFixtures\ORM;
 
 use AppBundle\Entity\Monster;
 use AppBundle\Entity\MonsterType;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 
-class MonsterData implements FixtureInterface
+class MonsterData implements FixtureInterface, DependentFixtureInterface
 {
+    /**
+     * This method must return an array of fixtures classes
+     * on which the implementing class depends on
+     *
+     * @return array
+     */
+    public function getDependencies()
+    {
+        return [MonsterTypeData::class];
+    }
+
     /**
      * Load a standard list of monsters
      *
@@ -32,7 +44,7 @@ class MonsterData implements FixtureInterface
         $ooze = $typesRepo->findOneBy(['name' => 'ooze']);
         $plant = $typesRepo->findOneBy(['name' => 'plant']);
         $undead = $typesRepo->findOneBy(['name' => 'undead']);
-        
+
         $monsters = [
             ['name' => 'Orc', 'type' => $humanoid],
             ['name' => 'Kobold', 'type' => $humanoid],

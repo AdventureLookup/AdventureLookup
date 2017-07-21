@@ -7,7 +7,7 @@ use AppBundle\Entity\Environment;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class EnvironmentsData implements FixtureInterface
+class EnvironmentData implements FixtureInterface
 {
     /**
      * Load a standard list of environments
