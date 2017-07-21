@@ -16,5 +16,12 @@ services:
 
     app.image_type_extension:
         class: AppBundle\Form\Extension\HelpTypeExtension
+        autowire: true
         tags:
             - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\FormType }
+
+    app.twig_extension:
+        class: AppBundle\Twig\AppExtension
+        autowire: true
+        tags:
+            - { name: twig.extension }

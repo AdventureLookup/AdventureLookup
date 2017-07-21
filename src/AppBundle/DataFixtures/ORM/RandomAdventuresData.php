@@ -10,12 +10,10 @@ use AppBundle\Entity\TagName;
 use AppBundle\Service\FieldUtils;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Faker;
-use function Symfony\Component\VarDumper\Tests\Caster\reflectionParameterFixture;
 
 class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
 {
@@ -48,8 +46,31 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
 
         for ($i = 0; $i < 200; $i++) {
             $adventure = new Adventure();
-            $adventure->setTitle($faker->catchPhrase);
-            $adventure->setSetting($faker->randomElement($settings));
+            $adventure
+                ->setTitle($faker->catchPhrase)
+                ->setDescription($faker->realText(2000))
+                ->setNumPages($faker->numberBetween(1, 200))
+                ->setFoundIn($faker->catchPhrase)
+                ->setLink($faker->url)
+                ->setThumbnailUrl($faker->imageUrl(260, 300))
+                ->setSoloable($faker->boolean())
+                ->setPregeneratedCharacters($faker->boolean())
+                ->setTacticalMaps($faker->boolean())
+                ->setHandouts($faker->boolean())
+                ->setSetting($faker->randomElement($settings));
+
+            if ($faker->boolean()) {
+                $adventure->setStartingLevelRange($faker->randomElement([
+                    'low', 'medium', 'high'
+                ]));
+            } else {
+                $min = $faker->numberBetween(1, 10);
+                $max = $faker->numberBetween($min + 1, 20);
+                $adventure
+                    ->setMinStartingLevel($min)
+                    ->setMaxStartingLevel($max)
+                ;
+            }
 
             foreach ($tags as $tag) {
                 for ($j = 0; $j < 2; $j++) {
@@ -77,36 +98,8 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
     private function customFaker(TagName $tag, TagContent $info, Faker\Generator $faker)
     {
         $fakes = [
-            'Length (# of Pages)' => function (Faker\Generator $faker) {
-                return $faker->numberBetween(20, 200);
-            },
-            'Year of Release' => function (Faker\Generator $faker) {
-                return $faker->numberBetween(1980, 2016);
-            },
-            'Language' => function (Faker\Generator $faker) {
-                return $faker->randomElement([
-                    'English',
-                    'German',
-                    'Italian'
-                ]);
-            },
             'System / Edition' => function (Faker\Generator $faker) {
                 return $faker->randomElement(explode(', ', "OD&D, AD&D, BECMI. AD&D 2, 3rd Edition, 3.5, Pathfinder, 4th Edition, 4th Essentials, 5th Edition, OSR, DCC"));
-            },
-            'Availability' => function (Faker\Generator $faker) {
-                return $faker->randomElement([
-                    'In Print',
-                    'Out of Print',
-                    'Print on Demand',
-                    'Digital',
-                ]);
-            },
-            'Available Formats' => function (Faker\Generator $faker) {
-                return $faker->randomElement([
-                    'PDF',
-                    'ePub',
-                    'Paper',
-                ]);
             },
             'Publisher' => function (Faker\Generator $faker) {
                 return $faker->randomElement(explode(', ', 'TSR, WotC, Paizo, Goodman Games, Necromancer Games, Judge\'s Guild'));
@@ -116,29 +109,6 @@ class RandomAdventuresData implements FixtureInterface, ContainerAwareInterface
             },
             'Environment' => function (Faker\Generator $faker) {
                 return $faker->randomElement(explode(', ', 'Dungeon, Wilderness, Swamp, City, Town, Ship, Underdark, Underwater, Stronghold, Planes'));
-            },
-            'Magic Level' => function (Faker\Generator $faker) {
-                return $faker->randomElement([
-                    'Low', 'High', 'Magitech'
-                ]);
-            },
-            'Alignment' => function (Faker\Generator $faker) {
-                return $faker->randomElement([
-                    'Good', 'Evil', 'Any', 'Lawful/Evil', 'Chaotic/Evil'
-                ]);
-            },
-            'Race / Social Class' => function (Faker\Generator $faker) {
-                return $faker->randomElement([
-                    'Gnomes', 'Drow', 'Human or Halfelf', 'Any'
-                ]);
-            },
-            'Level progression' => function (Faker\Generator $faker) {
-                return $faker->randomElement([
-                    'Milestones', 'XP'
-                ]);
-            },
-            'Level Range' => function (Faker\Generator $faker) {
-                return $faker->randomElement(['low', 'medium', 'high']);
             },
             'Notable Items' => function (Faker\Generator $faker) {
                 return $faker->randomElement([

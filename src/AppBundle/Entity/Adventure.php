@@ -14,6 +14,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Table(name="adventure")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\AdventureRepository")
  * @UniqueEntity("title")
+ * @Gedmo\Loggable
  */
 class Adventure
 {
@@ -37,6 +38,7 @@ class Adventure
     /**
      * @var Setting
      * @ORM\ManyToOne(targetEntity="Setting")
+     * @Gedmo\Versioned()
      */
     private $setting;
 
@@ -45,8 +47,110 @@ class Adventure
      *
      * @ORM\Column(name="title", type="string", length=255, unique=true)
      * @Assert\NotBlank()
+     * @Gedmo\Versioned()
      */
     private $title;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     * @Gedmo\Versioned()
+     */
+    private $description;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\Range(min=1)
+     * @Gedmo\Versioned()
+     */
+    private $minStartingLevel;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\Range(min=1)
+     * @Gedmo\Versioned()
+     */
+    private $maxStartingLevel;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Gedmo\Versioned()
+     */
+    private $startingLevelRange;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\Range(min=1)
+     * @Gedmo\Versioned()
+     */
+    private $numPages;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Gedmo\Versioned()
+     */
+    private $foundIn;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Url()
+     * @Gedmo\Versioned()
+     */
+    private $link;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Url()
+     * @Gedmo\Versioned()
+     */
+    private $thumbnailUrl;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Gedmo\Versioned()
+     */
+    private $soloable;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Gedmo\Versioned()
+     */
+    private $pregeneratedCharacters;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Gedmo\Versioned()
+     */
+    private $tacticalMaps;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Gedmo\Versioned()
+     */
+    private $handouts;
 
     /**
      * @var string
@@ -222,6 +326,236 @@ class Adventure
     public function getVersion(): int
     {
         return $this->version;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMinStartingLevel()
+    {
+        return $this->minStartingLevel;
+    }
+
+    /**
+     * @param int $minStartingLevel
+     *
+     * @return Adventure
+     */
+    public function setMinStartingLevel($minStartingLevel)
+    {
+        $this->minStartingLevel = $minStartingLevel;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxStartingLevel()
+    {
+        return $this->maxStartingLevel;
+    }
+
+    /**
+     * @param int $maxStartingLevel
+     *
+     * @return Adventure
+     */
+    public function setMaxStartingLevel($maxStartingLevel)
+    {
+        $this->maxStartingLevel = $maxStartingLevel;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStartingLevelRange()
+    {
+        return $this->startingLevelRange;
+    }
+
+    /**
+     * @param string $startingLevelRange
+     *
+     * @return Adventure
+     */
+    public function setStartingLevelRange($startingLevelRange)
+    {
+        $this->startingLevelRange = $startingLevelRange;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getNumPages()
+    {
+        return $this->numPages;
+    }
+
+    /**
+     * @param int $numPages
+     *
+     * @return Adventure
+     */
+    public function setNumPages($numPages)
+    {
+        $this->numPages = $numPages;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLink()
+    {
+        return $this->link;
+    }
+
+    /**
+     * @param string $link
+     *
+     * @return Adventure
+     */
+    public function setLink($link)
+    {
+        $this->link = $link;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getThumbnailUrl()
+    {
+        return $this->thumbnailUrl;
+    }
+
+    /**
+     * @param string $thumbnailUrl
+     *
+     * @return Adventure
+     */
+    public function setThumbnailUrl($thumbnailUrl)
+    {
+        $this->thumbnailUrl = $thumbnailUrl;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSoloable()
+    {
+        return $this->soloable;
+    }
+
+    /**
+     * @param bool $soloable
+     *
+     * @return Adventure
+     */
+    public function setSoloable($soloable)
+    {
+        $this->soloable = $soloable;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasPregeneratedCharacters()
+    {
+        return $this->pregeneratedCharacters;
+    }
+
+    /**
+     * @param bool $pregeneratedCharacters
+     *
+     * @return Adventure
+     */
+    public function setPregeneratedCharacters($pregeneratedCharacters)
+    {
+        $this->pregeneratedCharacters = $pregeneratedCharacters;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasTacticalMaps()
+    {
+        return $this->tacticalMaps;
+    }
+
+    /**
+     * @param bool $tacticalMaps
+     *
+     * @return Adventure
+     */
+    public function setTacticalMaps($tacticalMaps)
+    {
+        $this->tacticalMaps = $tacticalMaps;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasHandouts()
+    {
+        return $this->handouts;
+    }
+
+    /**
+     * @param bool $handouts
+     *
+     * @return Adventure
+     */
+    public function setHandouts($handouts)
+    {
+        $this->handouts = $handouts;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     *
+     * @return Adventure
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFoundIn()
+    {
+        return $this->foundIn;
+    }
+
+    /**
+     * @param string $foundIn
+     *
+     * @return Adventure
+     */
+    public function setFoundIn($foundIn)
+    {
+        $this->foundIn = $foundIn;
+
+        return $this;
     }
 }
 
