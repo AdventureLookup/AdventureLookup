@@ -22,7 +22,7 @@ class PublisherData implements FixtureInterface
             'Paizo',
             'Goodman Games',
             'Necromancer Games',
-            'Judge\'s Guild',
+            "Judge's Guild",
         ];
 
         foreach ($publishers as $publisherName) {
