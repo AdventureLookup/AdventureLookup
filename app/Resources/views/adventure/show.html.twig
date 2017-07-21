@@ -6,16 +6,16 @@
         {% for content in field.contents %}
             <li>
                 {% if field.meta.type in ['string', 'url'] %}
-                    {% if field.meta.type == 'url' %}
-                        {% set path = content.content %}
-                    {% else %}
-                        {% set path = path('adventure_index', {'f': 1, ('f[' ~ field.meta.id ~ '][e]'): '1', ('f[' ~ field.meta.id ~ '][v]'): content.content}) ~ '#search-results' %}
-                    {% endif %}
-                    <a href="{{ path }}">
+                {% if field.meta.type == 'url' %}
+                    {% set path = content.content %}
+                {% else %}
+                    {% set path = path('adventure_index', {'f': 1, ('f[' ~ field.meta.id ~ '][e]'): '1', ('f[' ~ field.meta.id ~ '][v]'): content.content}) ~ '#search-results' %}
                 {% endif %}
-                {{ content.content|nl2br }}
-                {% if field.meta.type not in ['text'] %}
-                    </a>
+                <a href="{{ path }}">
+                    {% endif %}
+                    {{ content.content|nl2br }}
+                    {% if field.meta.type not in ['text'] %}
+                </a>
                 {% endif %}
                 {% if not content.approved %}<span class="badge badge-warning">needs approval</span>{% endif %}
                 {% if is_granted('ROLE_CURATOR') %}
@@ -39,78 +39,87 @@
     <div class="container">
         <div class="row">
             <div class="col adventure-show--details">
-                <h1 class="my-5">{{ adventure.title }}</h1>
+                <h4 class="my-3">{{ adventure.title }}</h4>
                 {% if adventure.thumbnailUrl %}
-                    <img src="{{ adventure.thumbnailUrl }}" class="ml-1 pull-right" style="max-width: 120px; max-height: 140px;" />
+                    <img src="{{ adventure.thumbnailUrl }}" class="ml-1 pull-right"
+                         style="max-width: 120px; max-height: 140px;"/>
                 {% endif %}
                 <p>{{ adventure.description }}</p>
                 <div class="clearfix"></div>
-                <div class="row">
-                    <div class="col">
-                        <h6>Written By</h6>
-                        ...
-                    </div>
-                    <div class="col">
-                        <h6>Published By</h6>
-                        ...
-                    </div>
-                    <div class="col">
-                        <h6># Of Pages</h6>
-                        {{ adventure.numPages }}
-                    </div>
-                </div>
-                <div class="row">
-                    {% if adventure.link %}
+                <div>
+                    <div class="data-row">
                         <div class="col">
-                            <h6>Link</h6>
-                            <a href="{{ adventure.link|e('html_attr') }}">{{ adventure.link }}</a>
+                            <div class="label">Written By</div>
+                            ...
                         </div>
-                    {% endif %}
-                    <div class="col">
-                        <h6>Found In</h6>
-                        {{ adventure.foundIn }}
+                        <div class="col">
+                            <div class="label">Published By</div>
+                            ...
+                        </div>
+                        <div class="col">
+                            <div class="label"># Of Pages</div>
+                            {{ adventure.numPages }}
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <h6>System</h6>
-                        ...
+                    <div class="data-row">
+                        {% if adventure.link %}
+                            <div class="col">
+                                <div class="label">Link</div>
+                                <a href="{{ adventure.link|e('html_attr') }}">{{ adventure.link }}</a>
+                            </div>
+                        {% endif %}
+                        <div class="col">
+                            <div class="label">Found In</div>
+                            {{ adventure.foundIn }}
+                        </div>
                     </div>
-                    <div class="col">
-                        <h6>Setting</h6>
-                        {{ adventure.setting }}
+                    <div class="data-row">
+                        <div class="col">
+                            <div class="label">System</div>
+                            ...
+                        </div>
+                        <div class="col">
+                            <div class="label">Setting</div>
+                            {{ adventure.setting }}
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <h6>Starting Level Range</h6>
-                        {{ adventure.startingLevelRange }}
+                    <div class="data-row">
+                        <div class="col">
+                            <div class="label">Starting Level Range</div>
+                            {{ adventure.startingLevelRange }}
+                        </div>
+                        <div class="col">
+                            <div class="label">Min. Starting Level</div>
+                            {{ adventure.minStartingLevel }}
+                        </div>
+                        <div class="col">
+                            <div class="label">Max. Starting Level</div>
+                            {{ adventure.maxStartingLevel }}
+                        </div>
                     </div>
-                    <div class="col">
-                        <h6>Min. Starting Level</h6>
-                        {{ adventure.minStartingLevel }}
+                    <div class="data-row">
+                        <div class="col">
+                            <div class="label">Handouts?</div>
+                            {{ adventure.handouts|bool2str }}
+                        </div>
+                        <div class="col">
+                            <div class="label">Tactical Maps?</div>
+                            {{ adventure.tacticalMaps|bool2str }}
+                        </div>
+                        <div class="col">
+                            <div class="label">Soloable?</div>
+                            {{ adventure.soloable|bool2str }}
+                        </div>
+                        <div class="col">
+                            <div class="label">Includes Characters?</div>
+                            {{ adventure.pregeneratedCharacters|bool2str }}
+                        </div>
                     </div>
-                    <div class="col">
-                        <h6>Max. Starting Level</h6>
-                        {{ adventure.maxStartingLevel }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <h6>Handouts?</h6>
-                        {{ adventure.handouts|bool2str }}
-                    </div>
-                    <div class="col">
-                        <h6>Tactical Maps?</h6>
-                        {{ adventure.tacticalMaps|bool2str }}
-                    </div>
-                    <div class="col">
-                        <h6>Soloable?</h6>
-                        {{ adventure.soloable|bool2str }}
-                    </div>
-                    <div class="col">
-                        <h6>Includes Characters?</h6>
-                        {{ adventure.pregeneratedCharacters|bool2str }}
+                    <div class="data-row">
+                        <div class="col">
+                            <div class="label">BBEG & Monsters</div>
+                            ...
+                        </div>
                     </div>
                 </div>
 
@@ -128,7 +137,8 @@
                 <div class="bg-faded p-3">
                     <h3 class="mt-3">Other actions</h3>
                     {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                        <form method="get" action="{{ path('adventure_info_new', {id: adventure.id}) }}" class="form-inline">
+                        <form method="get" action="{{ path('adventure_info_new', {id: adventure.id}) }}"
+                              class="form-inline">
                             <label for="add-info" class="mr-1">Add information:</label>
                             <select name="fieldId" id="add-info" class="form-control form-control-sm">
                                 {% for field in fieldNames %}
@@ -144,9 +154,11 @@
                         <p>You need to <a href="{{ path('login') }}">log in</a> to add and edit information.</p>
                     {% endif %}
                     {% if is_granted('ROLE_CURATOR') %}
-                        <a class="btn btn-secondary btn-sm my-3" href="{{ path('adventure_edit', { 'id': adventure.id }) }}">Edit adventure</a>
+                        <a class="btn btn-secondary btn-sm my-3"
+                           href="{{ path('adventure_edit', { 'id': adventure.id }) }}">Edit adventure</a>
                         {{ form_start(delete_form) }}
-                        <input class="btn btn-sm btn-danger mt-3" type="submit" value="Delete" role="button" onclick="return confirm('Do you really want to delete this adventure?')">
+                        <input class="btn btn-sm btn-danger mt-3" type="submit" value="Delete" role="button"
+                               onclick="return confirm('Do you really want to delete this adventure?')">
                         {{ form_end(delete_form) }}
                     {% endif %}
                 </div>
@@ -159,7 +171,7 @@
         $(function () {
             $('#add-info')
                 .select2()
-                .on('select2:select', function(){
+                .on('select2:select', function () {
                     $(this).focus();
                 });
         })
