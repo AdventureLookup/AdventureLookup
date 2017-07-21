@@ -44,7 +44,7 @@ php bin/console doctrine:fixtures:load \
     --fixtures src/AppBundle/DataFixtures/ORM/ItemsData.php \
     --fixtures src/AppBundle/DataFixtures/ORM/NPCsData.php \
     --fixtures src/AppBundle/DataFixtures/ORM/PublishersData.php \
-    --fixtures src/AppBundle/DataFixtures/ORM/SettingsData.php \
+    --fixtures src/AppBundle/DataFixtures/ORM/SettingData.php \
     --fixtures src/AppBundle/DataFixtures/ORM/RandomAdventuresData.php
 php bin/console app:elasticsearch:reindex
 ```
