@@ -1,45 +1,5 @@
 @import './bootstrap.scss';
-
-.adv-info {
-  background-color: whitesmoke;
-  padding: 1rem;
-  margin: 0rem;
-  width: 100%;
-}
-
-.adventure-info-list {
-  column-count: 1;
-  column-gap: 40px;
-
-  @media (min-width: map-get($grid-breakpoints, md)) {
-    column-count: 2;
-  }
-  @media (min-width: map-get($grid-breakpoints, lg)) {
-    column-count: 3;
-  }
-}
-
-.adventure-show--details {
-  .col {
-    padding-bottom: 1em;
-    padding-top: 1em;
-    outline: 1px solid #cdcdcd;
-  }
-}
-
-.adventure-show--details-old {
-  column-count: 1;
-
-  @media (min-width: map-get($grid-breakpoints, md)) {
-    column-count: 2;
-  }
-  @media (min-width: map-get($grid-breakpoints, lg)) {
-    column-count: 3;
-  }
-  @media (min-width: map-get($grid-breakpoints, xl)) {
-    column-count: 4;
-  }
-}
+@import 'adventure';
 
 .filter-card .filters .show-more {
   display: block;
