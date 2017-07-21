@@ -118,12 +118,12 @@ class AdventureDocument
     public function __construct(
         int $id,
         array $authors,
-        string $edition,
+        string $edition = null,
         array $environments,
         array $items,
         array $npcs,
-        string $publisher,
-        string $setting,
+        string $publisher = null,
+        string $setting = null,
         array $monsters,
         string $title,
         string $description = null,
@@ -204,12 +204,12 @@ class AdventureDocument
         return new static(
             $adventure->getId(),
             $adventure->getAuthors()->map(function (Author $author) { return $author->getName(); })->toArray(),
-            $adventure->getEdition()->getName(),
+            static::getNameOrNull($adventure->getEdition()),
             $adventure->getEnvironments()->map(function (Environment $environment) { return $environment->getName(); })->toArray(),
             $adventure->getItems()->map(function (Item $item) { return $item->getName(); })->toArray(),
             $adventure->getNpcs()->map(function (NPC $npc) { return $npc->getName(); })->toArray(),
-            $adventure->getPublisher()->getName(),
-            $adventure->getSetting()->getName(),
+            static::getNameOrNull($adventure->getPublisher()),
+            static::getNameOrNull($adventure->getSetting()),
             $adventure->getMonsters()->map(function (Monster $monster) { return $monster->getName(); })->toArray(),
             $adventure->getTitle(),
             $adventure->getDescription(),
@@ -280,7 +280,7 @@ class AdventureDocument
     /**
      * @return string
      */
-    public function getEdition(): string
+    public function getEdition()
     {
         return $this->edition;
     }
@@ -427,5 +427,14 @@ class AdventureDocument
     public function getFoundIn()
     {
         return $this->foundIn;
+    }
+
+    /**
+     * @param $entity
+     * @return null|string
+     */
+    private static function getNameOrNull($entity)
+    {
+        return $entity === null ? null : $entity->getName();
     }
 }

@@ -16,12 +16,12 @@ class AdventureSerializer
     {
         $ser = [
             'authors' => $adventure->getAuthors()->map(function (Author $author) { return $author->getName(); })->toArray(),
-            'edition' => $adventure->getEdition()->getName(),
+            'edition' => $this->getNameOrNull($adventure->getEdition()),
             'environments' => $adventure->getEnvironments()->map(function (Environment $environment) { return $environment->getName(); })->toArray(),
             'items' => $adventure->getItems()->map(function (Item $item) { return $item->getName(); })->toArray(),
             'npcs' => $adventure->getNpcs()->map(function (NPC $npc) { return $npc->getName(); })->toArray(),
-            'publisher' => $adventure->getPublisher()->getName(),
-            'setting' => $adventure->getSetting()->getName(),
+            'publisher' => $this->getNameOrNull($adventure->getPublisher()),
+            'setting' => $this->getNameOrNull($adventure->getSetting()),
             'monsters' => $adventure->getMonsters()->map(function (Monster $monster) { return $monster->getName(); })->toArray(),
 
             'title' => $adventure->getTitle(),
@@ -52,5 +52,14 @@ class AdventureSerializer
         }
 
         return $ser;
+    }
+
+    /**
+     * @param $entity
+     * @return null|string
+     */
+    private function getNameOrNull($entity)
+    {
+        return $entity === null ? null : $entity->getName();
     }
 }

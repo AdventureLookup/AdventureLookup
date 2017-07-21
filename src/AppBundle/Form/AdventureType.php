@@ -49,7 +49,7 @@ class AdventureType extends AbstractType
             ])
             ->add('edition', EntityType::class, [
                 'help' => 'The system the game was designed for and the edition of that system if there is one.',
-                'required' => true,
+                'required' => false,
                 'class' => Edition::class,
                 'multiple' => false,
                 'choice_label' => 'name',
@@ -79,14 +79,14 @@ class AdventureType extends AbstractType
             ])
             ->add('publisher', EntityType::class, [
                 'help' => 'Publisher of the module.',
-                'required' => true,
+                'required' => false,
                 'class' => Publisher::class,
                 'multiple' => false,
                 'choice_label' => 'name'
             ])
             ->add('setting', EntityType::class, [
                 'help' => 'The narrative universe the module is set in.',
-                'required' => true,
+                'required' => false,
                 'class' => Setting::class,
                 'multiple' => false,
                 'choice_label' => 'name',
