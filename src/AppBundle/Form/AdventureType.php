@@ -36,7 +36,7 @@ class AdventureType extends AbstractType
     {
         $builder
             ->add('title', TextType::class, [
-                'help' => 'The title of the adventure. You can add more information in just a second.',
+                'help' => 'The title of the adventure.',
                 'required' => true,
             ])
             ->add('description', TextareaType::class, [

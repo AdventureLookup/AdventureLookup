@@ -187,6 +187,10 @@ class AdventureDocument
         }
     }
 
+    /**
+     * @param Adventure $adventure
+     * @return static
+     */
     public static function fromAdventure(Adventure $adventure)
     {
         $info = [];
