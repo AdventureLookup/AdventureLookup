@@ -90,8 +90,7 @@ function debounce(func, wait, immediate) {
         const selectized = $select.selectize({
             create: function(query, callback) {
                 const $modal = $('#newFieldContentModal');
-                const $modalTitle = $modal.find('.modal-title');
-                const $modalBody = $modal.find('.modal-body');
+                const $modalForm = $modal.find('.modal-form');
                 const $modalAddBtn = $modal.find('#newFieldContentModal-add');
 
                 // Create new form
@@ -100,7 +99,8 @@ function debounce(func, wait, immediate) {
                     .data('prototype')
                     .replace(/__name__/g, ++newFieldIndex)
                     .replace(/__label__/g, '');
-                $modalBody.html(prototype);
+                $modalForm.html(prototype);
+                $modalForm.find('select').selectize();
 
                 // Set name attribute
                 const $nameInput = $(`#appbundle_adventure_${fieldName}-new_${newFieldIndex}_name`);
@@ -108,7 +108,7 @@ function debounce(func, wait, immediate) {
 
                 $modalAddBtn.one('click', () => {
                     $modalAddBtn.attr('disabled', true);
-                    $modalBody.children()
+                    $modalForm.children()
                         .addClass('d-none')
                         .appendTo($newEntities);
                     callback({title: query, value: 'n' + query});
@@ -120,7 +120,7 @@ function debounce(func, wait, immediate) {
                 $modalAddBtn.attr('disabled', false);
 
                 $modal.one('shown.bs.modal', function () {
-                    $nameInput.focus()
+                    $modalAddBtn.focus()
                 });
                 $modal.modal('show');
             },

@@ -229,6 +229,7 @@ class AdventureType extends AbstractType
     private function createAppendableEntityCollection(FormBuilderInterface $builder, string $fieldName, string $entity, string $form, string $method, string $title, string $help)
     {
         $builder
+            // First create the normal dropdown for existing entities
             ->add($fieldName, EntityType::class, [
                 'help' => $help,
                 'required' => false,
@@ -238,12 +239,17 @@ class AdventureType extends AbstractType
                 'label' => $title,
             ])
             ->get($fieldName)
+            // Drop any submitted options starting with 'n'.
+            // This drops all new entities from the dropdown.
+            // Existing entities will always have numeric ids and therefore not be dropped.
             ->addViewTransformer(new CallbackTransformer(function ($data) { return $data; }, function ($choices) {
                 return array_filter($choices, function ($choice) {
                     return $choice[0] !== 'n';
                 });
             }));
         $builder
+            // Add an empty collection of entities.
+            // This will hold all newly created entities.
             ->add($fieldName . '-new', CollectionType::class, [
                 'entry_type' => $form,
                 'allow_add' => true,
@@ -252,11 +258,19 @@ class AdventureType extends AbstractType
                 'attr' => [
                     'style' => 'background: #cdcdcd'
                 ],
-                'label' => 'New ' . $title . ' (will be added to list above)',
+                'label' => 'New ' . $title . ' (added to list above)',
+                'entry_options' => [
+                    'label_attr' => [
+                        'class' => 'd-none',
+                    ]
+                ],
                 'constraints' => [
                     new Valid()
                 ]
             ])
+            // Once the form is submitted and validation has passed, associate the new entities
+            // with the adventure. They will be persisted once the changes to the adventure are
+            // added to the database.
             ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $formEvent) use ($fieldName, $method) {
                 /** @var Adventure $adventure */
                 $adventure = $formEvent->getData();
@@ -265,6 +279,7 @@ class AdventureType extends AbstractType
                 foreach ($newEntities as $entity) {
                     $adventure->$method($entity);
                 }
-            }, -200);
+            }, -200)
+        ;
     }
 }

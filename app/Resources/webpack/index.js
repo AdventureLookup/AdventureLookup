@@ -12,7 +12,7 @@ import './sass/style.scss';
 
 import './add-content.js';
 import './search.js';
-import './adventure-create.js';
+import './adventure.js';
 
 
 toastr.options = {
