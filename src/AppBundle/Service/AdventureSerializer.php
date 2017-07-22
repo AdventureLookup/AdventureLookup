@@ -4,13 +4,26 @@ namespace AppBundle\Service;
 
 
 use AppBundle\Entity\Adventure;
+use AppBundle\Entity\Author;
+use AppBundle\Entity\Environment;
+use AppBundle\Entity\Item;
+use AppBundle\Entity\Monster;
+use AppBundle\Entity\NPC;
 
 class AdventureSerializer
 {
     public function toElasticDocument(Adventure $adventure): array
     {
         $ser = [
-            'setting' => $adventure->getSetting()->getName(),
+            'authors' => $adventure->getAuthors()->map(function (Author $author) { return $author->getName(); })->toArray(),
+            'edition' => $this->getNameOrNull($adventure->getEdition()),
+            'environments' => $adventure->getEnvironments()->map(function (Environment $environment) { return $environment->getName(); })->toArray(),
+            'items' => $adventure->getItems()->map(function (Item $item) { return $item->getName(); })->toArray(),
+            'npcs' => $adventure->getNpcs()->map(function (NPC $npc) { return $npc->getName(); })->toArray(),
+            'publisher' => $this->getNameOrNull($adventure->getPublisher()),
+            'setting' => $this->getNameOrNull($adventure->getSetting()),
+            'monsters' => $adventure->getMonsters()->map(function (Monster $monster) { return $monster->getName(); })->toArray(),
+
             'title' => $adventure->getTitle(),
             'description' => $adventure->getDescription(),
             'slug' => $adventure->getSlug(),
@@ -25,7 +38,6 @@ class AdventureSerializer
             'pregeneratedCharacters' => $adventure->hasPregeneratedCharacters(),
             'tacticalMaps' => $adventure->hasTacticalMaps(),
             'handouts' => $adventure->hasHandouts(),
-
         ];
         $fieldUtils = new FieldUtils();
 
@@ -40,5 +52,14 @@ class AdventureSerializer
         }
 
         return $ser;
+    }
+
+    /**
+     * @param $entity
+     * @return null|string
+     */
+    private function getNameOrNull($entity)
+    {
+        return $entity === null ? null : $entity->getName();
     }
 }

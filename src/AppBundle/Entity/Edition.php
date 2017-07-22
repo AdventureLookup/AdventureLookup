@@ -8,13 +8,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * Setting
+ * Edition
  *
- * @ORM\Table(name="setting")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\SettingRepository")
+ * @ORM\Table(name="edition")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\EditionRepository")
  * @UniqueEntity("name")
  */
-class Setting
+class Edition
 {
     /**
      * @var int
@@ -32,6 +32,13 @@ class Setting
      * @Assert\NotBlank()
      */
     private $name;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="position", type="integer")
+     */
+    private $position;
 
     /**
      * @var string
@@ -65,7 +72,7 @@ class Setting
      *
      * @param string $name
      *
-     * @return Setting
+     * @return Edition
      */
     public function setName($name)
     {
@@ -82,6 +89,30 @@ class Setting
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set position
+     *
+     * @param integer $position
+     *
+     * @return Edition
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    /**
+     * Get position
+     *
+     * @return int
+     */
+    public function getPosition()
+    {
+        return $this->position;
     }
 }
 

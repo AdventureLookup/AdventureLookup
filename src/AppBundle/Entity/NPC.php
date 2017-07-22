@@ -2,19 +2,18 @@
 
 namespace AppBundle\Entity;
 
-use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * Setting
+ * NPC
  *
- * @ORM\Table(name="setting")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\SettingRepository")
+ * @ORM\Table(name="npc")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\NPCRepository")
  * @UniqueEntity("name")
  */
-class Setting
+class NPC
 {
     /**
      * @var int
@@ -33,22 +32,6 @@ class Setting
      */
     private $name;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", nullable=true)
-     * @Gedmo\Blameable(on="create")
-     */
-    private $createdBy;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", nullable=true)
-     * @Gedmo\Blameable(on="update")
-     */
-    private $updatedBy;
-
 
     /**
      * Get id
@@ -65,7 +48,7 @@ class Setting
      *
      * @param string $name
      *
-     * @return Setting
+     * @return NPC
      */
     public function setName($name)
     {

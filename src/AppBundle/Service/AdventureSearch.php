@@ -230,35 +230,16 @@ class AdventureSearch
         $fields = $qb->getQuery()->execute();
 
         return array_map(function ($hit) use ($fields) {
-            $infos = $hit['_source'];
-            unset($infos['setting']);
-            unset($infos['title']);
-            unset($infos['description']);
-            unset($infos['slug']);
-            unset($infos['minStartingLevel']);
-            unset($infos['maxStartingLevel']);
-            unset($infos['startingLevelRange']);
-            unset($infos['numPages']);
-            unset($infos['foundIn']);
-            unset($infos['link']);
-            unset($infos['thumbnailUrl']);
-            unset($infos['soloable']);
-            unset($infos['pregeneratedCharacters']);
-            unset($infos['tacticalMaps']);
-            unset($infos['handouts']);
-
-            $infoArr = [];
-            foreach ($infos as $id => $info) {
-                $id = substr($id, strlen('info_'));
-                $infoArr[$id] = [
-                    'meta' => $fields[$id],
-                    'contents' => $info
-                ];
-            }
-
             return new AdventureDocument(
                 $hit['_id'],
+                $hit['_source']['authors'],
+                $hit['_source']['edition'],
+                $hit['_source']['environments'],
+                $hit['_source']['items'],
+                $hit['_source']['npcs'],
+                $hit['_source']['publisher'],
                 $hit['_source']['setting'],
+                $hit['_source']['monsters'],
                 $hit['_source']['title'],
                 $hit['_source']['description'],
                 $hit['_source']['slug'],
@@ -273,7 +254,7 @@ class AdventureSearch
                 $hit['_source']['pregeneratedCharacters'],
                 $hit['_source']['tacticalMaps'],
                 $hit['_source']['handouts'],
-                $infoArr,
+                [],
                 $hit['_score']
             );
         }, $result['hits']['hits']);
@@ -341,7 +322,14 @@ class AdventureSearch
             return $fieldUtils->getFieldNameById($field->getId());
         }, $fields);
         $fields = array_values($fields);
+        $fields[] = 'authors';
+        $fields[] = 'edition';
+        $fields[] = 'environments';
+        $fields[] = 'items';
+        $fields[] = 'npcs';
+        $fields[] = 'publisher';
         $fields[] = 'setting';
+        $fields[] = 'monsters';
         $fields[] = 'description';
         $fields[] = 'foundIn';
 
