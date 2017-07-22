@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\AdventureDocument;
 use AppBundle\Form\AdventureType;
+use AppBundle\Form\AuthorType;
 use AppBundle\Service\FieldUtils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -87,6 +88,7 @@ class AdventureController extends Controller
         return $this->render('adventure/new.html.twig', array(
             'adventure' => $adventure,
             'form' => $form->createView(),
+            'authorForm' => $this->createForm(AuthorType::class)->createView()
         ));
     }
 
@@ -114,6 +116,10 @@ class AdventureController extends Controller
      * @Route("/{id}/edit", name="adventure_edit")
      * @Method({"GET", "POST"})
      * @Security("is_granted('ROLE_CURATOR')")
+     *
+     * @param Request $request
+     * @param Adventure $adventure
+     * @return RedirectResponse|Response
      */
     public function editAction(Request $request, Adventure $adventure)
     {
@@ -129,7 +135,7 @@ class AdventureController extends Controller
 
         return $this->render('adventure/edit.html.twig', array(
             'adventure' => $adventure,
-            'edit_form' => $editForm->createView(),
+            'form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));
     }

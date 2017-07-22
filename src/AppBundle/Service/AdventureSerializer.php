@@ -15,14 +15,14 @@ class AdventureSerializer
     public function toElasticDocument(Adventure $adventure): array
     {
         $ser = [
-            'authors' => $adventure->getAuthors()->map(function (Author $author) { return $author->getName(); })->toArray(),
+            'authors' => $adventure->getAuthors()->map(function (Author $author) { return $author->getName(); })->getValues(),
             'edition' => $this->getNameOrNull($adventure->getEdition()),
-            'environments' => $adventure->getEnvironments()->map(function (Environment $environment) { return $environment->getName(); })->toArray(),
-            'items' => $adventure->getItems()->map(function (Item $item) { return $item->getName(); })->toArray(),
-            'npcs' => $adventure->getNpcs()->map(function (NPC $npc) { return $npc->getName(); })->toArray(),
+            'environments' => $adventure->getEnvironments()->map(function (Environment $environment) { return $environment->getName(); })->getValues(),
+            'items' => $adventure->getItems()->map(function (Item $item) { return $item->getName(); })->getValues(),
+            'npcs' => $adventure->getNpcs()->map(function (NPC $npc) { return $npc->getName(); })->getValues(),
             'publisher' => $this->getNameOrNull($adventure->getPublisher()),
             'setting' => $this->getNameOrNull($adventure->getSetting()),
-            'monsters' => $adventure->getMonsters()->map(function (Monster $monster) { return $monster->getName(); })->toArray(),
+            'monsters' => $adventure->getMonsters()->map(function (Monster $monster) { return $monster->getName(); })->getValues(),
 
             'title' => $adventure->getTitle(),
             'description' => $adventure->getDescription(),
