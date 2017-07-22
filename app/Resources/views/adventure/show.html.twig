@@ -1,8 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% macro search_icon(fieldName, content) %}
-    {% set path = path('adventure_index', {('f[' ~ fieldName ~ '][v][]'): content}) %}
-
+    {% set path = path('adventure_index', {('f[' ~ fieldName ~ '][v]'): content}) %}
     <a href="{{ path }}" title="Search for similar adventures"><i class="fa fa-search"></i></a>
 {% endmacro %}
 
@@ -22,7 +21,10 @@
                     <div class="data-row">
                         <div class="col">
                             <div class="label">Written By</div>
-                            {{ adventure.authors|join(', ') }}
+                            {% for author in adventure.authors %}
+                                {{ author }}
+                                {{ macros.search_icon('authors', author) }}
+                            {% endfor %}
                         </div>
                         <div class="col">
                             <div class="label">Published By</div>
