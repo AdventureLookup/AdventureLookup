@@ -1,5 +1,11 @@
 {% extends 'base.html.twig' %}
 
+{% macro search_icon(fieldName, content) %}
+    {% set path = path('adventure_index', {('f[' ~ fieldName ~ '][v][]'): content}) %}
+
+    <a href="{{ path }}" title="Search for similar adventures"><i class="fa fa-search"></i></a>
+{% endmacro %}
+
 {% block body %}
     {% import _self as macros %}
     <div class="container">
@@ -21,6 +27,7 @@
                         <div class="col">
                             <div class="label">Published By</div>
                             {{ adventure.publisher }}
+                            {{ macros.search_icon('publisher', adventure.publisher) }}
                         </div>
                         <div class="col">
                             <div class="label"># Of Pages</div>
@@ -37,22 +44,26 @@
                         <div class="col">
                             <div class="label">Found In</div>
                             {{ adventure.foundIn }}
+                            {{ macros.search_icon('foundIn', adventure.foundIn) }}
                         </div>
                     </div>
                     <div class="data-row">
                         <div class="col">
                             <div class="label">System / Edition</div>
                             {{ adventure.edition }}
+                            {{ macros.search_icon('edition', adventure.edition) }}
                         </div>
                         <div class="col">
                             <div class="label">Setting</div>
                             {{ adventure.setting }}
+                            {{ macros.search_icon('setting', adventure.setting) }}
                         </div>
                     </div>
                     <div class="data-row">
                         <div class="col">
                             <div class="label">Starting Level Range</div>
                             {{ adventure.startingLevelRange }}
+                            {{ macros.search_icon('startingLevelRange', adventure.startingLevelRange) }}
                         </div>
                         <div class="col">
                             <div class="label">Min. Starting Level</div>
@@ -67,18 +78,22 @@
                         <div class="col">
                             <div class="label">Handouts?</div>
                             {{ adventure.handouts|bool2str }}
+                            {{ macros.search_icon('handouts', adventure.handouts) }}
                         </div>
                         <div class="col">
                             <div class="label">Tactical Maps?</div>
                             {{ adventure.tacticalMaps|bool2str }}
+                            {{ macros.search_icon('tacticalMaps', adventure.tacticalMaps) }}
                         </div>
                         <div class="col">
                             <div class="label">Soloable?</div>
                             {{ adventure.soloable|bool2str }}
+                            {{ macros.search_icon('soloable', adventure.soloable) }}
                         </div>
                         <div class="col">
                             <div class="label">Includes Characters?</div>
                             {{ adventure.pregeneratedCharacters|bool2str }}
+                            {{ macros.search_icon('pregeneratedCharacters', adventure.pregeneratedCharacters) }}
                         </div>
                     </div>
                     <div class="data-row">
@@ -86,7 +101,7 @@
                             <div class="label">Notable Items</div>
                             <ul>
                                 {% for item in adventure.items %}
-                                    <li>{{ item }}</li>
+                                    <li>{{ item }} {{ macros.search_icon('items', item) }}</li>
                                 {% endfor %}
                             </ul>
                         </div>
@@ -96,7 +111,7 @@
                             <div class="label">Notable NPCs</div>
                             <ul>
                                 {% for npc in adventure.npcs %}
-                                    <li>{{ npc }}</li>
+                                    <li>{{ npc }} {{ macros.search_icon('npcs', npc) }}</li>
                                 {% endfor %}
                             </ul>
                         </div>
@@ -106,7 +121,7 @@
                             <div class="label">BBEG & Monsters</div>
                             <ul>
                                 {% for monster in adventure.monsters %}
-                                    <li>{{ monster }}</li>
+                                    <li>{{ monster }} {{ macros.search_icon('monsters', monster) }}</li>
                                 {% endfor %}
                             </ul>
                         </div>
