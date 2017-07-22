@@ -1,0 +1,55 @@
+<h2 id="search-results">{{ adventures|length }} adventures found</h2>
+{% for adventure in adventures %}
+    <div class="card mb-3">
+        <div class="card-block">
+            {% if adventure.thumbnailUrl %}
+                <img src="{{ adventure.thumbnailUrl }}" class="ml-1 pull-right" style="max-width: 120px; max-height: 140px;" />
+            {% endif %}
+            <h4 class="card-title">
+                <a href="{{ path('adventure_show', { 'slug': adventure.slug }) }}">
+                    {{ adventure.title }}
+                </a>
+            </h4>
+            <!--h6 class="card-subtitle mb-2 text-muted">Search score: {{ adventure.score }}</h6-->
+            <p>{{ adventure.description|easyadmin_truncate(250) }}</p>
+            <div class="clearfix"></div>
+            <hr>
+            <!-- Quick look info -->
+            <div class="container-fluid row justify-content-center">
+                <div class="col-2 text-center">
+                    <i class="fa fa-gear"></i>
+                    <p class="text-muted mb-2">Edition</p>
+                    <h6>{{adventure.edition}}</h6>
+                </div>
+                <div class="col-2 text-center">
+                    <i class="fa fa-globe"></i>
+                    <p class="text-muted mb-2">Setting</p>
+                    <h6>{{adventure.setting}}</h6>
+                </div>
+                <div class="col-2 text-center">
+                    <i class="fa fa-flag"></i>
+                    <p class="text-muted mb-2">Starting Level</p>
+                    <h6>
+                        {% if adventure.startingLevelRange %}
+                            {{ adventure.startingLevelRange }}
+                        {% else %}
+                            {{adventure.minStartingLevel}}-{{adventure.maxStartingLevel}}
+                        {% endif %}
+                    </h6>
+                </div>
+                <div class="col-2 text-center">
+                    <i class="fa fa-tree"></i>
+                    <p class="text-muted mb-2">Environment</p>
+                    <h6>{{adventure.environments|join(', ')}}</h6>
+                </div>
+                <div class="col-2 text-center">
+                    <i class="fa fa-map"></i>
+                    <p class="text-muted mb-2">Tactical Maps</p>
+                    <h6>{{ adventure.tacticalMaps|bool2str }}</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="alert alert-danger">We're sorry. Apparently there is no adventure matching your search :(</div>
+{% endfor %}

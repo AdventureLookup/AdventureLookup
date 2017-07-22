@@ -1,0 +1,20 @@
+{% for fieldName, filter in searchFilter %}
+    {% set values = filter['v']|default([]) %}
+    {% if values is not iterable %}
+        {% set values = [values] %}
+    {% endif %}
+    {% if values|length > 0 %}
+        {% set field = fields[fieldName] %}
+        {% for value in values %}
+            <span class="badge badge-primary filter-tag">
+                {{ field.title }}:
+                {% if field.type == 'boolean' %}
+                    {{ value|bool2str }}
+                {% else %}
+                    {{ value }}
+                {% endif %}
+                <span role="button" aria-label="Remove" data-field-name="{{ field.name }}" data-field-type="{{ field.type }}" data-value="{{ value }}" class="filter-remove">&times;</span>
+            </span>
+        {% endfor %}
+    {% endif %}
+{% endfor %}

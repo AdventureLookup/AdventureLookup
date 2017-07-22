@@ -1,11 +1,6 @@
 @import './bootstrap.scss';
 @import 'adventure';
-
-.filter-card .filters .show-more {
-  display: block;
-  width: 100%;
-  cursor: pointer;
-}
+@import 'search';
 
 
 .selectize-control::before {

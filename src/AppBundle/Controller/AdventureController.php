@@ -5,7 +5,6 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\AdventureDocument;
 use AppBundle\Form\AdventureType;
-use AppBundle\Service\FieldUtils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -13,7 +12,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Adventure controller.
@@ -27,30 +25,25 @@ class AdventureController extends Controller
      *
      * @Route("/", name="adventure_index")
      * @Method({"GET", "POST"})
+     *
+     * @param Request $request
+     * @return Response
      */
     public function indexAction(Request $request)
     {
-        $fieldUtils = new FieldUtils();
         $search = $this->get('adventure_search');
 
         $q = $request->get('q', '');
         $filters = $request->get('f', []);
+        $fields = $this->get('app.field_provider')->getFields();
         list($adventures, $stats) = $search->search($q, $filters);
-
-        $em = $this->getDoctrine()->getManager();
-        $tagNames = $em->getRepository('AppBundle:TagName')->findAll();
-        array_unshift($tagNames, $fieldUtils->getTitleField());
-
-        $exampleValues = $search->aggregateMostCommonValues($tagNames);
 
         return $this->render('adventure/index.html.twig', [
             'adventures' => $adventures,
-            'exampleValues' => $exampleValues,
             'stats' => $stats,
-            'tagNames' => $tagNames,
             'searchFilter' => $filters,
+            'fields' => $fields,
             'q' => $q,
-            'fieldUtils' => new FieldUtils(),
         ]);
     }
 
@@ -62,10 +55,9 @@ class AdventureController extends Controller
      * @Security("is_granted('ROLE_USER')")
      *
      * @param Request $request
-     * @param UserInterface $user
      * @return RedirectResponse|Response
      */
-    public function newAction(Request $request, UserInterface $user)
+    public function newAction(Request $request)
     {
         $adventure = new Adventure();
         $isCurator = $this->isGranted('ROLE_CURATOR');
@@ -95,6 +87,9 @@ class AdventureController extends Controller
      *
      * @Route("/{slug}", name="adventure_show")
      * @Method("GET")
+     *
+     * @param Adventure $adventure
+     * @return Response
      */
     public function showAction(Adventure $adventure)
     {
@@ -114,6 +109,10 @@ class AdventureController extends Controller
      * @Route("/{id}/edit", name="adventure_edit")
      * @Method({"GET", "POST"})
      * @Security("is_granted('ROLE_CURATOR')")
+     *
+     * @param Request $request
+     * @param Adventure $adventure
+     * @return RedirectResponse|Response
      */
     public function editAction(Request $request, Adventure $adventure)
     {
@@ -140,6 +139,10 @@ class AdventureController extends Controller
      * @Route("/{id}", name="adventure_delete")
      * @Method("DELETE")
      * @Security("is_granted('ROLE_CURATOR')")
+     *
+     * @param Request $request
+     * @param Adventure $adventure
+     * @return RedirectResponse
      */
     public function deleteAction(Request $request, Adventure $adventure)
     {
