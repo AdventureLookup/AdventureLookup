@@ -180,15 +180,15 @@ class FieldProvider
     }
 
     /**
-     * @param $id
+     * @param $name
      * @return Field
      */
-    public function getField($id): Field
+    public function getField($name): Field
     {
-        if (!$this->fields->containsKey($id)) {
-            throw new FieldDoesNotExistException(sprintf('Field with id "%s" does not exist!', $id));
+        if (!$this->fields->containsKey($name)) {
+            throw new FieldDoesNotExistException(sprintf('Field with id "%s" does not exist!', $name));
         }
 
-        return $this->fields->get($id);
+        return $this->fields->get($name);
     }
 }

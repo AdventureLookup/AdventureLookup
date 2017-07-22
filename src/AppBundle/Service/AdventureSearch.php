@@ -112,10 +112,20 @@ class AdventureSearch
         }, $result['hits']['hits']);
     }
 
-    public function autocompleteFieldContent(TagName $field, string $q): array
+    /**
+     * Given a field and an input query, return a list of values
+     * which could possibly be what the user wants to insert.
+     * If the query is empty, return the most common values.
+     *
+     * @param Field $field
+     * @param string $q
+     * @return array
+     */
+    public function autocompleteFieldContent(Field $field, string $q): array
     {
+        $size = 20;
         if ($q === '') {
-            return current($this->aggregateMostCommonValues([$field], 10));
+            return current($this->aggregateMostCommonValues([$field], $size));
         }
         // Using the completion suggester returns duplicate documents...
         //$fieldName = 'info_' . $field->getId() . '_s';
@@ -141,11 +151,7 @@ class AdventureSearch
         //return $results;
 
         // Old version using match_phrase_prefix
-        $fieldUtils = new FieldUtils();
-
-        $fieldName = $fieldUtils->getFieldName($field);
-        $size = 10;
-
+        $fieldName = $field->getName();
         $response = $this->client->search([
             'index' => SearchIndexUpdater::INDEX,
             'type' => SearchIndexUpdater::TYPE,
@@ -172,7 +178,7 @@ class AdventureSearch
             if (!isset($hit['highlight'])) {
                 continue;
             }
-            $highlights = array_unique($hit['highlight'][$fieldUtils->getFieldName($field)]);
+            $highlights = array_unique($hit['highlight'][$fieldName]);
             foreach ($highlights as $highlight) {
                 if (!in_array($highlight, $results)) {
                     $results[] = $highlight;
@@ -184,24 +190,23 @@ class AdventureSearch
     }
 
     /**
-     * @param TagName[] $fields
-     * @param int $max
+     * @param Field[] $fields
+     * @param int $size
      * @return array
      */
-    public function aggregateMostCommonValues(array $fields, int $max = 3): array
+    private function aggregateMostCommonValues(array $fields, int $size): array
     {
         $aggregations = [];
-        $fieldUtils = new FieldUtils();
-        foreach ($fields as $fieldEntity) {
-            $elasticField = $fieldUtils->getFieldNameForAggregation($fieldEntity);
+        foreach ($fields as $field) {
+            $elasticField = $field->getFieldNameForAggregation();
             if (!$elasticField) {
                 // This field cannot be aggregated.
                 continue;
             }
-            $aggregations[$fieldUtils->getFieldName($fieldEntity)] = [
+            $aggregations[$elasticField] = [
                 'terms' => [
                     'field' => $elasticField,
-                    'size' => $max
+                    'size' => $size
                 ]
             ];
         }
