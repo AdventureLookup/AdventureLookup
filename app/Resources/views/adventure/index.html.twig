@@ -1,18 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% macro filter_checkbox(field, value, checked, count, hidden) %}
-    <div class="form-check{% if hidden %} d-none{% endif %}">
-        <label class="form-check-label">
-            <input class="form-check-input" type="checkbox" name="f[{{ field.id }}][v][]"
-                   value="{{ value }}"
-                   {% if checked %}checked{% endif %}
-            />
-            {{ value }}
-            <span class="badge-pill badge badge-default">{{ count }}</span>
-        </label>
-    </div>
-{% endmacro %}
-
 {% block body %}
     {% import _self as macros %}
     <div class="container" id="page--search-adventures" data-search-url="{{ path('field_content_search', {id: '__ID__', q: '__Q__'}) }}">
@@ -28,177 +15,17 @@
                     <div class="input-group input-group-lg">
                         <input class="form-control" name="q" type="text" value="{{ q }}" placeholder="goblins, mountains, ..." />
                         <span class="input-group-btn">
-                            <button type="submit" class="btn btn-primary" role="button">Search</button>
+                            <button type="submit" class="btn btn-primary" role="button" id="search-btn">Search</button>
                         </span>
                     </div>
-                    <small class="form-text text-muted">Things you type in here will be split at <code>,</code> and then <code>OR</code>ed. Use the filters below for advanced searches (hit the 'Search' button again after filtering).</small>
+                    <small class="form-text text-muted">Things you type in here will be split at <code>,</code> and then <code>AND</code>ed. Use the filters below for advanced searches (hit the 'Search' button again after filtering).</small>
                     <div class="row my-3">
                         <div class="col-3">
-                            <div class="row no-gutters">
-                                <div class="col-9">
-                                    <select class="form-control mb-3" id="filter-selection" title="Add search filter">
-                                        <option value="">Add Filter</option>
-                                        {% for field in tagNames if not (field.useAsFilter or searchFilter[field.id]|default({e: false})['e']) %}
-                                            <option value="{{ field.id }}">{{ field.title }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-3">
-                                    <button type="button" role="button" class="btn btn-secondary" id="filter-add">Add</button>
-                                </div>
-                            </div>
-                            {% for field in tagNames if field.type not in ['url'] %}
-                                {% set filter = searchFilter[field.id]|default([]) %}
-                                {% set show = (field.useAsFilter or searchFilter[field.id]|default({e: false})['e']) %}
-                                <div class="card mb-3 filter-card{% if not show %} d-none{% endif %}" id="filter-{{ field.id }}">
-                                    <input type="hidden" name="f[{{ field.id }}][e]" value="{{ show ? '1' : '0' }}" id="filter-{{ field.id }}-enabled">
-                                    <div class="card-block">
-                                        <h4 class="card-title">{{ field.title }}</h4>
-                                        <p class="card-text small">{{ field.description }}</p>
-                                        {% if field.type == 'boolean' %}
-                                            {% set vals = stats['vals_' ~ field.id]['buckets'] %}
-                                            <label class="form-check-label">
-                                                <input class="form-check-input" type="radio"
-                                                       name="f[{{ field.id }}][v]" value=""
-                                                       {% if filter['v']|default('') == '' %}checked{% endif %}
-                                                /> All
-                                            </label>
-                                            <label class="form-check-label">
-                                                <input class="form-check-input" type="radio"
-                                                       name="f[{{ field.id }}][v]" value="1"
-                                                       {% if filter['v']|default('') == '1' %}checked{% endif %}
-                                                /> Yes
-                                            </label>
-                                            <label class="form-check-label">
-                                                <input class="form-check-input" type="radio"
-                                                       name="f[{{ field.id }}][v]" value="0"
-                                                       {% if filter['v']|default('') == '0' %}checked{% endif %}
-                                                /> No
-                                            </label>
-                                        {% elseif field.type == 'integer' %}
-                                            {#
-                                            <div class="filter-slider mt-5 mx-3"
-                                                 data-field-id="{{ field.id }}"
-                                                 data-max="{{ stats['max_' ~ field.id]['value'] }}"
-                                                 data-min="{{ stats['min_' ~ field.id]['value'] }}"></div>
-                                             #}
-                                            <div class="row no-gutters">
-                                                <div class="col">
-                                                    <input type="number" name="f[{{ field.id }}][v][min]" id="filter-{{ field.id }}-min"
-                                                           placeholder="min (inc.)" class="form-control form-control-sm"
-                                                           value="{{ filter['v']|default({min: stats['min_' ~ field.id]['value']})['min'] }}"
-                                                           title="min (inc.)"
-                                                    />
-                                                </div>
-                                                <div class="col">
-                                                    <input type="number" name="f[{{ field.id }}][v][max]" id="filter-{{ field.id }}-max"
-                                                           placeholder="max (inc.)" class="form-control form-control-sm"
-                                                           value="{{ filter['v']|default({max: stats['max_' ~ field.id]['value']})['max'] }}"
-                                                           title="max (inc.)"
-                                                    />
-                                                </div>
-                                            </div>
-                                        {% elseif field.type == 'string' %}
-                                            {% if stats['vals_' ~ field.id]['sum_other_doc_count'] != 0 %}
-                                                {% if filter['v'] is not defined or filter['v'] == [] or filter['v'] == [''] %}
-                                                    {% set filter_vals = [''] %}
-                                                {% else %}
-                                                    {% set filter_vals = filter['v'] %}
-                                                {% endif %}
-                                                {% for filter_val in filter_vals if (filter_val != '' or filter_vals == ['']) %}
-                                                    <div class="input-group filter-input">
-                                                        <input class="w-100 form-control form-control-sm adv-search-input"
-                                                               data-id="{{ field.id }}"
-                                                               placeholder="{{ exampleValues['info_' ~ field.id]|default([field.example])|join(', ') }}"
-                                                               name="f[{{ field.id }}][v][]" value="{{ filter_val }}"
-                                                        />
-                                                        <span class="input-group-btn">
-                                                            <button class="btn btn-sm btn-secondary" type="button" role="button" title="Add another search term">
-                                                                <i class="fa fa-plus"></i>
-                                                            </button>
-                                                        </span>
-                                                    </div>
-                                                {% endfor %}
-                                            {% endif %}
-                                            <div class="filters">
-                                                {% set buckets = stats['vals_' ~ field.id]['buckets'] %}
-                                                {% set showMoreAfter = 5 %}
-                                                {% set valuesUsed = [] %}
-                                                {% for bucket in buckets %}
-                                                    {% set valuesUsed = valuesUsed|merge([bucket.key]) %}
-                                                    {{ macros.filter_checkbox(field, bucket.key, bucket.key in filter['v']|default([]), bucket.doc_count, loop.index0 >= showMoreAfter) }}
-                                                {% endfor %}
-                                                {% for value in filter['v']|default([]) if value != '' and value not in valuesUsed %}
-                                                    {{ macros.filter_checkbox(field, value, true, 0, false) }}
-                                                {% endfor %}
-                                                {% if buckets|length > showMoreAfter %}
-                                                    <span class="show-more text-info text-center">more</span>
-                                                {% endif %}
-                                            </div>
-                                        {% endif %}
-                                        <button type="submit" class="btn btn-secondary pull-right btn-sm" role="button">Apply</button>
-                                    </div>
-                                </div>
-                            {% endfor %}
+                            {% include 'adventure/search_filters.html.twig' %}
                         </div>
                         <div class="col-9">
-                            <h2 id="search-results">{{ adventures|length }} adventures found</h2>
-                            <!-- BEGIN ADVENTURE LIST -->
-                            {% for adventure in adventures %}                            
-                                <div class="card mb-3">
-                                    <div class="card-block">
-                                        {% if adventure.thumbnailUrl %}
-                                            <img src="{{ adventure.thumbnailUrl }}" class="ml-1 pull-right" style="max-width: 120px; max-height: 140px;" />
-                                        {% endif %}
-                                        <h4 class="card-title">
-                                            <a href="{{ path('adventure_show', { 'slug': adventure.slug }) }}">
-                                                {{ adventure.title }}
-                                            </a>
-                                        </h4>
-                                        <!--h6 class="card-subtitle mb-2 text-muted">Search score: {{ adventure.score }}</h6-->
-                                        <p>{{ adventure.description|easyadmin_truncate(250) }}</p>
-                                        <div class="clearfix"></div>
-                                        <hr>
-                                        <!-- Quick look info -->
-                                        <div class="container-fluid row justify-content-center">
-                                            <div class="col-2 text-center">
-                                                <i class="fa fa-gear"></i>
-                                                <p class="text-muted mb-2">System</p>
-                                                <h6>{{adventure.system|first}}</h6>
-                                            </div>
-                                            <div class="col-2 text-center">
-                                                <i class="fa fa-globe"></i>
-                                                <p class="text-muted mb-2">Setting</p>
-                                                <h6>{{adventure.setting}}</h6>
-                                            </div>
-                                            <div class="col-2 text-center">
-                                                <i class="fa fa-flag"></i>
-                                                <p class="text-muted mb-2">Starting Level</p>
-                                                <h6>
-                                                    {% if adventure.startingLevelRange %}
-                                                        {{ adventure.startingLevelRange }}
-                                                    {% else %}
-                                                        {{adventure.minStartingLevel}}-{{adventure.maxStartingLevel}}
-                                                    {% endif %}
-                                                </h6>
-                                            </div>
-                                            <div class="col-2 text-center">
-                                                <i class="fa fa-tree"></i>
-                                                <p class="text-muted mb-2">Environment</p>
-                                                <h6>{{adventure.environments|join(', ')}}</h6>
-                                            </div>
-                                            <div class="col-2 text-center">
-                                                <i class="fa fa-map"></i>
-                                                <p class="text-muted mb-2">Tactical Maps</p>
-                                                <h6>{{ adventure.tacticalMaps|bool2str }}</h6>
-                                            </div>
-                                        </div>
-                                        <!-- End quick look info -->
-                                    </div>
-                                </div>
-                            {% else %}
-                                <div class="alert alert-danger">We're sorry. Apparently there is no adventure matching your search :(</div>
-                            {% endfor %}
+                            {% include 'adventure/search_filter_tags.html.twig' %}
+                            {% include 'adventure/search_results.html.twig' %}
                         </div>
                     </div>
                 </form>

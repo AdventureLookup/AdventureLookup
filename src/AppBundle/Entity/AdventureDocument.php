@@ -16,9 +16,29 @@ class AdventureDocument
     private $info;
 
     /**
+     * @var string[]
+     */
+    private $authors;
+
+    /**
      * @var string
      */
-    private $system;
+    private $edition;
+
+    /**
+     * @var string[]
+     */
+    private $environments;
+
+    /**
+     * @var string[]
+     */
+    private $items;
+
+    /**
+     * @var string[]
+     */
+    private $npcs;
 
     /**
      * @var string
@@ -29,6 +49,11 @@ class AdventureDocument
      * @var string
      */
     private $setting;
+
+    /**
+     * @var string[]
+     */
+    private $monsters;
 
     /**
      * @var integer
@@ -61,11 +86,6 @@ class AdventureDocument
     private $pregeneratedCharacters;
 
     /**
-     * @var string[]
-     */
-    private $environments;
-
-    /**
      * @var string
      */
     private $link;
@@ -81,16 +101,6 @@ class AdventureDocument
     private $description;
 
     /**
-     * @var string[]
-     */
-    private $notableItems;
-
-    /**
-     * @var string[]
-     */
-    private $monsters;
-
-    /**
      * @var boolean
      */
     private $tacticalMaps;
@@ -101,18 +111,20 @@ class AdventureDocument
     private $handouts;
 
     /**
-     * @var string[]
-     */
-    private $villains;
-
-    /**
      * @var string
      */
     private $foundIn;
 
     public function __construct(
         int $id,
-        string $setting,
+        array $authors,
+        string $edition = null,
+        array $environments,
+        array $items,
+        array $npcs,
+        string $publisher = null,
+        string $setting = null,
+        array $monsters,
         string $title,
         string $description = null,
         string $slug,
@@ -131,7 +143,14 @@ class AdventureDocument
         float $score = 0.0)
     {
         $this->id = $id;
+        $this->authors = $authors;
+        $this->edition = $edition;
+        $this->environments = $environments;
+        $this->items = $items;
+        $this->npcs = $npcs;
+        $this->publisher = $publisher;
         $this->setting = $setting;
+        $this->monsters = $monsters;
         $this->title = $title;
         $this->description = $description;
         $this->slug = $slug;
@@ -168,6 +187,10 @@ class AdventureDocument
         }
     }
 
+    /**
+     * @param Adventure $adventure
+     * @return static
+     */
     public static function fromAdventure(Adventure $adventure)
     {
         $info = [];
@@ -184,7 +207,14 @@ class AdventureDocument
 
         return new static(
             $adventure->getId(),
-            $adventure->getSetting()->getName(),
+            $adventure->getAuthors()->map(function (Author $author) { return $author->getName(); })->toArray(),
+            static::getNameOrNull($adventure->getEdition()),
+            $adventure->getEnvironments()->map(function (Environment $environment) { return $environment->getName(); })->toArray(),
+            $adventure->getItems()->map(function (Item $item) { return $item->getName(); })->toArray(),
+            $adventure->getNpcs()->map(function (NPC $npc) { return $npc->getName(); })->toArray(),
+            static::getNameOrNull($adventure->getPublisher()),
+            static::getNameOrNull($adventure->getSetting()),
+            $adventure->getMonsters()->map(function (Monster $monster) { return $monster->getName(); })->toArray(),
             $adventure->getTitle(),
             $adventure->getDescription(),
             $adventure->getSlug(),
@@ -244,11 +274,43 @@ class AdventureDocument
     }
 
     /**
+     * @return string[]
+     */
+    public function getAuthors(): array
+    {
+        return $this->authors;
+    }
+
+    /**
      * @return string
      */
-    public function getSystem()
+    public function getEdition()
     {
-        return $this->system;
+        return $this->edition;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getEnvironments(): array
+    {
+        return $this->environments;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getItems(): array
+    {
+        return $this->items;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getNpcs(): array
+    {
+        return $this->npcs;
     }
 
     /**
@@ -310,17 +372,9 @@ class AdventureDocument
     /**
      * @return bool
      */
-    public function isPregeneratedCharacters()
+    public function hasPregeneratedCharacters()
     {
         return $this->pregeneratedCharacters;
-    }
-
-    /**
-     * @return \string[]
-     */
-    public function getEnvironments()
-    {
-        return $this->environments;
     }
 
     /**
@@ -350,14 +404,6 @@ class AdventureDocument
     /**
      * @return \string[]
      */
-    public function getNotableItems()
-    {
-        return $this->notableItems;
-    }
-
-    /**
-     * @return \string[]
-     */
     public function getMonsters()
     {
         return $this->monsters;
@@ -380,18 +426,19 @@ class AdventureDocument
     }
 
     /**
-     * @return \string[]
-     */
-    public function getVillains()
-    {
-        return $this->villains;
-    }
-
-    /**
      * @return string
      */
     public function getFoundIn()
     {
         return $this->foundIn;
+    }
+
+    /**
+     * @param $entity
+     * @return null|string
+     */
+    private static function getNameOrNull($entity)
+    {
+        return $entity === null ? null : $entity->getName();
     }
 }

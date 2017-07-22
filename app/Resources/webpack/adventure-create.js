@@ -29,7 +29,7 @@ function debounce(func, wait, immediate) {
     const similarTitlesUrl = $page.data('similar-titles-url');
     const searchUrl = $page.data('search-url');
 
-    let $title = $('#appbundle_adventure_field_title');
+    let $title = $('#appbundle_adventure_title');
     $title.on('change keyup paste', debounce(function (e) {
         $.getJSON(similarTitlesUrl, {
             q: $(this).val()
@@ -54,14 +54,18 @@ function debounce(func, wait, immediate) {
         })
     }, DEBOUNCE));
 
-    $('select.adventure-field').each(function () {
+    let newValueCounter = 1;
+
+    $('select[name^="appbundle_adventure"]').each(function () {
         const $select = $(this);
         $select.selectize({
-            create: true,
+            create: function(input) {
+                return {title: input, value: 'n' + ++newValueCounter};
+            },
             //sortField: 'title',
-            valueField: 'title',
+            //valueField: 'title',
             labelField: 'title',
-            maxItems: null,
+            maxItems: $select.attr('multiple') ? null : 1,
             preload: 'focus',
             searchField: 'title',
             render: {
@@ -77,7 +81,7 @@ function debounce(func, wait, immediate) {
             //},
             load: function(query, callback) {
                 $.ajax({
-                    url: searchUrl.replace(/__ID__/g, $select.data('id')),
+                    url: searchUrl.replace(/__FIELD__/g, $select.attr('id').split('_').pop()),
                     data: {
                         q: query
                     },

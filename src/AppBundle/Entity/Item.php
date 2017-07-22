@@ -8,13 +8,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * Setting
+ * Item
  *
- * @ORM\Table(name="setting")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\SettingRepository")
+ * @ORM\Table(name="item")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ItemRepository")
  * @UniqueEntity("name")
  */
-class Setting
+class Item
 {
     /**
      * @var int
@@ -65,7 +65,7 @@ class Setting
      *
      * @param string $name
      *
-     * @return Setting
+     * @return Item
      */
     public function setName($name)
     {

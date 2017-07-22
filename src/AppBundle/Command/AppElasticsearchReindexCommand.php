@@ -66,7 +66,14 @@ class AppElasticsearchReindexCommand extends ContainerAwareCommand
         $output->writeln('Recreated index.');
 
         $mappings = [
+            'authors' => self::FIELD_STRING,
+            'edition' => self::FIELD_STRING,
+            'environments' => self::FIELD_STRING,
+            'items' => self::FIELD_STRING,
+            'npcs' => self::FIELD_STRING,
+            'publisher' => self::FIELD_STRING,
             'setting' => self::FIELD_STRING,
+            'monsters' => self::FIELD_STRING,
 
             'title' => self::FIELD_STRING,
             'description' => self::FIELD_TEXT,
@@ -83,15 +90,6 @@ class AppElasticsearchReindexCommand extends ContainerAwareCommand
             'tacticalMaps' => self::FIELD_BOOLEAN,
             'handouts' => self::FIELD_BOOLEAN,
         ];
-
-        $fieldUtils = new FieldUtils();
-
-        /** @var TagName[] $tagNames */
-        $tagNames = $em->getRepository(TagName::class)->findAll();
-        foreach ($tagNames as $tagName) {
-            $fieldName = 'info_' . $tagName->getId();
-            $mappings[$fieldName] = $fieldUtils->generateMappingFor($tagName->getType());
-        }
 
         $client->indices()->putMapping([
             'index' => SearchIndexUpdater::INDEX,

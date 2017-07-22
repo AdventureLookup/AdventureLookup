@@ -7,7 +7,7 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use AppBundle\Entity\Setting;
 
-class SettingsData implements FixtureInterface
+class SettingData implements FixtureInterface
 {
     /**
      * Load a standard list of settings

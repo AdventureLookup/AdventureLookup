@@ -25,3 +25,7 @@ services:
         autowire: true
         tags:
             - { name: twig.extension }
+
+    app.field_provider:
+        class: AppBundle\Field\FieldProvider
+        autowire: true
