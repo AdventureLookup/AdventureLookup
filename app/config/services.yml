@@ -20,15 +20,26 @@ services:
         tags:
             - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\FormType }
 
-    app.twig_extension:
+    app.twig_extension.default:
         class: AppBundle\Twig\AppExtension
         autowire: true
         tags:
             - { name: twig.extension }
 
+    app.twig_extension.audit:
+            class: AppBundle\Twig\AuditExtension
+            autowire: true
+            tags:
+                - { name: twig.extension }
+
     app.field_provider:
         class: AppBundle\Field\FieldProvider
         autowire: true
+
+    twig.extension.date:
+       class: Twig_Extensions_Extension_Date
+       tags:
+            - { name: twig.extension }
 
     app.doctrine.hash_password_listener:
         class: AppBundle\Listener\HashPasswordListener
