@@ -22,14 +22,14 @@
                         <div class="col">
                             <div class="label">Written By</div>
                             {% for author in adventure.authors %}
-                                {{ author }}
-                                {{ macros.search_icon('authors', author) }}
+                                {{ author.name }}
+                                {{ macros.search_icon('authors', author.name) }}
                             {% endfor %}
                         </div>
                         <div class="col">
                             <div class="label">Published By</div>
-                            {{ adventure.publisher }}
-                            {{ macros.search_icon('publisher', adventure.publisher) }}
+                            {{ adventure.publisher.name }}
+                            {{ macros.search_icon('publisher', adventure.publisher.name) }}
                         </div>
                         <div class="col">
                             <div class="label"># Of Pages</div>
@@ -52,13 +52,13 @@
                     <div class="data-row">
                         <div class="col">
                             <div class="label">System / Edition</div>
-                            {{ adventure.edition }}
-                            {{ macros.search_icon('edition', adventure.edition) }}
+                            {{ adventure.edition.name }}
+                            {{ macros.search_icon('edition', adventure.edition.name) }}
                         </div>
                         <div class="col">
                             <div class="label">Setting</div>
-                            {{ adventure.setting }}
-                            {{ macros.search_icon('setting', adventure.setting) }}
+                            {{ adventure.setting.name }}
+                            {{ macros.search_icon('setting', adventure.setting.name) }}
                         </div>
                     </div>
                     <div class="data-row">
@@ -103,7 +103,7 @@
                             <div class="label">Notable Items</div>
                             <ul>
                                 {% for item in adventure.items %}
-                                    <li>{{ item }} {{ macros.search_icon('items', item) }}</li>
+                                    <li>{{ item.name }} {{ macros.search_icon('items', item.name) }}</li>
                                 {% endfor %}
                             </ul>
                         </div>
@@ -113,7 +113,7 @@
                             <div class="label">Notable NPCs</div>
                             <ul>
                                 {% for npc in adventure.npcs %}
-                                    <li>{{ npc }} {{ macros.search_icon('npcs', npc) }}</li>
+                                    <li>{{ npc.name }} {{ macros.search_icon('npcs', npc.name) }}</li>
                                 {% endfor %}
                             </ul>
                         </div>
@@ -123,20 +123,34 @@
                             <div class="label">BBEG & Monsters</div>
                             <ul>
                                 {% for monster in adventure.monsters %}
-                                    <li>{{ monster }} {{ macros.search_icon('monsters', monster) }}</li>
+                                    <li>
+                                        {% if monster.isUnique %}
+                                            <strong>{{ monster.name }}</strong>
+                                        {% else %}
+                                            {{ monster.name }}
+                                        {% endif %}
+                                        {% for type in monster.types %}
+                                            <span class="badge badge-default">{{ type.name }}</span>
+                                        {% endfor %}
+                                        {{ macros.search_icon('monsters', monster.name) }}
+                                    </li>
                                 {% endfor %}
                             </ul>
                         </div>
                     </div>
                 </div>
-                {% if is_granted('ROLE_CURATOR') %}
+                {% if is_granted('edit', adventure) or is_granted('delete', adventure) %}
                     <div class="bg-faded p-3">
-                        <a class="btn btn-secondary btn-sm my-3"
-                           href="{{ path('adventure_edit', { 'id': adventure.id }) }}">Edit adventure</a>
-                        {{ form_start(delete_form) }}
-                        <input class="btn btn-sm btn-danger mt-3" type="submit" value="Delete" role="button"
-                               onclick="return confirm('Do you really want to delete this adventure?')">
-                        {{ form_end(delete_form) }}
+                        {% if is_granted('edit', adventure) %}
+                            <a class="btn btn-secondary btn-sm my-3"
+                               href="{{ path('adventure_edit', { 'id': adventure.id }) }}">Edit adventure</a>
+                        {% endif %}
+                        {% if is_granted('delete', adventure) %}
+                            {{ form_start(delete_form) }}
+                            <input class="btn btn-sm btn-danger mt-3" type="submit" value="Delete" role="button"
+                                   onclick="return confirm('Do you really want to delete this adventure?')">
+                            {{ form_end(delete_form) }}
+                        {% endif %}
                     </div>
                 {% endif %}
             </div>

@@ -56,7 +56,6 @@ class User implements AdvancedUserInterface, \Serializable
     private $roles;
 
     /**
-     * @Assert\NotBlank()
      * @Assert\Length(max=72)
      */
     private $plainPassword;
@@ -70,6 +69,11 @@ class User implements AdvancedUserInterface, \Serializable
     public function __toString(): string
     {
         return $this->username;
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function getUsername()

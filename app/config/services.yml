@@ -10,6 +10,12 @@ services:
          tags:
              - { name: doctrine.event_subscriber, connection: default }
 
+    app.subscribers.easy_admin:
+         class: AppBundle\Listener\EasyAdminSubscriber
+         autowire: true
+         tags:
+             - { name: kernel.event_subscriber }
+
     adventure_search:
         class: AppBundle\Service\AdventureSearch
         autowire: true
@@ -40,6 +46,12 @@ services:
        class: Twig_Extensions_Extension_Date
        tags:
             - { name: twig.extension }
+
+    app.security.voter.adventure:
+        class: AppBundle\Security\AdventureVoter
+        autowire: true
+        tags:
+            - { name: security.voter }
 
     app.doctrine.hash_password_listener:
         class: AppBundle\Listener\HashPasswordListener

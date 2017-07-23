@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
@@ -13,6 +14,9 @@ use DataDog\AuditBundle\Entity\AuditLog;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @Security("is_granted('ROLE_ADMIN')")
+ */
 class AuditController extends Controller
 {
     /**

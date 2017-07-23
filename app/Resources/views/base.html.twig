@@ -25,9 +25,14 @@
                     <li class="nav-item">
                         <a class="nav-link{% if app.request.attributes.get('_route') == 'adventure_index' %} active{% endif %}" href="{{ path('adventure_index') }}">Adventures</a>
                     </li>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('audit') }}">Recent Activity</a>
+                        </li>
+                    {% endif %}
                     {% if is_granted('ROLE_CURATOR') %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path('tags_index') }}">Fields</a>
+                            <a class="nav-link" href="{{ path('easyadmin') }}">Admin Panel</a>
                         </li>
                     {% endif %}
                     {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
