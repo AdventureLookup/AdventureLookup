@@ -21,7 +21,10 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
- * Auto-generated Migration: Please modify to your needs!
+ * Migrates data from the old dynamic data schema into our new static schema.
+ * TODO: Delete the migration once executed on the live site. It will break in the future otherwise,
+ *       because it assumes the existence of several classes / entities and methods which may
+ *       not be present forever.
  */
 class Version20170722192838 extends AbstractMigration implements ContainerAwareInterface
 {
@@ -99,14 +102,22 @@ class Version20170722192838 extends AbstractMigration implements ContainerAwareI
         );
     }
     
-    private function convertBooleanField($value) {
-        if ($value === '') {
-            return null;
+    private function convertBooleanField($value)
+    {
+        switch ($value) {
+            case '':
+                return null;
+            case '0':
+            case 'No':
+            case 'false':
+                return false;
+            case '1':
+            case 'true':
+            case 'Only included in the Starter Set': // TODO: This is part of Adventure 17
+                return true;
+            default:
+                $this->abortIf(true, 'Unknown boolean value encountered.');
         }
-        if ($value === 'false') {
-            return false;
-        }
-        return (bool)$value;
     }
 
     /**
