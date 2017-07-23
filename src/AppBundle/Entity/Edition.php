@@ -114,5 +114,21 @@ class Edition
     {
         return $this->position;
     }
+
+    /**
+     * @return string
+     */
+    public function getCreatedBy()
+    {
+        return $this->createdBy;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUpdatedBy()
+    {
+        return $this->updatedBy;
+    }
 }
 
