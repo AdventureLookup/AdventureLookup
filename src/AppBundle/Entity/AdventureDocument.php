@@ -167,24 +167,6 @@ class AdventureDocument
         $this->pregeneratedCharacters = $pregeneratedCharacters;
         $this->tacticalMaps = $tacticalMaps;
         $this->handouts = $handouts;
-
-        $map = [
-            'Author' => 'author',
-            'System / Edition' => 'system',
-            'Publisher' => 'publisher',
-            'Environment' => 'environments',
-            'Notable Items' => 'notableItems',
-            'Monsters' => 'monsters',
-            'Villains' => 'villains',
-        ];
-
-        foreach ($info as $infoObj) {
-            $fieldTitle = $infoObj['meta']->getTitle();
-            if (isset($map[$fieldTitle])) {
-                $fieldName = $map[$fieldTitle];
-                $this->$fieldName = $infoObj['contents'];
-            }
-        }
     }
 
     /**

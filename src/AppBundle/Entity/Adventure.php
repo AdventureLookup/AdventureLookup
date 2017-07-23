@@ -340,6 +340,17 @@ class Adventure
     }
 
     /**
+     * @param Environment $environment
+     *
+     * @return Adventure
+     */
+    public function addEnvironment(Environment $environment)
+    {
+        $this->environments->add($environment);
+        return $this;
+    }
+
+    /**
      * @param Environment[] $environments
      *
      * @return Adventure
@@ -500,7 +511,7 @@ class Adventure
     }
 
     /**
-     * @return TagContent[]
+     * @return TagContent[]|Collection
      */
     public function getInfo()
     {

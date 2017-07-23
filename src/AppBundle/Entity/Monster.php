@@ -66,6 +66,7 @@ class Monster
 
     public function __construct()
     {
+        $this->isUnique = false;
         $this->types = new ArrayCollection();
     }
 
