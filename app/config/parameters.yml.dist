@@ -8,8 +8,6 @@ parameters:
     database_user: root
     database_password: root
     database_driver: mysql
-    # You should uncomment this if you want to use pdo_sqlite
-    #database_path: '%kernel.root_dir%/../var/data/data.sqlite'
 
     mailer_transport: smtp
     mailer_host: 127.0.0.1
@@ -18,3 +16,5 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret: ThisTokenIsNotSoSecretChangeIt
+
+    google_analytics_code: ~
