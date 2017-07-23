@@ -29,3 +29,9 @@ services:
     app.field_provider:
         class: AppBundle\Field\FieldProvider
         autowire: true
+
+    app.doctrine.hash_password_listener:
+        class: AppBundle\Listener\HashPasswordListener
+        autowire: true
+        tags:
+            - { name: doctrine.event_subscriber }
