@@ -1,0 +1,8 @@
+{{ form_row(form.title) }}
+<div class="alert alert-warning hidden-xs-up similar-adventures-warning">
+    <strong>It looks like there already are adventures with a similar title. Please make sure not to duplicate them! Using the exact same title twice will result in an error.</strong>
+    <ul class="similar-adventures-list"></ul>
+</div>
+
+{# Render the rest of the fields #}
+{{ form_widget(form) }}

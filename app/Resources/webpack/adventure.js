@@ -21,7 +21,7 @@ function debounce(func, wait, immediate) {
 
 (function () {
     const DEBOUNCE = 250;
-    const $page = $('#page--create-adventure');
+    const $page = $('#page--create-adventure, #page--edit-adventure');
     if (!$page.length) {
         return;
     }
@@ -54,13 +54,75 @@ function debounce(func, wait, immediate) {
         })
     }, DEBOUNCE));
 
-    let newValueCounter = 1;
+    $('input[data-autocomplete]').each(function () {
+        const $field = $(this);
+        const fieldName = $field.attr('id').split('_').pop();
+        $field.selectize({
+            create: true,
+            valueField: 'title',
+            labelField: 'title',
+            searchField: 'title',
+            maxItems: 1,
+            preload: 'focus',
+            load: function(query, callback) {
+                $.ajax({
+                    url: searchUrl.replace(/__FIELD__/g, fieldName),
+                    data: {
+                        q: query
+                    },
+                    type: 'GET',
+                    error: function() {
+                        callback();
+                    },
+                    success: function(res) {
+                        callback(res.map((content) => {return {'title': content}}));
+                    }
+                });
+            }
+        });
+    });
+
+    let newFieldIndex = 0;
 
     $('select[name^="appbundle_adventure"]').each(function () {
         const $select = $(this);
-        $select.selectize({
-            create: function(input) {
-                return {title: input, value: 'n' + ++newValueCounter};
+        const fieldName = $select.attr('id').split('_').pop();
+        const selectized = $select.selectize({
+            create: function(query, callback) {
+                const $modal = $('#newFieldContentModal');
+                const $modalForm = $modal.find('.modal-form');
+                const $modalAddBtn = $modal.find('#newFieldContentModal-add');
+
+                // Create new form
+                const $newEntities = $(`#appbundle_adventure_${fieldName}-new`);
+                const prototype = $newEntities
+                    .data('prototype')
+                    .replace(/__name__/g, ++newFieldIndex)
+                    .replace(/__label__/g, '');
+                $modalForm.html(prototype);
+                $modalForm.find('select').selectize();
+
+                // Set name attribute
+                const $nameInput = $(`#appbundle_adventure_${fieldName}-new_${newFieldIndex}_name`);
+                $nameInput.val(query);
+
+                $modalAddBtn.one('click', () => {
+                    $modalAddBtn.attr('disabled', true);
+                    $modalForm.children()
+                        .addClass('d-none')
+                        .appendTo($newEntities);
+                    callback({title: query, value: 'n' + query});
+                    $modal.one('hidden.bs.modal', () => {
+                        selectized.focus();
+                    });
+                    $modal.modal('hide');
+                });
+                $modalAddBtn.attr('disabled', false);
+
+                $modal.one('shown.bs.modal', function () {
+                    $modalAddBtn.focus()
+                });
+                $modal.modal('show');
             },
             //sortField: 'title',
             //valueField: 'title',
@@ -73,15 +135,9 @@ function debounce(func, wait, immediate) {
                     return '<div>' + escape(item.title) + '</div>';
                 }
             },
-            //score: function(search) {
-            //    var score = this.getScoreFunction(search);
-            //    return function(item) {
-            //        return score(item) * (1 + Math.min(item.watchers / 100, 1));
-            //    };
-            //},
             load: function(query, callback) {
                 $.ajax({
-                    url: searchUrl.replace(/__FIELD__/g, $select.attr('id').split('_').pop()),
+                    url: searchUrl.replace(/__FIELD__/g, fieldName),
                     data: {
                         q: query
                     },
@@ -90,60 +146,10 @@ function debounce(func, wait, immediate) {
                         callback();
                     },
                     success: function(res) {
-                        callback(res.map((content) => {return {'title': content}}),);
+                        callback(res.map((content) => {return {'title': content}}));
                     }
                 });
             }
-        });
-        /*$(this).select2({
-            tags: true,
-            minimumInputLength: 1,
-            ajax: {
-               url: searchUrl.replace(/__ID__/g, $(this).data('id')),
-                   //.replace(/__Q__/g, $(this).val()),
-               dataType: 'json',
-               delay: DEBOUNCE,
-               data: function (params) {
-                   return {
-                       q: params.term,
-                       page: params.page
-                   };
-               },
-               processResults: function (data, params) {
-                   // parse the results into the format expected by Select2
-                   // since we are using custom formatting functions we do not need to
-                   // alter the remote JSON data, except to indicate that infinite
-                   // scrolling can be used
-                   console.log(data);
-                   params.page = params.page || 1;
-
-                   return {
-                       results: data.map((content) => {return {'id': content, 'text': content}}),
-                       pagination: {
-                           more: false //(params.page * 30) < data.total_count
-                       }
-                   };
-               },
-               cache: true
-           },
-           createTag: function (params) {
-               return {
-                   id: params.term,
-                   text: params.term,
-                   newOption: true
-               }
-           },
-           templateResult: function (data) {
-               var $result = $("<span></span>");
-
-               $result.text(data.text);
-
-               if (data.newOption) {
-                   $result.append(" <em>(new)</em>");
-               }
-
-               return $result;
-           }
-       });*/
+        })[0].selectize;
     });
 })();

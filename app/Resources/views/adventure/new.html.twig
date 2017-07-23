@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container" id="page--create-adventure" data-similar-titles-url="{{ path('similar_titles_search') }}" data-search-url="{{ path('field_content_search', {id: '__FIELD__'}) }}">
+    <div class="container" id="page--create-adventure" data-similar-titles-url="{{ path('similar_titles_search') }}" data-search-url="{{ path('api_autocomplete_field', {fieldName: '__FIELD__'}) }}">
         <div class="row justify-content-center">
             <div class="col-lg-8 col-xl-7">
                 <h1 class="my-5">New adventure</h1>
@@ -12,18 +12,12 @@
 
                 {{ form_start(form) }}
 
-                {{ form_row(form.title) }}
-                <div class="alert alert-warning hidden-xs-up similar-adventures-warning">
-                    <strong>It looks like there already are adventures with a similar title. Please make sure not to duplicate them! Using the exact same title twice will result in an error.</strong>
-                    <ul class="similar-adventures-list"></ul>
-                </div>
+                {% include 'adventure/_form.html.twig' %}
 
-                {# Render the rest of the fields #}
-                {{ form_widget(form) }}
-
-                <input type="submit" value="Create Adventure" class="btn btn-primary" role="button" />
+                <input type="submit" value="Save" class="btn btn-primary" role="button" />
                 {{ form_end(form) }}
             </div>
         </div>
     </div>
+    {% include 'adventure/_new_content_modal.html.twig' %}
 {% endblock %}

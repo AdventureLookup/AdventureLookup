@@ -128,7 +128,7 @@ class AdventureController extends Controller
 
         return $this->render('adventure/edit.html.twig', array(
             'adventure' => $adventure,
-            'edit_form' => $editForm->createView(),
+            'form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));
     }

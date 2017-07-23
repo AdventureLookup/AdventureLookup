@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -89,6 +90,20 @@ class Monster
         $type->addMonster($this);
         $this->types[] = $type;
 
+        return $this;
+    }
+
+    /**
+     * Set the monster types
+     *
+     * @param Collection $types
+     * @return $this
+     */
+    public function setTypes(Collection $types)
+    {
+        foreach ($types as $type) {
+            $this->addType($type);
+        }
         return $this;
     }
 

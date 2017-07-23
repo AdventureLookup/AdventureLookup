@@ -38,7 +38,7 @@ class Adventure
 
     /**
      * @var Author[]|Collection
-     * @ORM\ManyToMany(targetEntity="Author")
+     * @ORM\ManyToMany(targetEntity="Author", cascade={"persist"})
      * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
      */
     private $authors;
@@ -59,14 +59,14 @@ class Adventure
 
     /**
      * @var Item[]|Collection
-     * @ORM\ManyToMany(targetEntity="Item")
+     * @ORM\ManyToMany(targetEntity="Item", cascade={"persist"})
      * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
      */
     private $items;
 
     /**
      * @var NPC[]|Collection
-     * @ORM\ManyToMany(targetEntity="NPC")
+     * @ORM\ManyToMany(targetEntity="NPC", cascade={"persist"})
      * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
      */
     private $npcs;
@@ -87,7 +87,7 @@ class Adventure
 
     /**
      * @var Monster[]|Collection
-     * @ORM\ManyToMany(targetEntity="Monster")
+     * @ORM\ManyToMany(targetEntity="Monster", cascade={"persist"})
      * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
      */
     private $monsters;
@@ -291,6 +291,17 @@ class Adventure
     }
 
     /**
+     * @param Author $author
+     *
+     * @return Adventure
+     */
+    public function addAuthor(Author $author)
+    {
+        $this->authors->add($author);
+        return $this;
+    }
+
+    /**
      * @param Author[] $authors
      *
      * @return Adventure
@@ -348,6 +359,17 @@ class Adventure
     }
 
     /**
+     * @param Item $item
+     *
+     * @return Adventure
+     */
+    public function addItem(Item $item)
+    {
+        $this->items->add($item);
+        return $this;
+    }
+
+    /**
      * @param Item[] $items
      *
      * @return Adventure
@@ -364,6 +386,17 @@ class Adventure
     public function getNpcs(): Collection
     {
         return $this->npcs;
+    }
+
+    /**
+     * @param Npc $npc
+     *
+     * @return Adventure
+     */
+    public function addNpc(NPC $npc)
+    {
+        $this->npcs->add($npc);
+        return $this;
     }
 
     /**
@@ -420,6 +453,16 @@ class Adventure
     public function getMonsters()
     {
         return $this->monsters;
+    }
+
+    /**
+     * @param Monster $monster
+     * @return Adventure
+     */
+    public function addMonster(Monster $monster)
+    {
+        $this->monsters->add($monster);
+        return $this;
     }
 
     /**
