@@ -103,6 +103,9 @@ class Version20170722192838 extends AbstractMigration implements ContainerAwareI
         if ($value === '') {
             return null;
         }
+        if ($value === 'false') {
+            return false;
+        }
         return (bool)$value;
     }
 
