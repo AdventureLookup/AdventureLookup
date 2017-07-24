@@ -83,6 +83,7 @@ class AppElasticsearchReindexCommand extends ContainerAwareCommand
             'startingLevelRange' => self::FIELD_STRING,
             'numPages' => self::FIELD_INTEGER,
             'foundIn' => self::FIELD_STRING,
+            'partOf' => self::FIELD_STRING,
             'link' => self::FIELD_NON_SEARCHABLE,
             'thumbnailUrl' => self::FIELD_NON_SEARCHABLE,
             'soloable' => self::FIELD_BOOLEAN,

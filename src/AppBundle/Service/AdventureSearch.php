@@ -273,6 +273,7 @@ class AdventureSearch
                 $hit['_source']['startingLevelRange'],
                 $hit['_source']['numPages'],
                 $hit['_source']['foundIn'],
+                $hit['_source']['partOf'],
                 $hit['_source']['link'],
                 $hit['_source']['thumbnailUrl'],
                 $hit['_source']['soloable'],

@@ -153,6 +153,13 @@ class AdventureType extends AbstractType
                     'data-autocomplete' => true,
                 ],
             ])
+            ->add('partOf', TextType::class, [
+                'required' => false,
+                'help' => 'The series of adventures that the module is a part of, if applicable.',
+                'attr' => [
+                    'data-autocomplete' => true,
+                ],
+            ])
             ->add('link', UrlType::class, [
                 'required' => false,
                 'help' => 'Links to legitimate sites where the module can be procured.'

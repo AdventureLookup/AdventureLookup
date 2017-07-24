@@ -115,6 +115,11 @@ class AdventureDocument
      */
     private $foundIn;
 
+    /**
+     * @var string
+     */
+    private $partOf;
+
     public function __construct(
         int $id,
         array $authors,
@@ -133,6 +138,7 @@ class AdventureDocument
         string $startingLevelRange = null,
         int $numPages = null,
         string $foundIn = null,
+        string $partOf = null,
         string $link = null,
         string $thumbnailUrl = null,
         bool $soloable = null,
@@ -161,6 +167,7 @@ class AdventureDocument
         $this->startingLevelRange = $startingLevelRange;
         $this->numPages = $numPages;
         $this->foundIn = $foundIn;
+        $this->partOf = $partOf;
         $this->link = $link;
         $this->thumbnailUrl = $thumbnailUrl;
         $this->soloable = $soloable;
@@ -205,6 +212,7 @@ class AdventureDocument
             $adventure->getStartingLevelRange(),
             $adventure->getNumPages(),
             $adventure->getFoundIn(),
+            $adventure->getPartOf(),
             $adventure->getLink(),
             $adventure->getThumbnailUrl(),
             $adventure->isSoloable(),
@@ -413,6 +421,14 @@ class AdventureDocument
     public function getFoundIn()
     {
         return $this->foundIn;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPartOf()
+    {
+        return $this->partOf;
     }
 
     /**
