@@ -472,7 +472,19 @@ class Version20180000000000 extends AbstractMigration implements ContainerAwareI
         }
 
         $em->flush();
-        
+
+        // Last but not least, set empty foundIn fields to null.
+        // This happens, because the database field was defined as NOT NULL at some point, therefore all
+        // adventures not having a foundIn content created before executing the migration have it set to ''.
+        $qb = $adventureRepository
+            ->createQueryBuilder('a');
+        $qb
+            ->update(Adventure::class, 'a')
+            ->set('a.foundIn','NULL')
+            ->where($qb->expr()->eq('a.foundIn', $qb->expr()->literal('')))
+            ->getQuery()
+            ->execute();
+
         $em->getConnection()->commit();
     }
 
