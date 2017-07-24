@@ -156,6 +156,14 @@ class Adventure
      * @var string
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Gedmo\Versioned()
+     */
+    private $partOf;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Url()
      * @Gedmo\Versioned()
      */
@@ -801,6 +809,22 @@ class Adventure
         return $this;
     }
 
+    public function getPartOf()
+    {
+        return $this->partOf;
+    }
+
+    /**
+     * @param string $partOf
+     * @return Adventure
+     */
+    public function setPartOf($partOf)
+    {
+        $this->partOf = $partOf;
+
+        return $this;
+    }
+
     /**
      * @return string
      */
@@ -817,4 +841,3 @@ class Adventure
         return $this->updatedBy;
     }
 }
-

@@ -48,6 +48,13 @@
                             {{ adventure.foundIn }}
                             {{ macros.search_icon('foundIn', adventure.foundIn) }}
                         </div>
+                        {% if adventure.partOf %}
+                            <div class="col">
+                                <div class="label">Part Of</div>
+                                {{ adventure.partOf }}
+                                {{ macros.search_icon('partOf', adventure.partOf) }}
+                            </div>
+                        {% endif %}
                     </div>
                     <div class="data-row">
                         <div class="col">
