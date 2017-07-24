@@ -32,6 +32,7 @@ class AdventureSerializer
             'startingLevelRange' => $adventure->getStartingLevelRange(),
             'numPages' => $adventure->getNumPages(),
             'foundIn' => $adventure->getFoundIn(),
+            'partOf' => $adventure->getPartOf(),
             'link' => $adventure->getLink(),
             'thumbnailUrl' => $adventure->getThumbnailUrl(),
             'soloable' => $adventure->isSoloable(),

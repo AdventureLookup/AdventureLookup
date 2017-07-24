@@ -168,6 +168,14 @@ class FieldProvider
                 'Found In',
                 'The place the adventure can be found in.'
             ),
+            'partOf' => new Field(
+                'partOf',
+                'string',
+                false,
+                true,
+                'Part Of',
+                'The series of adventures that the module is a part of, if applicable.'
+            ),
         ]);
     }
 
