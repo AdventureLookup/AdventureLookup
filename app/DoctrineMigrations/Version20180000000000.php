@@ -26,7 +26,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
  *       because it assumes the existence of several classes / entities and methods which may
  *       not be present forever.
  */
-class Version20170722192838 extends AbstractMigration implements ContainerAwareInterface
+class Version20180000000000 extends AbstractMigration implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
@@ -50,7 +50,7 @@ class Version20170722192838 extends AbstractMigration implements ContainerAwareI
     const TAG_ID_HANDOUTS = 90;
     const TAG_ID_VILLAINS = 91; 
     const TAG_ID_FOUND_IN = 92;
-    const TAG_ID_PART_OF = 93; // TODO: This doesn't yet exist in our data model!!
+    const TAG_ID_PART_OF = 93;
 
     const IGNORED_TAG_CONTENT_IDS = [
         2738, // Says no maps included, but there are. Is also a duplicate of the correct 1036 tag
@@ -310,6 +310,7 @@ class Version20170722192838 extends AbstractMigration implements ContainerAwareI
             $links = $this->getContentsForTagNameIdAndAdventure($adventure, self::TAG_ID_LINK);
             $thumbnails = $this->getContentsForTagNameIdAndAdventure($adventure, self::TAG_ID_THUMB);
             $foundIns = $this->getContentsForTagNameIdAndAdventure($adventure, self::TAG_ID_FOUND_IN);
+            $partOfs = $this->getContentsForTagNameIdAndAdventure($adventure, self::TAG_ID_PART_OF);
             $descriptions = $this->getContentsForTagNameIdAndAdventure($adventure, self::TAG_ID_DESCRIPTION);
 
             $numPages = $this->getContentsForTagNameIdAndAdventure($adventure, self::TAG_ID_NUM_PAGES);
@@ -346,6 +347,11 @@ class Version20170722192838 extends AbstractMigration implements ContainerAwareI
             $this->warnIf(count($foundIns) > 1, sprintf('Adventure #%s "%s" has %s foundIns: %s', $adventure->getId(), $adventure->getTitle(), count($foundIns), implode(', ', $foundIns)));
             if (count($foundIns) > 0) {
                 $adventure->setFoundIn(implode(', ', $foundIns));
+            }
+
+            $this->warnIf(count($partOfs) > 1, sprintf('Adventure #%s "%s" has %s partOfs: %s', $adventure->getId(), $adventure->getTitle(), count($partOfs), implode(', ', $partOfs)));
+            if (count($partOfs) > 0) {
+                $adventure->setPartOf(implode(', ', $partOfs));
             }
 
             $this->warnIf(count($descriptions) > 1, sprintf('Adventure #%s "%s" has %s descriptions: %s', $adventure->getId(), $adventure->getTitle(), count($descriptions), implode(', ', $descriptions)));
