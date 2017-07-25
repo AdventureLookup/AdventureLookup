@@ -92,8 +92,8 @@ class FieldProvider
                 'string',
                 true,
                 true,
-                'Monsters',
-                'The various types of creatures featured in the module.'
+                'Monsters and BBEGs',
+                'The monsters and BBEGs featured in the module.'
             ),
 
 

@@ -122,8 +122,8 @@ class AdventureType extends AbstractType
             Monster::class,
             MonsterType::class,
             'addMonster',
-            'Monsters',
-            'The various types of creatures featured in the module.'
+            'Monsters and BBEGs',
+            'The monsters and BBEGs featured in the module.'
         );
         $builder
             ->add('minStartingLevel', NumberType::class, [
