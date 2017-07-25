@@ -109,6 +109,9 @@ stof_doctrine_extensions:
             sluggable: true
             blameable: true
 
+# EasyAdminBundle
+# GitHub: https://github.com/javiereguiluz/EasyAdminBundle
+# Docs:   http://symfony.com/doc/current/bundles/EasyAdminBundle/index.html
 easy_admin:
     site_name: 'Adventure Lookup'
     design:
@@ -132,12 +135,11 @@ easy_admin:
         Adventure:
             class: AppBundle\Entity\Adventure
             label: 'Adventures'
+            disabled_actions: ['new', 'edit']
             list:
                 title: "Adventures"
-                fields: ['id', 'title', 'approved']
+                fields: ['id', 'title']
                 actions:
-                    - '-new'
-                    - '-edit'
                     - { name: 'adventure_edit', type: 'route', label: 'Edit' }
         Author:
             class: AppBundle\Entity\Author
@@ -223,8 +225,8 @@ easy_admin:
         User:
             class: AppBundle\Entity\User
             label: 'Users'
+            disabled_actions: ['new', 'delete']
             form:
-                help: 'Please make sure the user always either has ROLE_USER, ROLE_USER&ROLE_CURATOR or ROLE_USER&ROLE_CURATOR&ROLE_ADMIN!'
                 fields:
                     - isActive
                     - property: 'roles'
@@ -239,7 +241,4 @@ easy_admin:
             list:
                 title: "Users"
                 fields: [username, email, roles]
-                sort: ['roles', 'DESC']
-                actions:
-                    - '-new'
-                    - '-delete'
+                sort: ['roles', 'ASC']

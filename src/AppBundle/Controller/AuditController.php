@@ -7,14 +7,16 @@ use Doctrine\ORM\QueryBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use DataDog\AuditBundle\Entity\AuditLog;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
+ * Displays a log of the most recent creations, updates and removals.
+ * Allows easy filtering by user and entity.
+ *
  * @Security("is_granted('ROLE_ADMIN')")
  */
 class AuditController extends Controller
@@ -65,7 +67,9 @@ class AuditController extends Controller
     }
 
     /**
-     * @param QueryBuilder $qb
+     * Applies filter to the query builder object.
+     *
+     * @param QueryBuilder $qb A reference to the query builder to apply the filter to.
      * @param $key
      * @param $val
      * @throws \Exception
@@ -101,7 +105,7 @@ class AuditController extends Controller
                 break;
             default:
                 // if user attempts to filter by other fields, we restrict it
-                throw new \Exception("filter not allowed");
+                throw new NotFoundHttpException("Filter not allowed.");
         }
     }
 }

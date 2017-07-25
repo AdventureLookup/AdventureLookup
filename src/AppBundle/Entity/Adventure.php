@@ -809,6 +809,9 @@ class Adventure
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getPartOf()
     {
         return $this->partOf;

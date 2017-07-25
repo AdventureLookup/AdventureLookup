@@ -4,6 +4,11 @@ namespace AppBundle\Twig;
 
 use DataDog\AuditBundle\Entity\AuditLog;
 
+/**
+ * Adds new functions to use in the audit Twig templates.
+ *
+ * https://symfony.com/doc/current/templating/twig_extension.html
+ */
 class AuditExtension extends \Twig_Extension
 {
     public function getFunctions()
@@ -35,12 +40,12 @@ class AuditExtension extends \Twig_Extension
 
     public function assoc(\Twig_Environment $twig, $assoc)
     {
-        return $twig->render("audit/assoc.html.twig", compact('assoc'));
+        return $twig->render("audit/assoc.html.twig", ['assoc' => $assoc]);
     }
 
     public function blame(\Twig_Environment $twig, $blame)
     {
-        return $twig->render("audit/blame.html.twig", compact('blame'));
+        return $twig->render("audit/blame.html.twig", ['blame' => $blame]);
     }
 
     public function value(\Twig_Environment $twig, $val)
