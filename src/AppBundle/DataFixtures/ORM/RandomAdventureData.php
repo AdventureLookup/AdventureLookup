@@ -78,7 +78,7 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
                 ->setDescription($faker->realText(2000))
                 ->setNumPages($faker->numberBetween(1, 200))
                 ->setFoundIn($faker->catchPhrase)
-                ->setPartOf($faker->boolean() ? $faker->words(3) : null)
+                ->setPartOf($faker->boolean() ? $faker->catchPhrase : null)
                 ->setLink($faker->url)
                 ->setThumbnailUrl($faker->imageUrl(260, 300))
                 ->setSoloable($faker->boolean())
