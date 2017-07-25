@@ -341,7 +341,8 @@ class AdventureSearch
         $fields = $this->fieldProvider
             ->getFields()
             ->filter(function (Field $field) { return $field->isFreetextSearchable(); })
-            ->map(function (Field $field) { return $field->getName(); });
+            ->map(function (Field $field) { return $field->getName(); })
+            ->getValues();
 
         $terms = explode(',', $q);
         $qMatches = [];
