@@ -26,6 +26,11 @@ class Field
     private $freetextSearchable;
 
     /**
+     * @var int
+     */
+    private $searchBoost;
+
+    /**
      * @var string
      */
     private $title;
@@ -40,7 +45,7 @@ class Field
      */
     private $example;
 
-    public function __construct(string $name, string $type, bool $multiple, bool $freetextSearchable, string $title, string $description = null, string $example = null)
+    public function __construct(string $name, string $type, bool $multiple, bool $freetextSearchable, string $title, string $description = null, int $searchBoost = 1, string $example = null)
     {
         $this->name = $name;
         $this->type = $type;
@@ -49,6 +54,7 @@ class Field
         $this->description = $description;
         $this->example = $example;
         $this->freetextSearchable = $freetextSearchable;
+        $this->searchBoost = $searchBoost;
     }
 
     /**
@@ -81,6 +87,14 @@ class Field
     public function isFreetextSearchable(): bool
     {
         return $this->freetextSearchable;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSearchBoost(): int
+    {
+        return $this->searchBoost;
     }
 
     /**

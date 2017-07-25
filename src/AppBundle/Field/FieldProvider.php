@@ -22,7 +22,8 @@ class FieldProvider
                 false,
                 true,
                 'Title',
-                'The title of the adventure.'
+                'The title of the adventure.',
+                3
             ),
             'description' => new Field(
                 'description',
