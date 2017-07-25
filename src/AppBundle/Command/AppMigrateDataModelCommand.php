@@ -12,9 +12,11 @@ use AppBundle\Entity\Publisher;
 use AppBundle\Entity\Setting;
 use AppBundle\Entity\TagContent;
 use AppBundle\Entity\TagName;
+use AppBundle\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -133,6 +135,8 @@ class AppMigrateDataModelCommand extends ContainerAwareCommand
 
         $em->getConnection()->beginTransaction();
 
+        /** @var EntityRepository $userRepository */
+        $userRepository = $em->getRepository(User::class);
         $adventureRepository = $em->getRepository(Adventure::class);
         $tagNameRepository = $em->getRepository(TagName::class);
         $tagContentRepository = $em->getRepository(TagContent::class);
@@ -471,7 +475,7 @@ class AppMigrateDataModelCommand extends ContainerAwareCommand
         $em->flush();
 
         
-        // Last but not least, set empty foundIn fields to null.
+        // Set empty foundIn fields to null.
         // This happens, because the database field was defined as NOT NULL at some point, therefore all
         // adventures not having a foundIn content created before executing the migration have it set to ''.
         $qb = $adventureRepository->createQueryBuilder('a');
@@ -479,6 +483,23 @@ class AppMigrateDataModelCommand extends ContainerAwareCommand
             ->update(Adventure::class, 'a')
             ->set('a.foundIn', 'NULL')
             ->where($qb->expr()->eq('a.foundIn', $qb->expr()->literal('')))
+            ->getQuery()
+            ->execute();
+
+        // Give all users ROLE_USER.
+        $qb = $userRepository->createQueryBuilder('u');
+        $qb
+            ->update(User::class, 'u')
+            ->set('u.roles', $qb->expr()->literal('ROLE_USER'))
+            ->getQuery()
+            ->execute();
+
+        // Give Matt and Jerry ROLE_ADMIN.
+        $qb = $userRepository->createQueryBuilder('u');
+        $qb
+            ->update(User::class, 'u')
+            ->set('u.roles', $qb->expr()->literal('ROLE_ADMIN'))
+            ->where($qb->expr()->in('u.username', ['JohnnyFlash', 'Matthew']))
             ->getQuery()
             ->execute();
 
