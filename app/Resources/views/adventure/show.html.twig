@@ -79,6 +79,13 @@
                                 Unknown
                             {% endif %}
                         </div>
+                        <div class="col">
+                            <div class="label">Environments</div>
+                            {% for environment in adventure.environments %}
+                                {{ environment.name }}
+                                {{ macros.search_icon('environment', environment.name) }}
+                            {% endfor %}
+                        </div>
                     </div>
                     <div class="data-row">
                         <div class="col">
