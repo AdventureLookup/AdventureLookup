@@ -36,10 +36,10 @@ class AdventureVoter extends Voter
      */
     protected function supports($attribute, $subject)
     {
-        if (!in_array($attribute, [self::VIEW, self::EDIT, self::DELETE])) {
+        if (!in_array($attribute, [self::CREATE, self::VIEW, self::EDIT, self::DELETE])) {
             return false;
         }
-        if (!$subject instanceof Adventure) {
+        if (!($subject instanceof Adventure)) {
             return false;
         }
 
@@ -64,7 +64,7 @@ class AdventureVoter extends Voter
         }
 
         $user = $token->getUser();
-        if (!$user instanceof $user) {
+        if (!($user instanceof User)) {
             // the user must be logged in; if not, deny access
             return false;
         }
