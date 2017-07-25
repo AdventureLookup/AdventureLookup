@@ -74,7 +74,8 @@ class Version20180000000000 extends AbstractMigration implements ContainerAwareI
         3111, // Waterdeep is no setting but part of Forgotten Realms
         3112, // Urban is no setting
         3110, // Sword Coast is no setting
-        3164, // Has both AD&D and AD&D, DmsGuild lists it as AD&D2
+        3164, // Has both AD&D and AD&D, DmsGuild lists it as AD&D2,
+        497,  // Duplicate image
     ];
     
     private function getContentsForTagNameId(Collection $tagContents, int $tagNameId)
@@ -298,7 +299,6 @@ class Version20180000000000 extends AbstractMigration implements ContainerAwareI
         foreach ($adventures as $adventure) {
             if (in_array($adventure->getId(), [
                 102, // TODO: This adventure is for two different editions
-                17, // TODO: This adventure has multiple links
             ])) {
                 continue;
             }
