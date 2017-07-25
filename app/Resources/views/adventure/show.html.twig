@@ -28,8 +28,12 @@
                         </div>
                         <div class="col">
                             <div class="label">Published By</div>
-                            {{ adventure.publisher.name }}
-                            {{ macros.search_icon('publisher', adventure.publisher.name) }}
+                            {% if adventure.publisher %}
+                                {{ adventure.publisher.name }}
+                                {{ macros.search_icon('publisher', adventure.publisher.name) }}
+                            {% else %}
+                                Unknown
+                            {% endif %}
                         </div>
                         <div class="col">
                             <div class="label"># Of Pages</div>
@@ -59,13 +63,21 @@
                     <div class="data-row">
                         <div class="col">
                             <div class="label">System / Edition</div>
-                            {{ adventure.edition.name }}
-                            {{ macros.search_icon('edition', adventure.edition.name) }}
+                            {% if adventure.edition %}
+                                {{ adventure.edition.name }}
+                                {{ macros.search_icon('edition', adventure.edition.name) }}
+                            {% else %}
+                                Unknown
+                            {% endif %}
                         </div>
                         <div class="col">
                             <div class="label">Setting</div>
-                            {{ adventure.setting.name }}
-                            {{ macros.search_icon('setting', adventure.setting.name) }}
+                            {% if adventure.setting %}
+                                {{ adventure.setting.name }}
+                                {{ macros.search_icon('setting', adventure.setting.name) }}
+                            {% else %}
+                                Unknown
+                            {% endif %}
                         </div>
                     </div>
                     <div class="data-row">
