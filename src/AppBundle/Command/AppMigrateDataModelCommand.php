@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Migrations;
+namespace AppBundle\Command;
 
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\Author;
@@ -14,23 +14,28 @@ use AppBundle\Entity\TagContent;
 use AppBundle\Entity\TagName;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Migrations\AbstractMigration;
-use Doctrine\DBAL\Schema\Schema;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Migrates data from the old dynamic data schema into our new static schema.
- * TODO: Delete the migration once executed on the live site. It will break in the future otherwise,
+ * TODO: Delete the command once executed on the live site. It will break in the future otherwise,
  *       because it assumes the existence of several classes / entities and methods which may
  *       not be present forever.
  */
-class Version20170722192838 extends AbstractMigration implements ContainerAwareInterface
+class AppMigrateDataModelCommand extends ContainerAwareCommand
 {
-    use ContainerAwareTrait;
+    protected function configure()
+    {
+        $this
+            ->setName('app:migrate-data-model')
+            ->setDescription('Migrates data to the new static data model. May only be executed on production.')
+        ;
+    }
 
-    const TAG_ID_AUTHORS = 73; 
+    const TAG_ID_AUTHORS = 73;
     const TAG_ID_EDITION = 74;
     const TAG_ID_PUBLISHER = 75;
     const TAG_ID_SETTING = 76;
@@ -44,11 +49,11 @@ class Version20170722192838 extends AbstractMigration implements ContainerAwareI
     const TAG_ID_LINK = 84;
     const TAG_ID_THUMB = 85;
     const TAG_ID_DESCRIPTION = 86;
-    const TAG_ID_ITEMS = 87; 
+    const TAG_ID_ITEMS = 87;
     const TAG_ID_MONSTERS = 88;
     const TAG_ID_MAPS = 89;
     const TAG_ID_HANDOUTS = 90;
-    const TAG_ID_VILLAINS = 91; 
+    const TAG_ID_VILLAINS = 91;
     const TAG_ID_FOUND_IN = 92;
     const TAG_ID_PART_OF = 93; // TODO: This doesn't yet exist in our data model!!
 
@@ -76,7 +81,7 @@ class Version20170722192838 extends AbstractMigration implements ContainerAwareI
         3110, // Sword Coast is no setting
         3164, // Has both AD&D and AD&D, DmsGuild lists it as AD&D2
     ];
-    
+
     private function getContentsForTagNameId(Collection $tagContents, int $tagNameId)
     {
         return array_unique(
@@ -101,7 +106,7 @@ class Version20170722192838 extends AbstractMigration implements ContainerAwareI
             SORT_REGULAR
         );
     }
-    
+
     private function convertBooleanField($value)
     {
         switch ($value) {
@@ -120,13 +125,10 @@ class Version20170722192838 extends AbstractMigration implements ContainerAwareI
         }
     }
 
-    /**
-     * @param Schema $schema
-     */
-    public function up(Schema $schema)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var EntityManagerInterface $em */
-        $em = $this->container->get('doctrine.orm.entity_manager');
+        $em = $this->getContainer()->get('doctrine.orm.entity_manager');
 
         $em->getConnection()->beginTransaction();
 
@@ -267,7 +269,7 @@ class Version20170722192838 extends AbstractMigration implements ContainerAwareI
         $editionNames = $this->getContentsForTagNameId($tagContents, self::TAG_ID_EDITION);
         $publisherNames = $this->getContentsForTagNameId($tagContents, self::TAG_ID_PUBLISHER);
         $settingNames = $this->getContentsForTagNameId($tagContents, self::TAG_ID_SETTING);
-        
+
         $editions = [];
         $i = 10;
         foreach ($editionNames as $editionName) {
@@ -328,11 +330,11 @@ class Version20170722192838 extends AbstractMigration implements ContainerAwareI
                 $adventure->setMaxStartingLevel($maxStartingLevel[0]);
             }
 
-            $this->warnIf(count($startingLevelRange) > 1, sprintf('Adventure #%s "%s" has %s startingLevelRange: %s', $adventure->getId(), $adventure->getTitle(), count($startingLevelRange), implode(', ', $startingLevelRange)));
+            $this->warnIf($output, count($startingLevelRange) > 1, sprintf('Adventure #%s "%s" has %s startingLevelRange: %s', $adventure->getId(), $adventure->getTitle(), count($startingLevelRange), implode(', ', $startingLevelRange)));
             if (count($startingLevelRange) > 0) {
                 $adventure->setStartingLevelRange(implode(', ', $startingLevelRange));
             }
-            
+
             $this->abortIf(count($links) > 1, sprintf('Adventure #%s "%s" has %s links: %s', $adventure->getId(), $adventure->getTitle(), count($links), implode(', ', $links)));
             if (count($links) == 1) {
                 $adventure->setLink($links[0]);
@@ -343,12 +345,12 @@ class Version20170722192838 extends AbstractMigration implements ContainerAwareI
                 $adventure->setThumbnailUrl($thumbnails[0]);
             }
 
-            $this->warnIf(count($foundIns) > 1, sprintf('Adventure #%s "%s" has %s foundIns: %s', $adventure->getId(), $adventure->getTitle(), count($foundIns), implode(', ', $foundIns)));
+            $this->warnIf($output, count($foundIns) > 1, sprintf('Adventure #%s "%s" has %s foundIns: %s', $adventure->getId(), $adventure->getTitle(), count($foundIns), implode(', ', $foundIns)));
             if (count($foundIns) > 0) {
                 $adventure->setFoundIn(implode(', ', $foundIns));
             }
 
-            $this->warnIf(count($descriptions) > 1, sprintf('Adventure #%s "%s" has %s descriptions: %s', $adventure->getId(), $adventure->getTitle(), count($descriptions), implode(', ', $descriptions)));
+            $this->warnIf($output, count($descriptions) > 1, sprintf('Adventure #%s "%s" has %s descriptions: %s', $adventure->getId(), $adventure->getTitle(), count($descriptions), implode(', ', $descriptions)));
             if (count($descriptions) > 0) {
                 $adventure->setDescription(implode("\n\n", $descriptions));
             }
@@ -378,7 +380,7 @@ class Version20170722192838 extends AbstractMigration implements ContainerAwareI
                 $adventure->setSoloable($this->convertBooleanField($soloables[0]));
             }
 
-            
+
             $authorNames = $this->getContentsForTagNameIdAndAdventure($adventure, self::TAG_ID_AUTHORS);
             $environmentNames = $this->getContentsForTagNameIdAndAdventure($adventure, self::TAG_ID_ENVIRONMENTS);
             $itemNames = $this->getContentsForTagNameIdAndAdventure($adventure, self::TAG_ID_ITEMS);
@@ -431,7 +433,7 @@ class Version20170722192838 extends AbstractMigration implements ContainerAwareI
                 }
             }
 
-            
+
             $editionNames = $this->getContentsForTagNameIdAndAdventure($adventure, self::TAG_ID_EDITION);
             $publisherNames = $this->getContentsForTagNameIdAndAdventure($adventure, self::TAG_ID_PUBLISHER);
             $settingNames = $this->getContentsForTagNameIdAndAdventure($adventure, self::TAG_ID_SETTING);
@@ -466,15 +468,21 @@ class Version20170722192838 extends AbstractMigration implements ContainerAwareI
         }
 
         $em->flush();
-        
+
         $em->getConnection()->commit();
     }
 
-    /**
-     * @param Schema $schema
-     */
-    public function down(Schema $schema)
+    private function abortIf($condition, $message = '')
     {
-        $this->throwIrreversibleMigrationException();
+        if ($condition) {
+            throw new \RuntimeException($message);
+        }
+    }
+
+    private function warnIf(OutputInterface $output, $condition, $message)
+    {
+        if ($condition) {
+            $output->writeln('WARN: ' . $message);
+        }
     }
 }
