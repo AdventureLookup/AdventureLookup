@@ -3,7 +3,6 @@
 namespace AppBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\QueryBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -11,7 +10,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use DataDog\AuditBundle\Entity\AuditLog;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Displays a log of the most recent creations, updates and removals.
@@ -41,8 +39,24 @@ class AuditController extends Controller
             ->orderBy('a.loggedAt', 'DESC');
 
         $filters = $request->query->get('filters', []);
-        foreach ($filters as $name => $filter) {
-            $this->applyFilter($qb, $name, $filter);
+        if (isset($filters['blamed'])) {
+            $qb
+                ->andWhere($qb->expr()->eq('b.fk', ':blame'))
+                ->setParameter('blame', $filters['blamed']);
+        } else if (isset($filters['class']) && isset($filters['id'])) {
+            $qb
+                ->andWhere($qb->expr()->orX(
+                    $qb->expr()->andX(
+                        's.fk = :fk',
+                        's.class = :class'
+                    ),
+                    $qb->expr()->andX(
+                        't.fk = :fk',
+                        't.class = :class'
+                    )
+                ))
+                ->setParameter('fk', intval($filters['id']))
+                ->setParameter('class', $filters['class']);
         }
 
         $logs = $qb->getQuery()->execute();
@@ -64,48 +78,5 @@ class AuditController extends Controller
         return $this->render('audit/diff.html.twig', [
             'log' => $log
         ]);
-    }
-
-    /**
-     * Applies filter to the query builder object.
-     *
-     * @param QueryBuilder $qb A reference to the query builder to apply the filter to.
-     * @param $key
-     * @param $val
-     * @throws \Exception
-     */
-    private function applyFilter(QueryBuilder $qb, $key, $val)
-    {
-        switch ($key) {
-            case 'history':
-                if ($val) {
-                    $orx = $qb->expr()->orX();
-                    $orx->add('s.fk = :fk');
-                    $orx->add('t.fk = :fk');
-                    $qb->andWhere($orx);
-                    $qb->setParameter('fk', intval($val));
-                }
-                break;
-            case 'class':
-                $orx = $qb->expr()->orX();
-                $orx->add('s.class = :class');
-                $orx->add('t.class = :class');
-                $qb->andWhere($orx);
-                $qb->setParameter('class', $val);
-                break;
-            case 'blamed':
-                if ($val === 'null') {
-                    $qb->andWhere($qb->expr()->isNull('a.blame'));
-                } else {
-                    // this allows us to safely ignore empty values
-                    // otherwise if $qb is not changed, it would add where the string is empty statement.
-                    $qb->andWhere($qb->expr()->eq('b.fk', ':blame'));
-                    $qb->setParameter('blame', $val);
-                }
-                break;
-            default:
-                // if user attempts to filter by other fields, we restrict it
-                throw new NotFoundHttpException("Filter not allowed.");
-        }
     }
 }
