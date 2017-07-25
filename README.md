@@ -58,6 +58,20 @@ npm run dev
 The application is now running at http://localhost:8000/app_dev.php.
 Elasticsearch can be accessed at http://localhost:9200.
 
+## Running tests
+
+Tests use PHPUnit to run. There are two testsuites, one with functional tests and one with browser tests.
+Functional tests can be executed like so:
+```
+php vendor/symfony/phpunit-bridge/bin/simple-phpunit --testsuite functional
+```
+Browser tests require PhantomJS as well as the application running in the test environment. 
+To do that, execute `bash tests/start-phantomjs.sh` *once* before executing the tests. There is not
+need to call the script again until you reboot. Then execute the following to run the brow3ser tests:
+```
+php vendor/symfony/phpunit-bridge/bin/simple-phpunit --testsuite browser
+```
+
 # Running the application in production
 
 ## Apache configuration

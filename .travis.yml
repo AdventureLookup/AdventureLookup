@@ -1,0 +1,59 @@
+language: php
+php:
+  - '7.0'
+  - '7.1'
+env:
+  global:
+    - SYMFONY_ENV=test
+    - PHPUNIT=vendor/symfony/phpunit-bridge/bin/simple-phpunit
+  matrix:
+    - TESTSUITE=functional
+    - TESTSUITE=browser
+
+matrix:
+  fast_finish: true
+
+services:
+  # ElasticSearch takes few seconds to start, but it also takes a while until
+  # we finally execute the tests, no need to wait!
+  # https://docs.travis-ci.com/user/database-setup/#ElasticSearch
+  - elasticsearch
+
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+    - node_modules
+
+install:
+  - composer install -n
+  - npm install
+  - npm run prod
+
+before_script:
+  - php bin/console doctrine:schema:create -n
+  - php bin/console app:elasticsearch:reindex
+
+script:
+  - set -e
+  # Check for Twig and Yaml syntax errors
+  - php bin/console lint:twig app
+  - php bin/console lint:yaml app
+  # Check for security issues in installed dependencies
+  #   Specifying the endpoint is a (temporary) fix for Travis, see:
+  #   https://github.com/travis-ci/travis-ci/issues/6339
+  #   https://github.com/sensiolabs/security-checker/pull/77#issuecomment-290733113
+  - php bin/console security:check --end-point=http://security.sensiolabs.org/check_lock
+  # Start server and PhantomJS if browser tests are executed
+  - |
+    if [[ ${TESTSUITE} == "browser" ]]; then
+      bash scripts/start-phantomjs.sh
+    fi;
+  # Execute tests
+  # Only gather coverage on PHP 7.1
+  - |
+    if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.0" ]] || [ "$TESTSUITE" == "browser" ]; then
+      $PHPUNIT --testsuite $TESTSUITE;
+    else
+      $PHPUNIT --testsuite $TESTSUITE --coverage-clover=coverage.xml;
+      bash <(curl -s https://codecov.io/bash) -X gcov -X coveragepy;
+    fi;
