@@ -6,11 +6,11 @@ namespace AppBundle\Listener;
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\HasAdventuresInterface;
 use AppBundle\Service\AdventureSerializer;
+use AppBundle\Service\ElasticSearch;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Elasticsearch\Client;
-use Elasticsearch\ClientBuilder;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Psr\Log\LoggerInterface;
 
@@ -34,11 +34,23 @@ class SearchIndexUpdater implements EventSubscriber
      */
     private $logger;
 
-    public function __construct(LoggerInterface $logger)
+    /**
+     * @var string
+     */
+    private $indexName;
+
+    /**
+     * @var string
+     */
+    private $typeName;
+
+    public function __construct(LoggerInterface $logger, ElasticSearch $elasticSearch)
     {
-        $this->client = ClientBuilder::create()->build();
         $this->serializer = new AdventureSerializer();
         $this->logger = $logger;
+        $this->client = $elasticSearch->getClient();
+        $this->indexName = $elasticSearch->getIndexName();
+        $this->typeName = $elasticSearch->getTypeName();
     }
 
     /**
@@ -140,8 +152,8 @@ class SearchIndexUpdater implements EventSubscriber
     {
         // @TODO: Log errors
         $response = $this->client->index([
-            'index' => self::INDEX,
-            'type' => self::TYPE,
+            'index' => $this->indexName,
+            'type' => $this->typeName,
             'id' => $adventure->getId(),
             'body' => $this->serializer->toElasticDocument($adventure)
         ]);
@@ -158,8 +170,8 @@ class SearchIndexUpdater implements EventSubscriber
         try {
             // @TODO: Log errors
             $response = $this->client->delete([
-                    'index' => self::INDEX,
-                    'type' => self::TYPE,
+                    'index' => $this->indexName,
+                    'type' => $this->typeName,
                     'id' => $adventure->getId(),
             ]);
         } catch (Missing404Exception $e) {

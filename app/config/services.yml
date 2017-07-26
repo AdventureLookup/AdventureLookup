@@ -4,6 +4,11 @@ parameters:
     #parameter_name: value
 
 services:
+    app.elasticsearch:
+        class: AppBundle\Service\ElasticSearch
+        arguments:
+            - "%elasticsearch%"
+
     search_index_updater:
          class: AppBundle\Listener\SearchIndexUpdater
          autowire: true
