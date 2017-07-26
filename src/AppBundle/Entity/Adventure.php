@@ -233,6 +233,13 @@ class Adventure
     private $info;
 
     /**
+     * @var ChangeRequest[]|Collection
+     *
+     * @ORM\OneToMany(targetEntity="ChangeRequest", mappedBy="adventure", orphanRemoval=true)
+     */
+    private $changeRequests;
+
+    /**
      * @var string
      *
      * @Gedmo\Blameable(on="create")
@@ -257,6 +264,7 @@ class Adventure
         $this->items = new ArrayCollection();
         $this->npcs = new ArrayCollection();
         $this->monsters = new ArrayCollection();
+        $this->changeRequests = new ArrayCollection();
 
         $this->approved = false;
     }
@@ -826,6 +834,14 @@ class Adventure
         $this->partOf = $partOf;
 
         return $this;
+    }
+
+    /**
+     * @return ChangeRequest[]|Collection
+     */
+    public function getChangeRequests()
+    {
+        return $this->changeRequests;
     }
 
     /**

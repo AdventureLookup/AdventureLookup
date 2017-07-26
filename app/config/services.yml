@@ -53,8 +53,20 @@ services:
         tags:
             - { name: security.voter }
 
+    app.security.voter.change_request:
+        class: AppBundle\Security\ChangeRequestVoter
+        autowire: true
+        tags:
+            - { name: security.voter }
+
     app.doctrine.hash_password_listener:
         class: AppBundle\Listener\HashPasswordListener
         autowire: true
         tags:
             - { name: doctrine.event_subscriber }
+
+    app.form.change_request:
+        class: AppBundle\Form\ChangeRequestType
+        autowire: true
+        tags:
+            - { name: form.type }
