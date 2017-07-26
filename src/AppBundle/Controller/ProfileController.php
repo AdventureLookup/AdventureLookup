@@ -13,13 +13,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @Route("/account")
+ * @Route("/profile")
  * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
  */
-class AccountController extends Controller
+class ProfileController extends Controller
 {
     /**
-     * @Route("/", name="account")
+     * @Route("/", name="profile")
      * @Method("GET")
      */
     public function overviewAction()
@@ -35,7 +35,7 @@ class AccountController extends Controller
             'createdBy' => $user->getUsername(),
             'resolved' => false,
         ]);*/
-        return $this->render('account/overview.html.twig', [
+        return $this->render('profile/overview.html.twig', [
             'user' => $user,
             'changeRequests' => $changeRequests,
             'adventures' => $adventures,
@@ -65,10 +65,10 @@ class AccountController extends Controller
 
             $this->addFlash('success', 'Your password was changed.');
 
-            return $this->redirectToRoute('account');
+            return $this->redirectToRoute('profile');
         }
 
-        return $this->render('account/change_password.html.twig', [
+        return $this->render('profile/change_password.html.twig', [
             'form' => $form->createView()
         ]);
     }
