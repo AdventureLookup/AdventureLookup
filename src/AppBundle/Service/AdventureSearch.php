@@ -342,7 +342,7 @@ class AdventureSearch
         $fields = $this->fieldProvider
             ->getFields()
             ->filter(function (Field $field) { return $field->isFreetextSearchable(); })
-            ->map(function (Field $field) { return $field->getName(); })
+            ->map(function (Field $field) { return $field->getName() . '^' . $field->getSearchBoost(); })
             ->getValues();
 
         $terms = explode(',', $q);
@@ -355,7 +355,7 @@ class AdventureSearch
                 'multi_match' => [
                     'query' => $term,
                     'fields' => $fields,
-                    'type' => 'phrase'
+                    'fuzziness' => 'AUTO'
                 ]
             ];
         }
