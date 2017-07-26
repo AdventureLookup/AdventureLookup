@@ -36,4 +36,4 @@ security:
                 target: /
 
     access_control:
-        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/admin, roles: ROLE_CURATOR }

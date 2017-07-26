@@ -25,18 +25,23 @@
                     <li class="nav-item">
                         <a class="nav-link{% if app.request.attributes.get('_route') == 'adventure_index' %} active{% endif %}" href="{{ path('adventure_index') }}">Adventures</a>
                     </li>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <li class="nav-item">
+                            <a class="nav-link{% if app.request.attributes.get('_route') == 'audit' %} active{% endif %}" href="{{ path('audit') }}">Recent Activity</a>
+                        </li>
+                    {% endif %}
                     {% if is_granted('ROLE_CURATOR') %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path('tags_index') }}">Fields</a>
+                            <a class="nav-link{% if app.request.attributes.get('_route') == 'easyadmin' %} active{% endif %}" href="{{ path('easyadmin') }}">Admin Panel</a>
                         </li>
                     {% endif %}
                     {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path('logout') }}">Logout</a>
+                            <a class="nav-link{% if app.request.attributes.get('_route') == 'logout' %} active{% endif %}" href="{{ path('logout') }}">Logout</a>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path('login') }}">Login</a>
+                            <a class="nav-link{% if app.request.attributes.get('_route') == 'login' %} active{% endif %}" href="{{ path('login') }}">Login</a>
                         </li>
                     {% endif %}
                 </ul>

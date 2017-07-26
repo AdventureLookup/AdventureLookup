@@ -48,12 +48,17 @@ class MonsterType
         $this->types = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return $this->name;
+    }
+
     /**
      * Get id
      *
      * @return int
      */
-    public function getId(): int
+    public function getId()
     {
         return $this->id;
     }
@@ -101,7 +106,7 @@ class MonsterType
      *
      * @return string
      */
-    public function getName(): string
+    public function getName()
     {
         return $this->name;
     }
@@ -109,7 +114,7 @@ class MonsterType
     /**
      * @return string
      */
-    public function getSlug(): string
+    public function getSlug()
     {
         return $this->slug;
     }

@@ -12,9 +12,11 @@ use AppBundle\Entity\Publisher;
 use AppBundle\Entity\Setting;
 use AppBundle\Entity\TagContent;
 use AppBundle\Entity\TagName;
+use AppBundle\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -59,10 +61,10 @@ class AppMigrateDataModelCommand extends ContainerAwareCommand
 
     const IGNORED_TAG_CONTENT_IDS = [
         2738, // Says no maps included, but there are. Is also a duplicate of the correct 1036 tag
-        675, // Has two settings, 'Setting Neutral' and 'Mystara'. This removes the 'Setting Neutral' tag
+        675,  // Has two settings, 'Setting Neutral' and 'Mystara'. This removes the 'Setting Neutral' tag
         1753, // Same as above
-        765, // Has two settings, 'Setting Neutral' and 'Greyhawk'. This removes the 'Setting Neutral' tag
-        974, // Same as above
+        765,  // Has two settings, 'Setting Neutral' and 'Greyhawk'. This removes the 'Setting Neutral' tag
+        974,  // Same as above
         1085, // Same as above
         1111, // Same as above
         1637, // Same as above
@@ -72,7 +74,7 @@ class AppMigrateDataModelCommand extends ContainerAwareCommand
         3518, // Same as above
         1946, // Has two settings, 'Setting Neutral' and 'Points of Light'. This removes the 'Setting Neutral' tag
         2142, // Has two settings, 'Spelljammer' and 'Forgotten Realms'. This removes the 'Forgotten Realms' tag
-        812, // 'Sasquatch Game Studio' as publisher, only used once and same adventure is also tagged WotC
+        812,  // 'Sasquatch Game Studio' as publisher, only used once and same adventure is also tagged WotC
         2285, // 'B/X' and 'Labyrinth Lord' edition, removes 'B/X', as description says 'Labyrinth Lord'
         2337, // same as above
         2516, // same as above,
@@ -80,6 +82,7 @@ class AppMigrateDataModelCommand extends ContainerAwareCommand
         3112, // Urban is no setting
         3110, // Sword Coast is no setting
         3164, // Has both AD&D and AD&D, DmsGuild lists it as AD&D2
+        497,  // Duplicate image
     ];
 
     private function getContentsForTagNameId(Collection $tagContents, int $tagNameId)
@@ -132,6 +135,8 @@ class AppMigrateDataModelCommand extends ContainerAwareCommand
 
         $em->getConnection()->beginTransaction();
 
+        /** @var EntityRepository $userRepository */
+        $userRepository = $em->getRepository(User::class);
         $adventureRepository = $em->getRepository(Adventure::class);
         $tagNameRepository = $em->getRepository(TagName::class);
         $tagContentRepository = $em->getRepository(TagContent::class);
@@ -468,6 +473,35 @@ class AppMigrateDataModelCommand extends ContainerAwareCommand
         }
 
         $em->flush();
+
+        
+        // Set empty foundIn fields to null.
+        // This happens, because the database field was defined as NOT NULL at some point, therefore all
+        // adventures not having a foundIn content created before executing the migration have it set to ''.
+        $qb = $adventureRepository->createQueryBuilder('a');
+        $qb
+            ->update(Adventure::class, 'a')
+            ->set('a.foundIn', 'NULL')
+            ->where($qb->expr()->eq('a.foundIn', $qb->expr()->literal('')))
+            ->getQuery()
+            ->execute();
+
+        // Give all users ROLE_USER.
+        $qb = $userRepository->createQueryBuilder('u');
+        $qb
+            ->update(User::class, 'u')
+            ->set('u.roles', $qb->expr()->literal('ROLE_USER'))
+            ->getQuery()
+            ->execute();
+
+        // Give Matt and Jerry ROLE_ADMIN.
+        $qb = $userRepository->createQueryBuilder('u');
+        $qb
+            ->update(User::class, 'u')
+            ->set('u.roles', $qb->expr()->literal('ROLE_ADMIN'))
+            ->where($qb->expr()->in('u.username', ['JohnnyFlash', 'Matthew']))
+            ->getQuery()
+            ->execute();
 
         $em->getConnection()->commit();
     }

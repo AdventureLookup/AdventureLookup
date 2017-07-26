@@ -30,10 +30,10 @@
                     <i class="fa fa-flag"></i>
                     <p class="text-muted mb-2">Starting Level</p>
                     <h6>
-                        {% if adventure.startingLevelRange %}
-                            {{ adventure.startingLevelRange }}
-                        {% else %}
+                        {% if adventure.minStartingLevel and adventure.maxStartingLevel %}
                             {{adventure.minStartingLevel}}-{{adventure.maxStartingLevel}}
+                        {% else %}
+                            {{ adventure.startingLevelRange }}
                         {% endif %}
                     </h6>
                 </div>

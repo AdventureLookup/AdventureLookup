@@ -3,9 +3,8 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Adventure;
-use AppBundle\Entity\AdventureDocument;
 use AppBundle\Form\AdventureType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use AppBundle\Security\AdventureVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -52,7 +51,6 @@ class AdventureController extends Controller
      *
      * @Route("/new", name="adventure_new")
      * @Method({"GET", "POST"})
-     * @Security("is_granted('ROLE_USER')")
      *
      * @param Request $request
      * @return RedirectResponse|Response
@@ -60,6 +58,8 @@ class AdventureController extends Controller
     public function newAction(Request $request)
     {
         $adventure = new Adventure();
+        $this->denyAccessUnlessGranted(AdventureVoter::CREATE, $adventure);
+
         $isCurator = $this->isGranted('ROLE_CURATOR');
         if ($isCurator) {
             $adventure->setApproved(true);
@@ -93,9 +93,9 @@ class AdventureController extends Controller
      */
     public function showAction(Adventure $adventure)
     {
-        $deleteForm = $this->createDeleteForm($adventure);
+        $this->denyAccessUnlessGranted(AdventureVoter::VIEW, $adventure);
 
-        $adventure = AdventureDocument::fromAdventure($adventure);
+        $deleteForm = $this->createDeleteForm($adventure);
 
         return $this->render('adventure/show.html.twig', array(
             'adventure' => $adventure,
@@ -108,7 +108,6 @@ class AdventureController extends Controller
      *
      * @Route("/{id}/edit", name="adventure_edit")
      * @Method({"GET", "POST"})
-     * @Security("is_granted('ROLE_CURATOR')")
      *
      * @param Request $request
      * @param Adventure $adventure
@@ -116,6 +115,8 @@ class AdventureController extends Controller
      */
     public function editAction(Request $request, Adventure $adventure)
     {
+        $this->denyAccessUnlessGranted(AdventureVoter::EDIT, $adventure);
+
         $deleteForm = $this->createDeleteForm($adventure);
         $editForm = $this->createForm('AppBundle\Form\AdventureType', $adventure);
         $editForm->handleRequest($request);
@@ -138,7 +139,6 @@ class AdventureController extends Controller
      *
      * @Route("/{id}", name="adventure_delete")
      * @Method("DELETE")
-     * @Security("is_granted('ROLE_CURATOR')")
      *
      * @param Request $request
      * @param Adventure $adventure
@@ -146,6 +146,8 @@ class AdventureController extends Controller
      */
     public function deleteAction(Request $request, Adventure $adventure)
     {
+        $this->denyAccessUnlessGranted(AdventureVoter::DELETE, $adventure);
+
         $form = $this->createDeleteForm($adventure);
         $form->handleRequest($request);
 

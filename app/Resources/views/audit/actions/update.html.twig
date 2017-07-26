@@ -1,0 +1,15 @@
+<tr>
+  <td class="col-min">
+    <span class="badge badge-info"><i class="fa fa-fw fa-pencil"></i></span>
+  </td>
+  <td>
+    <strong>{{ log.source.typLabel }}</strong> {{ audit_assoc(log.source) }} was updated,
+    {{ audit_blame(log.blame) }}
+  </td>
+  <td class="col-min">{{ log.loggedAt|time_diff }}</td>
+  <td class="col-min">
+    <a class="btn btn-xs btn-link" href="{{ path('app_audit_diff', {id: log.id}) }}">
+      <i class="fa fa-search" title="Show diff"></i>
+    </a>
+  </td>
+</tr>
