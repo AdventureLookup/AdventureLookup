@@ -37,6 +37,9 @@
                     {% endif %}
                     {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                         <li class="nav-item">
+                            <a class="nav-link{% if app.request.attributes.get('_route') == 'profile' %} active{% endif %}" href="{{ path('profile') }}">Your Profile</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link{% if app.request.attributes.get('_route') == 'logout' %} active{% endif %}" href="{{ path('logout') }}">Logout</a>
                         </li>
                     {% else %}

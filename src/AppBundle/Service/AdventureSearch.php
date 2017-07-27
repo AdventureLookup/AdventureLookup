@@ -406,10 +406,11 @@ class AdventureSearch
                         ]
                     ];
                 } else {
+                    $fieldNameForSearch = $fieldName;
                     if ($field->getType() == 'string') {
-                        $fieldName .= '.keyword';
+                        $fieldNameForSearch .= '.keyword';
                     }
-                    $filterMatches[] = ['term' => [$fieldName => $value]];
+                    $filterMatches[] = ['term' => [$fieldNameForSearch => $value]];
                 }
             }
 
