@@ -34,10 +34,16 @@ class ProfileController extends Controller
         $changeRequestRepository = $em->getRepository(ChangeRequest::class);
 
         $qb = $adventureRepository->createQueryBuilder('a');
+        // Get all adventures created by the current user as well as corresponding pending change requests.
+        // Sort them by adventures having a change request, then by title
         $adventures = $qb
+            ->where($qb->expr()->eq('a.createdBy', ':username'))
             ->leftJoin('a.changeRequests', 'c')
             ->addSelect('c')
-            ->where($qb->expr()->eq('a.createdBy', ':username'))
+            ->andWhere($qb->expr()->orX(
+                $qb->expr()->eq('c.resolved', $qb->expr()->literal(false)),
+                $qb->expr()->isNull('c.id')
+            ))
             ->orderBy('c.id', 'DESC')
             ->addOrderBy('a.title', 'ASC')
             ->setParameter('username', $user->getUsername())

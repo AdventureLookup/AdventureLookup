@@ -16,7 +16,8 @@
                     </div>
                     <div class="list-group list-group-flush">
                         {% for adventure in adventures %}
-                            <a href="{{ path('adventure_show', {slug: adventure.slug}) }}" class="list-group-item list-group-item-action{% if adventure.changeRequests|length > 0 %} list-group-item-warning{% endif %}">
+                            <a href="{{ path('adventure_show', {slug: adventure.slug}) }}"
+                               class="list-group-item list-group-item-action{% if adventure.changeRequests|length > 0 %} list-group-item-warning{% endif %}">
                                 {{ adventure.title }}
                                 {% if adventure.changeRequests|length > 0 %}
                                     &nbsp;<span class="badge badge-default">{{ adventure.changeRequests|length }} pending change request(s)</span>
