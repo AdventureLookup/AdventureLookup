@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Adventure;
+use AppBundle\Entity\ChangeRequest;
 use AppBundle\Entity\User;
 use AppBundle\Form\ChangePasswordType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -11,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @Route("/profile")
@@ -21,20 +23,38 @@ class ProfileController extends Controller
     /**
      * @Route("/", name="profile")
      * @Method("GET")
+     *
+     * @param UserInterface $user
+     * @return Response
      */
-    public function overviewAction()
+    public function overviewAction(UserInterface $user)
     {
-        /** @var User $user */
-        $user = $this->getUser();
         $em = $this->getDoctrine()->getManager();
-        $adventures = $em->getRepository(Adventure::class)->findBy([
-            'createdBy' => $user->getUsername()
-        ]);
-        // TODO: Enable when change requests are merged.
-        $changeRequests = []; /*$em->getRepository()->findBy([
+        $adventureRepository = $em->getRepository(Adventure::class);
+        $changeRequestRepository = $em->getRepository(ChangeRequest::class);
+
+        $qb = $adventureRepository->createQueryBuilder('a');
+        // Get all adventures created by the current user as well as corresponding pending change requests.
+        // Sort them by adventures having a change request, then by title
+        $adventures = $qb
+            ->where($qb->expr()->eq('a.createdBy', ':username'))
+            ->leftJoin('a.changeRequests', 'c')
+            ->addSelect('c')
+            ->andWhere($qb->expr()->orX(
+                $qb->expr()->eq('c.resolved', $qb->expr()->literal(false)),
+                $qb->expr()->isNull('c.id')
+            ))
+            ->orderBy('c.id', 'DESC')
+            ->addOrderBy('a.title', 'ASC')
+            ->setParameter('username', $user->getUsername())
+            ->getQuery()
+            ->execute();
+
+        $changeRequests = $changeRequestRepository->findBy([
             'createdBy' => $user->getUsername(),
             'resolved' => false,
-        ]);*/
+        ], ['createdAt' => 'DESC']);
+
         return $this->render('profile/overview.html.twig', [
             'user' => $user,
             'changeRequests' => $changeRequests,

@@ -179,6 +179,8 @@
                         {% endif %}
                     </div>
                 {% endif %}
+                <div class="m-3"></div>
+                {{ render(controller('AppBundle:ChangeRequest:show', {adventure: adventure})) }}
             </div>
         </div>
     </div>

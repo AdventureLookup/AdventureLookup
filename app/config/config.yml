@@ -108,6 +108,7 @@ stof_doctrine_extensions:
             loggable: true
             sluggable: true
             blameable: true
+            timestampable: true
 
 # EasyAdminBundle
 # GitHub: https://github.com/javiereguiluz/EasyAdminBundle
@@ -117,6 +118,7 @@ easy_admin:
     design:
         menu:
             - Adventure
+            - ChangeRequest
             - Author
             - Edition
             - Environment
@@ -141,6 +143,17 @@ easy_admin:
                 fields: ['id', 'title']
                 actions:
                     - { name: 'adventure_edit', type: 'route', label: 'Edit' }
+        ChangeRequest:
+            class: AppBundle\Entity\ChangeRequest
+            label: 'Change Requests'
+            list:
+                title: 'Change Requests'
+                fields: ['adventure', 'fieldName', 'comment', 'resolved', 'createdBy']
+                sort: ['resolved', 'ASC']
+            search:
+                sort: ['resolved', 'ASC']
+            form:
+                fields: ['adventure', 'fieldName', 'comment', 'resolved']
         Author:
             class: AppBundle\Entity\Author
             label: 'Authors'

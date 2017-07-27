@@ -16,9 +16,12 @@
                     </div>
                     <div class="list-group list-group-flush">
                         {% for adventure in adventures %}
-                            <a href="{{ path('adventure_show', {slug: adventure.slug}) }}" class="list-group-item list-group-item-action">
+                            <a href="{{ path('adventure_show', {slug: adventure.slug}) }}"
+                               class="list-group-item list-group-item-action{% if adventure.changeRequests|length > 0 %} list-group-item-warning{% endif %}">
                                 {{ adventure.title }}
-                                {# TODO: Indicated pending change requests #}
+                                {% if adventure.changeRequests|length > 0 %}
+                                    &nbsp;<span class="badge badge-default">{{ adventure.changeRequests|length }} pending change request(s)</span>
+                                {% endif %}
                             </a>
                         {% else %}
                             <a href="{{ path('adventure_new') }}" class="list-group-item list-group-item-action">
@@ -34,7 +37,7 @@
                     <div class="list-group list-group-flush">
                         {% for changeRequest in changeRequests %}
                             <a href="{{ path('adventure_show', {slug: changeRequest.adventure.slug}) }}" class="list-group-item list-group-item-action">
-                                #{{ changeRequest.id }} ({{ changeRequest.adventure.id }})
+                                #{{ changeRequest.id }} ({{ changeRequest.adventure.title }})
                             </a>
                         {% else %}
                             <button disabled class="list-group-item">You don't have any pending change requests</button>
