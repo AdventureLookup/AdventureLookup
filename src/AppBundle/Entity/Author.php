@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -34,6 +36,12 @@ class Author
     private $name;
 
     /**
+     * @var Adventure[]|Collection
+     * @ORM\ManyToMany(targetEntity="Adventure", mappedBy="authors")
+     */
+    private $adventures;
+
+    /**
      * @var string
      *
      * @ORM\Column(type="string", nullable=true)
@@ -49,6 +57,10 @@ class Author
      */
     private $updatedBy;
 
+    public function __construct()
+    {
+        $this->adventures = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -82,6 +94,14 @@ class Author
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @return Adventure[]|Collection
+     */
+    public function getAdventures()
+    {
+        return $this->adventures;
     }
 
     /**

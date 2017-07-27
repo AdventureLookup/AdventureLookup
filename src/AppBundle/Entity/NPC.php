@@ -2,7 +2,10 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Ldap\Adapter\ExtLdap\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -32,6 +35,32 @@ class NPC
      */
     private $name;
 
+    /**
+     * @var Adventure[]|Collection
+     * @ORM\ManyToMany(targetEntity="Adventure", mappedBy="npcs")
+     */
+    private $adventures;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     * @Gedmo\Blameable(on="create")
+     */
+    private $createdBy;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     * @Gedmo\Blameable(on="update")
+     */
+    private $updatedBy;
+
+    public function __construct()
+    {
+        $this->adventures = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -65,6 +94,14 @@ class NPC
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @return Adventure[]|Collection
+     */
+    public function getAdventures()
+    {
+        return $this->adventures;
     }
 
     /**

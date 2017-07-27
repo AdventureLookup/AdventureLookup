@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -34,6 +36,12 @@ class Edition
     private $name;
 
     /**
+     * @var Adventure[]|Collection
+     * @ORM\OneToMany(targetEntity="Adventure", mappedBy="edition")
+     */
+    private $adventures;
+
+    /**
      * @var int
      *
      * @ORM\Column(name="position", type="integer")
@@ -56,6 +64,10 @@ class Edition
      */
     private $updatedBy;
 
+    public function __construct()
+    {
+        $this->adventures = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -113,6 +125,14 @@ class Edition
     public function getPosition()
     {
         return $this->position;
+    }
+
+    /**
+     * @return Adventure[]|Collection
+     */
+    public function getAdventures()
+    {
+        return $this->adventures;
     }
 
     /**

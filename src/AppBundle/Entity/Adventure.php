@@ -38,56 +38,56 @@ class Adventure
 
     /**
      * @var Author[]|Collection
-     * @ORM\ManyToMany(targetEntity="Author", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="Author", cascade={"persist"}, indexBy="adventures", inversedBy="adventures")
      * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
      */
     private $authors;
 
     /**
      * @var Edition
-     * @ORM\ManyToOne(targetEntity="Edition", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="Edition", fetch="EAGER", inversedBy="adventures")
      * @Gedmo\Versioned()
      */
     private $edition;
 
     /**
      * @var Environment[]|Collection
-     * @ORM\ManyToMany(targetEntity="Environment")
+     * @ORM\ManyToMany(targetEntity="Environment", indexBy="adventures", inversedBy="adventures")
      * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
      */
     private $environments;
 
     /**
      * @var Item[]|Collection
-     * @ORM\ManyToMany(targetEntity="Item", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="Item", cascade={"persist"}, indexBy="adventures", inversedBy="adventures")
      * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
      */
     private $items;
 
     /**
      * @var NPC[]|Collection
-     * @ORM\ManyToMany(targetEntity="NPC", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="NPC", cascade={"persist"}, indexBy="adventures", inversedBy="adventures")
      * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
      */
     private $npcs;
 
     /**
      * @var Publisher
-     * @ORM\ManyToOne(targetEntity="Publisher", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="Publisher", fetch="EAGER", inversedBy="adventures")
      * @Gedmo\Versioned()
      */
     private $publisher;
 
     /**
      * @var Setting
-     * @ORM\ManyToOne(targetEntity="Setting", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="Setting", fetch="EAGER", inversedBy="adventures")
      * @Gedmo\Versioned()
      */
     private $setting;
 
     /**
      * @var Monster[]|Collection
-     * @ORM\ManyToMany(targetEntity="Monster", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="Monster", cascade={"persist"}, indexBy="adventures", inversedBy="adventures")
      * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
      */
     private $monsters;

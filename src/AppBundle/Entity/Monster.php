@@ -49,6 +49,12 @@ class Monster
     private $isUnique = false;
 
     /**
+     * @var Adventure[]|Collection
+     * @ORM\ManyToMany(targetEntity="Adventure", mappedBy="monsters")
+     */
+    private $adventures;
+
+    /**
      * @var string
      *
      * @ORM\Column(type="string", nullable=true)
@@ -68,6 +74,7 @@ class Monster
     {
         $this->isUnique = false;
         $this->types = new ArrayCollection();
+        $this->adventures = new ArrayCollection();
     }
 
     /**
@@ -164,6 +171,14 @@ class Monster
     public function getIsUnique()
     {
         return $this->isUnique;
+    }
+
+    /**
+     * @return Adventure[]|Collection
+     */
+    public function getAdventures()
+    {
+        return $this->adventures;
     }
 
     /**
