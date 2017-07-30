@@ -3,9 +3,9 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Symfony\Component\Ldap\Adapter\ExtLdap\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -16,7 +16,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\NPCRepository")
  * @UniqueEntity("name")
  */
-class NPC
+class NPC implements HasAdventuresInterface
 {
     /**
      * @var int
@@ -99,9 +99,20 @@ class NPC
     /**
      * @return Adventure[]|Collection
      */
-    public function getAdventures()
+    public function getAdventures(): Collection
     {
         return $this->adventures;
+    }
+
+    /**
+     * @param Adventure $adventure
+     * @return static
+     */
+    public function addAdventure(Adventure $adventure)
+    {
+        $this->adventures->add($adventure);
+
+        return $this;
     }
 
     /**

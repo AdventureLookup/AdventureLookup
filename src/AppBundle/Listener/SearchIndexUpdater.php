@@ -4,14 +4,7 @@ namespace AppBundle\Listener;
 
 
 use AppBundle\Entity\Adventure;
-use AppBundle\Entity\Author;
-use AppBundle\Entity\Edition;
-use AppBundle\Entity\Environment;
-use AppBundle\Entity\Item;
-use AppBundle\Entity\Monster;
-use AppBundle\Entity\NPC;
-use AppBundle\Entity\Publisher;
-use AppBundle\Entity\Setting;
+use AppBundle\Entity\HasAdventuresInterface;
 use AppBundle\Service\AdventureSerializer;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -68,7 +61,7 @@ class SearchIndexUpdater implements EventSubscriber
      *
      * Make sure to fetch the adventures for all associated entities which are going to be deleted.
      * We can't fetch them inside the postRemove handler, because the associated entities will have been removed
-     * from the database at that point. Fetching them now by calling ->initialize makes sure the
+     * from the database at that point. Fetching them now by calling ->getValues() makes sure the
      * database is actually queried for the adventures and the collection isn't just proxying them.
      *
      * @param OnFlushEventArgs $eventArgs
@@ -78,8 +71,8 @@ class SearchIndexUpdater implements EventSubscriber
         $em = $eventArgs->getEntityManager();
         $uow = $em->getUnitOfWork();
         foreach ($uow->getScheduledEntityDeletions() as $entity) {
-            if ($this->isRelatedEntity($entity)) {
-                $entity->getAdventures()->initialize();
+            if ($entity instanceof HasAdventuresInterface) {
+                $entity->getAdventures()->getValues();
             }
         }
     }
@@ -131,7 +124,7 @@ class SearchIndexUpdater implements EventSubscriber
         if ($entity instanceof Adventure) {
             return [$entity];
         }
-        if ($this->isRelatedEntity($entity)) {
+        if ($entity instanceof HasAdventuresInterface) {
             return $entity->getAdventures();
         }
 
@@ -172,18 +165,5 @@ class SearchIndexUpdater implements EventSubscriber
         } catch (Missing404Exception $e) {
             // Apparently already deleted.
         }
-    }
-
-    /**
-     * Checks whether the given entity is associated with the Adventure entity via a *toMany association.
-     *
-     * @param $entity
-     * @return bool
-     */
-    private function isRelatedEntity($entity)
-    {
-        return $entity instanceof Author || $entity instanceof Edition || $entity instanceof Environment ||
-            $entity instanceof Item || $entity instanceof Monster || $entity instanceof NPC ||
-            $entity instanceof Publisher || $entity instanceof Setting;
     }
 }

@@ -305,6 +305,7 @@ class Adventure
      */
     public function addAuthor(Author $author)
     {
+        $author->addAdventure($this);
         $this->authors->add($author);
         return $this;
     }
@@ -335,6 +336,7 @@ class Adventure
      */
     public function setEdition($edition)
     {
+        $edition->addAdventure($this);
         $this->edition = $edition;
         return $this;
     }
@@ -354,6 +356,7 @@ class Adventure
      */
     public function addEnvironment(Environment $environment)
     {
+        $environment->addAdventure($this);
         $this->environments->add($environment);
         return $this;
     }
@@ -384,6 +387,7 @@ class Adventure
      */
     public function addItem(Item $item)
     {
+        $item->addAdventure($this);
         $this->items->add($item);
         return $this;
     }
@@ -414,6 +418,7 @@ class Adventure
      */
     public function addNpc(NPC $npc)
     {
+        $npc->addAdventure($this);
         $this->npcs->add($npc);
         return $this;
     }
@@ -444,6 +449,7 @@ class Adventure
      */
     public function setPublisher($publisher)
     {
+        $publisher->addAdventure($this);
         $this->publisher = $publisher;
         return $this;
     }
@@ -462,6 +468,7 @@ class Adventure
      */
     public function setSetting(Setting $setting)
     {
+        $setting->addAdventure($this);
         $this->setting = $setting;
         return $this;
     }
@@ -480,6 +487,7 @@ class Adventure
      */
     public function addMonster(Monster $monster)
     {
+        $monster->addAdventure($this);
         $this->monsters->add($monster);
         return $this;
     }
