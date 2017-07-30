@@ -1,0 +1,46 @@
+<h5>Change Requests</h5>
+<div class="alert alert-info">
+    You can use change requests to report missing, wrong or new information for this adventure.
+    Curators and the adventure's author will then be able to incorporate your requested changes into the adventure.
+    Once that's done, you and they can mark your change request as resolved.
+    {% if is_granted('create', newChangeRequest) %}
+        <a class="alert-link" href="{{ path('changerequest_new', {adventure_id: adventure.id}) }}">Click here to submit a new change request.</a>
+    {% else %}
+        <a class="alert-link" href="{{ path('login') }}">Login to submit a change request.</a>
+    {% endif %}
+</div>
+<ul class="list-group">
+    {% for changeRequest in changeRequests %}
+        <li class="list-group-item flex-column align-items-start{% if changeRequest.resolved %} list-group-item-success{% endif %}">
+            <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">
+                    {% if changeRequest.fieldName %}
+                        Request to change "{{ changeRequest.fieldName }}"
+                    {% else %}
+                        General change request
+                    {% endif %}
+                    {% if changeRequest.resolved %}
+                        <small>RESOLVED</small>
+                    {% endif %}
+                </h6>
+                <small>{{ changeRequest.createdAt|time_diff }}</small>
+            </div>
+            <p class="mb-1">{{ changeRequest.comment|nl2br }}</p>
+            <div class="d-flex w-100 justify-content-between">
+                <small>Proposed by @{{ changeRequest.createdBy }}.</small>
+                {% if is_granted('toggle_resolved', changeRequest) %}
+                    <form action="{{ path('changerequest_resolve', {id: changeRequest.id}) }}" method="post">
+                        <div>
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('resolveChangeRequest') }}" />
+                            <input type="hidden" name="resolve" value="{{ not changeRequest.resolved }}" />
+                            <input type="submit" value="{% if changeRequest.resolved %}Unresolve{% else %}Resolve{% endif %}" class="btn-link" role="button" />
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+        </li>
+    {% endfor %}
+</ul>
+{% if changeRequests|length == 0 %}
+    <p>This adventure doesn't have any pending change requests.</p>
+{% endif %}
