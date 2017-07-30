@@ -30,11 +30,6 @@ class SearchIndexUpdater implements EventSubscriber
     private $serializer;
 
     /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @var string
      */
     private $indexName;
@@ -44,10 +39,9 @@ class SearchIndexUpdater implements EventSubscriber
      */
     private $typeName;
 
-    public function __construct(LoggerInterface $logger, ElasticSearch $elasticSearch)
+    public function __construct(ElasticSearch $elasticSearch)
     {
         $this->serializer = new AdventureSerializer();
-        $this->logger = $logger;
         $this->client = $elasticSearch->getClient();
         $this->indexName = $elasticSearch->getIndexName();
         $this->typeName = $elasticSearch->getTypeName();
@@ -150,8 +144,7 @@ class SearchIndexUpdater implements EventSubscriber
      */
     public function updateSearchIndexForAdventure(Adventure $adventure)
     {
-        // @TODO: Log errors
-        $response = $this->client->index([
+        $this->client->index([
             'index' => $this->indexName,
             'type' => $this->typeName,
             'id' => $adventure->getId(),
@@ -168,11 +161,10 @@ class SearchIndexUpdater implements EventSubscriber
     private function deleteSearchIndexForAdventure(Adventure $adventure)
     {
         try {
-            // @TODO: Log errors
-            $response = $this->client->delete([
-                    'index' => $this->indexName,
-                    'type' => $this->typeName,
-                    'id' => $adventure->getId(),
+            $this->client->delete([
+                'index' => $this->indexName,
+                'type' => $this->typeName,
+                'id' => $adventure->getId(),
             ]);
         } catch (Missing404Exception $e) {
             // Apparently already deleted.

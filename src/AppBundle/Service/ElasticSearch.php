@@ -4,6 +4,7 @@
 namespace AppBundle\Service;
 
 use Elasticsearch\ClientBuilder;
+use Psr\Log\LoggerInterface;
 
 class ElasticSearch
 {
@@ -22,11 +23,13 @@ class ElasticSearch
      */
     private $client;
 
-    public function __construct(array $config)
+    public function __construct(LoggerInterface $logger, array $config)
     {
         $this->indexName = $config['index_name'];
         $this->typeName = $config['type_name'];
-        $this->client = ClientBuilder::create()->build();
+        $this->client = ClientBuilder::create()
+            ->setLogger($logger)
+            ->build();
     }
 
     /**
