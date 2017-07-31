@@ -244,6 +244,9 @@ class AdventureType extends AbstractType
                 'multiple' => true,
                 'choice_label' => 'name',
                 'label' => $title,
+                'attr' => [
+                    'data-allow-add' => true
+                ]
             ])
             ->get($fieldName)
             // Drop any submitted options starting with 'n'.

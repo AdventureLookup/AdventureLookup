@@ -87,8 +87,10 @@ function debounce(func, wait, immediate) {
     $('select[name^="appbundle_adventure"]').each(function () {
         const $select = $(this);
         const fieldName = $select.attr('id').split('_').pop();
-        const selectized = $select.selectize({
-            create: function(query, callback) {
+
+        let createNewItemCallback = false;
+        if ($select.data('allow-add')) {
+            createNewItemCallback = function(query, callback) {
                 const $modal = $('#newFieldContentModal');
                 const $modalForm = $modal.find('.modal-form');
                 const $modalAddBtn = $modal.find('#newFieldContentModal-add');
@@ -123,7 +125,11 @@ function debounce(func, wait, immediate) {
                     $modalAddBtn.focus()
                 });
                 $modal.modal('show');
-            },
+            };
+        }
+
+        const selectized = $select.selectize({
+            create: createNewItemCallback,
             //sortField: 'title',
             //valueField: 'title',
             labelField: 'title',
