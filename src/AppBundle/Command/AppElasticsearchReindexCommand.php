@@ -3,9 +3,7 @@
 namespace AppBundle\Command;
 
 use AppBundle\Entity\Adventure;
-use AppBundle\Entity\TagName;
 use AppBundle\Listener\SearchIndexUpdater;
-use AppBundle\Service\FieldUtils;
 use Elasticsearch\ClientBuilder;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -111,7 +109,7 @@ class AppElasticsearchReindexCommand extends ContainerAwareCommand
         $progress->start();
 
         foreach($adventures as $adventure) {
-            $searchIndexUpdater->update($adventure);
+            $searchIndexUpdater->updateSearchIndexForAdventure($adventure);
             $progress->advance();
         }
 

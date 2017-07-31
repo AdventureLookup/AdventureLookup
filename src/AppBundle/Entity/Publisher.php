@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -14,7 +16,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\PublisherRepository")
  * @UniqueEntity("name")
  */
-class Publisher
+class Publisher implements HasAdventuresInterface
 {
     /**
      * @var int
@@ -34,6 +36,12 @@ class Publisher
     private $name;
 
     /**
+     * @var Adventure[]|Collection
+     * @ORM\OneToMany(targetEntity="Adventure", mappedBy="publisher")
+     */
+    private $adventures;
+
+    /**
      * @var string
      *
      * @ORM\Column(type="string", nullable=true)
@@ -49,6 +57,10 @@ class Publisher
      */
     private $updatedBy;
 
+    public function __construct()
+    {
+        $this->adventures = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -82,6 +94,25 @@ class Publisher
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @return Adventure[]|Collection
+     */
+    public function getAdventures(): Collection
+    {
+        return $this->adventures;
+    }
+
+    /**
+     * @param Adventure $adventure
+     * @return static
+     */
+    public function addAdventure(Adventure $adventure)
+    {
+        $this->adventures->add($adventure);
+
+        return $this;
     }
 
     /**

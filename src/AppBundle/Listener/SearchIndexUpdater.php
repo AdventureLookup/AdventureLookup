@@ -4,12 +4,11 @@ namespace AppBundle\Listener;
 
 
 use AppBundle\Entity\Adventure;
-use AppBundle\Entity\TagContent;
-use AppBundle\Entity\TagName;
+use AppBundle\Entity\HasAdventuresInterface;
 use AppBundle\Service\AdventureSerializer;
-use AppBundle\Service\FieldUtils;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\OnFlushEventArgs;
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
@@ -50,142 +49,121 @@ class SearchIndexUpdater implements EventSubscriber
     public function getSubscribedEvents()
     {
         return [
-            'postUpdate',
+            'onFlush',
             'postPersist',
-            'postRemove'
+            'postUpdate',
+            'postRemove',
         ];
     }
 
-    public function postUpdate(LifecycleEventArgs $args)
+    /**
+     * Called right before the changes are flushed.
+     *
+     * Make sure to fetch the adventures for all associated entities which are going to be deleted.
+     * We can't fetch them inside the postRemove handler, because the associated entities will have been removed
+     * from the database at that point. Fetching them now by calling ->getValues() makes sure the
+     * database is actually queried for the adventures and the collection isn't just proxying them.
+     *
+     * @param OnFlushEventArgs $eventArgs
+     */
+    public function onFlush(OnFlushEventArgs $eventArgs)
     {
-        return $this->updateSearchIndex($args);
+        $em = $eventArgs->getEntityManager();
+        $uow = $em->getUnitOfWork();
+        foreach ($uow->getScheduledEntityDeletions() as $entity) {
+            if ($entity instanceof HasAdventuresInterface) {
+                $entity->getAdventures()->getValues();
+            }
+        }
     }
 
     public function postPersist(LifecycleEventArgs $args)
     {
-        $entity = $args->getEntity();
-        if ($entity instanceof TagName) {
-            return $this->addMapping($entity);
-        }
-        return $this->updateSearchIndex($args);
+        $this->handleInsertOrUpdate($args);
+    }
+
+    public function postUpdate(LifecycleEventArgs $args)
+    {
+        $this->handleInsertOrUpdate($args);
     }
 
     public function postRemove(LifecycleEventArgs $args)
     {
+        $this->handleRemoval($args);
+    }
+
+    private function handleInsertOrUpdate(LifecycleEventArgs $args)
+    {
+        $adventures = $this->getAffectedAdventures($args);
+        foreach ($adventures as $adventure) {
+            $this->updateSearchIndexForAdventure($adventure);
+        }
+    }
+
+    private function handleRemoval(LifecycleEventArgs $args)
+    {
         $entity = $args->getEntity();
-        if ($entity instanceof TagName) {
-            return $this->removeMappingAndData($entity);
+        // Only delete the search index if the entity is an adventure.
+        // Otherwise reindex the adventure.
+        if ($entity instanceof Adventure) {
+            $this->deleteSearchIndexForAdventure($entity);
+        } else {
+            $this->handleInsertOrUpdate($args);
         }
-        return $this->deleteSearchIndex($args);
-    }
-
-    private function updateSearchIndex(LifecycleEventArgs $args)
-    {
-        $adventure = $this->getAdventure($args);
-        if (!$adventure) {
-            return;
-        }
-
-        $this->update($adventure);
-    }
-
-    private function deleteSearchIndex(LifecycleEventArgs $args)
-    {
-        $adventure = $this->getAdventure($args);
-        if (!$adventure || !$adventure->getId()) {
-            return;
-        }
-
-        $client = ClientBuilder::create()->build();
-
-        try {
-            $response = $client->delete([
-                'index' => self::INDEX,
-                'type' => self::TYPE,
-                'id' => $adventure->getId(),
-            ]);
-        } catch (Missing404Exception $e) {
-
-        }
-
-        // @TODO: Log errors
     }
 
     /**
+     * Given the lifecycle event, find all adventures effected by it.
+     *
      * @param LifecycleEventArgs $args
-     * @return Adventure|null|object
+     * @return Adventure[]
      */
-    private function getAdventure(LifecycleEventArgs $args)
+    private function getAffectedAdventures(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
-        if (!($entity instanceof TagContent) && (!$entity instanceof Adventure)) {
-            return null;
+        if ($entity instanceof Adventure) {
+            return [$entity];
         }
-        if ($entity instanceof TagContent) {
-            $entity = $entity->getAdventure();
+        if ($entity instanceof HasAdventuresInterface) {
+            return $entity->getAdventures();
         }
-        return $entity;
+
+        return [];
     }
 
     /**
+     * Updates the search index for the given adventure.
+     *
      * @param Adventure $adventure
      */
-    public function update(Adventure $adventure)
+    public function updateSearchIndexForAdventure(Adventure $adventure)
     {
+        // @TODO: Log errors
         $response = $this->client->index([
             'index' => self::INDEX,
             'type' => self::TYPE,
             'id' => $adventure->getId(),
             'body' => $this->serializer->toElasticDocument($adventure)
         ]);
-
-        // @TODO: Log errors
     }
 
-    private function addMapping(TagName $field)
+    /**
+     * Deletes the search index for the given adventure.
+     * Fails silently if the index is already deleted.
+     *
+     * @param Adventure $adventure
+     */
+    private function deleteSearchIndexForAdventure(Adventure $adventure)
     {
-        $fieldUtils = new FieldUtils();
-
-        $response = $this->client->indices()->putMapping([
-            'index' => self::INDEX,
-            'type' => self::TYPE,
-            'body' => [
-                'properties' => [
-                    $fieldUtils->getFieldName($field) => $fieldUtils->generateMappingFor($field->getType())
-                ]
-            ]
-        ]);
-
-        // @TODO: Log errors
-    }
-
-    private function removeMappingAndData(TagName $field)
-    {
-        $fieldUtils = new FieldUtils();
-
-        // Remove data
-        $response = $this->client->updateByQuery([
-            'index' => self::INDEX,
-            'type' => self::TYPE,
-            'body' => [
-                'script' => [
-                    'inline' => 'ctx._source.remove("' . $fieldUtils->getFieldName($field) . '")',
-                ],
-                'query' => [
-                    'bool' => [
-                        'must' => [
-                            'exists' => [
-                                'field' => $fieldUtils->getFieldName($field)
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ]);
-        // Remove mapping
-        // Apparently, it is impossible to delete a mapping.
-        // https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-delete-mapping.html
-
-        // @TODO: Log errors
+        try {
+            // @TODO: Log errors
+            $response = $this->client->delete([
+                    'index' => self::INDEX,
+                    'type' => self::TYPE,
+                    'id' => $adventure->getId(),
+            ]);
+        } catch (Missing404Exception $e) {
+            // Apparently already deleted.
+        }
     }
 }
