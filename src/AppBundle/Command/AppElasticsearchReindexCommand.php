@@ -47,11 +47,14 @@ class AppElasticsearchReindexCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $em = $this->getContainer()->get('doctrine.orm.entity_manager');
-        $client = ClientBuilder::create()->build();
+        $elasticSearch = $this->getContainer()->get('app.elasticsearch');
+        $client = $elasticSearch->getClient();
+        $indexName = $elasticSearch->getIndexName();
+        $typeName = $elasticSearch->getTypeName();
 
         try {
             $client->indices()->delete([
-                'index' => SearchIndexUpdater::INDEX,
+                'index' => $indexName,
             ]);
             $output->writeln('Deleted index.');
         } catch (Missing404Exception $e) {
@@ -59,7 +62,7 @@ class AppElasticsearchReindexCommand extends ContainerAwareCommand
         }
 
         $client->indices()->create([
-            'index' => SearchIndexUpdater::INDEX,
+            'index' => $indexName,
         ]);
         $output->writeln('Recreated index.');
 
@@ -91,8 +94,8 @@ class AppElasticsearchReindexCommand extends ContainerAwareCommand
         ];
 
         $client->indices()->putMapping([
-            'index' => SearchIndexUpdater::INDEX,
-            'type' => SearchIndexUpdater::TYPE,
+            'index' => $indexName,
+            'type' => $typeName,
             'body' => [
                 SearchIndexUpdater::TYPE => [
                     'properties' => $mappings

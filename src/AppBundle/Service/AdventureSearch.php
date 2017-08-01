@@ -8,9 +8,7 @@ use AppBundle\Entity\TagName;
 use AppBundle\Exception\FieldDoesNotExistException;
 use AppBundle\Field\Field;
 use AppBundle\Field\FieldProvider;
-use AppBundle\Listener\SearchIndexUpdater;
 use Doctrine\ORM\EntityManagerInterface;
-use Elasticsearch\ClientBuilder;
 
 class AdventureSearch
 {
@@ -29,11 +27,23 @@ class AdventureSearch
      */
     private $fieldProvider;
 
-    public function __construct(EntityManagerInterface $em, FieldProvider $fieldProvider)
+    /**
+     * @var string
+     */
+    private $indexName;
+
+    /**
+     * @var string
+     */
+    private $typeName;
+
+    public function __construct(EntityManagerInterface $em, FieldProvider $fieldProvider, ElasticSearch $elasticSearch)
     {
-        $this->client = ClientBuilder::create()->build();
         $this->em = $em;
         $this->fieldProvider = $fieldProvider;
+        $this->client = $elasticSearch->getClient();
+        $this->indexName = $elasticSearch->getIndexName();
+        $this->typeName = $elasticSearch->getTypeName();
     }
 
     /**
@@ -58,8 +68,8 @@ class AdventureSearch
         }
 
         $result = $this->client->search([
-            'index' => SearchIndexUpdater::INDEX,
-            'type' => SearchIndexUpdater::TYPE,
+            'index' => $this->indexName,
+            'type' => $this->typeName,
             'body' => [
                 'query' => [
                     // All queries must evaluate to true for a result to be returned.
@@ -88,8 +98,8 @@ class AdventureSearch
         $fieldUtils = new FieldUtils();
 
         $result = $this->client->search([
-            'index' => SearchIndexUpdater::INDEX,
-            'type' => SearchIndexUpdater::TYPE,
+            'index' => $this->indexName,
+            'type' => $this->typeName,
             'body' => [
                 'query' => [
                     'match' => [
@@ -130,7 +140,7 @@ class AdventureSearch
         // Using the completion suggester returns duplicate documents...
         //$fieldName = 'info_' . $field->getId() . '_s';
         //$response = $this->client->suggest([
-        //    'index' => SearchIndexUpdater::INDEX,
+        //    'index' => $this->indexName,
         //    'body' => [
         //        'suggest' => [
         //            'prefix' => $q,
@@ -153,8 +163,8 @@ class AdventureSearch
         // Old version using match_phrase_prefix
         $fieldName = $field->getName();
         $response = $this->client->search([
-            'index' => SearchIndexUpdater::INDEX,
-            'type' => SearchIndexUpdater::TYPE,
+            'index' => $this->indexName,
+            'type' => $this->typeName,
             'body' => [
                 'query' => [
                     'match_phrase_prefix' => [
@@ -212,8 +222,8 @@ class AdventureSearch
         }
 
         $response = $this->client->search([
-            'index' => SearchIndexUpdater::INDEX,
-            'type' => SearchIndexUpdater::TYPE,
+            'index' => $this->indexName,
+            'type' => $this->typeName,
             'body' => [
                 'size' => 0,
                 'aggregations' => $aggregations
@@ -232,8 +242,8 @@ class AdventureSearch
     public function getStats()
     {
         return $this->client->search([
-            'index' => SearchIndexUpdater::INDEX,
-            'type' => SearchIndexUpdater::TYPE,
+            'index' => $this->indexName,
+            'type' => $this->typeName,
             'body' => [
                 '_source' => false,
                 'size' => 0,
