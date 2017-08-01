@@ -57,7 +57,7 @@ class AppMigrateDataModelCommand extends ContainerAwareCommand
     const TAG_ID_HANDOUTS = 90;
     const TAG_ID_VILLAINS = 91;
     const TAG_ID_FOUND_IN = 92;
-    const TAG_ID_PART_OF = 93; // TODO: This doesn't yet exist in our data model!!
+    const TAG_ID_PART_OF = 93;
 
     const IGNORED_TAG_CONTENT_IDS = [
         2738, // Says no maps included, but there are. Is also a duplicate of the correct 1036 tag
@@ -93,6 +93,7 @@ class AppMigrateDataModelCommand extends ContainerAwareCommand
         5855, // Duplicate setting
         6293, // Duplicate setting (remove Forgotten Realms, add Ravenloft)
         6393, // Duplicate setting (remove Neutral, keep Greyhawk)
+        497,  // Duplicate image
     ];
 
     private function getContentsForTagNameId(Collection $tagContents, int $tagNameId)
@@ -131,7 +132,7 @@ class AppMigrateDataModelCommand extends ContainerAwareCommand
                 return false;
             case '1':
             case 'true':
-            case 'Only included in the Starter Set': // TODO: This is part of Adventure 17
+            case 'Only included in the Starter Set':
                 return true;
             default:
                 $this->abortIf(true, 'Unknown boolean value encountered.');
@@ -340,7 +341,6 @@ class AppMigrateDataModelCommand extends ContainerAwareCommand
         foreach ($adventures as $adventure) {
             if (in_array($adventure->getId(), [
                 102, // TODO: This adventure is for two different editions
-                17, // TODO: This adventure has multiple links
             ])) {
                 continue;
             }
@@ -352,6 +352,7 @@ class AppMigrateDataModelCommand extends ContainerAwareCommand
             $links = $this->getContentsForTagNameIdAndAdventure($adventure, self::TAG_ID_LINK);
             $thumbnails = $this->getContentsForTagNameIdAndAdventure($adventure, self::TAG_ID_THUMB);
             $foundIns = $this->getContentsForTagNameIdAndAdventure($adventure, self::TAG_ID_FOUND_IN);
+            $partOfs = $this->getContentsForTagNameIdAndAdventure($adventure, self::TAG_ID_PART_OF);
             $descriptions = $this->getContentsForTagNameIdAndAdventure($adventure, self::TAG_ID_DESCRIPTION);
 
             $numPages = $this->getContentsForTagNameIdAndAdventure($adventure, self::TAG_ID_NUM_PAGES);
@@ -388,6 +389,11 @@ class AppMigrateDataModelCommand extends ContainerAwareCommand
             $this->warnIf($output, count($foundIns) > 1, sprintf('Adventure #%s "%s" has %s foundIns: %s', $adventure->getId(), $adventure->getTitle(), count($foundIns), implode(', ', $foundIns)));
             if (count($foundIns) > 0) {
                 $adventure->setFoundIn(implode(', ', $foundIns));
+            }
+
+            $this->warnIf($output, count($partOfs) > 1, sprintf('Adventure #%s "%s" has %s partOfs: %s', $adventure->getId(), $adventure->getTitle(), count($partOfs), implode(', ', $partOfs)));
+            if (count($partOfs) > 0) {
+                $adventure->setPartOf(implode(', ', $partOfs));
             }
 
             $this->warnIf($output, count($descriptions) > 1, sprintf('Adventure #%s "%s" has %s descriptions: %s', $adventure->getId(), $adventure->getTitle(), count($descriptions), implode(', ', $descriptions)));
