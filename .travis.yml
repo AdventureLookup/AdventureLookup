@@ -28,7 +28,8 @@ cache:
 install:
   - composer install -n
   - |
-    if [ ${TESTSUITE} == "browser" ]; then
+    if [ ${TESTSUITE} == "functional" ] || [ "$TESTSUITE" == "browser" ]; then
+      npm install npm@latest -g
       npm install;
       npm run prod;
     fi;

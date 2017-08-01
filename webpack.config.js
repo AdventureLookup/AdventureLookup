@@ -1,66 +1,37 @@
-const path = require('path');
-const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+var Encore = require('@symfony/webpack-encore');
 
-module.exports = {
-    entry: {
-        main: './app/Resources/webpack/index.js',
-    },
-    output: {
-        filename: '[name].js',
-        path: path.resolve(__dirname, 'web/assets')
-    },
-    module: {
-        rules: [
-            {
-                test: /\.(js|jsx)$/,
-                exclude: [/node_modules/],
-                use: [{
-                    loader: 'babel-loader',
-                    options: {presets: ['es2015']}
-                }]
-            },
-            {
-                test: /\.(scss|css)$/,
-                use: ExtractTextPlugin.extract({
-                    use: [
-                        'css-loader',
-                        'postcss-loader',
-                        'sass-loader',
-                    ]
-                })
-            },
-            // the url-loader uses DataUrls.
-            {
-                test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                loader: 'url-loader?limit=10000&mimetype=application/font-woff&publicPath=/assets/'
-            },
-            // the file-loader emits files.
-            {test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file-loader?publicPath=/assets/'},
-            {test: /\.(png|jpeg|jpg|gif)$/, loader: 'file-loader?publicPath=/assets/'},
-        ]
-    },
-    plugins: [
-        new webpack.optimize.UglifyJsPlugin(),
-        new webpack.ProvidePlugin({
-            $: "jquery",
-            jQuery: "jquery",
-            Tether: "tether",
-        }),
-        new ExtractTextPlugin('styles.css'),
-        //new webpack.optimize.CommonsChunkPlugin({
-        //  name: 'commons',
-        //  filename: 'commons.js',
-        //  minChunks: 2,
-        //}),
-    ],
-    resolve: {
-        alias: {
-            jquery: "jquery/src/jquery",
-            tether: "tether/dist/js/tether.js",
-        }
-    },
-    watchOptions: {
-        poll: true
-    },
-};
+Encore
+    .setOutputPath('web/assets/')
+    .setPublicPath('/assets')
+    .cleanupOutputBeforeBuild()
+
+    .addEntry('app', './app/Resources/webpack/index.js')
+    .createSharedEntry('vendor', [
+        'jquery',
+        'bootstrap',
+        // TODO: Including the Bootstrap css here duplicates it for some reason, although the docs indicate otherwise:
+        // https://symfony.com/doc/current/frontend/encore/shared-entry.html
+        // If you make it work, don't forget to include the vendor css in the base.html.twig layout:
+        // <link rel="stylesheet" href="{{ asset('assets/vendor.css') }}" />
+        //'bootstrap/scss/bootstrap',
+        // TODO: Add other vendor dependencies in here once we cleaned them up.
+    ])
+
+    .enableSassLoader()
+    .enablePostCssLoader()
+    .configureBabel(function(babelConfig) {
+        // add additional presets
+        babelConfig.presets.push('es2015');
+
+        // no plugins are added by default, but you can add some
+        // babelConfig.plugins = ['styled-jsx/babel'];
+    })
+    .autoProvidejQuery()
+    .autoProvideVariables({
+        'Tether': 'tether',
+    })
+    .enableSourceMaps(!Encore.isProduction())
+    .enableVersioning(Encore.isProduction())
+;
+
+module.exports = Encore.getWebpackConfig();
