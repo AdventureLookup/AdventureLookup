@@ -83,6 +83,16 @@ class AppMigrateDataModelCommand extends ContainerAwareCommand
         3110, // Sword Coast is no setting
         3164, // Has both AD&D and AD&D, DmsGuild lists it as AD&D2
         497,  // Duplicate image
+        4803, // Duplicate edition
+        5193, // Duplicate setting, this is the nation, the planet remains
+        5358, // Duplicate cover
+        5651, 5679,  // Duplicate edition
+        5695, // Two settings: Neutral and Freeport, removed Neutral
+        5830, // Duplicate setting
+        5853, // Duplicate publisher (removed DMSGuild)
+        5855, // Duplicate setting
+        6293, // Duplicate setting (remove Forgotten Realms, add Ravenloft)
+        6393, // Duplicate setting (remove Neutral, keep Greyhawk)
     ];
 
     private function getContentsForTagNameId(Collection $tagContents, int $tagNameId)
@@ -186,6 +196,31 @@ class AppMigrateDataModelCommand extends ContainerAwareCommand
                 'tag' => self::TAG_ID_ITEMS,
                 'old' => 'stone of weight',
                 'new' => 'Stone of Weight'
+            ],
+            [
+                'tag' => self::TAG_ID_MONSTERS,
+                'old' => 'barbed devil',
+                'new' => 'Barbed Devil'
+            ],
+            [
+                'tag' => self::TAG_ID_ITEMS,
+                'old' => 'beads of force',
+                'new' => 'Beads of Force'
+            ],
+            [
+                'tag' => self::TAG_ID_ITEMS,
+                'old' => 'incense of meditation',
+                'new' => 'Incense of Meditation'
+            ],
+            [
+                'tag' => self::TAG_ID_ITEMS,
+                'old' => 'potion of heroism',
+                'new' => 'Potion of Heroism'
+            ],
+            [
+                'tag' => self::TAG_ID_ITEMS,
+                'old' => 'ring of sustenance',
+                'new' => 'Ring of Sustenance'
             ],
             [
                 'tag' => self::TAG_ID_ITEMS,
