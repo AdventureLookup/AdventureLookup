@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
- * @ORM\Table(name="users")
+ * @ORM\Table(name="user")
  * @ORM\Entity()
  * @UniqueEntity(fields="email", message="Email already taken")
  * @UniqueEntity(fields="username", message="Username already taken")
@@ -56,8 +56,7 @@ class User implements AdvancedUserInterface, \Serializable
     private $roles;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Length(max=4096)
+     * @Assert\Length(max=72)
      */
     private $plainPassword;
 
@@ -65,6 +64,16 @@ class User implements AdvancedUserInterface, \Serializable
     {
         $this->roles = ['ROLE_USER'];
         $this->isActive = true;
+    }
+
+    public function __toString(): string
+    {
+        return $this->username;
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function getUsername()

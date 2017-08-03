@@ -1,97 +1,187 @@
 {% extends 'base.html.twig' %}
 
-{% macro print_field(field, adventure) %}
-    <strong {% if not field.meta.approved %}class="bg-warning"{% endif %}>{{ field.meta.title }}:</strong>
-    <ul>
-        {% for content in field.contents %}
-            <li>
-                {% if field.meta.type in ['string', 'url'] %}
-                    {% if field.meta.type == 'url' %}
-                        {% set path = content.content %}
-                    {% else %}
-                        {% set path = path('adventure_index', {'f': 1, ('f[' ~ field.meta.id ~ '][e]'): '1', ('f[' ~ field.meta.id ~ '][v]'): content.content}) ~ '#search-results' %}
-                    {% endif %}
-                    <a href="{{ path }}">
-                {% endif %}
-                {{ content.content|nl2br }}
-                {% if field.meta.type not in ['text'] %}
-                    </a>
-                {% endif %}
-                {% if not content.approved %}<span class="badge badge-warning">needs approval</span>{% endif %}
-                {% if is_granted('ROLE_CURATOR') %}
-                    <a href="{{ path('adventure_info_edit', {id: content.id}) }}">
-                        <i class="fa fa-edit" title="edit"></i>
-                    </a>
-                {% endif %}
-            </li>
-        {% endfor %}
-        {% if is_granted('ROLE_USER') %}
-            <li>
-                <a href="{{ path('adventure_info_new', {id: adventure.id, fieldId: field.meta.id}) }}">
-                    <i class="fa fa-plus" title="add"></i>
-                </a>
-            </li>
-        {% endif %}
-    </ul>
+{% macro search_icon(fieldName, content) %}
+    {% set path = path('adventure_index', {('f[' ~ fieldName ~ '][v]'): content}) %}
+    <a href="{{ path }}" title="Search for similar adventures"><i class="fa fa-search"></i></a>
 {% endmacro %}
+
 {% block body %}
     {% import _self as macros %}
     <div class="container">
         <div class="row">
-            <div class="col">
-                <h1 class="my-5">{{ adventure.title }}</h1>
-                {% if adventure.info is empty %}
-                    <div class="alert alert-info">This adventure is currently pretty much without information. Click the 'Add' button below to start supplying the first bits and pieces.</div>
+            <div class="col adventure-show--details">
+                <h4 class="my-3">{{ adventure.title }}</h4>
+                {% if adventure.thumbnailUrl %}
+                    <img src="{{ adventure.thumbnailUrl }}" class="ml-1 pull-right"
+                         style="max-width: 120px; max-height: 140px;"/>
                 {% endif %}
-
-                <ul class="adventure-show--details list-unstyled">
-                    {% for field in adventure.info if field.meta.type != 'text' %}
-                        <li>{{ macros.print_field(field, adventure) }}</li>
-                    {% endfor %}
-                </ul>
-                <ul class="list-unstyled">
-                    {% for field in adventure.info if field.meta.type == 'text' %}
-                        <li>{{ macros.print_field(field, adventure) }}</li>
-                    {% endfor %}
-                </ul>
-
-                <div class="bg-faded p-3">
-                    <h3 class="mt-3">Other actions</h3>
-                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                        <form method="get" action="{{ path('adventure_info_new', {id: adventure.id}) }}" class="form-inline">
-                            <label for="add-info" class="mr-1">Add information:</label>
-                            <select name="fieldId" id="add-info" class="form-control form-control-sm">
-                                {% for field in fieldNames %}
-                                    <option value="{{ field.id }}">{{ field.title }}</option>
+                <p>{{ adventure.description|nl2br }}</p>
+                <div class="clearfix"></div>
+                <div>
+                    <div class="data-row">
+                        <div class="col">
+                            <div class="label">Written By</div>
+                            {% for author in adventure.authors %}
+                                {{ author.name }}
+                                {{ macros.search_icon('authors', author.name) }}
+                            {% endfor %}
+                        </div>
+                        <div class="col">
+                            <div class="label">Published By</div>
+                            {% if adventure.publisher %}
+                                {{ adventure.publisher.name }}
+                                {{ macros.search_icon('publisher', adventure.publisher.name) }}
+                            {% else %}
+                                Unknown
+                            {% endif %}
+                        </div>
+                        <div class="col">
+                            <div class="label"># Of Pages</div>
+                            {{ adventure.numPages }}
+                        </div>
+                    </div>
+                    <div class="data-row">
+                        {% if adventure.link %}
+                            <div class="col">
+                                <div class="label">Link</div>
+                                <a href="{{ adventure.link|e('html_attr') }}">{{ adventure.link }}</a>
+                            </div>
+                        {% endif %}
+                        <div class="col">
+                            <div class="label">Found In</div>
+                            {{ adventure.foundIn }}
+                            {{ macros.search_icon('foundIn', adventure.foundIn) }}
+                        </div>
+                        {% if adventure.partOf %}
+                            <div class="col">
+                                <div class="label">Part Of</div>
+                                {{ adventure.partOf }}
+                                {{ macros.search_icon('partOf', adventure.partOf) }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="data-row">
+                        <div class="col">
+                            <div class="label">System / Edition</div>
+                            {% if adventure.edition %}
+                                {{ adventure.edition.name }}
+                                {{ macros.search_icon('edition', adventure.edition.name) }}
+                            {% else %}
+                                Unknown
+                            {% endif %}
+                        </div>
+                        <div class="col">
+                            <div class="label">Setting</div>
+                            {% if adventure.setting %}
+                                {{ adventure.setting.name }}
+                                {{ macros.search_icon('setting', adventure.setting.name) }}
+                            {% else %}
+                                Unknown
+                            {% endif %}
+                        </div>
+                        <div class="col">
+                            <div class="label">Environments</div>
+                            {% for environment in adventure.environments %}
+                                {{ environment.name }}
+                                {{ macros.search_icon('environments', environment.name) }}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="data-row">
+                        <div class="col">
+                            <div class="label">Starting Level Range</div>
+                            {{ adventure.startingLevelRange }}
+                            {{ macros.search_icon('startingLevelRange', adventure.startingLevelRange) }}
+                        </div>
+                        <div class="col">
+                            <div class="label">Min. Starting Level</div>
+                            {{ adventure.minStartingLevel }}
+                        </div>
+                        <div class="col">
+                            <div class="label">Max. Starting Level</div>
+                            {{ adventure.maxStartingLevel }}
+                        </div>
+                    </div>
+                    <div class="data-row">
+                        <div class="col">
+                            <div class="label">Handouts?</div>
+                            {{ adventure.handouts|bool2str }}
+                            {{ macros.search_icon('handouts', adventure.handouts) }}
+                        </div>
+                        <div class="col">
+                            <div class="label">Tactical Maps?</div>
+                            {{ adventure.tacticalMaps|bool2str }}
+                            {{ macros.search_icon('tacticalMaps', adventure.tacticalMaps) }}
+                        </div>
+                        <div class="col">
+                            <div class="label">Soloable?</div>
+                            {{ adventure.soloable|bool2str }}
+                            {{ macros.search_icon('soloable', adventure.soloable) }}
+                        </div>
+                        <div class="col">
+                            <div class="label">Includes Characters?</div>
+                            {{ adventure.pregeneratedCharacters|bool2str }}
+                            {{ macros.search_icon('pregeneratedCharacters', adventure.pregeneratedCharacters) }}
+                        </div>
+                    </div>
+                    <div class="data-row">
+                        <div class="col">
+                            <div class="label">Notable Items</div>
+                            <ul>
+                                {% for item in adventure.items %}
+                                    <li>{{ item.name }} {{ macros.search_icon('items', item.name) }}</li>
                                 {% endfor %}
-                            </select>
-
-                            <button type="submit" role="button" class="btn btn-info btn-sm">
-                                Add
-                            </button>
-                        </form>
-                    {% else %}
-                        <p>You need to <a href="{{ path('login') }}">log in</a> to add and edit information.</p>
-                    {% endif %}
-                    {% if is_granted('ROLE_CURATOR') %}
-                        <a class="btn btn-secondary btn-sm my-3" href="{{ path('adventure_edit', { 'id': adventure.id }) }}">Edit adventure title</a>
-                        {{ form_start(delete_form) }}
-                        <input class="btn btn-sm btn-danger mt-3" type="submit" value="Delete" role="button" onclick="return confirm('Do you really want to delete this adventure?')">
-                        {{ form_end(delete_form) }}
-                    {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="data-row">
+                        <div class="col">
+                            <div class="label">Notable NPCs</div>
+                            <ul>
+                                {% for npc in adventure.npcs %}
+                                    <li>{{ npc.name }} {{ macros.search_icon('npcs', npc.name) }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="data-row">
+                        <div class="col">
+                            <div class="label">BBEG & Monsters</div>
+                            <ul>
+                                {% for monster in adventure.monsters %}
+                                    <li>
+                                        {% if monster.isUnique %}
+                                            <strong>{{ monster.name }}</strong>
+                                        {% else %}
+                                            {{ monster.name }}
+                                        {% endif %}
+                                        {% for type in monster.types %}
+                                            <span class="badge badge-default">{{ type.name }}</span>
+                                        {% endfor %}
+                                        {{ macros.search_icon('monsters', monster.name) }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
                 </div>
+                {% if is_granted('edit', adventure) or is_granted('delete', adventure) %}
+                    <div class="bg-faded p-3">
+                        {% if is_granted('edit', adventure) %}
+                            <a class="btn btn-secondary btn-sm my-3"
+                               href="{{ path('adventure_edit', { 'id': adventure.id }) }}">Edit adventure</a>
+                        {% endif %}
+                        {% if is_granted('delete', adventure) %}
+                            {{ form_start(delete_form) }}
+                            <input class="btn btn-sm btn-danger mt-3" type="submit" value="Delete" role="button"
+                                   onclick="return confirm('Do you really want to delete this adventure?')">
+                            {{ form_end(delete_form) }}
+                        {% endif %}
+                    </div>
+                {% endif %}
+                <div class="m-3"></div>
+                {{ render(controller('AppBundle:ChangeRequest:show', {adventure: adventure})) }}
             </div>
         </div>
     </div>
-{% endblock %}
-{% block javascripts %}
-    <script>
-        $(function () {
-            $('#add-info')
-                .select2()
-                .on('select2:select', function(){
-                    $(this).focus();
-                });
-        })
-    </script>
 {% endblock %}

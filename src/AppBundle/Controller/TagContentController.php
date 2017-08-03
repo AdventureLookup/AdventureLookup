@@ -30,7 +30,7 @@ class TagContentController extends Controller
      *
      * @Route("/adventures/{id}/info/new", name="adventure_info_new")
      * @Method({"GET", "POST"})
-     * @Security("is_granted('ROLE_USER')")
+     * @Security("is_granted('ROLE_ADMIN')")
      *
      * @param Request $request
      * @param Adventure $adventure
@@ -57,7 +57,7 @@ class TagContentController extends Controller
      *
      * @Route("/adventure-info/{id}/edit", name="adventure_info_edit")
      * @Method({"GET", "POST"})
-     * @Security("is_granted('ROLE_CURATOR')")
+     * @Security("is_granted('ROLE_ADMIN')")
      *
      * @param Request $request
      * @param TagContent $tagContent
@@ -89,7 +89,7 @@ class TagContentController extends Controller
      *
      * @Route("/adventure-info/{id}", name="adventure_info_delete")
      * @Method("DELETE")
-     * @Security("is_granted('ROLE_CURATOR')")
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function deleteAction(Request $request, TagContent $tagContent)
     {
@@ -160,7 +160,7 @@ class TagContentController extends Controller
     /**
      * @Route("/adventures/{id}/info/new/ajax", name="adventure_info_new_ajax")
      * @Method({"POST"})
-     * @Security("is_granted('ROLE_USER')")
+     * @Security("is_granted('ROLE_ADMIN')")
      *
      * @param Request $request
      * @param Adventure $adventure

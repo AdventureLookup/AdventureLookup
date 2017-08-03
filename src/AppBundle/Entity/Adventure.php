@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -14,6 +15,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Table(name="adventure")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\AdventureRepository")
  * @UniqueEntity("title")
+ * @Gedmo\Loggable
  */
 class Adventure
 {
@@ -35,12 +37,178 @@ class Adventure
     private $version;
 
     /**
+     * @var Author[]|Collection
+     * @ORM\ManyToMany(targetEntity="Author", cascade={"persist"}, indexBy="adventures", inversedBy="adventures")
+     * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
+     */
+    private $authors;
+
+    /**
+     * @var Edition
+     * @ORM\ManyToOne(targetEntity="Edition", fetch="EAGER", inversedBy="adventures")
+     * @Gedmo\Versioned()
+     */
+    private $edition;
+
+    /**
+     * @var Environment[]|Collection
+     * @ORM\ManyToMany(targetEntity="Environment", indexBy="adventures", inversedBy="adventures")
+     * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
+     */
+    private $environments;
+
+    /**
+     * @var Item[]|Collection
+     * @ORM\ManyToMany(targetEntity="Item", cascade={"persist"}, indexBy="adventures", inversedBy="adventures")
+     * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
+     */
+    private $items;
+
+    /**
+     * @var NPC[]|Collection
+     * @ORM\ManyToMany(targetEntity="NPC", cascade={"persist"}, indexBy="adventures", inversedBy="adventures")
+     * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
+     */
+    private $npcs;
+
+    /**
+     * @var Publisher
+     * @ORM\ManyToOne(targetEntity="Publisher", fetch="EAGER", inversedBy="adventures")
+     * @Gedmo\Versioned()
+     */
+    private $publisher;
+
+    /**
+     * @var Setting
+     * @ORM\ManyToOne(targetEntity="Setting", fetch="EAGER", inversedBy="adventures")
+     * @Gedmo\Versioned()
+     */
+    private $setting;
+
+    /**
+     * @var Monster[]|Collection
+     * @ORM\ManyToMany(targetEntity="Monster", cascade={"persist"}, indexBy="adventures", inversedBy="adventures")
+     * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
+     */
+    private $monsters;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255, unique=true)
      * @Assert\NotBlank()
+     * @Gedmo\Versioned()
      */
     private $title;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     * @Gedmo\Versioned()
+     */
+    private $description;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\Range(min=1)
+     * @Gedmo\Versioned()
+     */
+    private $minStartingLevel;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\Range(min=1)
+     * @Gedmo\Versioned()
+     */
+    private $maxStartingLevel;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Gedmo\Versioned()
+     */
+    private $startingLevelRange;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\Range(min=1)
+     * @Gedmo\Versioned()
+     */
+    private $numPages;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Gedmo\Versioned()
+     */
+    private $foundIn;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Gedmo\Versioned()
+     */
+    private $partOf;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Url()
+     * @Gedmo\Versioned()
+     */
+    private $link;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Url()
+     * @Gedmo\Versioned()
+     */
+    private $thumbnailUrl;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Gedmo\Versioned()
+     */
+    private $soloable;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Gedmo\Versioned()
+     */
+    private $pregeneratedCharacters;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Gedmo\Versioned()
+     */
+    private $tacticalMaps;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Gedmo\Versioned()
+     */
+    private $handouts;
 
     /**
      * @var string
@@ -65,6 +233,13 @@ class Adventure
     private $info;
 
     /**
+     * @var ChangeRequest[]|Collection
+     *
+     * @ORM\OneToMany(targetEntity="ChangeRequest", mappedBy="adventure", orphanRemoval=true)
+     */
+    private $changeRequests;
+
+    /**
      * @var string
      *
      * @Gedmo\Blameable(on="create")
@@ -83,6 +258,14 @@ class Adventure
     public function __construct()
     {
         $this->info = new ArrayCollection();
+
+        $this->authors = new ArrayCollection();
+        $this->environments = new ArrayCollection();
+        $this->items = new ArrayCollection();
+        $this->npcs = new ArrayCollection();
+        $this->monsters = new ArrayCollection();
+        $this->changeRequests = new ArrayCollection();
+
         $this->approved = false;
     }
 
@@ -116,6 +299,218 @@ class Adventure
     }
 
     /**
+     * @return Author[]|Collection
+     */
+    public function getAuthors(): Collection
+    {
+        return $this->authors;
+    }
+
+    /**
+     * @param Author $author
+     *
+     * @return Adventure
+     */
+    public function addAuthor(Author $author)
+    {
+        $author->addAdventure($this);
+        $this->authors->add($author);
+        return $this;
+    }
+
+    /**
+     * @param Author[] $authors
+     *
+     * @return Adventure
+     */
+    public function setAuthors($authors)
+    {
+        $this->authors = $authors;
+        return $this;
+    }
+
+    /**
+     * @return Edition
+     */
+    public function getEdition()
+    {
+        return $this->edition;
+    }
+
+    /**
+     * @param Edition $edition
+     *
+     * @return Adventure
+     */
+    public function setEdition($edition)
+    {
+        $edition->addAdventure($this);
+        $this->edition = $edition;
+        return $this;
+    }
+
+    /**
+     * @return Environment[]|Collection
+     */
+    public function getEnvironments(): Collection
+    {
+        return $this->environments;
+    }
+
+    /**
+     * @param Environment $environment
+     *
+     * @return Adventure
+     */
+    public function addEnvironment(Environment $environment)
+    {
+        $environment->addAdventure($this);
+        $this->environments->add($environment);
+        return $this;
+    }
+
+    /**
+     * @param Environment[] $environments
+     *
+     * @return Adventure
+     */
+    public function setEnvironments($environments)
+    {
+        $this->environments = $environments;
+        return $this;
+    }
+
+    /**
+     * @return Item[]|Collection
+     */
+    public function getItems(): Collection
+    {
+        return $this->items;
+    }
+
+    /**
+     * @param Item $item
+     *
+     * @return Adventure
+     */
+    public function addItem(Item $item)
+    {
+        $item->addAdventure($this);
+        $this->items->add($item);
+        return $this;
+    }
+
+    /**
+     * @param Item[] $items
+     *
+     * @return Adventure
+     */
+    public function setItems($items)
+    {
+        $this->items = $items;
+        return $this;
+    }
+
+    /**
+     * @return NPC[]|Collection
+     */
+    public function getNpcs(): Collection
+    {
+        return $this->npcs;
+    }
+
+    /**
+     * @param Npc $npc
+     *
+     * @return Adventure
+     */
+    public function addNpc(NPC $npc)
+    {
+        $npc->addAdventure($this);
+        $this->npcs->add($npc);
+        return $this;
+    }
+
+    /**
+     * @param NPC[] $npcs
+     *
+     * @return Adventure
+     */
+    public function setNpcs($npcs)
+    {
+        $this->npcs = $npcs;
+        return $this;
+    }
+
+    /**
+     * @return Publisher
+     */
+    public function getPublisher()
+    {
+        return $this->publisher;
+    }
+
+    /**
+     * @param Publisher $publisher
+     *
+     * @return Adventure
+     */
+    public function setPublisher($publisher)
+    {
+        $publisher->addAdventure($this);
+        $this->publisher = $publisher;
+        return $this;
+    }
+
+    /**
+     * @return Setting
+     */
+    public function getSetting()
+    {
+        return $this->setting;
+    }
+
+    /**
+     * @param Setting $setting
+     * @return Adventure
+     */
+    public function setSetting(Setting $setting)
+    {
+        $setting->addAdventure($this);
+        $this->setting = $setting;
+        return $this;
+    }
+
+    /**
+     * @return Monster[]|Collection
+     */
+    public function getMonsters()
+    {
+        return $this->monsters;
+    }
+
+    /**
+     * @param Monster $monster
+     * @return Adventure
+     */
+    public function addMonster(Monster $monster)
+    {
+        $monster->addAdventure($this);
+        $this->monsters->add($monster);
+        return $this;
+    }
+
+    /**
+     * @param Monster[]|Collection $monsters
+     * @return Adventure
+     */
+    public function setMonsters($monsters)
+    {
+        $this->monsters = $monsters;
+        return $this;
+    }
+
+    /**
      * Set title
      *
      * @param string $title
@@ -140,7 +535,7 @@ class Adventure
     }
 
     /**
-     * @return TagContent[]
+     * @return TagContent[]|Collection
      */
     public function getInfo()
     {
@@ -199,5 +594,277 @@ class Adventure
     {
         return $this->version;
     }
-}
 
+    /**
+     * @return int
+     */
+    public function getMinStartingLevel()
+    {
+        return $this->minStartingLevel;
+    }
+
+    /**
+     * @param int $minStartingLevel
+     *
+     * @return Adventure
+     */
+    public function setMinStartingLevel($minStartingLevel)
+    {
+        $this->minStartingLevel = $minStartingLevel;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxStartingLevel()
+    {
+        return $this->maxStartingLevel;
+    }
+
+    /**
+     * @param int $maxStartingLevel
+     *
+     * @return Adventure
+     */
+    public function setMaxStartingLevel($maxStartingLevel)
+    {
+        $this->maxStartingLevel = $maxStartingLevel;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStartingLevelRange()
+    {
+        return $this->startingLevelRange;
+    }
+
+    /**
+     * @param string $startingLevelRange
+     *
+     * @return Adventure
+     */
+    public function setStartingLevelRange($startingLevelRange)
+    {
+        $this->startingLevelRange = $startingLevelRange;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getNumPages()
+    {
+        return $this->numPages;
+    }
+
+    /**
+     * @param int $numPages
+     *
+     * @return Adventure
+     */
+    public function setNumPages($numPages)
+    {
+        $this->numPages = $numPages;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLink()
+    {
+        return $this->link;
+    }
+
+    /**
+     * @param string $link
+     *
+     * @return Adventure
+     */
+    public function setLink($link)
+    {
+        $this->link = $link;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getThumbnailUrl()
+    {
+        return $this->thumbnailUrl;
+    }
+
+    /**
+     * @param string $thumbnailUrl
+     *
+     * @return Adventure
+     */
+    public function setThumbnailUrl($thumbnailUrl)
+    {
+        $this->thumbnailUrl = $thumbnailUrl;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSoloable()
+    {
+        return $this->soloable;
+    }
+
+    /**
+     * @param bool $soloable
+     *
+     * @return Adventure
+     */
+    public function setSoloable($soloable)
+    {
+        $this->soloable = $soloable;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasPregeneratedCharacters()
+    {
+        return $this->pregeneratedCharacters;
+    }
+
+    /**
+     * @param bool $pregeneratedCharacters
+     *
+     * @return Adventure
+     */
+    public function setPregeneratedCharacters($pregeneratedCharacters)
+    {
+        $this->pregeneratedCharacters = $pregeneratedCharacters;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasTacticalMaps()
+    {
+        return $this->tacticalMaps;
+    }
+
+    /**
+     * @param bool $tacticalMaps
+     *
+     * @return Adventure
+     */
+    public function setTacticalMaps($tacticalMaps)
+    {
+        $this->tacticalMaps = $tacticalMaps;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasHandouts()
+    {
+        return $this->handouts;
+    }
+
+    /**
+     * @param bool $handouts
+     *
+     * @return Adventure
+     */
+    public function setHandouts($handouts)
+    {
+        $this->handouts = $handouts;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     *
+     * @return Adventure
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFoundIn()
+    {
+        return $this->foundIn;
+    }
+
+    /**
+     * @param string $foundIn
+     *
+     * @return Adventure
+     */
+    public function setFoundIn($foundIn)
+    {
+        $this->foundIn = $foundIn;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPartOf()
+    {
+        return $this->partOf;
+    }
+
+    /**
+     * @param string $partOf
+     * @return Adventure
+     */
+    public function setPartOf($partOf)
+    {
+        $this->partOf = $partOf;
+
+        return $this;
+    }
+
+    /**
+     * @return ChangeRequest[]|Collection
+     */
+    public function getChangeRequests()
+    {
+        return $this->changeRequests;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCreatedBy()
+    {
+        return $this->createdBy;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUpdatedBy()
+    {
+        return $this->updatedBy;
+    }
+}

@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container" id="page--create-adventure" data-similar-titles-url="{{ path('similar_titles_search') }}" data-search-url="{{ path('field_content_search', {id: '__ID__'}) }}">
+    <div class="container" id="page--create-adventure" data-similar-titles-url="{{ path('similar_titles_search') }}" data-search-url="{{ path('api_autocomplete_field', {fieldName: '__FIELD__'}) }}">
         <div class="row justify-content-center">
             <div class="col-lg-8 col-xl-7">
                 <h1 class="my-5">New adventure</h1>
@@ -10,61 +10,14 @@
                 {% endif %}
                 <div class="alert alert-warning">AdventureLookup is for D&D and it's clones. Not other systems/genres.</div>
 
-                <form action="{{ path('adventure_new') }}" method="post" id="create-adventure-form">
-                    <div>
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('new_adventure') }}" />
-                    </div>
-                    <div class="form-group">
-                        <label class="form-control-label" for="appbundle_adventure_field_title">Title</label>
-                        <input type="text" id="appbundle_adventure_field_title" class="form-control" required name="fields[title]" />
+                {{ form_start(form) }}
 
-                        <div class="alert alert-warning hidden-xs-up similar-adventures-warning">
-                            <strong>It looks like there already are adventures with a similar title. Please make sure not to duplicate them! Using the exact same title twice will result in an error.</strong>
-                            <ul class="similar-adventures-list"></ul>
-                        </div>
-                    </div>
+                {% include 'adventure/_form.html.twig' %}
 
-                    {% for fieldType in fieldTypes %}
-                        <hr />
-                        <div class="form-group">
-                            <label class="form-control-label" for="appbundle_adventure_field_{{ fieldType.id }}">{{ fieldType.title }}</label>
-                            {% if fieldType.type in ['string'] %}
-                                <select id="appbundle_adventure_field_{{ fieldType.id }}" class="adventure-field form-control" data-id="{{ fieldType.id }}" name="fields[{{ fieldType.id }}][]">
-                                </select>
-                            {% elseif fieldType.type in ['url'] %}
-                                <input type="url" id="appbundle_adventure_field_{{ fieldType.id }}" class="form-control" name="fields[{{ fieldType.id }}][]" />
-                            {% elseif fieldType.type in ['integer'] %}
-                                <input type="number" id="appbundle_adventure_field_{{ fieldType.id }}" class="form-control" name="fields[{{ fieldType.id }}][]" />
-                            {% elseif fieldType.type in ['boolean'] %}
-                                <br>
-                                <div class="form-check form-check-inline">
-                                    <label class="form-check-label">
-                                        <input class="form-check-input" type="radio" name="fields[{{ fieldType.id }}][]" value="?" checked /> Unknown
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <label class="form-check-label">
-                                        <input class="form-check-input" type="radio" name="fields[{{ fieldType.id }}][]" value="1" /> Yes
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <label class="form-check-label">
-                                        <input class="form-check-input" type="radio" name="fields[{{ fieldType.id }}][]" value="0" /> No
-                                    </label>
-                                </div>
-                            {% elseif fieldType.type in ['text'] %}
-                                <textarea class="form-control" id="appbundle_adventure_field_{{ fieldType.id }}" rows="10" name="fields[{{ fieldType.id }}][]"></textarea>
-                            {% endif %}
-                            <small class="form-text text-muted">{{ fieldType.description }}</small>
-                            {% if fieldType.example %}
-                                <small class="form-text text-muted">Example: <em>{{ fieldType.example }}</em></small>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-
-                    <input class="btn btn-primary btn-lg" type="submit" value="Create" role="button" />
-                </form>
+                <input type="submit" value="Save" class="btn btn-primary" role="button" />
+                {{ form_end(form) }}
             </div>
         </div>
     </div>
+    {% include 'adventure/_new_content_modal.html.twig' %}
 {% endblock %}

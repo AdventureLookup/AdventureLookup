@@ -37,7 +37,7 @@ php bin/console doctrine:migrations:migrate
 php bin/console app:elasticsearch:reindex
  
 # Import dummy adventures
-php bin/console doctrine:fixtures:load --fixtures src/AppBundle/DataFixtures/ORM/TagData.php --fixtures src/AppBundle/DataFixtures/ORM/RandomAdventuresData.php -n
+php bin/console doctrine:fixtures:load --fixtures src/AppBundle/DataFixtures/ORM/RandomAdventureData.php
 php bin/console app:elasticsearch:reindex
 ```
 

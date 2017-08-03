@@ -7,6 +7,9 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
+    elasticsearch:
+        index_name: 'adventure'
+        type_name: 'all'
 
 framework:
     #esi: ~
@@ -40,6 +43,8 @@ twig:
     strict_variables: '%kernel.debug%'
     form_themes:
         - 'bootstrap_4_layout.html.twig'
+    globals:
+        google_analytics_code: '%google_analytics_code%'
 
 # Doctrine Configuration
 doctrine:
@@ -50,13 +55,10 @@ doctrine:
         dbname: '%database_name%'
         user: '%database_user%'
         password: '%database_password%'
-        charset: UTF8
-        # if using pdo_sqlite as your database driver:
-        #   1. add the path in parameters.yml
-        #     e.g. database_path: "%kernel.root_dir%/../var/data/data.sqlite"
-        #   2. Uncomment database_path in parameters.yml.dist
-        #   3. Uncomment next line:
-        #path: '%database_path%'
+        charset: utf8mb4
+        default_table_options:
+            charset: utf8mb4
+            collate: utf8mb4_unicode_ci
 
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
@@ -109,21 +111,150 @@ stof_doctrine_extensions:
             loggable: true
             sluggable: true
             blameable: true
+            timestampable: true
 
+# EasyAdminBundle
+# GitHub: https://github.com/javiereguiluz/EasyAdminBundle
+# Docs:   http://symfony.com/doc/current/bundles/EasyAdminBundle/index.html
 easy_admin:
     site_name: 'Adventure Lookup'
+    design:
+        menu:
+            - Adventure
+            - ChangeRequest
+            - Author
+            - Edition
+            - Environment
+            - Item
+            - Monster
+            - MonsterType
+            - NPC
+            - Publisher
+            - Setting
+            - User
+            - { label: '' }
+            - { label: 'Back to Frontend', route: 'homepage', icon: 'chevron-circle-left' }
+    list:
+        max_results: 30
     entities:
         Adventure:
             class: AppBundle\Entity\Adventure
             label: 'Adventures'
+            disabled_actions: ['new', 'edit']
             list:
                 title: "Adventures"
-                fields: ['id', 'title', 'approved', 'info']
-            edit:
                 fields: ['id', 'title']
-
+                actions:
+                    - { name: 'adventure_edit', type: 'route', label: 'Edit' }
+        ChangeRequest:
+            class: AppBundle\Entity\ChangeRequest
+            label: 'Change Requests'
+            list:
+                title: 'Change Requests'
+                fields: ['adventure', 'fieldName', 'comment', 'resolved', 'createdBy']
+                sort: ['resolved', 'ASC']
+            search:
+                sort: ['resolved', 'ASC']
+            form:
+                fields: ['adventure', 'fieldName', 'comment', 'resolved']
+        Author:
+            class: AppBundle\Entity\Author
+            label: 'Authors'
+            form:
+                fields: ['name']
+            list:
+                sort: ['name', 'ASC']
+            search:
+                sort: ['name', 'ASC']
+        Edition:
+            class: AppBundle\Entity\Edition
+            label: 'Editions'
+            form:
+                fields: ['name', 'position']
+            list:
+                sort: ['position', 'DESC']
+            search:
+                sort: ['position', 'DESC']
+        Environment:
+            class: AppBundle\Entity\Environment
+            label: 'Environments'
+            form:
+                fields: ['name']
+            list:
+                sort: ['name', 'ASC']
+            search:
+                sort: ['name', 'ASC']
+        Item:
+            class: AppBundle\Entity\Item
+            label: 'Items'
+            form:
+                fields: ['name']
+            list:
+                sort: ['name', 'ASC']
+            search:
+                sort: ['name', 'ASC']
+        Monster:
+            class: AppBundle\Entity\Monster
+            label: 'Monsters'
+            form:
+                fields: ['name', 'isUnique', 'types']
+            list:
+                sort: ['name', 'ASC']
+            search:
+                sort: ['name', 'ASC']
+        MonsterType:
+            class: AppBundle\Entity\MonsterType
+            label: 'Monster Types'
+            form:
+                fields: ['name']
+            list:
+                sort: ['name', 'ASC']
+            search:
+                sort: ['name', 'ASC']
+        NPC:
+            class: AppBundle\Entity\NPC
+            label: 'NPCs'
+            form:
+                fields: ['name']
+            list:
+                sort: ['name', 'ASC']
+            search:
+                sort: ['name', 'ASC']
+        Publisher:
+            class: AppBundle\Entity\Publisher
+            label: 'Publishers'
+            form:
+                fields: ['name']
+            list:
+                sort: ['name', 'ASC']
+            search:
+                sort: ['name', 'ASC']
+        Setting:
+            class: AppBundle\Entity\Setting
+            label: 'Settings'
+            form:
+                fields: ['name']
+            list:
+                sort: ['name', 'ASC']
+            search:
+                sort: ['name', 'ASC']
         User:
             class: AppBundle\Entity\User
             label: 'Users'
+            disabled_actions: ['new', 'delete']
+            form:
+                fields:
+                    - isActive
+                    - property: 'roles'
+                      type: 'collection'
+                      type_options:
+                          entry_type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType'
+                          entry_options:
+                              choices:
+                                  ROLE_USER: ROLE_USER
+                                  ROLE_CURATOR: ROLE_CURATOR
+                                  ROLE_ADMIN: ROLE_ADMIN
             list:
                 title: "Users"
+                fields: [username, email, roles]
+                sort: ['roles', 'ASC']

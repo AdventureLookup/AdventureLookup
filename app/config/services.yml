@@ -4,11 +4,25 @@ parameters:
     #parameter_name: value
 
 services:
+    app.elasticsearch:
+        class: AppBundle\Service\ElasticSearch
+        arguments:
+            - "@logger"
+            - "%elasticsearch%"
+        tags:
+            - { name: monolog.logger, channel: elasticsearch }
+
     search_index_updater:
          class: AppBundle\Listener\SearchIndexUpdater
          autowire: true
          tags:
              - { name: doctrine.event_subscriber, connection: default }
+
+    app.subscribers.easy_admin:
+         class: AppBundle\Listener\EasyAdminSubscriber
+         autowire: true
+         tags:
+             - { name: kernel.event_subscriber }
 
     adventure_search:
         class: AppBundle\Service\AdventureSearch
@@ -16,5 +30,51 @@ services:
 
     app.image_type_extension:
         class: AppBundle\Form\Extension\HelpTypeExtension
+        autowire: true
         tags:
             - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\FormType }
+
+    app.twig_extension.default:
+        class: AppBundle\Twig\AppExtension
+        autowire: true
+        tags:
+            - { name: twig.extension }
+
+    app.twig_extension.audit:
+            class: AppBundle\Twig\AuditExtension
+            autowire: true
+            tags:
+                - { name: twig.extension }
+
+    app.field_provider:
+        class: AppBundle\Field\FieldProvider
+        autowire: true
+
+    twig.extension.date:
+       class: Twig_Extensions_Extension_Date
+       tags:
+            - { name: twig.extension }
+
+    app.security.voter.adventure:
+        class: AppBundle\Security\AdventureVoter
+        autowire: true
+        tags:
+            - { name: security.voter }
+
+    app.security.voter.change_request:
+        class: AppBundle\Security\ChangeRequestVoter
+        autowire: true
+        tags:
+            - { name: security.voter }
+
+    app.doctrine.hash_password_listener:
+        class: AppBundle\Listener\HashPasswordListener
+        autowire: true
+        tags:
+            - { name: doctrine.event_subscriber }
+
+    app.form.change_request:
+        class: AppBundle\Form\ChangeRequestType
+        autowire: true
+        tags:
+            - { name: form.type }

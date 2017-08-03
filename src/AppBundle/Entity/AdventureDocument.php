@@ -16,9 +16,29 @@ class AdventureDocument
     private $info;
 
     /**
+     * @var string[]
+     */
+    private $authors;
+
+    /**
      * @var string
      */
-    private $system;
+    private $edition;
+
+    /**
+     * @var string[]
+     */
+    private $environments;
+
+    /**
+     * @var string[]
+     */
+    private $items;
+
+    /**
+     * @var string[]
+     */
+    private $npcs;
 
     /**
      * @var string
@@ -29,6 +49,11 @@ class AdventureDocument
      * @var string
      */
     private $setting;
+
+    /**
+     * @var string[]
+     */
+    private $monsters;
 
     /**
      * @var integer
@@ -43,7 +68,7 @@ class AdventureDocument
     /**
      * @var integer
      */
-    private $levelRange;
+    private $startingLevelRange;
 
     /**
      * @var boolean
@@ -61,11 +86,6 @@ class AdventureDocument
     private $pregeneratedCharacters;
 
     /**
-     * @var string[]
-     */
-    private $environments;
-
-    /**
      * @var string
      */
     private $link;
@@ -81,16 +101,6 @@ class AdventureDocument
     private $description;
 
     /**
-     * @var string[]
-     */
-    private $notableItems;
-
-    /**
-     * @var string[]
-     */
-    private $monsters;
-
-    /**
      * @var boolean
      */
     private $tacticalMaps;
@@ -101,55 +111,75 @@ class AdventureDocument
     private $handouts;
 
     /**
-     * @var string[]
-     */
-    private $villains;
-
-    /**
      * @var string
      */
     private $foundIn;
 
-    public function __construct(int $id, string $title, string $slug, array $info, float $score = 0.0)
+    /**
+     * @var string
+     */
+    private $partOf;
+
+    public function __construct(
+        int $id,
+        array $authors,
+        string $edition = null,
+        array $environments,
+        array $items,
+        array $npcs,
+        string $publisher = null,
+        string $setting = null,
+        array $monsters,
+        string $title,
+        string $description = null,
+        string $slug,
+        int $minStartingLevel = null,
+        int $maxStartingLevel = null,
+        string $startingLevelRange = null,
+        int $numPages = null,
+        string $foundIn = null,
+        string $partOf = null,
+        string $link = null,
+        string $thumbnailUrl = null,
+        bool $soloable = null,
+        bool $pregeneratedCharacters = null,
+        bool $tacticalMaps = null,
+        bool $handouts = null,
+        array $info = [],
+        float $score = 0.0)
     {
         $this->id = $id;
+        $this->authors = $authors;
+        $this->edition = $edition;
+        $this->environments = $environments;
+        $this->items = $items;
+        $this->npcs = $npcs;
+        $this->publisher = $publisher;
+        $this->setting = $setting;
+        $this->monsters = $monsters;
         $this->title = $title;
+        $this->description = $description;
         $this->slug = $slug;
         $this->score = $score;
         $this->info = $info;
-
-        $map = [
-            'Author' => 'author',
-            'System / Edition' => 'system',
-            'Publisher' => 'publisher',
-            'Setting' => 'setting',
-            'Min. Starting Level' => 'minStartingLevel',
-            'Max. Starting Level' => 'maxStartingLevel',
-            'Level Range' => 'levelRange',
-            'Suitable for Solo Play' => 'soloable',
-            'Length (# of Pages)' => 'numPages',
-            'Includes Pregenerated Characters' => 'pregeneratedCharacters',
-            'Environment' => 'environments',
-            'Link' => 'link',
-            'Thumbnail' => 'thumbnailUrl',
-            'Description' => 'description',
-            'Notable Items' => 'notableItems',
-            'Monsters' => 'monsters',
-            'Tactical Maps' => 'tacticalMaps',
-            'Handouts' => 'handouts',
-            'Villains' => 'villains',
-            'Found in ' => 'foundIn'
-        ];
-
-        foreach ($info as $infoObj) {
-            $fieldTitle = $infoObj['meta']->getTitle();
-            if (isset($map[$fieldTitle])) {
-                $fieldName = $map[$fieldTitle];
-                $this->$fieldName = $infoObj['contents'];
-            }
-        }
+        $this->minStartingLevel = $minStartingLevel;
+        $this->maxStartingLevel = $maxStartingLevel;
+        $this->startingLevelRange = $startingLevelRange;
+        $this->numPages = $numPages;
+        $this->foundIn = $foundIn;
+        $this->partOf = $partOf;
+        $this->link = $link;
+        $this->thumbnailUrl = $thumbnailUrl;
+        $this->soloable = $soloable;
+        $this->pregeneratedCharacters = $pregeneratedCharacters;
+        $this->tacticalMaps = $tacticalMaps;
+        $this->handouts = $handouts;
     }
 
+    /**
+     * @param Adventure $adventure
+     * @return static
+     */
     public static function fromAdventure(Adventure $adventure)
     {
         $info = [];
@@ -164,7 +194,33 @@ class AdventureDocument
             $info[$key]['contents'][] = $fieldContent;
         }
 
-        return new static($adventure->getId(), $adventure->getTitle(), $adventure->getSlug(), $info);
+        return new static(
+            $adventure->getId(),
+            $adventure->getAuthors()->map(function (Author $author) { return $author->getName(); })->getValues(),
+            static::getNameOrNull($adventure->getEdition()),
+            $adventure->getEnvironments()->map(function (Environment $environment) { return $environment->getName(); })->getValues(),
+            $adventure->getItems()->map(function (Item $item) { return $item->getName(); })->getValues(),
+            $adventure->getNpcs()->map(function (NPC $npc) { return $npc->getName(); })->getValues(),
+            static::getNameOrNull($adventure->getPublisher()),
+            static::getNameOrNull($adventure->getSetting()),
+            $adventure->getMonsters()->map(function (Monster $monster) { return $monster->getName(); })->getValues(),
+            $adventure->getTitle(),
+            $adventure->getDescription(),
+            $adventure->getSlug(),
+            $adventure->getMinStartingLevel(),
+            $adventure->getMaxStartingLevel(),
+            $adventure->getStartingLevelRange(),
+            $adventure->getNumPages(),
+            $adventure->getFoundIn(),
+            $adventure->getPartOf(),
+            $adventure->getLink(),
+            $adventure->getThumbnailUrl(),
+            $adventure->isSoloable(),
+            $adventure->hasPregeneratedCharacters(),
+            $adventure->hasTacticalMaps(),
+            $adventure->hasHandouts(),
+            $info
+        );
     }
 
     /**
@@ -208,11 +264,43 @@ class AdventureDocument
     }
 
     /**
+     * @return string[]
+     */
+    public function getAuthors(): array
+    {
+        return $this->authors;
+    }
+
+    /**
      * @return string
      */
-    public function getSystem()
+    public function getEdition()
     {
-        return $this->system;
+        return $this->edition;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getEnvironments(): array
+    {
+        return $this->environments;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getItems(): array
+    {
+        return $this->items;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getNpcs(): array
+    {
+        return $this->npcs;
     }
 
     /**
@@ -250,9 +338,9 @@ class AdventureDocument
     /**
      * @return int
      */
-    public function getLevelRange()
+    public function getStartingLevelRange()
     {
-        return $this->levelRange;
+        return $this->startingLevelRange;
     }
 
     /**
@@ -274,17 +362,9 @@ class AdventureDocument
     /**
      * @return bool
      */
-    public function isPregeneratedCharacters()
+    public function hasPregeneratedCharacters()
     {
         return $this->pregeneratedCharacters;
-    }
-
-    /**
-     * @return \string[]
-     */
-    public function getEnvironments()
-    {
-        return $this->environments;
     }
 
     /**
@@ -314,14 +394,6 @@ class AdventureDocument
     /**
      * @return \string[]
      */
-    public function getNotableItems()
-    {
-        return $this->notableItems;
-    }
-
-    /**
-     * @return \string[]
-     */
     public function getMonsters()
     {
         return $this->monsters;
@@ -344,18 +416,27 @@ class AdventureDocument
     }
 
     /**
-     * @return \string[]
-     */
-    public function getVillains()
-    {
-        return $this->villains;
-    }
-
-    /**
      * @return string
      */
     public function getFoundIn()
     {
         return $this->foundIn;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPartOf()
+    {
+        return $this->partOf;
+    }
+
+    /**
+     * @param $entity
+     * @return null|string
+     */
+    private static function getNameOrNull($entity)
+    {
+        return $entity === null ? null : $entity->getName();
     }
 }

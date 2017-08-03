@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1 class="mt-5">Welcome, @{{ user.username }}!</h1>
+                <p>
+                    Your email address is <em>{{ user.email }}</em>.<br>
+                    You currently have the following roles: <em>{{ user.roles|join(', ') }}</em>.<br>
+                    You can change your password <a href="{{ path('change_password') }}">here</a>.
+                </p>
+                <div class="card mb-3">
+                    <div class="card-header">
+                        Your Adventures
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for adventure in adventures %}
+                            <a href="{{ path('adventure_show', {slug: adventure.slug}) }}"
+                               class="list-group-item list-group-item-action{% if adventure.changeRequests|length > 0 %} list-group-item-warning{% endif %}">
+                                {{ adventure.title }}
+                                {% if adventure.changeRequests|length > 0 %}
+                                    &nbsp;<span class="badge badge-default">{{ adventure.changeRequests|length }} pending change request(s)</span>
+                                {% endif %}
+                            </a>
+                        {% else %}
+                            <a href="{{ path('adventure_new') }}" class="list-group-item list-group-item-action">
+                                You haven't created any adventures yet. Click here to add your first adventure.
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card mb-3">
+                    <div class="card-header">
+                        Your unresolved Change Requests
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for changeRequest in changeRequests %}
+                            <a href="{{ path('adventure_show', {slug: changeRequest.adventure.slug}) }}" class="list-group-item list-group-item-action">
+                                #{{ changeRequest.id }} ({{ changeRequest.adventure.title }})
+                            </a>
+                        {% else %}
+                            <button disabled class="list-group-item">You don't have any pending change requests</button>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

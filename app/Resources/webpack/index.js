@@ -8,11 +8,11 @@ import toastr from 'toastr/toastr';
 import 'toastr/toastr.scss';
 import "typeahead.js/dist/typeahead.jquery";
 import "typeahead.js-bootstrap4-css/typeaheadjs.css";
-import './style.scss';
+import './sass/style.scss';
 
 import './add-content.js';
 import './search.js';
-import './adventure-create.js';
+import './adventure.js';
 
 
 toastr.options = {
