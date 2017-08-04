@@ -18,3 +18,5 @@ parameters:
     secret: ThisTokenIsNotSoSecretChangeIt
 
     google_analytics_code: ~
+    # Email addresses to be notified if an error occurs
+    error_email_addresses: []
