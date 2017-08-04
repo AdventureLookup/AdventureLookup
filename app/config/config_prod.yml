@@ -11,11 +11,26 @@ monolog:
     handlers:
         main:
             type: fingers_crossed
-            action_level: error
-            handler: nested
-        nested:
-            type: stream
-            path: '%kernel.logs_dir%/%kernel.environment%.log'
+            action_level: critical
+            handler: grouped
+        grouped:
+            type:    group
+            members: [streamed, deduplicated]
+        streamed:
+            type:  stream
+            path:  '%kernel.logs_dir%/%kernel.environment%.log'
             level: debug
+        deduplicated:
+            type:    deduplication
+            timeout: 3600
+            handler: swift
+        swift:
+            type:       swift_mailer
+            from_email: 'error@adventurelookup.com'
+            to_email:   '%error_email_addresses%'
+            subject:    '[ADL Error] %%message%%'
+            level:      debug
+            formatter:  monolog.formatter.html
+            content_type: text/html
         console:
             type: console
