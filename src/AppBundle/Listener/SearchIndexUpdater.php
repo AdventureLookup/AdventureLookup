@@ -12,7 +12,6 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Elasticsearch\Client;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
-use Psr\Log\LoggerInterface;
 
 class SearchIndexUpdater implements EventSubscriber
 {
@@ -102,6 +101,11 @@ class SearchIndexUpdater implements EventSubscriber
     {
         $adventures = $this->getAffectedAdventures($args);
         foreach ($adventures as $adventure) {
+            if ($adventure->getId() === null) {
+                // If the id is null, then this is a new related entity which references the main adventure which
+                // doesn't yet have an id. We can simply skip it.
+                continue;
+            }
             $this->updateSearchIndexForAdventure($adventure);
         }
     }
@@ -144,10 +148,14 @@ class SearchIndexUpdater implements EventSubscriber
      */
     public function updateSearchIndexForAdventure(Adventure $adventure)
     {
+        $id = $adventure->getId();
+        if (!is_numeric($id)) {
+            throw new \RuntimeException('Trying to index an adventure without an id set! This should not have happened.');
+        }
         $this->client->index([
             'index' => $this->indexName,
             'type' => $this->typeName,
-            'id' => $adventure->getId(),
+            'id' => $id,
             'body' => $this->serializer->toElasticDocument($adventure)
         ]);
     }
