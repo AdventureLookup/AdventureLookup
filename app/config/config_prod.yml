@@ -23,6 +23,7 @@ monolog:
         deduplicated:
             type:    deduplication
             timeout: 3600
+            level: warning
             handler: swift
         swift:
             type:       swift_mailer
