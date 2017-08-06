@@ -1,7 +1,11 @@
+dist: trusty
+
 language: php
+
 php:
   - '7.0'
   - '7.1'
+
 env:
   global:
     - SYMFONY_ENV=test
@@ -9,9 +13,6 @@ env:
   matrix:
     - TESTSUITE=functional
     - TESTSUITE=browser
-
-matrix:
-  fast_finish: true
 
 services:
   # ElasticSearch takes few seconds to start, but it also takes a while until
@@ -57,3 +58,28 @@ script:
       $PHPUNIT --testsuite $TESTSUITE --coverage-clover=coverage.xml;
       bash <(curl -s https://codecov.io/bash) -X gcov -X coveragepy;
     fi;
+
+jobs:
+  include:
+    - stage: deploy
+      addons:
+        ssh_known_hosts: dev.adventurelookup.com
+      services: []
+      env:
+        # Encrypted SSH_PORT
+        - secure: f4YeypBxXD4w4lRlHrOs6CO3LaO2sGOIYb5VYQFelOw1UbdYitgqHrbsD7avsMZEzzHj8b9QHvfpmu3jtPS+63J2lR1TRT0F0bdzf4pfkTM7Ucw9nIJcxiAuNQLwSzFr/zvAvshP/FiR8ex3jJsnjDlsvV0uJl7PDof+n81tOEGU0VJa4HtBiC86+GPr3ckkl47NCPtHtyAVOzHHZN8oNmHDqh6AWHC/irrz56+2e2rmgqrgKk530YbJTyjejrVVNgNUePUVYm5JNX1anH2plRecFyN3Ov6VJsP5U8P9ej/433igJ/l14euPYFaE3L6deyBfVQ64qGA19oGEbPMdpgUuP8NFbCB+FohmzFRzEZcYQvPam7+N6849u9DdV/rqImw3USjKcLKqFG6l056x/tXBQFMKHJ/jx9/2WuCGg2kd5fCQyZWB2avPq8ifHOkoT9mJAVWwD3u1GfsRJgDCnz8iXCutsFNVE0WGz4trqd3Oni03wZ7dh7RCiF/lTzsL4Py8bFUfl1JS3Z3G5dxR/9hpuhl1Z0YV7sekwpYBJmP4lEX3LMy04XTgMNYitGIQs8GgHKVxSpD0FRGxMcpjPyRcS85gaSvQreY8aCubC8NEE2HNXS96RGFrp7w3H/yyAVVqkTiTX4MAYqudLohBDYUJCz85lawEk648Vup61e8=
+      before_install: skip
+      install: skip
+      before_script: skip
+      script: skip
+      after_script: skip
+      before_deploy:
+        - openssl aes-256-cbc -K $encrypted_d7464a3e89e9_key -iv $encrypted_d7464a3e89e9_iv -in scripts/deployment_id_rsa.enc -out /tmp/deployment_id_rsa -d
+        - eval "$(ssh-agent -s)"
+        - chmod 600 /tmp/deployment_id_rsa
+        - ssh-add /tmp/deployment_id_rsa
+      deploy:
+        provider: script
+        script: bash $TRAVIS_BUILD_DIR/scripts/deploy-to-dev.sh
+        on:
+          branch: dev
