@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
+use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -19,6 +20,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AuditController extends Controller
 {
+    const LOGS_PER_PAGE = 50;
+
     /**
      * @Route("/audit", name="audit")
      * @Method("GET")
@@ -59,10 +62,16 @@ class AuditController extends Controller
                 ->setParameter('class', $filters['class']);
         }
 
-        $logs = $qb->getQuery()->execute();
+        $paginator  = $this->get('knp_paginator');
+        /** @var SlidingPagination $pagination */
+        $pagination = $paginator->paginate(
+            $qb->getQuery(),
+            $request->query->getInt('page', 1),
+            self::LOGS_PER_PAGE
+        );
 
         return $this->render('audit/index.html.twig', [
-            'logs' => $logs
+            'pagination' => $pagination
         ]);
     }
 

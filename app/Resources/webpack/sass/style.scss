@@ -22,3 +22,7 @@
 .selectize-control.loading::before {
   opacity: 0.7;
 }
+
+.pagination {
+  @extend .justify-content-center;
+}
