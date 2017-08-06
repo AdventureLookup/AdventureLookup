@@ -113,6 +113,17 @@ stof_doctrine_extensions:
             blameable: true
             timestampable: true
 
+knp_paginator:
+    page_range: 5                # default page range used in pagination control
+    default_options:
+        page_name: page          # page query parameter name
+        sort_field_name: sort    # sort field query parameter name
+        sort_direction_name: dir # sort direction query parameter name
+        distinct: true           # ensure distinct results, useful when ORM queries are using GROUP BY statements
+    template:
+        pagination: 'KnpPaginatorBundle:Pagination:twitter_bootstrap_v4_pagination.html.twig'
+        sortable: 'KnpPaginatorBundle:Pagination:sortable_link.html.twig'
+
 # EasyAdminBundle
 # GitHub: https://github.com/javiereguiluz/EasyAdminBundle
 # Docs:   http://symfony.com/doc/current/bundles/EasyAdminBundle/index.html
