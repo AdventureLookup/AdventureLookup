@@ -8,6 +8,7 @@ import toastr from 'toastr/toastr';
 import 'toastr/toastr.scss';
 import "typeahead.js/dist/typeahead.jquery";
 import "typeahead.js-bootstrap4-css/typeaheadjs.css";
+import LazyLoad from "vanilla-lazyload/dist/lazyload";
 import './sass/style.scss';
 
 import './add-content.js';
@@ -32,3 +33,7 @@ toastr.options = {
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
 };
+
+// Lazy-load images using
+// https://github.com/verlok/lazyload
+const myLazyLoad = new LazyLoad();

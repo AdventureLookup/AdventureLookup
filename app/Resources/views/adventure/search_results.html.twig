@@ -3,7 +3,7 @@
     <div class="card mb-3">
         <div class="card-block">
             {% if adventure.thumbnailUrl %}
-                <img src="{{ adventure.thumbnailUrl }}" class="ml-1 pull-right" style="max-width: 120px; max-height: 140px;" />
+                <img alt="Cover of {{ adventure.title }}" data-original="{{ adventure.thumbnailUrl }}" class="ml-1 pull-right" style="max-width: 120px; max-height: 140px;" />
             {% endif %}
             <h4 class="card-title">
                 <a href="{{ path('adventure_show', { 'slug': adventure.slug }) }}">
