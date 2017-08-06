@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <title>{% block title %}Adventure Lookup{% endblock %}</title>
-        <link rel="stylesheet" href="{{ asset('assets/styles.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/styles.css') }}?v=2">
         {% block stylesheets %}{% endblock %}
         <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
         <link rel="icon" type="image/png" href="{{ asset('favicon-32x32.png') }}" sizes="32x32">
@@ -86,7 +86,7 @@
             </div>
         </footer>
 
-        <script src="{{ asset('assets/main.js') }}"></script>
+        <script src="{{ asset('assets/main.js') }}?v=2"></script>
         {% block javascripts %}{% endblock %}
         {% if app.environment == 'prod' and google_analytics_code is not empty %}
             <script>

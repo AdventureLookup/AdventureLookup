@@ -27,6 +27,7 @@ class MonsterType extends AbstractType
                 'help' => 'Check this if the monster is a known named individual.'
             ])
             ->add('types', EntityType::class, [
+                'help' => 'Select all types that apply',
                 'choice_label' => 'name',
                 'required' => true,
                 'class' => MonsterTypeEntity::class,
