@@ -139,7 +139,6 @@ easy_admin:
             - Item
             - Monster
             - MonsterType
-            - NPC
             - Publisher
             - Setting
             - User
@@ -216,15 +215,6 @@ easy_admin:
         MonsterType:
             class: AppBundle\Entity\MonsterType
             label: 'Monster Types'
-            form:
-                fields: ['name']
-            list:
-                sort: ['name', 'ASC']
-            search:
-                sort: ['name', 'ASC']
-        NPC:
-            class: AppBundle\Entity\NPC
-            label: 'NPCs'
             form:
                 fields: ['name']
             list:

@@ -8,7 +8,6 @@ use AppBundle\Entity\Edition;
 use AppBundle\Entity\Environment;
 use AppBundle\Entity\Item;
 use AppBundle\Entity\Monster;
-use AppBundle\Entity\NPC;
 use AppBundle\Entity\Publisher;
 use AppBundle\Entity\Setting;
 use Doctrine\Common\Collections\Collection;
@@ -85,15 +84,6 @@ class AdventureType extends AbstractType
             'addItem',
             'Items',
             'The notable magic or non-magic items that are obtained in the module. Only include named items, don\'t include a +1 sword.'
-        );
-        $this->createAppendableEntityCollection(
-            $builder,
-            'npcs',
-            NPC::class,
-            NPCType::class,
-            'addNpc',
-            'NPCs',
-            'Names of notable NPCs'
         );
         $builder
             ->add('publisher', EntityType::class, [

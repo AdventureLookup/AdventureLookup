@@ -9,7 +9,6 @@ use AppBundle\Entity\Edition;
 use AppBundle\Entity\Environment;
 use AppBundle\Entity\Item;
 use AppBundle\Entity\Monster;
-use AppBundle\Entity\NPC;
 use AppBundle\Entity\Publisher;
 use AppBundle\Entity\Setting;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -34,7 +33,7 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
     public function getDependencies()
     {
         return [AuthorData::class, EditionData::class, EnvironmentData::class, ItemData::class, MonsterData::class,
-            NPCData::class, PublisherData::class, SettingData::class];
+            PublisherData::class, SettingData::class];
     }
 
     /**
@@ -55,8 +54,6 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
         $environments = $doctrine->getRepository('AppBundle:Environment')->findAll();
         /** @var Item[] $items */
         $items = $doctrine->getRepository('AppBundle:Item')->findAll();
-        /** @var NPC[] $npcs */
-        $npcs = $doctrine->getRepository('AppBundle:NPC')->findAll();
         /** @var Publisher[] $publishers */
         $publishers = $doctrine->getRepository('AppBundle:Publisher')->findAll();
         /** @var Setting[] $settings */
@@ -89,7 +86,6 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
                 ->setEdition($faker->randomElement($editions))
                 ->setEnvironments(new ArrayCollection($faker->randomElements($environments, $faker->numberBetween(1, 2))))
                 ->setItems(new ArrayCollection($faker->randomElements($items, $faker->numberBetween(0, 5))))
-                ->setNpcs(new ArrayCollection($faker->randomElements($npcs, $faker->numberBetween(0, 6))))
                 ->setPublisher($faker->randomElement($publishers))
                 ->setSetting($faker->randomElement($settings))
                 ->setMonsters(new ArrayCollection($faker->randomElements($monsters, $faker->numberBetween(0, 20))));

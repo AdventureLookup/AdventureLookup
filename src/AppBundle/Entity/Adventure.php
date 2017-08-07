@@ -65,13 +65,6 @@ class Adventure
     private $items;
 
     /**
-     * @var NPC[]|Collection
-     * @ORM\ManyToMany(targetEntity="NPC", cascade={"persist"}, indexBy="adventures", inversedBy="adventures")
-     * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
-     */
-    private $npcs;
-
-    /**
      * @var Publisher
      * @ORM\ManyToOne(targetEntity="Publisher", fetch="EAGER", inversedBy="adventures")
      * @Gedmo\Versioned()
@@ -262,7 +255,6 @@ class Adventure
         $this->authors = new ArrayCollection();
         $this->environments = new ArrayCollection();
         $this->items = new ArrayCollection();
-        $this->npcs = new ArrayCollection();
         $this->monsters = new ArrayCollection();
         $this->changeRequests = new ArrayCollection();
 
@@ -408,37 +400,6 @@ class Adventure
     public function setItems($items)
     {
         $this->items = $items;
-        return $this;
-    }
-
-    /**
-     * @return NPC[]|Collection
-     */
-    public function getNpcs(): Collection
-    {
-        return $this->npcs;
-    }
-
-    /**
-     * @param Npc $npc
-     *
-     * @return Adventure
-     */
-    public function addNpc(NPC $npc)
-    {
-        $npc->addAdventure($this);
-        $this->npcs->add($npc);
-        return $this;
-    }
-
-    /**
-     * @param NPC[] $npcs
-     *
-     * @return Adventure
-     */
-    public function setNpcs($npcs)
-    {
-        $this->npcs = $npcs;
         return $this;
     }
 

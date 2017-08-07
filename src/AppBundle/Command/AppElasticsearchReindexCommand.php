@@ -71,7 +71,6 @@ class AppElasticsearchReindexCommand extends ContainerAwareCommand
             'edition' => self::FIELD_STRING,
             'environments' => self::FIELD_STRING,
             'items' => self::FIELD_STRING,
-            'npcs' => self::FIELD_STRING,
             'publisher' => self::FIELD_STRING,
             'setting' => self::FIELD_STRING,
             'monsters' => self::FIELD_STRING,

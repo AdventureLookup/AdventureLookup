@@ -136,16 +136,6 @@
                     </div>
                     <div class="data-row">
                         <div class="col">
-                            <div class="label">Notable NPCs</div>
-                            <ul>
-                                {% for npc in adventure.npcs %}
-                                    <li>{{ npc.name }} {{ macros.search_icon('npcs', npc.name) }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="data-row">
-                        <div class="col">
                             <div class="label">BBEG & Monsters</div>
                             <ul>
                                 {% for monster in adventure.monsters %}

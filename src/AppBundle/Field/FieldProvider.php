@@ -64,14 +64,6 @@ class FieldProvider
                 true,
                 'Notable Items',
                 "The notable magic or non-magic items that are obtained in the module. Only include named items, don't include a +1 sword."),
-            'npcs' => new Field(
-                'npcs',
-                'string',
-                true,
-                true,
-                'NPCs',
-                'Names of notable NPCs'
-            ),
             'publisher' => new Field(
                 'publisher',
                 'string',

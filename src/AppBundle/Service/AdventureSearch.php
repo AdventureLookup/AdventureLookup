@@ -271,7 +271,6 @@ class AdventureSearch
                 $hit['_source']['edition'],
                 $hit['_source']['environments'],
                 $hit['_source']['items'],
-                $hit['_source']['npcs'],
                 $hit['_source']['publisher'],
                 $hit['_source']['setting'],
                 $hit['_source']['monsters'],
