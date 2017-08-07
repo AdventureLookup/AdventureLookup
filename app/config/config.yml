@@ -138,6 +138,7 @@ easy_admin:
             - Environment
             - Item
             - Monster
+            - Villains
             - MonsterType
             - Publisher
             - Setting
@@ -207,8 +208,21 @@ easy_admin:
             class: AppBundle\Entity\Monster
             label: 'Monsters'
             form:
-                fields: ['name', 'isUnique', 'types']
+                fields: ['name', 'types']
             list:
+                dql_filter: "entity.isUnique = FALSE"
+                fields: ['name', 'types', 'adventures', 'createdBy', 'updatedBy']
+                sort: ['name', 'ASC']
+            search:
+                sort: ['name', 'ASC']
+        Villains:
+            class: AppBundle\Entity\Monster
+            label: 'Villains'
+            form:
+                fields: ['name', 'types']
+            list:
+                dql_filter: "entity.isUnique = TRUE"
+                fields: ['name', 'types', 'adventures', 'createdBy', 'updatedBy']
                 sort: ['name', 'ASC']
             search:
                 sort: ['name', 'ASC']
