@@ -81,6 +81,7 @@ class Adventure
     /**
      * @var Monster[]|Collection
      * @ORM\ManyToMany(targetEntity="Monster", cascade={"persist"}, indexBy="adventures", inversedBy="adventures")
+     * @ORM\OrderBy({"isUnique" = "DESC", "name" = "ASC"})
      * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
      */
     private $monsters;
@@ -451,6 +452,26 @@ class Adventure
     }
 
     /**
+     * @return Monster[]|Collection
+     */
+    public function getCommonMonsters()
+    {
+        return $this->monsters->filter(function (Monster $monster) {
+            return !$monster->getIsUnique();
+        });
+    }
+
+    /**
+     * @return Monster[]|Collection
+     */
+    public function getBossMonsters()
+    {
+        return $this->monsters->filter(function (Monster $monster) {
+            return $monster->getIsUnique();
+        });
+    }
+
+    /**
      * @param Monster $monster
      * @return Adventure
      */
@@ -468,6 +489,36 @@ class Adventure
     public function setMonsters($monsters)
     {
         $this->monsters = $monsters;
+        return $this;
+    }
+
+    /**
+     * @param Monster[]|Collection $monsters
+     * @return Adventure
+     */
+    public function setCommonMonsters($monsters)
+    {
+        $this->monsters = $this->monsters->filter(function (Monster $monster) {
+            return $monster->getIsUnique();
+        });
+        foreach ($monsters as $monster) {
+            $this->monsters->add($monster);
+        }
+        return $this;
+    }
+
+    /**
+     * @param Monster[]|Collection $monsters
+     * @return Adventure
+     */
+    public function setBossMonsters($monsters)
+    {
+        $this->monsters = $this->monsters->filter(function (Monster $monster) {
+            return !$monster->getIsUnique();
+        });
+        foreach ($monsters as $monster) {
+            $this->monsters->add($monster);
+        }
         return $this;
     }
 

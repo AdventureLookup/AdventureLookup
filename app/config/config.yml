@@ -138,7 +138,7 @@ easy_admin:
             - Environment
             - Item
             - Monster
-            - Villains
+            - BossMonster
             - MonsterType
             - Publisher
             - Setting
@@ -206,7 +206,7 @@ easy_admin:
                 sort: ['name', 'ASC']
         Monster:
             class: AppBundle\Entity\Monster
-            label: 'Monsters'
+            label: 'Common Monsters'
             form:
                 fields: ['name', 'types']
             list:
@@ -215,9 +215,9 @@ easy_admin:
                 sort: ['name', 'ASC']
             search:
                 sort: ['name', 'ASC']
-        Villains:
+        BossMonster:
             class: AppBundle\Entity\Monster
-            label: 'Villains'
+            label: 'Boss Monsters'
             form:
                 fields: ['name', 'types']
             list:

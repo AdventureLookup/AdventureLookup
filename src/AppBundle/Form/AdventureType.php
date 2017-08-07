@@ -11,6 +11,7 @@ use AppBundle\Entity\Monster;
 use AppBundle\Entity\Publisher;
 use AppBundle\Entity\Setting;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -108,12 +109,29 @@ class AdventureType extends AbstractType
             ]);
         $this->createAppendableEntityCollection(
             $builder,
-            'monsters',
+            'commonMonsters',
             Monster::class,
-            MonsterType::class,
+            CommonMonsterType::class,
             'addMonster',
-            'Monsters and BBEGs',
-            'The monsters and BBEGs featured in the module.'
+            'Common Monsters',
+            'The common monsters featured in the module.',
+            function (EntityRepository $er) {
+                return $er->createQueryBuilder('e')
+                    ->where('e.isUnique = 0');
+            }
+        );
+        $this->createAppendableEntityCollection(
+            $builder,
+            'bossMonsters',
+            Monster::class,
+            BossMonsterType::class,
+            'addMonster',
+            'Boss Monsters',
+            'The boss monsters and villains featured in the module.',
+            function (EntityRepository $er) {
+                return $er->createQueryBuilder('e')
+                    ->where('e.isUnique = 1');
+            }
         );
         $builder
             ->add('minStartingLevel', NumberType::class, [
@@ -223,8 +241,13 @@ class AdventureType extends AbstractType
         return 'appbundle_adventure';
     }
 
-    private function createAppendableEntityCollection(FormBuilderInterface $builder, string $fieldName, string $entity, string $form, string $method, string $title, string $help)
+    private function createAppendableEntityCollection(FormBuilderInterface $builder, string $fieldName, string $entity, string $form, string $method, string $title, string $help, callable $queryBuilder = null)
     {
+        if ($queryBuilder === null) {
+            $queryBuilder = function (EntityRepository $er) {
+                return $er->createQueryBuilder('e');
+            };
+        }
         $builder
             // First create the normal dropdown for existing entities
             ->add($fieldName, EntityType::class, [
@@ -236,7 +259,8 @@ class AdventureType extends AbstractType
                 'label' => $title,
                 'attr' => [
                     'data-allow-add' => true
-                ]
+                ],
+                'query_builder' => $queryBuilder,
             ])
             ->get($fieldName)
             // Drop any submitted options starting with 'n'.

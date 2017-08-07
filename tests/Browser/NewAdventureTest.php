@@ -15,8 +15,8 @@ class NewAdventureTest extends BrowserTestCase
     const AUTHORS = ['Jonathan Schneider', 'Matt Colville'];
     const ENVIRONMENTS = ['Environment 4', 'Environment 5'];
     const ITEMS = ['Bag of Code', 'Stone of Programming'];
-    const NPCS = ['PHP-Man', 'JS-Woman'];
-    const MONSTERS = ['Ternary Operator', 'Code Style'];
+    const COMMON_MONSTERS = ['Ternary Operator', 'Code Style'];
+    const BOSS_MONSTERS = ['Ruby', 'Rails'];
     const EDITION = 'Edition 1';
     const PUBLISHER = 'Publisher 2';
     const SETTING = 'Setting 3';
@@ -68,13 +68,13 @@ class NewAdventureTest extends BrowserTestCase
         foreach (self::ITEMS as $item) {
             $this->fillSelectizedInput($session, 'items', $item, true);
         }
-        foreach (self::NPCS as $npc) {
-            $this->fillSelectizedInput($session, 'npcs', $npc, true);
-        }
         $this->fillSelectizedInput($session, 'publisher', self::PUBLISHER, false);
         $this->fillSelectizedInput($session, 'setting', self::SETTING, false);
-        foreach (self::MONSTERS as $monster) {
-            $this->fillSelectizedInput($session, 'monsters', $monster, true);
+        foreach (self::COMMON_MONSTERS as $monster) {
+            $this->fillSelectizedInput($session, 'commonMonsters', $monster, true);
+        }
+        foreach (self::BOSS_MONSTERS as $monster) {
+            $this->fillSelectizedInput($session, 'bossMonsters', $monster, true);
         }
 
         $this->fillField($session, 'minStartingLevel', self::MIN_STARTING_LEVEL);
@@ -105,12 +105,12 @@ class NewAdventureTest extends BrowserTestCase
         foreach (self::ITEMS as $item) {
             $this->assertTrue($page->hasContent($item));
         }
-        foreach (self::NPCS as $npc) {
-            $this->assertTrue($page->hasContent($npc));
-        }
         $this->assertTrue($page->hasContent(self::PUBLISHER));
         $this->assertTrue($page->hasContent(self::SETTING));
-        foreach (self::MONSTERS as $monster) {
+        foreach (self::COMMON_MONSTERS as $monster) {
+            $this->assertTrue($page->hasContent($monster));
+        }
+        foreach (self::BOSS_MONSTERS as $monster) {
             $this->assertTrue($page->hasContent($monster));
         }
 

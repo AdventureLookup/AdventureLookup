@@ -48,7 +48,12 @@ class AdventureDocument
     /**
      * @var string[]
      */
-    private $monsters;
+    private $commonMonsters;
+
+    /**
+     * @var string[]
+     */
+    private $bossMonsters;
 
     /**
      * @var integer
@@ -123,7 +128,8 @@ class AdventureDocument
         array $items,
         string $publisher = null,
         string $setting = null,
-        array $monsters,
+        array $commonMonsters,
+        array $bossMonsters,
         string $title,
         string $description = null,
         string $slug,
@@ -149,7 +155,8 @@ class AdventureDocument
         $this->items = $items;
         $this->publisher = $publisher;
         $this->setting = $setting;
-        $this->monsters = $monsters;
+        $this->commonMonsters = $commonMonsters;
+        $this->bossMonsters = $bossMonsters;
         $this->title = $title;
         $this->description = $description;
         $this->slug = $slug;
@@ -195,7 +202,8 @@ class AdventureDocument
             $adventure->getItems()->map(function (Item $item) { return $item->getName(); })->getValues(),
             static::getNameOrNull($adventure->getPublisher()),
             static::getNameOrNull($adventure->getSetting()),
-            $adventure->getMonsters()->map(function (Monster $monster) { return $monster->getName(); })->getValues(),
+            $adventure->getCommonMonsters()->map(function (Monster $monster) { return $monster->getName(); })->getValues(),
+            $adventure->getBossMonsters()->map(function (Monster $monster) { return $monster->getName(); })->getValues(),
             $adventure->getTitle(),
             $adventure->getDescription(),
             $adventure->getSlug(),
@@ -376,11 +384,19 @@ class AdventureDocument
     }
 
     /**
-     * @return \string[]
+     * @return string[]
      */
-    public function getMonsters()
+    public function getCommonMonsters()
     {
-        return $this->monsters;
+        return $this->commonMonsters;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getBossMonsters()
+    {
+        return $this->bossMonsters;
     }
 
     /**

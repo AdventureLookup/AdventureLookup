@@ -20,7 +20,10 @@ class AdventureSerializer
             'items' => $adventure->getItems()->map(function (Item $item) { return $item->getName(); })->getValues(),
             'publisher' => $this->getNameOrNull($adventure->getPublisher()),
             'setting' => $this->getNameOrNull($adventure->getSetting()),
-            'monsters' => $adventure->getMonsters()->map(function (Monster $monster) { return $monster->getName(); })->getValues(),
+            'commonMonsters' => $adventure->getCommonMonsters()
+                ->map(function (Monster $monster) { return $monster->getName(); })->getValues(),
+            'bossMonsters' => $adventure->getBossMonsters()
+                ->map(function (Monster $monster) { return $monster->getName(); })->getValues(),
 
             'title' => $adventure->getTitle(),
             'description' => $adventure->getDescription(),

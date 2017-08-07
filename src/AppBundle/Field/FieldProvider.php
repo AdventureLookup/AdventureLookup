@@ -80,13 +80,21 @@ class FieldProvider
                 'Setting',
                 'The narrative universe the module is set in.'
             ),
-            'monsters' => new Field(
-                'monsters',
+            'commonMonsters' => new Field(
+                'commonMonsters',
                 'string',
                 true,
                 true,
-                'Monsters and BBEGs',
-                'The monsters and BBEGs featured in the module.'
+                'Common Monsters',
+                'The common monsters featured in the module.'
+            ),
+            'bossMonsters' => new Field(
+                'bossMonsters',
+                'string',
+                true,
+                true,
+                'Boss Monsters',
+                'The boss monsters and villains featured in the module.'
             ),
 
 

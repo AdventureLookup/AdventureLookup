@@ -29,7 +29,6 @@ class RelatedEntitiesData extends AbstractFixture
             Environment::class,
             Item::class,
             Monster::class,
-            NPC::class,
             Publisher::class,
             Setting::class,
         ];

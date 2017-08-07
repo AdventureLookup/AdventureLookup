@@ -132,6 +132,7 @@ function debounce(func, wait, immediate) {
 
                 // Set name attribute
                 const $nameInput = $(`#appbundle_adventure_${fieldName}-new_${newFieldIndex}_name`);
+                $nameInput.attr('readonly', true);
                 $nameInput.val(query);
 
                 $modalAddBtn.one('click', () => {

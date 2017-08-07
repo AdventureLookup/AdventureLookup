@@ -34,7 +34,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
     {
         return [
             EasyAdminEvents::POST_INITIALIZE => ['denyAccessToUsersForCurators'],
-            EasyAdminEvents::PRE_PERSIST => ['makeSureVillainsAreUnique']
+            EasyAdminEvents::PRE_PERSIST => ['makeSureBossMonstersAreUnique']
         ];
     }
 
@@ -44,7 +44,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         $this->tokenStorage = $tokenStorage;
     }
 
-    public function makeSureVillainsAreUnique(GenericEvent $event)
+    public function makeSureBossMonstersAreUnique(GenericEvent $event)
     {
         $entity = $event->getSubject();
 
@@ -54,7 +54,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         /** @var Request $request */
         $request = $event->getArgument('request');
         $easyAdminRequestAttributes = $request->attributes->get('easyadmin');
-        if ($easyAdminRequestAttributes['entity']['name'] === 'Villains') {
+        if ($easyAdminRequestAttributes['entity']['name'] === 'BossMonster') {
             $entity->setIsUnique(true);
             $event->setArgument('entity', $entity);
         }
