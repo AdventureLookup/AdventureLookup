@@ -13,9 +13,12 @@
     </php>
 
     <testsuites>
+        <testsuite name="unittests">
+            <directory>tests/AppBundle</directory>
+            <exclude>tests/AppBundle/Controller</exclude>
+        </testsuite>
         <testsuite name="functional">
-            <directory>tests</directory>
-            <exclude>tests/Browser</exclude>
+            <directory>tests/AppBundle/Controller</directory>
         </testsuite>
         <testsuite name="browser">
             <directory>tests/Browser</directory>

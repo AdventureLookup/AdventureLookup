@@ -7,6 +7,7 @@ env:
     - SYMFONY_ENV=test
     - PHPUNIT=vendor/symfony/phpunit-bridge/bin/simple-phpunit
   matrix:
+    - TESTSUITE=unittests
     - TESTSUITE=functional
     - TESTSUITE=browser
 
@@ -26,12 +27,18 @@ cache:
 
 install:
   - composer install -n
-  - npm install
-  - npm run prod
+  - |
+    if [ ${TESTSUITE} == "browser" ]; then
+      npm install;
+      npm run prod;
+    fi;
 
 before_script:
-  - php bin/console doctrine:schema:create -n
-  - php bin/console app:elasticsearch:reindex
+  - |
+    if [ ${TESTSUITE} == "functional" ] || [ "$TESTSUITE" == "browser" ]; then
+      php bin/console doctrine:schema:create -n
+      php bin/console app:elasticsearch:reindex
+    fi;
 
 script:
   - set -e
@@ -49,11 +56,11 @@ script:
       bash scripts/start-phantomjs.sh
     fi;
   # Execute tests
-  # Only gather coverage on PHP 7.1
+  # Only gather coverage on PHP 7.1, ignore browser tests for coverage.
   - |
-    if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.0" ]] || [ "$TESTSUITE" == "browser" ]; then
+    if [ ${TRAVIS_PHP_VERSION:0:3} == "7.0" ] || [ "$TESTSUITE" == "browser" ]; then
       $PHPUNIT --testsuite $TESTSUITE;
     else
       $PHPUNIT --testsuite $TESTSUITE --coverage-clover=coverage.xml;
-      bash <(curl -s https://codecov.io/bash) -X gcov -X coveragepy;
+      bash <(curl -s https://codecov.io/bash) -X gcov -X coveragepy -F $TESTSUITE;
     fi;
