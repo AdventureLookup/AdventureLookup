@@ -14,3 +14,34 @@ web_profiler:
 
 swiftmailer:
     disable_delivery: true
+
+# Use an SQLite database for tests
+doctrine:
+    dbal:
+        default_connection: default
+        connections:
+            default:
+                driver:   pdo_sqlite
+                path:     "%kernel.cache_dir%/test.db"
+
+# The best practice in symfony is to put a HTTP basic auth
+# for the firewall in test env, so that not to have to
+# make a request to the login form every single time.
+# http://symfony.com/doc/current/cookbook/testing/http_authentication.html
+security:
+    firewalls:
+        main:
+            http_basic: ~
+
+liip_functional_test:
+    cache_sqlite_db: true
+    authentication:
+        username: 'User #1'
+        password: user1
+
+parameters:
+    elasticsearch:
+        index_name: 'adventure_test'
+        type_name: 'all'
+    # Overwrite default blame listener to be able to manually set the user to blame.
+    stof_doctrine_extensions.event_listener.blame.class: Tests\ConfigurableBlameListener
