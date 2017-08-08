@@ -62,8 +62,6 @@ script:
 jobs:
   include:
     - stage: deploy
-      addons:
-        ssh_known_hosts: dev.adventurelookup.com
       services: []
       env:
         # Encrypted SSH_PORT
@@ -78,6 +76,9 @@ jobs:
         - eval "$(ssh-agent -s)"
         - chmod 600 /tmp/deployment_id_rsa
         - ssh-add /tmp/deployment_id_rsa
+        # Add hashed public host keys to known hosts
+        - echo "|1|/o5a0+nceYEVEmz2IzW3gFdfUjQ=|nht4u7Jzhx0LvWoAyQgb2BpRI8U= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAaH7fLxrEAQA5GVcNqLTvXYRBfd8Ap0LMQLehsGkC8/G3pQBMITd38oqmfdlxCtvu4qdAYecmZ6a/B9E+vDGG4=" >> $HOME/.ssh/known_hosts
+        - echo "|1|9zrUMwfMs5nMGI51R1y6SUCKu5Y=|dvwXduUFjsR1jqF9w/JjPRcO41w= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAaH7fLxrEAQA5GVcNqLTvXYRBfd8Ap0LMQLehsGkC8/G3pQBMITd38oqmfdlxCtvu4qdAYecmZ6a/B9E+vDGG4=" >> $HOME/.ssh/known_hosts
       deploy:
         provider: script
         script: bash $TRAVIS_BUILD_DIR/scripts/deploy-to-dev.sh
