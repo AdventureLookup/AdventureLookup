@@ -138,8 +138,8 @@ easy_admin:
             - Environment
             - Item
             - Monster
+            - BossMonster
             - MonsterType
-            - NPC
             - Publisher
             - Setting
             - User
@@ -206,25 +206,29 @@ easy_admin:
                 sort: ['name', 'ASC']
         Monster:
             class: AppBundle\Entity\Monster
-            label: 'Monsters'
+            label: 'Common Monsters'
             form:
-                fields: ['name', 'isUnique', 'types']
+                fields: ['name', 'types']
             list:
+                dql_filter: "entity.isUnique = FALSE"
+                fields: ['name', 'types', 'adventures', 'createdBy', 'updatedBy']
+                sort: ['name', 'ASC']
+            search:
+                sort: ['name', 'ASC']
+        BossMonster:
+            class: AppBundle\Entity\Monster
+            label: 'Boss Monsters'
+            form:
+                fields: ['name', 'types']
+            list:
+                dql_filter: "entity.isUnique = TRUE"
+                fields: ['name', 'types', 'adventures', 'createdBy', 'updatedBy']
                 sort: ['name', 'ASC']
             search:
                 sort: ['name', 'ASC']
         MonsterType:
             class: AppBundle\Entity\MonsterType
             label: 'Monster Types'
-            form:
-                fields: ['name']
-            list:
-                sort: ['name', 'ASC']
-            search:
-                sort: ['name', 'ASC']
-        NPC:
-            class: AppBundle\Entity\NPC
-            label: 'NPCs'
             form:
                 fields: ['name']
             list:

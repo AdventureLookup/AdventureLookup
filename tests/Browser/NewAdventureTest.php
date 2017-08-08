@@ -15,8 +15,8 @@ class NewAdventureTest extends BrowserTestCase
     const AUTHORS = ['Jonathan Schneider', 'Matt Colville'];
     const ENVIRONMENTS = ['Environment 4', 'Environment 5'];
     const ITEMS = ['Bag of Code', 'Stone of Programming'];
-    const NPCS = ['PHP-Man', 'JS-Woman'];
-    const MONSTERS = ['Ternary Operator', 'Code Style'];
+    const COMMON_MONSTERS = ['Ternary Operator', 'Code Style'];
+    const BOSS_MONSTERS = ['Ruby', 'Rails'];
     const EDITION = 'Edition 1';
     const PUBLISHER = 'Publisher 2';
     const SETTING = 'Setting 3';
@@ -29,7 +29,10 @@ class NewAdventureTest extends BrowserTestCase
     const LINK = 'http://example.com';
     const THUMBNAIL_URL = 'http://lorempixel.com/130/160/';
 
-    public function testAddSimpleAdventure()
+    /**
+     * @dataProvider triggerValidationErrorProvider
+     */
+    public function testAddSimpleAdventure(bool $triggerValidationError)
     {
         $this->loadFixtures([UserData::class]);
         $session = $this->makeSession(true);
@@ -37,8 +40,16 @@ class NewAdventureTest extends BrowserTestCase
         $this->visit($session, '/adventures/new');
 
         $page = $session->getPage();
-        $this->fillField($session, 'title', self::TITLE);
+        if (!$triggerValidationError) {
+            $this->fillField($session, 'title', self::TITLE);
+        }
         $page->findButton('Save')->click();
+
+        if ($triggerValidationError) {
+            $this->assertTrue($page->hasContent('This value should not be blank.'));
+            $this->fillField($session, 'title', self::TITLE);
+            $page->findButton('Save')->click();
+        }
 
         $page = $session->getPage();
 
@@ -48,14 +59,19 @@ class NewAdventureTest extends BrowserTestCase
         $this->assertWorkingIndex($session);
     }
 
-    public function testAddComplexAdventure()
+    /**
+     * @dataProvider triggerValidationErrorProvider
+     */
+    public function testAddComplexAdventure(bool $triggerValidationError)
     {
         $this->loadFixtures([UserData::class, RelatedEntitiesData::class]);
         $session = $this->makeSession(true);
 
         $this->visit($session, '/adventures/new');
 
-        $this->fillField($session, 'title', self::TITLE);
+        if (!$triggerValidationError) {
+            $this->fillField($session, 'title', self::TITLE);
+        }
         $this->fillField($session, 'description', self::DESCRIPTION);
 
         foreach (self::AUTHORS as $author) {
@@ -68,13 +84,13 @@ class NewAdventureTest extends BrowserTestCase
         foreach (self::ITEMS as $item) {
             $this->fillSelectizedInput($session, 'items', $item, true);
         }
-        foreach (self::NPCS as $npc) {
-            $this->fillSelectizedInput($session, 'npcs', $npc, true);
-        }
         $this->fillSelectizedInput($session, 'publisher', self::PUBLISHER, false);
         $this->fillSelectizedInput($session, 'setting', self::SETTING, false);
-        foreach (self::MONSTERS as $monster) {
-            $this->fillSelectizedInput($session, 'monsters', $monster, true);
+        foreach (self::COMMON_MONSTERS as $monster) {
+            $this->fillSelectizedInput($session, 'commonMonsters', $monster, true);
+        }
+        foreach (self::BOSS_MONSTERS as $monster) {
+            $this->fillSelectizedInput($session, 'bossMonsters', $monster, true);
         }
 
         $this->fillField($session, 'minStartingLevel', self::MIN_STARTING_LEVEL);
@@ -91,6 +107,12 @@ class NewAdventureTest extends BrowserTestCase
         $page = $session->getPage();
         $page->findButton('Save')->click();
 
+        if ($triggerValidationError) {
+            $this->assertTrue($page->hasContent('This value should not be blank.'));
+            $this->fillField($session, 'title', self::TITLE);
+            $page->findButton('Save')->click();
+        }
+
         $this->assertPath($session, '/adventures/' . self::SLUG . '');
         $this->assertTrue($page->hasContent(self::TITLE));
         $this->assertTrue($page->hasContent(self::DESCRIPTION));
@@ -105,12 +127,12 @@ class NewAdventureTest extends BrowserTestCase
         foreach (self::ITEMS as $item) {
             $this->assertTrue($page->hasContent($item));
         }
-        foreach (self::NPCS as $npc) {
-            $this->assertTrue($page->hasContent($npc));
-        }
         $this->assertTrue($page->hasContent(self::PUBLISHER));
         $this->assertTrue($page->hasContent(self::SETTING));
-        foreach (self::MONSTERS as $monster) {
+        foreach (self::COMMON_MONSTERS as $monster) {
+            $this->assertTrue($page->hasContent($monster));
+        }
+        foreach (self::BOSS_MONSTERS as $monster) {
             $this->assertTrue($page->hasContent($monster));
         }
 
@@ -150,5 +172,13 @@ class NewAdventureTest extends BrowserTestCase
             $page = $session->getPage();
             $page->pressButton('Add');
         }
+    }
+
+    public function triggerValidationErrorProvider()
+    {
+        return [
+            [false],
+            [true]
+        ];
     }
 }

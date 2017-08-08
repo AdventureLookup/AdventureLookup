@@ -36,11 +36,6 @@ class AdventureDocument
     private $items;
 
     /**
-     * @var string[]
-     */
-    private $npcs;
-
-    /**
      * @var string
      */
     private $publisher;
@@ -53,7 +48,12 @@ class AdventureDocument
     /**
      * @var string[]
      */
-    private $monsters;
+    private $commonMonsters;
+
+    /**
+     * @var string[]
+     */
+    private $bossMonsters;
 
     /**
      * @var integer
@@ -126,10 +126,10 @@ class AdventureDocument
         string $edition = null,
         array $environments,
         array $items,
-        array $npcs,
         string $publisher = null,
         string $setting = null,
-        array $monsters,
+        array $commonMonsters,
+        array $bossMonsters,
         string $title,
         string $description = null,
         string $slug,
@@ -153,10 +153,10 @@ class AdventureDocument
         $this->edition = $edition;
         $this->environments = $environments;
         $this->items = $items;
-        $this->npcs = $npcs;
         $this->publisher = $publisher;
         $this->setting = $setting;
-        $this->monsters = $monsters;
+        $this->commonMonsters = $commonMonsters;
+        $this->bossMonsters = $bossMonsters;
         $this->title = $title;
         $this->description = $description;
         $this->slug = $slug;
@@ -200,10 +200,10 @@ class AdventureDocument
             static::getNameOrNull($adventure->getEdition()),
             $adventure->getEnvironments()->map(function (Environment $environment) { return $environment->getName(); })->getValues(),
             $adventure->getItems()->map(function (Item $item) { return $item->getName(); })->getValues(),
-            $adventure->getNpcs()->map(function (NPC $npc) { return $npc->getName(); })->getValues(),
             static::getNameOrNull($adventure->getPublisher()),
             static::getNameOrNull($adventure->getSetting()),
-            $adventure->getMonsters()->map(function (Monster $monster) { return $monster->getName(); })->getValues(),
+            $adventure->getCommonMonsters()->map(function (Monster $monster) { return $monster->getName(); })->getValues(),
+            $adventure->getBossMonsters()->map(function (Monster $monster) { return $monster->getName(); })->getValues(),
             $adventure->getTitle(),
             $adventure->getDescription(),
             $adventure->getSlug(),
@@ -296,14 +296,6 @@ class AdventureDocument
     }
 
     /**
-     * @return string[]
-     */
-    public function getNpcs(): array
-    {
-        return $this->npcs;
-    }
-
-    /**
      * @return string
      */
     public function getPublisher()
@@ -392,11 +384,19 @@ class AdventureDocument
     }
 
     /**
-     * @return \string[]
+     * @return string[]
      */
-    public function getMonsters()
+    public function getCommonMonsters()
     {
-        return $this->monsters;
+        return $this->commonMonsters;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getBossMonsters()
+    {
+        return $this->bossMonsters;
     }
 
     /**
