@@ -44,13 +44,21 @@ class SearchIndexUpdater implements EventSubscriber
      */
     private $adventureIdsToRemove;
 
-    public function __construct(ElasticSearch $elasticSearch)
+    /**
+     * If true, force immediate ElasticSearch refresh.
+     * This is useful for tests, so they don't continue when the index isn't yet refreshed.
+     * @var bool
+     */
+    private $isTestEnvironment;
+
+    public function __construct(ElasticSearch $elasticSearch, $environment)
     {
         $this->serializer = new AdventureSerializer();
         $this->client = $elasticSearch->getClient();
         $this->indexName = $elasticSearch->getIndexName();
         $this->typeName = $elasticSearch->getTypeName();
         $this->adventureIdsToRemove = [];
+        $this->isTestEnvironment = $environment === 'test';
     }
 
     /**
@@ -184,7 +192,8 @@ class SearchIndexUpdater implements EventSubscriber
             'index' => $this->indexName,
             'type' => $this->typeName,
             'id' => $id,
-            'body' => $this->serializer->toElasticDocument($adventure)
+            'body' => $this->serializer->toElasticDocument($adventure),
+            'refresh' => $this->isTestEnvironment,
         ]);
     }
 
@@ -201,6 +210,7 @@ class SearchIndexUpdater implements EventSubscriber
                 'index' => $this->indexName,
                 'type' => $this->typeName,
                 'id' => $adventureId,
+                'refresh' => $this->isTestEnvironment,
             ]);
         } catch (Missing404Exception $e) {
             // Apparently already deleted.
