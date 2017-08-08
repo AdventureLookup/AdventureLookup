@@ -62,5 +62,5 @@ script:
       $PHPUNIT --testsuite $TESTSUITE;
     else
       $PHPUNIT --testsuite $TESTSUITE --coverage-clover=coverage.xml;
-      bash <(curl -s https://codecov.io/bash) -X gcov -X coveragepy -F $TESTSUITE;
+      bash <(curl -s https://codecov.io/bash) -X gcov -X coveragepy
     fi;
