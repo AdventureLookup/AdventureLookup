@@ -113,7 +113,7 @@ class Adventure
      * @var integer
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Assert\Range(min=1)
+     * @Assert\Range(min=0)
      * @Gedmo\Versioned()
      */
     private $minStartingLevel;
@@ -122,7 +122,7 @@ class Adventure
      * @var integer
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Assert\Range(min=1)
+     * @Assert\Range(min=0)
      * @Gedmo\Versioned()
      */
     private $maxStartingLevel;
