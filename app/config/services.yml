@@ -14,7 +14,9 @@ services:
 
     search_index_updater:
          class: AppBundle\Listener\SearchIndexUpdater
-         autowire: true
+         arguments:
+            - "@app.elasticsearch"
+            - "%kernel.environment%"
          tags:
              - { name: doctrine.event_subscriber, connection: default }
 
