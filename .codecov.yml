@@ -1,3 +1,4 @@
 codecov:
+  comment: false
   ci:
     - !styleci.com
