@@ -29,7 +29,10 @@ class NewAdventureTest extends BrowserTestCase
     const LINK = 'http://example.com';
     const THUMBNAIL_URL = 'http://lorempixel.com/130/160/';
 
-    public function testAddSimpleAdventure()
+    /**
+     * @dataProvider triggerValidationErrorProvider
+     */
+    public function testAddSimpleAdventure(bool $triggerValidationError)
     {
         $this->loadFixtures([UserData::class]);
         $session = $this->makeSession(true);
@@ -37,8 +40,16 @@ class NewAdventureTest extends BrowserTestCase
         $this->visit($session, '/adventures/new');
 
         $page = $session->getPage();
-        $this->fillField($session, 'title', self::TITLE);
+        if (!$triggerValidationError) {
+            $this->fillField($session, 'title', self::TITLE);
+        }
         $page->findButton('Save')->click();
+
+        if ($triggerValidationError) {
+            $this->assertTrue($page->hasContent('This value should not be blank.'));
+            $this->fillField($session, 'title', self::TITLE);
+            $page->findButton('Save')->click();
+        }
 
         $page = $session->getPage();
 
@@ -48,14 +59,19 @@ class NewAdventureTest extends BrowserTestCase
         $this->assertWorkingIndex($session);
     }
 
-    public function testAddComplexAdventure()
+    /**
+     * @dataProvider triggerValidationErrorProvider
+     */
+    public function testAddComplexAdventure(bool $triggerValidationError)
     {
         $this->loadFixtures([UserData::class, RelatedEntitiesData::class]);
         $session = $this->makeSession(true);
 
         $this->visit($session, '/adventures/new');
 
-        $this->fillField($session, 'title', self::TITLE);
+        if (!$triggerValidationError) {
+            $this->fillField($session, 'title', self::TITLE);
+        }
         $this->fillField($session, 'description', self::DESCRIPTION);
 
         foreach (self::AUTHORS as $author) {
@@ -90,6 +106,12 @@ class NewAdventureTest extends BrowserTestCase
 
         $page = $session->getPage();
         $page->findButton('Save')->click();
+
+        if ($triggerValidationError) {
+            $this->assertTrue($page->hasContent('This value should not be blank.'));
+            $this->fillField($session, 'title', self::TITLE);
+            $page->findButton('Save')->click();
+        }
 
         $this->assertPath($session, '/adventures/' . self::SLUG . '');
         $this->assertTrue($page->hasContent(self::TITLE));
@@ -150,5 +172,13 @@ class NewAdventureTest extends BrowserTestCase
             $page = $session->getPage();
             $page->pressButton('Add');
         }
+    }
+
+    public function triggerValidationErrorProvider()
+    {
+        return [
+            [false],
+            [true]
+        ];
     }
 }
