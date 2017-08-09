@@ -4,14 +4,16 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                <h1 class="my-5">Recent activity</h1>
+                <h1 class="mt-5">Recent Activity</h1>
+                <small>Showing page {{ pagination.currentPageNumber }} of {{ pagination.pageCount }} pages.</small>
                 <table class="table">
                     <tbody>
-                    {% for log in logs %}
+                    {% for log in pagination %}
                         {{ audit(log) }}
                     {% endfor %}
                     </tbody>
                 </table>
+                {{ knp_pagination_render(pagination) }}
             </div>
         </div>
     </div>

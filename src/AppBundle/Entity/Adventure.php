@@ -65,13 +65,6 @@ class Adventure
     private $items;
 
     /**
-     * @var NPC[]|Collection
-     * @ORM\ManyToMany(targetEntity="NPC", cascade={"persist"}, indexBy="adventures", inversedBy="adventures")
-     * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
-     */
-    private $npcs;
-
-    /**
      * @var Publisher
      * @ORM\ManyToOne(targetEntity="Publisher", fetch="EAGER", inversedBy="adventures")
      * @Gedmo\Versioned()
@@ -88,6 +81,7 @@ class Adventure
     /**
      * @var Monster[]|Collection
      * @ORM\ManyToMany(targetEntity="Monster", cascade={"persist"}, indexBy="adventures", inversedBy="adventures")
+     * @ORM\OrderBy({"isUnique" = "DESC", "name" = "ASC"})
      * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
      */
     private $monsters;
@@ -113,7 +107,7 @@ class Adventure
      * @var integer
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Assert\Range(min=1)
+     * @Assert\Range(min=0)
      * @Gedmo\Versioned()
      */
     private $minStartingLevel;
@@ -122,7 +116,7 @@ class Adventure
      * @var integer
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Assert\Range(min=1)
+     * @Assert\Range(min=0)
      * @Gedmo\Versioned()
      */
     private $maxStartingLevel;
@@ -262,7 +256,6 @@ class Adventure
         $this->authors = new ArrayCollection();
         $this->environments = new ArrayCollection();
         $this->items = new ArrayCollection();
-        $this->npcs = new ArrayCollection();
         $this->monsters = new ArrayCollection();
         $this->changeRequests = new ArrayCollection();
 
@@ -412,37 +405,6 @@ class Adventure
     }
 
     /**
-     * @return NPC[]|Collection
-     */
-    public function getNpcs(): Collection
-    {
-        return $this->npcs;
-    }
-
-    /**
-     * @param Npc $npc
-     *
-     * @return Adventure
-     */
-    public function addNpc(NPC $npc)
-    {
-        $npc->addAdventure($this);
-        $this->npcs->add($npc);
-        return $this;
-    }
-
-    /**
-     * @param NPC[] $npcs
-     *
-     * @return Adventure
-     */
-    public function setNpcs($npcs)
-    {
-        $this->npcs = $npcs;
-        return $this;
-    }
-
-    /**
      * @return Publisher
      */
     public function getPublisher()
@@ -490,6 +452,26 @@ class Adventure
     }
 
     /**
+     * @return Monster[]|Collection
+     */
+    public function getCommonMonsters()
+    {
+        return $this->monsters->filter(function (Monster $monster) {
+            return !$monster->getIsUnique();
+        });
+    }
+
+    /**
+     * @return Monster[]|Collection
+     */
+    public function getBossMonsters()
+    {
+        return $this->monsters->filter(function (Monster $monster) {
+            return $monster->getIsUnique();
+        });
+    }
+
+    /**
      * @param Monster $monster
      * @return Adventure
      */
@@ -507,6 +489,36 @@ class Adventure
     public function setMonsters($monsters)
     {
         $this->monsters = $monsters;
+        return $this;
+    }
+
+    /**
+     * @param Monster[]|Collection $monsters
+     * @return Adventure
+     */
+    public function setCommonMonsters($monsters)
+    {
+        $this->monsters = $this->monsters->filter(function (Monster $monster) {
+            return $monster->getIsUnique();
+        });
+        foreach ($monsters as $monster) {
+            $this->monsters->add($monster);
+        }
+        return $this;
+    }
+
+    /**
+     * @param Monster[]|Collection $monsters
+     * @return Adventure
+     */
+    public function setBossMonsters($monsters)
+    {
+        $this->monsters = $this->monsters->filter(function (Monster $monster) {
+            return !$monster->getIsUnique();
+        });
+        foreach ($monsters as $monster) {
+            $this->monsters->add($monster);
+        }
         return $this;
     }
 

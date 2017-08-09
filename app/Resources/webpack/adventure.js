@@ -91,6 +91,32 @@ function debounce(func, wait, immediate) {
         let createNewItemCallback = false;
         if ($select.data('allow-add')) {
             createNewItemCallback = function(query, callback) {
+                // Check for existing selected options in select input
+                let existingOptionWithSameName = null;
+                const existingOptions = $select[0].selectize.options;
+                Object.keys(existingOptions).forEach(function (key) {
+                    let option = existingOptions[key];
+                    if (option.title.toLowerCase() === query.toLowerCase()) {
+                        existingOptionWithSameName = option;
+                    }
+                });
+                if (existingOptionWithSameName !== null) {
+                    callback();
+                    alert('An entity with the same name already exists.');
+                    return;
+                }
+                // Check for existing new entities on the page
+                $('input[id^="appbundle_adventure_' + fieldName + '-new_"][id$="_name"]').each(function () {
+                    if ($(this).val().toLowerCase() === query.toLowerCase()) {
+                        existingOptionWithSameName = $(this).val();
+                    }
+                });
+                if (existingOptionWithSameName !== null) {
+                    callback();
+                    alert('An entity with the same name is already going to be added to the adventure.');
+                    return;
+                }
+
                 const $modal = $('#newFieldContentModal');
                 const $modalForm = $modal.find('.modal-form');
                 const $modalAddBtn = $modal.find('#newFieldContentModal-add');
@@ -106,6 +132,7 @@ function debounce(func, wait, immediate) {
 
                 // Set name attribute
                 const $nameInput = $(`#appbundle_adventure_${fieldName}-new_${newFieldIndex}_name`);
+                $nameInput.attr('readonly', true);
                 $nameInput.val(query);
 
                 $modalAddBtn.one('click', () => {

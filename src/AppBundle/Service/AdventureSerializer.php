@@ -8,7 +8,6 @@ use AppBundle\Entity\Author;
 use AppBundle\Entity\Environment;
 use AppBundle\Entity\Item;
 use AppBundle\Entity\Monster;
-use AppBundle\Entity\NPC;
 
 class AdventureSerializer
 {
@@ -19,10 +18,12 @@ class AdventureSerializer
             'edition' => $this->getNameOrNull($adventure->getEdition()),
             'environments' => $adventure->getEnvironments()->map(function (Environment $environment) { return $environment->getName(); })->getValues(),
             'items' => $adventure->getItems()->map(function (Item $item) { return $item->getName(); })->getValues(),
-            'npcs' => $adventure->getNpcs()->map(function (NPC $npc) { return $npc->getName(); })->getValues(),
             'publisher' => $this->getNameOrNull($adventure->getPublisher()),
             'setting' => $this->getNameOrNull($adventure->getSetting()),
-            'monsters' => $adventure->getMonsters()->map(function (Monster $monster) { return $monster->getName(); })->getValues(),
+            'commonMonsters' => $adventure->getCommonMonsters()
+                ->map(function (Monster $monster) { return $monster->getName(); })->getValues(),
+            'bossMonsters' => $adventure->getBossMonsters()
+                ->map(function (Monster $monster) { return $monster->getName(); })->getValues(),
 
             'title' => $adventure->getTitle(),
             'description' => $adventure->getDescription(),

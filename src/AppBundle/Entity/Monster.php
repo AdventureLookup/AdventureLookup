@@ -12,9 +12,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * Monster
  *
- * @ORM\Table(name="monster")
+ * @ORM\Table(name="monster", uniqueConstraints={
+ *      @ORM\UniqueConstraint(name="name_and_isUnique", columns={"name", "is_unique"})
+ * })
  * @ORM\Entity(repositoryClass="AppBundle\Repository\MonsterRepository")
- * @UniqueEntity("name")
+ * @UniqueEntity({"name", "isUnique"})
  */
 class Monster implements HasAdventuresInterface
 {
@@ -36,7 +38,7 @@ class Monster implements HasAdventuresInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255, unique=true)
+     * @ORM\Column(name="name", type="string", length=255)
      * @Assert\NotBlank()
      */
     private $name;

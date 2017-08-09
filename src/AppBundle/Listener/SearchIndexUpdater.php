@@ -10,6 +10,7 @@ use AppBundle\Service\ElasticSearch;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use Elasticsearch\Client;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 
@@ -38,12 +39,26 @@ class SearchIndexUpdater implements EventSubscriber
      */
     private $typeName;
 
-    public function __construct(ElasticSearch $elasticSearch)
+    /**
+     * @var int[]
+     */
+    private $adventureIdsToRemove;
+
+    /**
+     * If true, force immediate ElasticSearch refresh.
+     * This is useful for tests, so they don't continue when the index isn't yet refreshed.
+     * @var bool
+     */
+    private $isTestEnvironment;
+
+    public function __construct(ElasticSearch $elasticSearch, $environment)
     {
         $this->serializer = new AdventureSerializer();
         $this->client = $elasticSearch->getClient();
         $this->indexName = $elasticSearch->getIndexName();
         $this->typeName = $elasticSearch->getTypeName();
+        $this->adventureIdsToRemove = [];
+        $this->isTestEnvironment = $environment === 'test';
     }
 
     /**
@@ -55,9 +70,11 @@ class SearchIndexUpdater implements EventSubscriber
     {
         return [
             'onFlush',
+            'preRemove',
             'postPersist',
             'postUpdate',
             'postRemove',
+            'postFlush',
         ];
     }
 
@@ -82,6 +99,20 @@ class SearchIndexUpdater implements EventSubscriber
         }
     }
 
+    /**
+     * Keep track of all ids of adventures being removed. We need to save them for later, because the id of
+     * a removed adventure is not available inside postRemove.
+     *
+     * @param LifecycleEventArgs $args
+     */
+    public function preRemove(LifecycleEventArgs $args)
+    {
+        $entity = $args->getEntity();
+        if ($entity instanceof Adventure) {
+            $this->adventureIdsToRemove[] = $entity->getId();
+        }
+    }
+
     public function postPersist(LifecycleEventArgs $args)
     {
         $this->handleInsertOrUpdate($args);
@@ -94,7 +125,24 @@ class SearchIndexUpdater implements EventSubscriber
 
     public function postRemove(LifecycleEventArgs $args)
     {
-        $this->handleRemoval($args);
+        $entity = $args->getEntity();
+        if ($entity instanceof Adventure) {
+            // Do nothing - if this is an adventure being deleted, Doctrine sets its id to null.
+            // We will delete the adventure in the postFlush listener - we saved the id in the preRemove listener.
+        } else {
+            // Don't delete the search index if the entity is not an adventure.
+            // Simply reindex the adventure instead.
+            $this->handleInsertOrUpdate($args);
+        }
+    }
+
+    public function postFlush(PostFlushEventArgs $args)
+    {
+        foreach ($this->adventureIdsToRemove as $adventureId) {
+            $this->deleteSearchIndexForAdventureId($adventureId);
+        }
+        // Make sure to reset the ids to remove in case another flush operation is following.
+        $this->adventureIdsToRemove = [];
     }
 
     private function handleInsertOrUpdate(LifecycleEventArgs $args)
@@ -107,18 +155,6 @@ class SearchIndexUpdater implements EventSubscriber
                 continue;
             }
             $this->updateSearchIndexForAdventure($adventure);
-        }
-    }
-
-    private function handleRemoval(LifecycleEventArgs $args)
-    {
-        $entity = $args->getEntity();
-        // Only delete the search index if the entity is an adventure.
-        // Otherwise reindex the adventure.
-        if ($entity instanceof Adventure) {
-            $this->deleteSearchIndexForAdventure($entity);
-        } else {
-            $this->handleInsertOrUpdate($args);
         }
     }
 
@@ -156,7 +192,8 @@ class SearchIndexUpdater implements EventSubscriber
             'index' => $this->indexName,
             'type' => $this->typeName,
             'id' => $id,
-            'body' => $this->serializer->toElasticDocument($adventure)
+            'body' => $this->serializer->toElasticDocument($adventure),
+            'refresh' => $this->isTestEnvironment,
         ]);
     }
 
@@ -164,15 +201,16 @@ class SearchIndexUpdater implements EventSubscriber
      * Deletes the search index for the given adventure.
      * Fails silently if the index is already deleted.
      *
-     * @param Adventure $adventure
+     * @param int $adventureId
      */
-    private function deleteSearchIndexForAdventure(Adventure $adventure)
+    private function deleteSearchIndexForAdventureId(int $adventureId)
     {
         try {
             $this->client->delete([
                 'index' => $this->indexName,
                 'type' => $this->typeName,
-                'id' => $adventure->getId(),
+                'id' => $adventureId,
+                'refresh' => $this->isTestEnvironment,
             ]);
         } catch (Missing404Exception $e) {
             // Apparently already deleted.

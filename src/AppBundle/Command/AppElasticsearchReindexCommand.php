@@ -4,7 +4,6 @@ namespace AppBundle\Command;
 
 use AppBundle\Entity\Adventure;
 use AppBundle\Listener\SearchIndexUpdater;
-use Elasticsearch\ClientBuilder;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -71,10 +70,10 @@ class AppElasticsearchReindexCommand extends ContainerAwareCommand
             'edition' => self::FIELD_STRING,
             'environments' => self::FIELD_STRING,
             'items' => self::FIELD_STRING,
-            'npcs' => self::FIELD_STRING,
             'publisher' => self::FIELD_STRING,
             'setting' => self::FIELD_STRING,
-            'monsters' => self::FIELD_STRING,
+            'commonMonsters' => self::FIELD_STRING,
+            'bossMonsters' => self::FIELD_STRING,
 
             'title' => self::FIELD_STRING,
             'description' => self::FIELD_TEXT,

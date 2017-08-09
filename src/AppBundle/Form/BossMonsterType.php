@@ -6,12 +6,13 @@ use AppBundle\Entity\Monster;
 use AppBundle\Entity\MonsterType as MonsterTypeEntity;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class MonsterType extends AbstractType
+class BossMonsterType extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -22,16 +23,18 @@ class MonsterType extends AbstractType
             ->add('name', TextType::class, [
                 'required' => true,
             ])
-            ->add('isUnique', CheckboxType::class, [
-                'required' => false,
-                'help' => 'Check this if the monster is a known named individual.'
-            ])
             ->add('types', EntityType::class, [
+                'help' => 'Select all types that apply',
                 'choice_label' => 'name',
                 'required' => true,
                 'class' => MonsterTypeEntity::class,
                 'multiple' => true,
-            ]);
+            ])
+        ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $formEvent) {
+            /** @var Monster $monster */
+            $monster = $formEvent->getData();
+            $monster->setIsUnique(true);
+        });
     }
     
     /**
