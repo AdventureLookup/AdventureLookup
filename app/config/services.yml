@@ -1,82 +1,40 @@
-# Learn more about services, parameters and containers at
-# http://symfony.com/doc/current/service_container.html
-parameters:
-    #parameter_name: value
-
 services:
-    app.elasticsearch:
-        class: AppBundle\Service\ElasticSearch
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+    AppBundle\:
+        resource: '../../src/AppBundle/*'
+        exclude: '../../src/AppBundle/{Entity,Repository}'
+    AppBundle\Controller\:
+        resource: '../../src/AppBundle/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+
+    AppBundle\Service\ElasticSearch:
         arguments:
-            - "@logger"
-            - "%elasticsearch%"
+            $config: "%elasticsearch%"
         tags:
             - { name: monolog.logger, channel: elasticsearch }
 
-    search_index_updater:
-         class: AppBundle\Listener\SearchIndexUpdater
-         arguments:
-            - "@app.elasticsearch"
-            - "%kernel.environment%"
-         tags:
-             - { name: doctrine.event_subscriber, connection: default }
+    AppBundle\Listener\SearchIndexUpdater:
+        arguments:
+            $environment: "%kernel.environment%"
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
 
-    app.subscribers.easy_admin:
-         class: AppBundle\Listener\EasyAdminSubscriber
-         autowire: true
-         tags:
-             - { name: kernel.event_subscriber }
-
-    adventure_search:
-        class: AppBundle\Service\AdventureSearch
-        autowire: true
-
-    app.image_type_extension:
-        class: AppBundle\Form\Extension\HelpTypeExtension
-        autowire: true
+    AppBundle\Form\Extension\HelpTypeExtension:
         tags:
             - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\FormType }
 
-    app.twig_extension.default:
-        class: AppBundle\Twig\AppExtension
-        autowire: true
+    AppBundle\Listener\HashPasswordListener:
         tags:
-            - { name: twig.extension }
-
-    app.twig_extension.audit:
-            class: AppBundle\Twig\AuditExtension
-            autowire: true
-            tags:
-                - { name: twig.extension }
-
-    app.field_provider:
-        class: AppBundle\Field\FieldProvider
-        autowire: true
+            - { name: doctrine.event_subscriber, connection: default }
 
     twig.extension.date:
-       class: Twig_Extensions_Extension_Date
-       tags:
+        class: Twig_Extensions_Extension_Date
+        # For some reason the translation doesn't work if we autowire this service.
+        autowire: false
+        tags:
             - { name: twig.extension }
-
-    app.security.voter.adventure:
-        class: AppBundle\Security\AdventureVoter
-        autowire: true
-        tags:
-            - { name: security.voter }
-
-    app.security.voter.change_request:
-        class: AppBundle\Security\ChangeRequestVoter
-        autowire: true
-        tags:
-            - { name: security.voter }
-
-    app.doctrine.hash_password_listener:
-        class: AppBundle\Listener\HashPasswordListener
-        autowire: true
-        tags:
-            - { name: doctrine.event_subscriber }
-
-    app.form.change_request:
-        class: AppBundle\Form\ChangeRequestType
-        autowire: true
-        tags:
-            - { name: form.type }

@@ -63,11 +63,6 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
 
         $faker = Faker\Factory::create();
 
-        // Disable indexing temporarily.
-        $doctrine->getManager()->getEventManager()->removeEventSubscriber(
-            $this->container->get('search_index_updater')
-        );
-
         for ($i = 0; $i < 200; $i++) {
             $adventure = new Adventure();
             $adventure

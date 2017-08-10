@@ -6,7 +6,7 @@ namespace AppBundle\Security;
 use AppBundle\Entity\ChangeRequest;
 use AppBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\AccessDecisionManager;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ChangeRequestVoter extends Voter
@@ -16,11 +16,11 @@ class ChangeRequestVoter extends Voter
     const EDIT_CURATOR_REMARKS = 'edit_curator_remarks';
 
     /**
-     * @var AccessDecisionManager
+     * @var AccessDecisionManagerInterface
      */
     private $decisionManager;
 
-    public function __construct(AccessDecisionManager $decisionManager)
+    public function __construct(AccessDecisionManagerInterface $decisionManager)
     {
         $this->decisionManager = $decisionManager;
     }
