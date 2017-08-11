@@ -22,7 +22,7 @@ class ApiController extends Controller
      * @param string $fieldName
      * @return JsonResponse
      */
-    public function autocompleteFieldValue(Request $request, FieldProvider $fieldProvider, AdventureSearch $adventureSearch, string $fieldName)
+    public function autocompleteFieldValueAction(Request $request, FieldProvider $fieldProvider, AdventureSearch $adventureSearch, string $fieldName)
     {
         try {
             $field = $fieldProvider->getField($fieldName);

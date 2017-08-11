@@ -1,10 +1,11 @@
 {
-    "name": "cmfcmf/adl",
+    "name": "adventurelookup/adventurelookup",
+    "description": "A tool that will allow Dungeon Masters to find the adventure they're looking for.",
     "license": "MIT",
     "type": "project",
     "autoload": {
         "psr-4": {
-            "": "src/"
+            "AppBundle\\": "src/AppBundle"
         },
         "classmap": [
             "app/AppKernel.php",

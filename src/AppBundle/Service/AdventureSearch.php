@@ -7,7 +7,6 @@ use AppBundle\Entity\AdventureDocument;
 use AppBundle\Exception\FieldDoesNotExistException;
 use AppBundle\Field\Field;
 use AppBundle\Field\FieldProvider;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class AdventureSearch
@@ -18,11 +17,6 @@ class AdventureSearch
      * @var \Elasticsearch\Client
      */
     private $client;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
 
     /**
      * @var FieldProvider
@@ -39,9 +33,8 @@ class AdventureSearch
      */
     private $typeName;
 
-    public function __construct(EntityManagerInterface $em, FieldProvider $fieldProvider, ElasticSearch $elasticSearch)
+    public function __construct(FieldProvider $fieldProvider, ElasticSearch $elasticSearch)
     {
-        $this->em = $em;
         $this->fieldProvider = $fieldProvider;
         $this->client = $elasticSearch->getClient();
         $this->indexName = $elasticSearch->getIndexName();
