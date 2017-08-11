@@ -3,7 +3,7 @@
     <div class="card mb-3">
         <div class="card-block">
             {% if adventure.thumbnailUrl %}
-                <img alt="Cover of {{ adventure.title }}" data-original="{{ adventure.thumbnailUrl }}" class="ml-1 pull-right" style="max-width: 120px; max-height: 140px;" />
+                <img alt="Cover of {{ adventure.title }}" data-original="{{ adventure.thumbnailUrl }}" class="ml-sm-1 float-sm-right" style="max-width: 120px; max-height: 140px;" />
             {% endif %}
             <h4 class="card-title">
                 <a href="{{ path('adventure_show', { 'slug': adventure.slug }) }}">
@@ -16,17 +16,17 @@
             <hr>
             <!-- Quick look info -->
             <div class="container-fluid row justify-content-center">
-                <div class="col-2 text-center">
+                <div class="col-6 col-sm text-center">
                     <i class="fa fa-gear"></i>
                     <p class="text-muted mb-2">Edition</p>
                     <h6>{{adventure.edition}}</h6>
                 </div>
-                <div class="col-2 text-center">
+                <div class="col-6 col-sm text-center">
                     <i class="fa fa-globe"></i>
                     <p class="text-muted mb-2">Setting</p>
                     <h6>{{adventure.setting}}</h6>
                 </div>
-                <div class="col-2 text-center">
+                <div class="col-6 col-sm text-center">
                     <i class="fa fa-flag"></i>
                     <p class="text-muted mb-2">Starting Level</p>
                     <h6>
@@ -37,12 +37,12 @@
                         {% endif %}
                     </h6>
                 </div>
-                <div class="col-2 text-center">
+                <div class="col-6 col-sm text-center">
                     <i class="fa fa-tree"></i>
                     <p class="text-muted mb-2">Environment</p>
                     <h6>{{adventure.environments|join(', ')}}</h6>
                 </div>
-                <div class="col-2 text-center">
+                <div class="d-none d-sm-block col-sm text-center">
                     <i class="fa fa-map"></i>
                     <p class="text-muted mb-2">Tactical Maps</p>
                     <h6>{{ adventure.tacticalMaps|bool2str }}</h6>
