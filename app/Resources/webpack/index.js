@@ -1,18 +1,13 @@
 import 'jquery/src/jquery'
 import 'bootstrap/dist/js/bootstrap.js';
 import 'font-awesome-webpack';
-import 'select2/dist/css/select2.css';
-import 'select2/dist/js/select2.full.js';
 import 'selectize/dist/css/selectize.bootstrap3.css'
 import 'selectize/dist/js/standalone/selectize'
 import toastr from 'toastr/toastr';
 import 'toastr/toastr.scss';
-import "typeahead.js/dist/typeahead.jquery";
-import "typeahead.js-bootstrap4-css/typeaheadjs.css";
 import LazyLoad from "vanilla-lazyload/dist/lazyload";
 import './sass/style.scss';
 
-import './add-content.js';
 import './search.js';
 import './adventure.js';
 

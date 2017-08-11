@@ -35,4 +35,21 @@ class ApiController extends Controller
 
         return new JsonResponse($results);
     }
+
+    /**
+     * @Route("/autocomplete/similar-titles", name="similar_titles_search")
+     *
+     * @param Request $request
+     * @param AdventureSearch $adventureSearch
+     * @return JsonResponse
+     */
+    public function findSimilarTitlesAction(Request $request, AdventureSearch $adventureSearch)
+    {
+        $q = $request->query->get('q', false);
+        if ($q === false) {
+            throw new NotFoundHttpException();
+        }
+
+        return new JsonResponse($adventureSearch->similarTitles($q));
+    }
 }

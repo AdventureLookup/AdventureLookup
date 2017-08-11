@@ -14,7 +14,9 @@ Encore
         // If you make it work, don't forget to include the vendor css in the base.html.twig layout:
         // <link rel="stylesheet" href="{{ asset('assets/vendor.css') }}" />
         //'bootstrap/scss/bootstrap',
-        // TODO: Add other vendor dependencies in here once we cleaned them up.
+        'toastr',
+        'selectize',
+        'vanilla-lazyload',
     ])
 
     .enableSassLoader()

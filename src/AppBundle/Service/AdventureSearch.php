@@ -104,15 +104,13 @@ class AdventureSearch
             return [];
         }
 
-        $fieldUtils = new FieldUtils();
-
         $result = $this->client->search([
             'index' => $this->indexName,
             'type' => $this->typeName,
             'body' => [
                 'query' => [
                     'match' => [
-                        $fieldUtils->getFieldNameById('title') => [
+                        'title' => [
                             'query' => $title,
                             'operator' => 'and',
                         ]
@@ -146,30 +144,7 @@ class AdventureSearch
         if ($q === '') {
             return current($this->aggregateMostCommonValues([$field], $size));
         }
-        // Using the completion suggester returns duplicate documents...
-        //$fieldName = 'info_' . $field->getId() . '_s';
-        //$response = $this->client->suggest([
-        //    'index' => $this->indexName,
-        //    'body' => [
-        //        'suggest' => [
-        //            'prefix' => $q,
-        //            'completion' => [
-        //                'field' => $fieldName,
-        //                'fuzzy' => new \stdClass()
-        //            ]
-        //        ],
-        //    ]
-        //]);
-        //$results = [
-        //    'total' => count($response['suggest'][0]['options']),
-        //    'results' => []
-        //];
-        //foreach($response['suggest'][0]['options'] as $suggestion) {
-        //    $results['results'][] = $suggestion['text'];
-        //}
-        //return $results;
 
-        // Old version using match_phrase_prefix
         $fieldName = $field->getName();
         $response = $this->client->search([
             'index' => $this->indexName,
@@ -248,19 +223,6 @@ class AdventureSearch
         return $results;
     }
 
-    public function getStats()
-    {
-        return $this->client->search([
-            'index' => $this->indexName,
-            'type' => $this->typeName,
-            'body' => [
-                '_source' => false,
-                'size' => 0,
-                'aggs' => $this->fieldAggregations()
-            ]
-        ])['aggregations'];
-    }
-
     /**
      * @param array $hits
      * @return AdventureDocument[]
@@ -293,7 +255,6 @@ class AdventureSearch
                 $hit['_source']['pregeneratedCharacters'],
                 $hit['_source']['tacticalMaps'],
                 $hit['_source']['handouts'],
-                [],
                 $hit['_score']
             );
         }, $hits);

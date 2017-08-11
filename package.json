@@ -9,12 +9,8 @@
     "bootstrap": "4.0.0-alpha.6",
     "font-awesome": "^4.7.0",
     "font-awesome-webpack": "^0.0.5-beta.2",
-    "nouislider": "^9.2.0",
-    "select2": "^4.0.3",
     "selectize": "^0.12.4",
     "toastr": "^2.1.2",
-    "typeahead.js": "^0.11.1",
-    "typeahead.js-bootstrap4-css": "^1.0.0",
     "vanilla-lazyload": "^8.0.3"
   },
   "devDependencies": {
