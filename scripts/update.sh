@@ -16,6 +16,7 @@ git checkout $BRANCH
 git pull
 export SYMFONY_ENV=prod
 composer install --no-dev --optimize-autoloader -n
+npm install
 npm run prod
 php bin/console doctrine:migrations:migrate -n
 php bin/console app:elasticsearch:reindex -n
