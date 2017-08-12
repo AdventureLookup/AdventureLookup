@@ -29,6 +29,8 @@ class NewAdventureTest extends BrowserTestCase
     const LINK = 'http://example.com';
     const THUMBNAIL_URL = 'http://lorempixel.com/130/160/';
 
+    const CREATE_ADVENTURE_PATH = '/adventure';
+
     /**
      * @dataProvider triggerValidationErrorProvider
      */
@@ -37,7 +39,7 @@ class NewAdventureTest extends BrowserTestCase
         $this->loadFixtures([UserData::class]);
         $session = $this->makeSession(true);
 
-        $this->visit($session, '/adventures/new');
+        $this->visit($session, self::CREATE_ADVENTURE_PATH);
 
         $page = $session->getPage();
         if (!$triggerValidationError) {
@@ -67,7 +69,7 @@ class NewAdventureTest extends BrowserTestCase
         $this->loadFixtures([UserData::class, RelatedEntitiesData::class]);
         $session = $this->makeSession(true);
 
-        $this->visit($session, '/adventures/new');
+        $this->visit($session, self::CREATE_ADVENTURE_PATH);
 
         if (!$triggerValidationError) {
             $this->fillField($session, 'title', self::TITLE);

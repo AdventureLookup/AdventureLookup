@@ -14,15 +14,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Adventure controller.
- *
- * @Route("adventures")
  */
 class AdventureController extends Controller
 {
     /**
      * Lists all adventure entities.
      *
-     * @Route("/", name="adventure_index")
+     * @Route("/adventures/", name="adventure_index")
      * @Method({"GET", "POST"})
      *
      * @param Request $request
@@ -49,7 +47,7 @@ class AdventureController extends Controller
     /**
      * Creates a new adventure entity.
      *
-     * @Route("/new", name="adventure_new")
+     * @Route("/adventure", name="adventure_new")
      * @Method({"GET", "POST"})
      *
      * @param Request $request
@@ -85,7 +83,7 @@ class AdventureController extends Controller
     /**
      * Finds and displays a adventure entity.
      *
-     * @Route("/{slug}", name="adventure_show")
+     * @Route("/adventures/{slug}", name="adventure_show")
      * @Method("GET")
      *
      * @param Adventure $adventure
@@ -106,7 +104,7 @@ class AdventureController extends Controller
     /**
      * Displays a form to edit an existing adventure entity.
      *
-     * @Route("/{id}/edit", name="adventure_edit")
+     * @Route("/adventures/{id}/edit", name="adventure_edit")
      * @Method({"GET", "POST"})
      *
      * @param Request $request
@@ -137,7 +135,7 @@ class AdventureController extends Controller
     /**
      * Deletes a adventure entity.
      *
-     * @Route("/{id}", name="adventure_delete")
+     * @Route("/adventures/{id}", name="adventure_delete")
      * @Method("DELETE")
      *
      * @param Request $request
