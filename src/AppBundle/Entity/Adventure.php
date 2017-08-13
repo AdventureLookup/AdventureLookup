@@ -91,6 +91,7 @@ class Adventure
      *
      * @ORM\Column(name="title", type="string", length=255, unique=true)
      * @Assert\NotBlank()
+     * @Assert\Length(max=255)
      * @Gedmo\Versioned()
      */
     private $title;
@@ -125,6 +126,7 @@ class Adventure
      * @var string
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(max=255)
      * @Gedmo\Versioned()
      */
     private $startingLevelRange;
@@ -142,6 +144,7 @@ class Adventure
      * @var string
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(max=255)
      * @Gedmo\Versioned()
      */
     private $foundIn;
@@ -150,6 +153,7 @@ class Adventure
      * @var string
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(max=255)
      * @Gedmo\Versioned()
      */
     private $partOf;
@@ -158,6 +162,7 @@ class Adventure
      * @var string
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(max=255)
      * @Assert\Url()
      * @Gedmo\Versioned()
      */
@@ -167,6 +172,7 @@ class Adventure
      * @var string
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(max=255)
      * @Assert\Url()
      * @Gedmo\Versioned()
      */

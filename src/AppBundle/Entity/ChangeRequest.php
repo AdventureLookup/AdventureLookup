@@ -26,6 +26,7 @@ class ChangeRequest
      * @var string
      *
      * @ORM\Column(name="fieldName", type="string", length=255, nullable=true)
+     * @Assert\Length(max=255)
      */
     private $fieldName;
 
