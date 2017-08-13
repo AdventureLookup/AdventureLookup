@@ -25,6 +25,7 @@ class User implements AdvancedUserInterface, \Serializable
     /**
      * @ORM\Column(type="string", length=25, unique=true)
      * @Assert\NotBlank()
+     * @Assert\Length(max=25)
      */
     private $username;
 
@@ -40,6 +41,7 @@ class User implements AdvancedUserInterface, \Serializable
      * @ORM\Column(type="string", length=60, unique=true)
      * @Assert\NotBlank()
      * @Assert\Email()
+     * @Assert\Length(max=60)
      */
     private $email;
 
