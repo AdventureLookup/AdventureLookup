@@ -32,3 +32,7 @@ monolog:
 
 #swiftmailer:
 #    delivery_addresses: ['me@example.com']
+
+
+ewz_recaptcha:
+    enabled: false
