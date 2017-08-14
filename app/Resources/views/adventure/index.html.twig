@@ -24,6 +24,10 @@
                             <div class="alert alert-info d-md-none">
                                 Please scroll down to skip the filters and see your search results!
                             </div>
+                            <a class="btn btn-sm btn-secondary btn-block mb-1" role="button" href="{{ path('adventure_index', {q: q}) }}">
+                                <i class="fa fa-times"></i>
+                                Clear all Filters
+                            </a>
                             {% include 'adventure/search_filters.html.twig' %}
                         </div>
                         <div class="col-md-9">
