@@ -156,7 +156,7 @@ class AdventureType extends AbstractType
             ])
             ->add('foundIn', TextType::class, [
                 'required' => false,
-                'help' => 'The magazine, site, etc. the adventure can be found in.',
+                'help' => 'If the adventure is part of a larger product, like a magazine or anthology, list it here.',
                 'attr' => [
                     'data-autocomplete' => true,
                 ],
