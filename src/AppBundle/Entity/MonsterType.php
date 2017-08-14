@@ -5,12 +5,15 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * MonsterType
  *
  * @ORM\Table(name="monster_type")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\MonsterTypeRepository")
+ * @UniqueEntity("name")
  */
 class MonsterType
 {
@@ -32,6 +35,7 @@ class MonsterType
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, unique=true)
+     * @Assert\Length(max=255)
      */
     private $name;
 

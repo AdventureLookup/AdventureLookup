@@ -32,6 +32,7 @@ class Publisher implements HasAdventuresInterface
      *
      * @ORM\Column(name="name", type="string", length=255, unique=true)
      * @Assert\NotBlank()
+     * @Assert\Length(max=255)
      */
     private $name;
 
