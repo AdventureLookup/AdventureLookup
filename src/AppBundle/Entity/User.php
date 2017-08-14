@@ -51,6 +51,20 @@ class User implements AdvancedUserInterface, \Serializable
     private $isActive;
 
     /**
+     * @ORM\Column(type="string", length=180, unique=true, nullable=true)
+     *
+     * @var string|null
+     */
+    private $passwordResetToken;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @var \DateTimeInterface|null
+     */
+    private $passwordResetRequestedAt;
+
+    /**
      * @var string[]
      *
      * @ORM\Column(name="roles", type="simple_array")
@@ -96,6 +110,46 @@ class User implements AdvancedUserInterface, \Serializable
     public function getRoles()
     {
         return $this->roles;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPasswordResetToken()
+    {
+        return $this->passwordResetToken;
+    }
+
+    /**
+     * @param string|null $passwordResetToken
+     *
+     * @return User
+     */
+    public function setPasswordResetToken($passwordResetToken)
+    {
+        $this->passwordResetToken = $passwordResetToken;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTimeInterface|null
+     */
+    public function getPasswordResetRequestedAt()
+    {
+        return $this->passwordResetRequestedAt;
+    }
+
+    /**
+     * @param \DateTimeInterface|null $passwordResetRequestedAt
+     *
+     * @return User
+     */
+    public function setPasswordResetRequestedAt($passwordResetRequestedAt)
+    {
+        $this->passwordResetRequestedAt = $passwordResetRequestedAt;
+
+        return $this;
     }
 
     public function eraseCredentials()
