@@ -39,6 +39,13 @@ class ChangeRequest
     private $comment;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=512, nullable=true)
+     */
+    private $curatorRemarks;
+
+    /**
      * @var boolean
      *
      * @ORM\Column(name="resolved", type="boolean", nullable=false)
@@ -150,6 +157,25 @@ class ChangeRequest
     public function getComment()
     {
         return $this->comment;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCuratorRemarks()
+    {
+        return $this->curatorRemarks;
+    }
+
+    /**
+     * @param string $curatorRemarks
+     *
+     * @return ChangeRequest
+     */
+    public function setCuratorRemarks($curatorRemarks)
+    {
+        $this->curatorRemarks = $curatorRemarks;
+        return $this;
     }
 
     /**
