@@ -126,16 +126,6 @@
                     </div>
                     <div class="data-row">
                         <div class="col">
-                            <div class="label">Notable Items</div>
-                            <ul>
-                                {% for item in adventure.items %}
-                                    <li>{{ item.name }} {{ macros.search_icon('items', item.name) }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="data-row">
-                        <div class="col">
                             <div class="label">Boss Monsters and Villains</div>
                             <ul>
                                 {% for monster in adventure.bossMonsters %}
@@ -149,7 +139,17 @@
                                 {% endfor %}
                             </ul>
                         </div>
-                        <div class="col">
+                    </div>
+                    <div class="data-row">
+                        <div class="col-sm">
+                            <div class="label">Notable Items</div>
+                            <ul>
+                                {% for item in adventure.items %}
+                                    <li>{{ item.name }} {{ macros.search_icon('items', item.name) }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col-sm">
                             <div class="label">Common Monsters</div>
                             <ul>
                                 {% for monster in adventure.commonMonsters %}
