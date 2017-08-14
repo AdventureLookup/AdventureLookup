@@ -167,7 +167,7 @@ class FieldProvider
                 false,
                 true,
                 'Found In',
-                'The place the adventure can be found in.'
+                'If the adventure is part of a larger product, like a magazine or anthology, list it here.'
             ),
             'partOf' => new Field(
                 'partOf',
