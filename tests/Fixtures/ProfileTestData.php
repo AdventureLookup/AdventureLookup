@@ -44,9 +44,6 @@ class ProfileTestData extends AbstractFixture implements DependentFixtureInterfa
         $myAdventure = new Adventure();
         $myAdventure->setTitle('My Adventure 1');
 
-        $myAdventure2 = new Adventure();
-        $myAdventure2->setTitle('My Adventure 2');
-
         $myUnresolvedChangeRequest = new ChangeRequest();
         $myUnresolvedChangeRequest->setAdventure($myAdventure);
         $myUnresolvedChangeRequest->setResolved(false);
@@ -57,15 +54,30 @@ class ProfileTestData extends AbstractFixture implements DependentFixtureInterfa
         $myResolvedChangeRequest->setResolved(true);
         $myResolvedChangeRequest->setComment('My resolved change request');
 
+        $em->persist($myAdventure);
         $em->persist($myUnresolvedChangeRequest);
         $em->persist($myResolvedChangeRequest);
-        $em->persist($myAdventure);
-        $em->persist($myAdventure2);
         $this->addReference('my-adventure-1', $myAdventure);
-        $this->addReference('my-adventure-2', $myAdventure2);
         $this->addReference('my-unresolved-change-request', $myUnresolvedChangeRequest);
         $this->addReference('my-resolved-change-request', $myResolvedChangeRequest);
 
+        $myAdventure2 = new Adventure();
+        $myAdventure2->setTitle('My Adventure 2');
+
+        $em->persist($myAdventure2);
+        $this->addReference('my-adventure-2', $myAdventure2);
+
+        $myAdventure3 = new Adventure();
+        $myAdventure3->setTitle('My Adventure 3');
+
+        $myResolvedChangeRequest2 = new ChangeRequest();
+        $myResolvedChangeRequest2->setAdventure($myAdventure3);
+        $myResolvedChangeRequest2->setResolved(true);
+        $myResolvedChangeRequest2->setComment('My other resolved change request');
+
+        $em->persist($myAdventure3);
+        $em->persist($myResolvedChangeRequest2);
+        $this->addReference('my-adventure-3', $myAdventure3);
 
         $blameListener->setUserValue($this->getReference('user-2')->getUsername());
 

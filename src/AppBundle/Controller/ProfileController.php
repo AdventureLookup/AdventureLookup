@@ -6,6 +6,7 @@ use AppBundle\Entity\Adventure;
 use AppBundle\Entity\ChangeRequest;
 use AppBundle\Entity\User;
 use AppBundle\Form\ChangePasswordType;
+use Doctrine\ORM\Query\Expr;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -38,12 +39,8 @@ class ProfileController extends Controller
         // Sort them by adventures having a change request, then by title
         $adventures = $qb
             ->where($qb->expr()->eq('a.createdBy', ':username'))
-            ->leftJoin('a.changeRequests', 'c')
+            ->leftJoin('a.changeRequests', 'c', Expr\Join::WITH, 'c.resolved = false')
             ->addSelect('c')
-            ->andWhere($qb->expr()->orX(
-                $qb->expr()->eq('c.resolved', $qb->expr()->literal(false)),
-                $qb->expr()->isNull('c.id')
-            ))
             ->orderBy('c.id', 'DESC')
             ->addOrderBy('a.title', 'ASC')
             ->setParameter('username', $user->getUsername())
