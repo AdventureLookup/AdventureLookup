@@ -36,4 +36,4 @@ toastr.options = {
 
 // Lazy-load images using
 // https://github.com/verlok/lazyload
-const myLazyLoad = new LazyLoad();
+export const myLazyLoad = new LazyLoad();

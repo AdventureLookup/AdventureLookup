@@ -33,12 +33,15 @@ class AdventureController extends Controller
         $search = $this->get('adventure_search');
 
         $q = $request->get('q', '');
+        $page = (int)$request->get('page', 1);
         $filters = $request->get('f', []);
         $fields = $this->get('app.field_provider')->getFields();
-        list($adventures, $stats) = $search->search($q, $filters);
+        list($paginatedAdventureDocuments, $totalNumberOfResults, $stats) = $search->search($q, $filters, $page);
 
         return $this->render('adventure/index.html.twig', [
-            'adventures' => $adventures,
+            'adventures' => $paginatedAdventureDocuments,
+            'totalNumberOfResults' => $totalNumberOfResults,
+            'page' => $page,
             'stats' => $stats,
             'searchFilter' => $filters,
             'fields' => $fields,

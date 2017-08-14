@@ -11,7 +11,7 @@
                 {% endif %}
                 <p>Find adventures fitting your search term!</p>
                 <div class="clearfix"></div>
-                <form method="post" action="{{ url('adventure_index') }}{##search-results#}">
+                <form method="post" action="{{ url('adventure_index') }}" id="search-form">
                     <div class="input-group input-group-lg">
                         <input class="form-control" name="q" type="text" value="{{ q }}" placeholder="goblins, mountains, ..." />
                         <span class="input-group-btn">
