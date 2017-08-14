@@ -13,6 +13,7 @@ class ChangeRequestVoter extends Voter
 {
     const CREATE = 'create';
     const TOGGLE_RESOLVED = 'toggle_resolved';
+    const EDIT_CURATOR_REMARKS = 'edit_curator_remarks';
 
     /**
      * @var AccessDecisionManager
@@ -34,7 +35,7 @@ class ChangeRequestVoter extends Voter
      */
     protected function supports($attribute, $subject)
     {
-        if (!in_array($attribute, [self::CREATE, self::TOGGLE_RESOLVED])) {
+        if (!in_array($attribute, [self::CREATE, self::TOGGLE_RESOLVED, self::EDIT_CURATOR_REMARKS])) {
             return false;
         }
         if (!($subject instanceof ChangeRequest)) {
@@ -60,7 +61,8 @@ class ChangeRequestVoter extends Voter
             case self::CREATE:
                 return $this->canCreate($subject, $token);
             case self::TOGGLE_RESOLVED:
-                return $this->canToggleResolved($subject, $token);
+            case self::EDIT_CURATOR_REMARKS:
+                return $this->canToggleResolvedAndEditCuratorRemarks($subject, $token);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -85,13 +87,13 @@ class ChangeRequestVoter extends Voter
     }
 
     /**
-     * Only curators and the adventure's author can toggle the resolved status of a change request.
+     * Only curators and the adventure's author can toggle the resolved status or edit the curator remarks of a change request.
      *
      * @param ChangeRequest $changeRequest
      * @param TokenInterface $token
      * @return bool
      */
-    private function canToggleResolved(ChangeRequest $changeRequest, TokenInterface $token)
+    private function canToggleResolvedAndEditCuratorRemarks(ChangeRequest $changeRequest, TokenInterface $token)
     {
         $user = $token->getUser();
         if (!($user instanceof User)) {
