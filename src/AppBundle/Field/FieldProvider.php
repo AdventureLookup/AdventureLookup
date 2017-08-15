@@ -177,6 +177,23 @@ class FieldProvider
                 'Part Of',
                 'The series of adventures that the module is a part of, if applicable.'
             ),
+
+            'link' => new Field(
+                'link',
+                'url',
+                false,
+                false,
+                'Link',
+                'Links to legitimate sites where the module can be procured.'
+            ),
+            'thumbnailUrl' => new Field(
+                'thumbnailUrl',
+                'url',
+                false,
+                false,
+                'Thumbnail URL',
+                'URL of the thumbnail image.'
+            ),
         ]);
     }
 
