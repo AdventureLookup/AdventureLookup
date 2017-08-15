@@ -135,22 +135,31 @@ function debounce(func, wait, immediate) {
                 $nameInput.attr('readonly', true);
                 $nameInput.val(query);
 
-                $modalAddBtn.one('click', () => {
+                const addBtnClickHandler = () => {
                     $modalAddBtn.attr('disabled', true);
                     $modalForm.children()
                         .addClass('d-none')
                         .appendTo($newEntities);
                     callback({title: query, value: 'n' + query});
-                    $modal.one('hidden.bs.modal', () => {
-                        selectized.focus();
-                    });
                     $modal.modal('hide');
-                });
+                };
+                $modalAddBtn.one('click', addBtnClickHandler);
                 $modalAddBtn.attr('disabled', false);
 
-                $modal.one('shown.bs.modal', function () {
+                $modal.one('shown.bs.modal', () => {
                     $modalAddBtn.focus()
                 });
+                $modal.one('hidden.bs.modal', () => {
+                    callback();
+                    // Make sure to remove the click handler and the modal content, the click handler
+                    // might not have been executed and the modal content not moved into the form if the
+                    // modal has been hidden without clicking the add button. Otherwise, the click
+                    // handler would trigger twice when opening the modal the next time.
+                    $modalAddBtn.off('click', addBtnClickHandler);
+                    $modalForm.children().empty();
+                    selectized.focus();
+                });
+
                 $modal.modal('show');
             };
         }
