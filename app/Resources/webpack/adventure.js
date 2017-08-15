@@ -82,7 +82,15 @@ function debounce(func, wait, immediate) {
         });
     });
 
-    let newFieldIndex = 0;
+    // Iterate through all new entity fields and gather the maximum new field index.
+    const $newEntityNames = $('input[id^="appbundle_adventure_"][id$="_name"]').filter(function () {
+        return this.id.match(/-new/);
+    });
+    const newEntityFieldIndices = $newEntityNames.map(function () {
+        const idParts = this.id.split('_');
+        return parseInt(idParts[idParts.length - 2]);
+    }).get();
+    let newFieldIndex = newEntityFieldIndices.length === 0 ? 0 : Math.max.apply(null, newEntityFieldIndices) + 1;
 
     $('select[name^="appbundle_adventure"]').each(function () {
         const $select = $(this);
