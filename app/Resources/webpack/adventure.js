@@ -151,11 +151,12 @@ function debounce(func, wait, immediate) {
                 });
                 $modal.one('hidden.bs.modal', () => {
                     callback();
-                    $nameInput.val('');
-                    // Make sure to remove the click handler, it might not have been executed if the
-                    // modal has been hidden without clicking the add button. It would trigger twice
-                    // when opening the modal next time otherwise.
+                    // Make sure to remove the click handler and the modal content, the click handler
+                    // might not have been executed and the modal content not moved into the form if the
+                    // modal has been hidden without clicking the add button. Otherwise, the click
+                    // handler would trigger twice when opening the modal the next time.
                     $modalAddBtn.off('click', addBtnClickHandler);
+                    $modalForm.children().empty();
                     selectized.focus();
                 });
 
