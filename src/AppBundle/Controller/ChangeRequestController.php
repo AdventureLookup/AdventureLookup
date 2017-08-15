@@ -65,6 +65,7 @@ class ChangeRequestController extends Controller
 
     /**
      * @Route("/new/{adventure_id}", name="changerequest_new")
+     * @Method({"GET", "POST"})
      * @ParamConverter("adventure", options={"id" = "adventure_id"})
      *
      * @param Request $request

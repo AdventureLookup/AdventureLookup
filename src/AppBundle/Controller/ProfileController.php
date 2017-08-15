@@ -61,6 +61,7 @@ class ProfileController extends Controller
 
     /**
      * @Route("/change-password", name="change_password")
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      * @return Response

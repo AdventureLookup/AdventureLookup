@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Exception\FieldDoesNotExistException;
 use AppBundle\Field\FieldProvider;
 use AppBundle\Service\AdventureSearch;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,7 +15,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class ApiController extends Controller
 {
     /**
-     * @Route("/autocomplete/{fieldName}", name="api_autocomplete_field")
+     * @Route("/autocomplete/field/{fieldName}", name="api_autocomplete_field")
+     * @Method("GET")
      *
      * @param Request $request
      * @param FieldProvider $fieldProvider
@@ -38,6 +40,7 @@ class ApiController extends Controller
 
     /**
      * @Route("/autocomplete/similar-titles", name="similar_titles_search")
+     * @Method("GET")
      *
      * @param Request $request
      * @param AdventureSearch $adventureSearch
