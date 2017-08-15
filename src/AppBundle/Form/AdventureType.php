@@ -301,7 +301,9 @@ class AdventureType extends AbstractType
                 /** @var Monster[]|Collection $newEntities */
                 $newEntities = $formEvent->getForm()->get($fieldName . '-new')->getData();
                 foreach ($newEntities as $entity) {
-                    $adventure->$method($entity);
+                    if ($entity !== null) {
+                        $adventure->$method($entity);
+                    }
                 }
             }, -200)
         ;

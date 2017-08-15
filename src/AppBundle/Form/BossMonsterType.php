@@ -33,7 +33,9 @@ class BossMonsterType extends AbstractType
         ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $formEvent) {
             /** @var Monster $monster */
             $monster = $formEvent->getData();
-            $monster->setIsUnique(true);
+            if ($monster !== null) {
+                $monster->setIsUnique(true);
+            }
         });
     }
     
