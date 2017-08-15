@@ -5,7 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\ChangeRequest;
 use AppBundle\Entity\User;
-use AppBundle\Form\ChangeRequestType;
+use AppBundle\Form\Type\ChangeRequestType;
 use AppBundle\Security\ChangeRequestVoter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;

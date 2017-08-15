@@ -4,8 +4,8 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
-use AppBundle\Form\DoPasswordResetType;
-use AppBundle\Form\RequestPasswordResetType;
+use AppBundle\Form\Type\DoPasswordResetType;
+use AppBundle\Form\Type\RequestPasswordResetType;
 use AppBundle\Security\TokenGenerator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
