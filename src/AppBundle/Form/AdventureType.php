@@ -156,7 +156,7 @@ class AdventureType extends AbstractType
             ])
             ->add('foundIn', TextType::class, [
                 'required' => false,
-                'help' => 'The magazine, site, etc. the adventure can be found in.',
+                'help' => 'If the adventure is part of a larger product, like a magazine or anthology, list it here.',
                 'attr' => [
                     'data-autocomplete' => true,
                 ],
@@ -301,7 +301,9 @@ class AdventureType extends AbstractType
                 /** @var Monster[]|Collection $newEntities */
                 $newEntities = $formEvent->getForm()->get($fieldName . '-new')->getData();
                 foreach ($newEntities as $entity) {
-                    $adventure->$method($entity);
+                    if ($entity !== null) {
+                        $adventure->$method($entity);
+                    }
                 }
             }, -200)
         ;

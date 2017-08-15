@@ -4,14 +4,16 @@ namespace AppBundle\Service;
 
 
 use AppBundle\Entity\AdventureDocument;
-use AppBundle\Entity\TagName;
 use AppBundle\Exception\FieldDoesNotExistException;
 use AppBundle\Field\Field;
 use AppBundle\Field\FieldProvider;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class AdventureSearch
 {
+    const ADVENTURES_PER_PAGE = 50;
+
     /**
      * @var \Elasticsearch\Client
      */
@@ -49,10 +51,15 @@ class AdventureSearch
     /**
      * @param string $q
      * @param array $filters
-     * @return AdventureDocument[]
+     * @param int $page
+     * @return array
      */
-    public function search(string $q, array $filters)
+    public function search(string $q, array $filters, int $page)
     {
+        if ($page < 1 ||  $page * self::ADVENTURES_PER_PAGE > 5000) {
+            throw new BadRequestHttpException();
+        }
+
         $matches = [];
 
         // First generate ES search query from free-text searchbar at the top.
@@ -62,7 +69,7 @@ class AdventureSearch
         // Now apply filters from the left-hand filterbar.
         $matches = $this->filterMatches($filters, $matches);
 
-        // If we neither have a filter, nor any kind of free-text search, return all all adventures.
+        // If we neither have a filter, nor any kind of free-text search, return all adventures.
         if (empty($matches)) {
             $matches = ['match_all' => new \stdClass()];
         }
@@ -77,16 +84,18 @@ class AdventureSearch
                         "must" => $matches
                     ]
                 ],
-                // Return up to 1000 results - we don't have any form of pagination yet,
-                // this makes sure all results are returned regardless.
-                'size' => 1000,
+                'from' => self::ADVENTURES_PER_PAGE * ($page - 1),
+                'size' => self::ADVENTURES_PER_PAGE,
                 // Also return aggregations for all fields, i.e. min/max for integer fields
                 // or the most common strings for string fields.
                 'aggs' => $this->fieldAggregations(),
             ],
         ]);
 
-        return [$this->searchResultsToAdventureDocuments($result), $result['aggregations']];
+        $hits = $result['hits']['hits'];
+        $adventureDocuments = $this->searchResultsToAdventureDocuments($hits);
+
+        return [$adventureDocuments, $result['hits']['total'], $result['aggregations']];
     }
 
     public function similarTitles($title): array
@@ -253,18 +262,12 @@ class AdventureSearch
     }
 
     /**
-     * @param array $result
+     * @param array $hits
      * @return AdventureDocument[]
      */
-    private function searchResultsToAdventureDocuments(array $result): array
+    private function searchResultsToAdventureDocuments(array $hits): array
     {
-        $qb = $this->em->createQueryBuilder();
-        $qb
-            ->select('f')
-            ->from(TagName::class, 'f', 'f.id');
-        $fields = $qb->getQuery()->execute();
-
-        return array_map(function ($hit) use ($fields) {
+        return array_map(function ($hit) {
             return new AdventureDocument(
                 $hit['_id'],
                 $hit['_source']['authors'],
@@ -293,7 +296,7 @@ class AdventureSearch
                 [],
                 $hit['_score']
             );
-        }, $result['hits']['hits']);
+        }, $hits);
     }
 
     /**

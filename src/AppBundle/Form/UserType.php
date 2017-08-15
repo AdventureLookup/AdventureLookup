@@ -23,7 +23,7 @@ class UserType extends AbstractType
                 'type' => PasswordType::class,
                 'first_options'  => ['label' => 'Password'],
                 'second_options' => ['label' => 'Repeat Password'],
-                'constraints' => new NotBlank()
+                'constraints' => [new NotBlank()]
             ])
         ;
     }

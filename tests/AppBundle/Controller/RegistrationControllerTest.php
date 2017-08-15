@@ -75,6 +75,8 @@ class RegistrationControllerTest extends WebTestCase
     {
         $password = '12345678';
         $tooLongPassword = str_repeat('a', 73);
+        $tooLongUsername = str_repeat('a', 26);
+        $tooLongEmail = str_repeat('a', 49) . '@example.com';
 
         return [
             // Empty fields
@@ -83,6 +85,10 @@ class RegistrationControllerTest extends WebTestCase
             ['cmfcmf', 'foo.bar', $password, ['This value is not a valid email address.' => 1]],
             // Password too long
             ['cmfcmf', 'cmfcmf@example.com', $tooLongPassword, ['This value is too long.' => 1]],
+            // Username too long
+            [$tooLongUsername, 'cmfcmf@example.com', $password, ['This value is too long.' => 1]],
+            // Email too long
+            ['cmfcmf', $tooLongEmail, $password, ['This value is too long.' => 1]],
             // Duplicate username and email
             ['User #1', 'user1@example.com', $password, ['Username already taken' => 1, 'Email already taken' => 1]],
         ];

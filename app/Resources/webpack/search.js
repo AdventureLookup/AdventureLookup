@@ -1,4 +1,4 @@
-import 'nouislider/distribute/nouislider.css';
+import {myLazyLoad} from "./index";
 
 (function () {
     const $page = $('#page--search-adventures');
@@ -30,5 +30,33 @@ import 'nouislider/distribute/nouislider.css';
     $('.filter-card .filters .show-more').on('click', function () {
         $(this).closest('.filters').find('.form-check').removeClass('d-none');
         $(this).remove();
+    });
+
+    let currentPage = 1;
+    const $searchForm = $("#search-form");
+    const $loadMoreBtn = $('#load-more-btn');
+    $loadMoreBtn.click(function () {
+        $loadMoreBtn.attr('disabled', true);
+        $loadMoreBtn.find('.fa-spin').removeClass('d-none');
+
+        const data = $searchForm.serialize() + '&page=' + ++currentPage;
+        $.ajax({
+            method: 'POST',
+            url: $searchForm.attr('action'),
+            data: data,
+        }).done(function (result) {
+            $('#search-results').append($(result).find('#search-results'));
+            myLazyLoad.update();
+        }).fail(function () {
+            alert('Something went wrong.');
+        }).always(function () {
+            $loadMoreBtn.attr('disabled', false);
+            $loadMoreBtn.find('.fa-spin').addClass('d-none');
+        });
+    });
+    $('#pagination-next-btn').click(function () {
+        $(this).attr('disabled', true);
+        $pageInput.val(parseInt($pageInput.val()) + 1);
+        $('#search-btn').click();
     });
 })();

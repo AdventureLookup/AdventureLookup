@@ -124,6 +124,10 @@ knp_paginator:
         pagination: 'KnpPaginatorBundle:Pagination:twitter_bootstrap_v4_pagination.html.twig'
         sortable: 'KnpPaginatorBundle:Pagination:sortable_link.html.twig'
 
+ewz_recaptcha:
+    public_key:  '%recaptcha_public_key%'
+    private_key: '%recaptcha_private_key%'
+
 # EasyAdminBundle
 # GitHub: https://github.com/javiereguiluz/EasyAdminBundle
 # Docs:   http://symfony.com/doc/current/bundles/EasyAdminBundle/index.html

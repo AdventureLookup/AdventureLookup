@@ -13,9 +13,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
-use Symfony\Component\Security\Csrf\CsrfToken;
 
 /**
  * @Route("/change-requests")
@@ -116,6 +113,32 @@ class ChangeRequestController extends Controller
 
         $resolve = $request->request->filter('resolve', true, FILTER_VALIDATE_BOOLEAN);
         $changeRequest->setResolved($resolve);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->merge($changeRequest);
+        $em->flush();
+
+        return $this->redirectToRoute('adventure_show', ['slug' => $changeRequest->getAdventure()->getSlug()]);
+    }
+
+    /**
+     * @Route("/curator-comment/{id}", name="changerequest_curator_remarks")
+     * @Method("POST")
+     *
+     * @param Request $request
+     * @param ChangeRequest $changeRequest
+     * @return Response
+     */
+    public function editCuratorRemarksAction(Request $request, ChangeRequest $changeRequest)
+    {
+        $this->denyAccessUnlessGranted(ChangeRequestVoter::EDIT_CURATOR_REMARKS, $changeRequest);
+        $csrfToken = $request->request->get('_csrf_token');
+        if (!$this->isCsrfTokenValid('curatorRemarksForChangeRequest', $csrfToken)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $remarks = $request->request->get('remarks');
+        $changeRequest->setCuratorRemarks($remarks);
 
         $em = $this->getDoctrine()->getManager();
         $em->merge($changeRequest);

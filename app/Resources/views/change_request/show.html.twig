@@ -19,6 +19,7 @@
                     {% else %}
                         General change request
                     {% endif %}
+                    <small>by @{{ changeRequest.createdBy }}.</small>
                     {% if changeRequest.resolved %}
                         <small>RESOLVED</small>
                     {% endif %}
@@ -26,14 +27,29 @@
                 <small>{{ changeRequest.createdAt|time_diff }}</small>
             </div>
             <p class="mb-1">{{ changeRequest.comment|nl2br }}</p>
+            {% if changeRequest.curatorRemarks is not empty %}
+                <p class="mb-1">Curator remarks: {{ changeRequest.curatorRemarks }}</p>
+            {% endif %}
             <div class="d-flex w-100 justify-content-between">
-                <small>Proposed by @{{ changeRequest.createdBy }}.</small>
                 {% if is_granted('toggle_resolved', changeRequest) %}
                     <form action="{{ path('changerequest_resolve', {id: changeRequest.id}) }}" method="post">
                         <div>
                             <input type="hidden" name="_csrf_token" value="{{ csrf_token('resolveChangeRequest') }}" />
                             <input type="hidden" name="resolve" value="{{ not changeRequest.resolved }}" />
-                            <input type="submit" value="{% if changeRequest.resolved %}Unresolve{% else %}Resolve{% endif %}" class="btn-link" role="button" />
+                            <input type="submit" value="{% if changeRequest.resolved %}Unresolve{% else %}Resolve{% endif %}" class="btn btn-sm btn-primary" role="button" />
+                        </div>
+                    </form>
+                {% endif %}
+                {% if is_granted('edit_curator_remarks', changeRequest) %}
+                    <form action="{{ path('changerequest_curator_remarks', {id: changeRequest.id}) }}" method="post" class="w-100 ml-3">
+                        <div>
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('curatorRemarksForChangeRequest') }}" />
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control" placeholder="Publicly comment on this change request (i.e. if invalid)" name="remarks" maxlength="512" value="{{ changeRequest.curatorRemarks }}">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-secondary" type="submit" role="button">Update Remarks</button>
+                                </span>
+                            </div>
                         </div>
                     </form>
                 {% endif %}

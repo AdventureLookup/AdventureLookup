@@ -18,5 +18,9 @@ parameters:
     secret: ThisTokenIsNotSoSecretChangeIt
 
     google_analytics_code: ~
+
+    recaptcha_public_key: ~
+    recaptcha_private_key: ~
+
     # Email addresses to be notified if an error occurs
     error_email_addresses: []

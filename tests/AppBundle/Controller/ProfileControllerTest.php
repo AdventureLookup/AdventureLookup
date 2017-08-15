@@ -155,6 +155,7 @@ class ProfileControllerTest extends WebTestCase
             ['your-adventure', false, -1],
             ['my-adventure-1', true, 1],
             ['my-adventure-2', true, 0],
+            ['my-adventure-3', true, 0]
         ];
     }
 

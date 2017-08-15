@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * ChangeRequest
@@ -26,6 +27,7 @@ class ChangeRequest
      * @var string
      *
      * @ORM\Column(name="fieldName", type="string", length=255, nullable=true)
+     * @Assert\Length(max=255)
      */
     private $fieldName;
 
@@ -35,6 +37,13 @@ class ChangeRequest
      * @ORM\Column(name="comment", type="text", nullable=true)
      */
     private $comment;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=512, nullable=true)
+     */
+    private $curatorRemarks;
 
     /**
      * @var boolean
@@ -148,6 +157,25 @@ class ChangeRequest
     public function getComment()
     {
         return $this->comment;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCuratorRemarks()
+    {
+        return $this->curatorRemarks;
+    }
+
+    /**
+     * @param string $curatorRemarks
+     *
+     * @return ChangeRequest
+     */
+    public function setCuratorRemarks($curatorRemarks)
+    {
+        $this->curatorRemarks = $curatorRemarks;
+        return $this;
     }
 
     /**

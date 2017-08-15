@@ -167,7 +167,7 @@ class FieldProvider
                 false,
                 true,
                 'Found In',
-                'The place the adventure can be found in.'
+                'If the adventure is part of a larger product, like a magazine or anthology, list it here.'
             ),
             'partOf' => new Field(
                 'partOf',
@@ -176,6 +176,23 @@ class FieldProvider
                 true,
                 'Part Of',
                 'The series of adventures that the module is a part of, if applicable.'
+            ),
+
+            'link' => new Field(
+                'link',
+                'url',
+                false,
+                false,
+                'Link',
+                'Links to legitimate sites where the module can be procured.'
+            ),
+            'thumbnailUrl' => new Field(
+                'thumbnailUrl',
+                'url',
+                false,
+                false,
+                'Thumbnail URL',
+                'URL of the thumbnail image.'
             ),
         ]);
     }
