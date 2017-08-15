@@ -49,7 +49,7 @@ class MonsterType
 
     public function __construct()
     {
-        $this->types = new ArrayCollection();
+        $this->monsters = new ArrayCollection();
     }
 
     public function __toString(): string
