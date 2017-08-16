@@ -4,6 +4,7 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/xenial64"
   config.vm.network "forwarded_port", guest: 8000, host: 8000
+  config.vm.network "forwarded_port", guest: 8001, host: 8001
   config.vm.network "forwarded_port", guest: 9200, host: 9200
 
   if Vagrant::Util::Platform.windows? then
@@ -52,17 +53,14 @@ Vagrant.configure("2") do |config|
      curl -sL https://deb.nodesource.com/setup_6.x | bash -
      apt install -y nodejs
 
+     # Update NPM
+     npm install npm@latest -g
+
      # PhantomJS headless browser
      wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
      tar -xvjf phantomjs-2.1.1-linux-x86_64.tar.bz2
      mv phantomjs-2.1.1-linux-x86_64 /opt/phantomjs
      ln -s /opt/phantomjs/bin/phantomjs /usr/bin/phantomjs
-
-     # Yarn (Frontend Package Manager)
-     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-     apt -y update
-     apt -y install yarn
 
      # Composer (PHP Package Manager)
      php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"

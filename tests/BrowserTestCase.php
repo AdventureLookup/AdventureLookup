@@ -15,7 +15,7 @@ use Zumba\Mink\Driver\PhantomJSDriver;
 class BrowserTestCase extends TestCase
 {
     const HOST = "http://localhost:" . self::PORT;
-    const PORT = '8001';
+    const PORT = '8003';
 
     /**
      * Creates an instance of a Mink Session.
@@ -37,9 +37,9 @@ class BrowserTestCase extends TestCase
 
     protected function setUp()
     {
-        self::executeCommand('php bin/console doctrine:database:drop --force --env test --no-debug');
-        self::executeCommand('php bin/console doctrine:schema:create --env test --no-debug');
-        self::executeCommand('php bin/console app:elasticsearch:reindex --env test --no-debug');
+        self::executeCommand('php bin/console doctrine:database:drop --force --env test');
+        self::executeCommand('php bin/console doctrine:schema:create --env test');
+        self::executeCommand('php bin/console app:elasticsearch:reindex --env test');
     }
 
     protected function visit(Session $session, string $path)
@@ -59,8 +59,8 @@ class BrowserTestCase extends TestCase
             $reflector = new ReflectionClass($fixture);
             $fixturePaths .=  " --fixtures {$reflector->getFileName()}";
         }
-        self::executeCommand("php bin/console doctrine:fixtures:load --env test --no-debug {$fixturePaths}");
-        self::executeCommand("php bin/console app:elasticsearch:reindex --env test --no-debug");
+        self::executeCommand("php bin/console doctrine:fixtures:load --env test {$fixturePaths}");
+        self::executeCommand("php bin/console app:elasticsearch:reindex --env test");
     }
 
     private static function executeCommand($command)

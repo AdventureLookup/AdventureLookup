@@ -4,14 +4,40 @@ namespace AppBundle\Command;
 
 use AppBundle\Entity\Adventure;
 use AppBundle\Listener\SearchIndexUpdater;
+use AppBundle\Service\ElasticSearch;
+use Doctrine\ORM\EntityManagerInterface;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class AppElasticsearchReindexCommand extends ContainerAwareCommand
+class AppElasticsearchReindexCommand extends Command
 {
+    /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+
+    /**
+     * @var ElasticSearch
+     */
+    private $elasticSearch;
+
+    /**
+     * @var SearchIndexUpdater
+     */
+    private $searchIndexUpdater;
+
+    public function __construct(EntityManagerInterface $em, ElasticSearch $elasticSearch, SearchIndexUpdater $searchIndexUpdater)
+    {
+        $this->em = $em;
+        $this->elasticSearch = $elasticSearch;
+        $this->searchIndexUpdater = $searchIndexUpdater;
+
+        parent::__construct();
+    }
+
     protected function configure()
     {
         $this
@@ -45,11 +71,9 @@ class AppElasticsearchReindexCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $em = $this->getContainer()->get('doctrine.orm.entity_manager');
-        $elasticSearch = $this->getContainer()->get('app.elasticsearch');
-        $client = $elasticSearch->getClient();
-        $indexName = $elasticSearch->getIndexName();
-        $typeName = $elasticSearch->getTypeName();
+        $client = $this->elasticSearch->getClient();
+        $indexName = $this->elasticSearch->getIndexName();
+        $typeName = $this->elasticSearch->getTypeName();
 
         try {
             $client->indices()->delete([
@@ -104,14 +128,12 @@ class AppElasticsearchReindexCommand extends ContainerAwareCommand
         $output->writeln('Created mappings');
         $output->writeln('Reindexing documents');
 
-        $searchIndexUpdater = $this->getContainer()->get('search_index_updater');
-
-        $adventures = $em->getRepository(Adventure::class)->findAll();
+        $adventures = $this->em->getRepository(Adventure::class)->findAll();
         $progress = new ProgressBar($output, count($adventures));
         $progress->start();
 
         foreach($adventures as $adventure) {
-            $searchIndexUpdater->updateSearchIndexForAdventure($adventure);
+            $this->searchIndexUpdater->updateSearchIndexForAdventure($adventure);
             $progress->advance();
         }
 

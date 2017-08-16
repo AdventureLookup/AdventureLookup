@@ -20,7 +20,14 @@ monolog:
             channels: ['!event']
         console:
             type: console
-            channels: ['!event', '!doctrine']
+            process_psr_3_messages: false
+            channels: ['!event', '!doctrine', '!console']
+        # To follow logs in real time, execute the following command:
+        # `bin/console server:log -vv`
+        server_log:
+            type: server_log
+            process_psr_3_messages: false
+            host: 127.0.0.1:9911
         # uncomment to get logging in your browser
         # you may have to allow bigger header sizes in your Web server configuration
         #firephp:
@@ -32,7 +39,6 @@ monolog:
 
 #swiftmailer:
 #    delivery_addresses: ['me@example.com']
-
 
 ewz_recaptcha:
     enabled: false
