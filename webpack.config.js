@@ -19,13 +19,6 @@ Encore
 
     .enableSassLoader()
     .enablePostCssLoader()
-    .configureBabel(function(babelConfig) {
-        // add additional presets
-        babelConfig.presets.push('es2015');
-
-        // no plugins are added by default, but you can add some
-        // babelConfig.plugins = ['styled-jsx/babel'];
-    })
     .autoProvidejQuery()
     .autoProvideVariables({
         'Tether': 'tether',

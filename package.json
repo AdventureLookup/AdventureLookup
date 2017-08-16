@@ -19,10 +19,13 @@
   },
   "devDependencies": {
     "@symfony/webpack-encore": "^0.12.0",
-    "babel-preset-es2015": "^6.24.1",
     "less": "^2.7.2",
     "node-sass": "^4.5.2",
     "postcss-loader": "^2.0.6",
     "sass-loader": "^6.0.3"
-  }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ]
 }
