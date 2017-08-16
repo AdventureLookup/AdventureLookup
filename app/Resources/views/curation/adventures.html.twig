@@ -1,0 +1,27 @@
+{% extends 'curation/base.html.twig' %}
+
+{% block curation_content %}
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Watch out!</h4>
+        <p class="mb-0">
+            Any changes done here are taken into effect immediately and cannot be reversed.
+            There won't be any confirmation screen before saving the changes.
+        </p>
+    </div>
+    <h3>Found In</h3>
+        {{ form_start(foundInUpdateForm) }}
+        {{ form_widget(foundInUpdateForm) }}
+        {{ form_end(foundInUpdateForm) }}
+    <hr>
+    <h3>Part Of</h3>
+        {{ form_start(partOfUpdateForm) }}
+        {{ form_widget(partOfUpdateForm) }}
+        {{ form_end(partOfUpdateForm) }}
+    <hr>
+    <h3>Starting Level Range</h3>
+        {{ form_start(startingLevelRangeUpdateForm) }}
+        {{ form_widget(startingLevelRangeUpdateForm) }}
+        {{ form_end(startingLevelRangeUpdateForm) }}
+    <hr>
+{% endblock %}
+

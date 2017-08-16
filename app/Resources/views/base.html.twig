@@ -33,6 +33,9 @@
                     {% endif %}
                     {% if is_granted('ROLE_CURATOR') %}
                         <li class="nav-item">
+                            <a class="nav-link{% if app.request.attributes.get('_route') starts with 'curation' %} active{% endif %}" href="{{ path('curation_bulk_resolve_change_requests') }}">Curation Panel <span class="badge badge-success">new</span></a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link{% if app.request.attributes.get('_route') == 'easyadmin' %} active{% endif %}" href="{{ path('easyadmin') }}">Admin Panel</a>
                         </li>
                     {% endif %}

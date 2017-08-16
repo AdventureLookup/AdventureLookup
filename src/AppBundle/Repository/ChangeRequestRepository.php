@@ -10,4 +10,16 @@ namespace AppBundle\Repository;
  */
 class ChangeRequestRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @return \Doctrine\ORM\Query
+     */
+    public function getUnresolvedChangeRequestsQuery()
+    {
+        $qb = $this->createQueryBuilder('c');
+
+        return $qb
+            ->join('c.adventure', 'a')
+            ->where($qb->expr()->eq('c.resolved', $qb->expr()->literal(false)))
+            ->getQuery();
+    }
 }

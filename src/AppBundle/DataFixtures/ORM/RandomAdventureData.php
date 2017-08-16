@@ -5,6 +5,7 @@ namespace AppBundle\DataFixtures\ORM;
 
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\Author;
+use AppBundle\Entity\ChangeRequest;
 use AppBundle\Entity\Edition;
 use AppBundle\Entity\Environment;
 use AppBundle\Entity\Item;
@@ -84,6 +85,25 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
                 ->setPublisher($faker->randomElement($publishers))
                 ->setSetting($faker->randomElement($settings))
                 ->setMonsters(new ArrayCollection($faker->randomElements($monsters, $faker->numberBetween(0, 20))));
+
+            if ($faker->boolean(20)) {
+                for ($j = 0; $j < $faker->numberBetween(1, 5); $j++) {
+                    $changeRequest = new ChangeRequest();
+                    $changeRequest
+                        ->setComment($faker->realText($faker->numberBetween(20, 500)))
+                        ->setResolved($faker->boolean())
+                        ->setAdventure($adventure);
+                    if ($faker->boolean(50)) {
+                        $changeRequest->setFieldName($faker->randomElement([
+                            'link', 'description', 'title', 'minStartingLevel'
+                        ]));
+                    }
+                    if ($faker->boolean(30)) {
+                        $changeRequest->setCuratorRemarks($faker->realText($faker->numberBetween(20, 200)));
+                    }
+                    $em->persist($changeRequest);
+                }
+            }
 
             if ($faker->boolean()) {
                 $adventure->setStartingLevelRange($faker->randomElement([
