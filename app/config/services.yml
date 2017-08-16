@@ -5,7 +5,7 @@ services:
         public: false
     AppBundle\:
         resource: '../../src/AppBundle/*'
-        exclude: '../../src/AppBundle/{Entity,Repository}'
+        exclude: '../../src/AppBundle/{Entity,Repository,DataFixtures}'
     AppBundle\Controller\:
         resource: '../../src/AppBundle/Controller'
         public: true
