@@ -44,7 +44,7 @@
                         {% if adventure.link %}
                             <div class="col">
                                 <div class="label">Link</div>
-                                <a href="{{ adventure.link|e('html_attr') }}">{{ adventure.link }}</a>
+                                <a href="{{ adventure.link|add_affiliate_code|e('html_attr') }}">{{ adventure.link|add_affiliate_code }}</a>
                             </div>
                         {% endif %}
                         <div class="col">
