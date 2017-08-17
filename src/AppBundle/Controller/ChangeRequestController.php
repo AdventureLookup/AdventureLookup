@@ -5,7 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\ChangeRequest;
 use AppBundle\Entity\User;
-use AppBundle\Form\ChangeRequestType;
+use AppBundle\Form\Type\ChangeRequestType;
 use AppBundle\Security\ChangeRequestVoter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -65,6 +65,7 @@ class ChangeRequestController extends Controller
 
     /**
      * @Route("/new/{adventure_id}", name="changerequest_new")
+     * @Method({"GET", "POST"})
      * @ParamConverter("adventure", options={"id" = "adventure_id"})
      *
      * @param Request $request

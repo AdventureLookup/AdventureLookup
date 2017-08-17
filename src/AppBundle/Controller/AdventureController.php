@@ -4,7 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Adventure;
 use AppBundle\Field\FieldProvider;
-use AppBundle\Form\AdventureType;
+use AppBundle\Form\Type\AdventureType;
 use AppBundle\Security\AdventureVoter;
 use AppBundle\Service\AdventureSearch;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;

@@ -13,8 +13,6 @@ class AdventureDocument
 
     private $score;
 
-    private $info;
-
     /**
      * @var string[]
      */
@@ -145,7 +143,6 @@ class AdventureDocument
         bool $pregeneratedCharacters = null,
         bool $tacticalMaps = null,
         bool $handouts = null,
-        array $info = [],
         float $score = 0.0)
     {
         $this->id = $id;
@@ -161,7 +158,6 @@ class AdventureDocument
         $this->description = $description;
         $this->slug = $slug;
         $this->score = $score;
-        $this->info = $info;
         $this->minStartingLevel = $minStartingLevel;
         $this->maxStartingLevel = $maxStartingLevel;
         $this->startingLevelRange = $startingLevelRange;
@@ -182,18 +178,6 @@ class AdventureDocument
      */
     public static function fromAdventure(Adventure $adventure)
     {
-        $info = [];
-        foreach ($adventure->getInfo() as $fieldContent) {
-            $key = $fieldContent->getTag()->getId();
-            if (!isset($info[$key])) {
-                $info[$key] = [
-                    'meta' => $fieldContent->getTag(),
-                    'contents' => [],
-                ];
-            }
-            $info[$key]['contents'][] = $fieldContent;
-        }
-
         return new static(
             $adventure->getId(),
             $adventure->getAuthors()->map(function (Author $author) { return $author->getName(); })->getValues(),
@@ -218,17 +202,8 @@ class AdventureDocument
             $adventure->isSoloable(),
             $adventure->hasPregeneratedCharacters(),
             $adventure->hasTacticalMaps(),
-            $adventure->hasHandouts(),
-            $info
+            $adventure->hasHandouts()
         );
-    }
-
-    /**
-     * @return array
-     */
-    public function getInfo(): array
-    {
-        return $this->info;
     }
 
     /**

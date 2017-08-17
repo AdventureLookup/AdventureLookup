@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Form;
+namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\Monster;
 use AppBundle\Entity\MonsterType as MonsterTypeEntity;
@@ -8,11 +8,9 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class BossMonsterType extends AbstractType
+class CommonMonsterType extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -29,14 +27,7 @@ class BossMonsterType extends AbstractType
                 'required' => true,
                 'class' => MonsterTypeEntity::class,
                 'multiple' => true,
-            ])
-        ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $formEvent) {
-            /** @var Monster $monster */
-            $monster = $formEvent->getData();
-            if ($monster !== null) {
-                $monster->setIsUnique(true);
-            }
-        });
+            ]);
     }
     
     /**

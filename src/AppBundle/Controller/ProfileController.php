@@ -5,7 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\ChangeRequest;
 use AppBundle\Entity\User;
-use AppBundle\Form\ChangePasswordType;
+use AppBundle\Form\Type\ChangePasswordType;
 use Doctrine\ORM\Query\Expr;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -61,6 +61,7 @@ class ProfileController extends Controller
 
     /**
      * @Route("/change-password", name="change_password")
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      * @return Response

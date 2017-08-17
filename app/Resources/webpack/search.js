@@ -1,6 +1,7 @@
 import {myLazyLoad} from "./index";
 
 (function () {
+
     const $page = $('#page--search-adventures');
     if (!$page.length) {
         return;
