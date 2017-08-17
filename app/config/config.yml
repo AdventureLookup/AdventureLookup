@@ -122,7 +122,7 @@ knp_paginator:
         distinct: true           # ensure distinct results, useful when ORM queries are using GROUP BY statements
     template:
         pagination: 'KnpPaginatorBundle:Pagination:twitter_bootstrap_v4_pagination.html.twig'
-        sortable: 'KnpPaginatorBundle:Pagination:sortable_link.html.twig'
+        sortable: 'pagination/sortable_link.html.twig'
 
 ewz_recaptcha:
     public_key:  '%recaptcha_public_key%'

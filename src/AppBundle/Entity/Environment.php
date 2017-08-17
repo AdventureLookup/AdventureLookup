@@ -16,7 +16,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\EnvironmentRepository")
  * @UniqueEntity("name")
  */
-class Environment implements HasAdventuresInterface
+class Environment implements RelatedEntityInterface
 {
     /**
      * @var int
