@@ -10,4 +10,5 @@ namespace AppBundle\Repository;
  */
 class EditionRepository extends \Doctrine\ORM\EntityRepository
 {
+    use RelatedEntityFieldValueCountsTrait;
 }

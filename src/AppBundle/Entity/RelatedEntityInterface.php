@@ -5,8 +5,18 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
 
-interface HasAdventuresInterface
+interface RelatedEntityInterface
 {
+    /**
+     * @return int
+     */
+    public function getId();
+
+    /**
+     * @return string
+     */
+    public function getName();
+
     /**
      * @return Collection
      */

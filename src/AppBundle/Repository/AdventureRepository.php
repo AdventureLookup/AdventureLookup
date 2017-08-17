@@ -3,7 +3,9 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Adventure;
+use AppBundle\Entity\RelatedEntityInterface;
 use AppBundle\Field\Field;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
@@ -35,15 +37,15 @@ class AdventureRepository extends EntityRepository
     /**
      * Get all distinct values and their usage counts for a certain field. Will ignore NULL values
      *
-     * @param Field $field
+     * @param string $field
      *
      * @return array Array of arrays containing the 'value' and 'count'
      */
-    public function getFieldValueCounts(Field $field): array
+    public function getFieldValueCounts(string $field): array
     {
-        $qb = $this->createQueryBuilder('a');
+        $qb = $this->createQueryBuilder('tbl');
 
-        $field = 'a.' . $field->getName();
+        $field = 'tbl.' . $field;
         $results = $qb
             ->select($field)
             ->addSelect($qb->expr()->count($field))
@@ -72,12 +74,50 @@ class AdventureRepository extends EntityRepository
     public function updateField(Field $field, string $oldValue, string $newValue = null): int
     {
         $propertyAccessor = new PropertyAccessor();
-        /** @var Adventure[] $adventures */
-        $adventures = $this->findBy([$field->getName() => $oldValue]);
-        foreach ($adventures as $adventure) {
-            $propertyAccessor->setValue($adventure, $field->getName(), $newValue);
+        $em = $this->getEntityManager();
+        if ($field->isRelatedEntity()) {
+
+            $qb = $this->createQueryBuilder('a');
+            $adventures = $qb
+                ->join('a.' . $field->getName(), 'r')
+                ->where($qb->expr()->eq('r.id', ':oldValue'))
+                ->setParameter('oldValue', (int)$oldValue)
+                ->getQuery()
+                ->execute();
+            foreach ($adventures as $adventure) {
+                /** @var ArrayCollection|RelatedEntityInterface[] $currentRelatedEntities */
+                $currentRelatedEntities = $propertyAccessor->getValue($adventure, $field->getName());
+                if ($newValue === null) {
+                    $newRelatedEntities = $currentRelatedEntities->filter(function (RelatedEntityInterface $relatedEntity) use ($oldValue) {
+                        return $relatedEntity->getId() !== (int)$oldValue;
+                    });
+                } else {
+                    $newRelatedEntity = $em->getReference($field->getRelatedEntityClass(), (int)$newValue);
+                    /** @var ArrayCollection|RelatedEntityInterface[] $newRelatedDuplicatedEntities */
+                    $newRelatedDuplicatedEntities = $currentRelatedEntities->map(function (RelatedEntityInterface $relatedEntity) use ($oldValue, $newRelatedEntity) {
+                        if ($relatedEntity->getId() !== (int)$oldValue) {
+                            return $relatedEntity;
+                        } else {
+                            return $newRelatedEntity;
+                        }
+                    })->toArray();
+
+                    // Now we need to make sure to remove any duplicates
+                    $newRelatedEntities = [];
+                    foreach ($newRelatedDuplicatedEntities as $newRelatedDuplicatedEntity) {
+                        $newRelatedEntities[$newRelatedDuplicatedEntity->getId()] = $newRelatedDuplicatedEntity;
+                    }
+                }
+                $propertyAccessor->setValue($adventure, $field->getName(), $newRelatedEntities);
+            }
+        } else {
+            $adventures = $this->findBy([$field->getName() => $oldValue]);
+            foreach ($adventures as $adventure) {
+                $propertyAccessor->setValue($adventure, $field->getName(), $newValue);
+            }
         }
-        $this->getEntityManager()->flush();
+
+        $em->flush();
 
         return count($adventures);
     }

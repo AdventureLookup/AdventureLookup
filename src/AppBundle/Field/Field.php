@@ -43,18 +43,18 @@ class Field
     /**
      * @var string
      */
-    private $example;
+    private $relatedEntityClass;
 
-    public function __construct(string $name, string $type, bool $multiple, bool $freetextSearchable, string $title, string $description = null, int $searchBoost = 1, string $example = null)
+    public function __construct(string $name, string $type, bool $multiple, bool $freetextSearchable, string $title, string $description = null, int $searchBoost = 1, string $relatedEntityClass = null)
     {
         $this->name = $name;
         $this->type = $type;
         $this->multiple = $multiple;
         $this->title = $title;
         $this->description = $description;
-        $this->example = $example;
         $this->freetextSearchable = $freetextSearchable;
         $this->searchBoost = $searchBoost;
+        $this->relatedEntityClass = $relatedEntityClass;
     }
 
     /**
@@ -116,14 +116,6 @@ class Field
     /**
      * @return string
      */
-    public function getExample()
-    {
-        return $this->example;
-    }
-
-    /**
-     * @return string
-     */
     public function getFieldNameForAggregation(): string
     {
         $field = $this->getName();
@@ -132,5 +124,21 @@ class Field
         }
 
         return $field;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRelatedEntity(): bool
+    {
+        return $this->relatedEntityClass !== null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRelatedEntityClass(): string
+    {
+        return $this->relatedEntityClass;
     }
 }

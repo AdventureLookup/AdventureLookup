@@ -3,6 +3,13 @@
 
 namespace AppBundle\Field;
 
+use AppBundle\Entity\Author;
+use AppBundle\Entity\Edition;
+use AppBundle\Entity\Environment;
+use AppBundle\Entity\Item;
+use AppBundle\Entity\Monster;
+use AppBundle\Entity\Publisher;
+use AppBundle\Entity\Setting;
 use AppBundle\Exception\FieldDoesNotExistException;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -39,7 +46,9 @@ class FieldProvider
                 true,
                 true,
                 'Authors',
-                'Names of people with writing or story credits on the module. Do not include editors or designers.'
+                'Names of people with writing or story credits on the module. Do not include editors or designers.',
+                1,
+                Author::class
             ),
             'edition' => new Field(
                 'edition',
@@ -47,7 +56,9 @@ class FieldProvider
                 false,
                 true,
                 'System / Edition',
-                'The system the game was designed for and the edition of that system if there is one.'
+                'The system the game was designed for and the edition of that system if there is one.',
+                1,
+                Edition::class
             ),
             'environments' => new Field(
                 'environments',
@@ -55,7 +66,9 @@ class FieldProvider
                 true,
                 true,
                 'Environments',
-                'The different types of environments the module will take place in.'
+                'The different types of environments the module will take place in.',
+                1,
+                Environment::class
             ),
             'items' => new Field(
                 'items',
@@ -63,14 +76,19 @@ class FieldProvider
                 true,
                 true,
                 'Notable Items',
-                "The notable magic or non-magic items that are obtained in the module. Only include named items, don't include a +1 sword."),
+                "The notable magic or non-magic items that are obtained in the module. Only include named items, don't include a +1 sword.",
+                1,
+                Item::class
+            ),
             'publisher' => new Field(
                 'publisher',
                 'string',
                 false,
                 true,
                 'Publisher',
-                'Publisher of the adventure.'
+                'Publisher of the adventure.',
+                1,
+                Publisher::class
             ),
             'setting' => new Field(
                 'setting',
@@ -78,7 +96,9 @@ class FieldProvider
                 false,
                 true,
                 'Setting',
-                'The narrative universe the module is set in.'
+                'The narrative universe the module is set in.',
+                1,
+                Setting::class
             ),
             'commonMonsters' => new Field(
                 'commonMonsters',
@@ -86,7 +106,9 @@ class FieldProvider
                 true,
                 true,
                 'Common Monsters',
-                'The common monsters featured in the module.'
+                'The common monsters featured in the module.',
+                1,
+                Monster::class
             ),
             'bossMonsters' => new Field(
                 'bossMonsters',
@@ -94,7 +116,9 @@ class FieldProvider
                 true,
                 true,
                 'Boss Monsters',
-                'The boss monsters and villains featured in the module.'
+                'The boss monsters and villains featured in the module.',
+                1,
+                Monster::class
             ),
 
 
@@ -127,7 +151,7 @@ class FieldProvider
                 'string',
                 false,
                 false,
-                'Level Range',
+                'Starting Level Range',
                 'In case no min. / max. starting levels but rather low/medium/high are given.'
             ),
 

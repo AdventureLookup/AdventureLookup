@@ -2,10 +2,9 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Curation\BulkEditFormHandler;
+use AppBundle\Curation\BulkEditFormHelper;
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\ChangeRequest;
-use AppBundle\Field\FieldProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Knp\Component\Pager\PaginatorInterface;
@@ -39,20 +38,15 @@ class CurationController extends Controller
      * @Route("/adventures/edit", name="curation_bulk_edit_adventures")
      * @Method("GET")
      *
-     * @param BulkEditFormHandler $bulkEditFormGenerator
-     * @param FieldProvider $fieldProvider
+     * @param BulkEditFormHelper $bulkEditFormGenerator
      * @return Response
      */
-    public function bulkEditAdventuresAction(BulkEditFormHandler $bulkEditFormGenerator, FieldProvider $fieldProvider)
+    public function bulkEditAdventuresAction(BulkEditFormHelper $bulkEditFormGenerator)
     {
-        $foundInUpdateForm = $bulkEditFormGenerator->formForSimpleStringField($fieldProvider->getField('foundIn'));
-        $partOfUpdateForm = $bulkEditFormGenerator->formForSimpleStringField($fieldProvider->getField('partOf'));
-        $startingLevelRangeUpdateForm = $bulkEditFormGenerator->formForSimpleStringField($fieldProvider->getField('startingLevelRange'));
+        $formsAndFields = $bulkEditFormGenerator->getFormsAndFields();
 
         return $this->render('curation/adventures.html.twig', [
-            'foundInUpdateForm' => $foundInUpdateForm->createView(),
-            'partOfUpdateForm' => $partOfUpdateForm->createView(),
-            'startingLevelRangeUpdateForm' => $startingLevelRangeUpdateForm->createView(),
+            'formsAndFields' => $formsAndFields,
         ]);
     }
 
@@ -60,20 +54,16 @@ class CurationController extends Controller
      * @Route("/adventures/edit", name="curation_do_bulk_edit_adventures")
      * @Method("POST")
      *
-     * @param BulkEditFormHandler $bulkEditFormGenerator
-     * @param FieldProvider $fieldProvider
+     * @param BulkEditFormHelper $bulkEditFormGenerator
      * @param Request $request
      * @return Response
      */
-    public function doBulkEditAdventuresAction(BulkEditFormHandler $bulkEditFormGenerator, FieldProvider $fieldProvider, Request $request)
+    public function doBulkEditAdventuresAction(BulkEditFormHelper $bulkEditFormGenerator, Request $request)
     {
-        $fields = [
-            $fieldProvider->getField('foundIn'),
-            $fieldProvider->getField('partOf'),
-            $fieldProvider->getField('startingLevelRange'),
-        ];
-        foreach ($fields as $field) {
-            $affected = $bulkEditFormGenerator->handleSimpleStringField($request, $field);
+        $formsAndFields = $bulkEditFormGenerator->getFormsAndFields();
+
+        foreach ($formsAndFields as $formAndField) {
+            $affected = $bulkEditFormGenerator->handle($request, $formAndField['form'], $formAndField['field']);
             if ($affected >= 0) {
                 $this->addFlash('success', sprintf('%s adventure(s) were updated!', $affected));
 
