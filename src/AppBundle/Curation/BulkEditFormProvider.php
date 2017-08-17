@@ -17,11 +17,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class BulkEditFormHelper
+class BulkEditFormProvider
 {
     const OLD_VALUE = 'oldValue';
     const NEW_VALUE = 'newValue';
@@ -93,26 +92,12 @@ class BulkEditFormHelper
         return $formsAndFields;
     }
 
-    public function handle(Request $request, FormInterface $form, Field $field): int
-    {
-        $form->handleRequest($request);
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            return -1;
-        }
-
-        $oldValue = $form->get(self::OLD_VALUE)->getData();
-        $newValue = $form->get(self::NEW_VALUE)->getData();
-        if (strlen($newValue) === 0) {
-            $newValue = null;
-        }
-
-        return $this->adventureRepository->updateField($field, $oldValue, $newValue);
-    }
-
     private function formForSimpleStringField(Field $field): FormInterface
     {
         if (!$field->getType() === 'string') {
+            // @codeCoverageIgnoreStart
             throw new \InvalidArgumentException('Field type must be string');
+            // @codeCoverageIgnoreEnd
         }
 
         $formChoices = $this->getFieldChoicesForSimpleField($field->getName());
@@ -122,6 +107,9 @@ class BulkEditFormHelper
             ->add(self::OLD_VALUE, ChoiceType::class, [
                 'choices' => $formChoices,
                 'label' => sprintf('Select all adventures where %s matches', $title),
+                'constraints' => [
+                    new NotBlank()
+                ]
             ])
             ->add(self::NEW_VALUE, TextType::class, [
                 'label' => sprintf('Replace selected %s value with', $title),

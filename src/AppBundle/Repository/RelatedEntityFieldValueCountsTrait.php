@@ -40,7 +40,7 @@ trait RelatedEntityFieldValueCountsTrait
             return [
                 'value' => current($result),
                 'id' => $result['id'],
-                'count' => $result['_cnt'],
+                'count' => (int)$result['_cnt'],
             ];
         }, $results);
     }

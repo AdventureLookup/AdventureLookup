@@ -2,7 +2,6 @@
 
 namespace AppBundle\Repository;
 
-use AppBundle\Entity\Adventure;
 use AppBundle\Entity\RelatedEntityInterface;
 use AppBundle\Field\Field;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -17,23 +16,6 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
  */
 class AdventureRepository extends EntityRepository
 {
-    /**
-     * @return Adventure[]
-     */
-    public function getWithSuspiciousLinks()
-    {
-        $qb = $this->createQueryBuilder('a');
-
-        return $qb
-            ->where($qb->expr()->orX(
-                $qb->expr()->gte($qb->expr()->length('a.link'), 100),
-                $qb->expr()->like('a.link', $qb->expr()->literal('%mega%')),
-                $qb->expr()->like('a.link', $qb->expr()->literal('%dropbox%'))
-            ))
-            ->orderBy($qb->expr()->desc('a.createdAt'))
-            ->getQuery()->execute();
-    }
-
     /**
      * Get all distinct values and their usage counts for a certain field. Will ignore NULL values
      *
@@ -58,7 +40,7 @@ class AdventureRepository extends EntityRepository
         return array_map(function ($result) {
             return [
                 'value' => current($result),
-                'count' => $result[1],
+                'count' => (int)$result[1],
             ];
         }, $results);
     }
@@ -76,7 +58,6 @@ class AdventureRepository extends EntityRepository
         $propertyAccessor = new PropertyAccessor();
         $em = $this->getEntityManager();
         if ($field->isRelatedEntity()) {
-
             $qb = $this->createQueryBuilder('a');
             $adventures = $qb
                 ->join('a.' . $field->getName(), 'r')
@@ -122,6 +103,9 @@ class AdventureRepository extends EntityRepository
         return count($adventures);
     }
 
+    /**
+     * @return \Doctrine\ORM\Query
+     */
     public function getWithMostUnresolvedChangeRequestsQuery()
     {
         $qb = $this->createQueryBuilder('a');

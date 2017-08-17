@@ -2,9 +2,12 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Curation\BulkEditFormHandler;
 use AppBundle\Curation\BulkEditFormHelper;
+use AppBundle\Curation\BulkEditFormProvider;
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\ChangeRequest;
+use AppBundle\Repository\AdventureRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Knp\Component\Pager\PaginatorInterface;
@@ -38,15 +41,13 @@ class CurationController extends Controller
      * @Route("/adventures/edit", name="curation_bulk_edit_adventures")
      * @Method("GET")
      *
-     * @param BulkEditFormHelper $bulkEditFormGenerator
+     * @param BulkEditFormProvider $formProvider
      * @return Response
      */
-    public function bulkEditAdventuresAction(BulkEditFormHelper $bulkEditFormGenerator)
+    public function bulkEditAdventuresAction(BulkEditFormProvider $formProvider)
     {
-        $formsAndFields = $bulkEditFormGenerator->getFormsAndFields();
-
         return $this->render('curation/adventures.html.twig', [
-            'formsAndFields' => $formsAndFields,
+            'formsAndFields' => $formProvider->getFormsAndFields(),
         ]);
     }
 
@@ -54,23 +55,21 @@ class CurationController extends Controller
      * @Route("/adventures/edit", name="curation_do_bulk_edit_adventures")
      * @Method("POST")
      *
-     * @param BulkEditFormHelper $bulkEditFormGenerator
+     * @param BulkEditFormProvider $formProvider
+     * @param BulkEditFormHandler $formHandler
      * @param Request $request
      * @return Response
      */
-    public function doBulkEditAdventuresAction(BulkEditFormHelper $bulkEditFormGenerator, Request $request)
+    public function doBulkEditAdventuresAction(BulkEditFormProvider $formProvider, BulkEditFormHandler $formHandler, Request $request)
     {
-        $formsAndFields = $bulkEditFormGenerator->getFormsAndFields();
-
-        foreach ($formsAndFields as $formAndField) {
-            $affected = $bulkEditFormGenerator->handle($request, $formAndField['form'], $formAndField['field']);
+        foreach ($formProvider->getFormsAndFields() as $formAndField) {
+            $affected = $formHandler->handle($request, $formAndField['form'], $formAndField['field']);
             if ($affected >= 0) {
                 $this->addFlash('success', sprintf('%s adventure(s) were updated!', $affected));
 
                 return $this->redirectToRoute('curation_bulk_edit_adventures');
             }
         }
-
         $this->addFlash('danger', 'Nothing happened, either no form submitted or invalid submission');
 
         return $this->redirectToRoute('curation_bulk_edit_adventures');
@@ -139,17 +138,8 @@ class CurationController extends Controller
         $changeRequestIds = $request->request->get('change_request', []);
         $remarks = $request->request->get('remarks', '');
         if (count($changeRequestIds) > 0) {
-            $qb = $em->createQueryBuilder();
-            $qb
-                ->update(ChangeRequest::class, 'c')
-                ->set('c.resolved', $qb->expr()->literal(true))
-                ->where($qb->expr()->in('c.id', $changeRequestIds))
-                ->andWhere($qb->expr()->eq('c.resolved', $qb->expr()->literal(false)));
-            if (!empty($remarks)) {
-                $qb->set('c.curatorRemarks', $remarks);
-            }
-
-            $numUpdates = $qb->getQuery()->execute();
+            $numUpdates = $em->getRepository(ChangeRequest::class)
+                ->resolveChangeRequestsByIds($changeRequestIds, $remarks);
             $this->addFlash('success', sprintf('%s change requests resolved.', $numUpdates));
         } else {
             $this->addFlash('warning', "You didn't select any change request to resolve!");

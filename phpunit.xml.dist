@@ -16,9 +16,11 @@
         <testsuite name="unittests">
             <directory>tests/AppBundle</directory>
             <exclude>tests/AppBundle/Controller</exclude>
+            <exclude>tests/AppBundle/Repository</exclude>
         </testsuite>
         <testsuite name="functional">
             <directory>tests/AppBundle/Controller</directory>
+            <directory>tests/AppBundle/Repository</directory>
         </testsuite>
         <testsuite name="browser">
             <directory>tests/Browser</directory>
