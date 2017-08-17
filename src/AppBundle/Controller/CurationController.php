@@ -26,7 +26,7 @@ class CurationController extends Controller
     const ITEMS_PER_PAGE = 20;
 
     /**
-     * @Route("/")
+     * @Route("/", name="curation")
      *
      * @return RedirectResponse
      */
