@@ -4,7 +4,10 @@
 namespace Tests\AppBundle\Entity;
 
 use AppBundle\Entity\Adventure;
+use AppBundle\Entity\Edition;
 use AppBundle\Entity\Monster;
+use AppBundle\Entity\Publisher;
+use AppBundle\Entity\Setting;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class AdventureTest extends \PHPUnit_Framework_TestCase
@@ -85,6 +88,33 @@ class AdventureTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(5, $this->subject->getMonsters());
         $this->assertCount(3, $this->subject->getCommonMonsters());
         $this->assertCount(2, $this->subject->getBossMonsters());
+    }
+
+    public function testEdition()
+    {
+        $this->subject->setEdition(null);
+        $this->assertSame(null, $this->subject->getEdition());
+        $edition = new Edition();
+        $this->subject->setEdition($edition);
+        $this->assertSame($edition, $this->subject->getEdition());
+    }
+
+    public function testPublisher()
+    {
+        $this->subject->setPublisher(null);
+        $this->assertSame(null, $this->subject->getPublisher());
+        $publisher = new Publisher();
+        $this->subject->setPublisher($publisher);
+        $this->assertSame($publisher, $this->subject->getPublisher());
+    }
+
+    public function testSetting()
+    {
+        $this->subject->setSetting(null);
+        $this->assertSame(null, $this->subject->getSetting());
+        $setting = new Setting();
+        $this->subject->setSetting($setting);
+        $this->assertSame($setting, $this->subject->getSetting());
     }
 
     private function makeCommonMonster(): Monster

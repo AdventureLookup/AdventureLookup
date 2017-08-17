@@ -341,9 +341,11 @@ class Adventure
      *
      * @return Adventure
      */
-    public function setEdition($edition)
+    public function setEdition(Edition $edition = null)
     {
-        $edition->addAdventure($this);
+        if ($edition !== null) {
+            $edition->addAdventure($this);
+        }
         $this->edition = $edition;
         return $this;
     }
@@ -423,9 +425,11 @@ class Adventure
      *
      * @return Adventure
      */
-    public function setPublisher($publisher)
+    public function setPublisher(Publisher $publisher = null)
     {
-        $publisher->addAdventure($this);
+        if ($publisher !== null) {
+            $publisher->addAdventure($this);
+        }
         $this->publisher = $publisher;
         return $this;
     }
@@ -442,9 +446,11 @@ class Adventure
      * @param Setting $setting
      * @return Adventure
      */
-    public function setSetting(Setting $setting)
+    public function setSetting(Setting $setting = null)
     {
-        $setting->addAdventure($this);
+        if ($setting !== null) {
+            $setting->addAdventure($this);
+        }
         $this->setting = $setting;
         return $this;
     }
