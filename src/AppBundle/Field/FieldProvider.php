@@ -158,7 +158,7 @@ class FieldProvider
                 'boolean',
                 false,
                 false,
-                'Tactical Maps'
+                'Battle Mats'
             ),
 
             'foundIn' => new Field(

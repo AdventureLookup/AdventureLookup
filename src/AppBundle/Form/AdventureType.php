@@ -199,14 +199,14 @@ class AdventureType extends AbstractType
                 'expanded' => true,
             ])
             ->add('tacticalMaps', ChoiceType::class, [
-                'help' => 'Whether or not tactical maps are provided.',
+                'help' => 'Whether or not battle mats are provided.',
                 'required' => false,
                 'choices' => [
                     'Yes' => true,
                     'No' => false,
                 ],
                 'placeholder' => 'Unknown',
-                'label' => 'Tactical Maps',
+                'label' => 'Battle Mats',
                 'expanded' => true,
             ])
             ->add('handouts', ChoiceType::class, [
