@@ -34,7 +34,7 @@ Vagrant.configure("2") do |config|
      mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS adl"
 
      # PHP
-     apt -y install php7.0 php7.0-curl php7.0-fpm php7.0-mysql php7.0-zip php7.0-cli php7.0-xml php7.0-mbstring php7.0-sqlite3 php-xdebug
+     apt -y install php7.0 php7.0-curl php7.0-fpm php7.0-mysql php7.0-zip php7.0-cli php7.0-xml php7.0-mbstring php7.0-sqlite3 php7.0-intl php-xdebug
 
      # Utilities
      apt -y install htop git nano vim

@@ -32,6 +32,10 @@ services:
         tags:
             - { name: doctrine.event_subscriber, connection: default }
 
+    AppBundle\Twig\AppExtension:
+        arguments:
+            $affiliateMappings: '%affiliate_mappings%'
+
     twig.extension.date:
         class: Twig_Extensions_Extension_Date
         # For some reason the translation doesn't work if we autowire this service.
