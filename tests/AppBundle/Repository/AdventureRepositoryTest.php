@@ -6,12 +6,15 @@ namespace Tests\AppBundle\Repository;
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\Author;
 use AppBundle\Entity\ChangeRequest;
+use AppBundle\Entity\Monster;
+use AppBundle\Entity\RelatedEntityInterface;
 use AppBundle\Field\Field;
 use AppBundle\Repository\AdventureRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Query;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Tests\WebTestCase;
 
 class AdventureRepositoryTest extends WebTestCase
@@ -39,10 +42,29 @@ class AdventureRepositoryTest extends WebTestCase
                 $author2->setName('author2');
                 $em->persist($author1);
 
+                $commonMonster1 = new Monster();
+                $commonMonster1->setName('common1');
+                $commonMonster1->setIsUnique(false);
+                $em->persist($commonMonster1);
+                $commonMonster2 = new Monster();
+                $commonMonster2->setName('common2');
+                $commonMonster2->setIsUnique(false);
+                $em->persist($commonMonster2);
+
+                $bossMonster1 = new Monster();
+                $bossMonster1->setName('boss1');
+                $bossMonster1->setIsUnique(true);
+                $em->persist($bossMonster1);
+                $bossMonster2 = new Monster();
+                $bossMonster2->setName('boss2');
+                $bossMonster2->setIsUnique(true);
+                $em->persist($bossMonster2);
+
                 $adventure1 = new Adventure();
                 $adventure1->setTitle('adventure1');
                 $adventure1->setLink('link1');
                 $adventure1->setAuthors(new ArrayCollection([$author1]));
+                $adventure1->setMonsters(new ArrayCollection([$commonMonster1, $commonMonster2, $bossMonster1, $bossMonster2]));
                 $em->persist($adventure1);
                 $adventure2 = new Adventure();
                 $adventure2->setTitle('adventure2');
@@ -129,13 +151,16 @@ class AdventureRepositoryTest extends WebTestCase
             ->getRepository(Adventure::class)
             ->findBy([], ['title' => 'ASC']);
 
+        $propertyAccessor = new PropertyAccessor();
         foreach ($adventures as $i => $adventure) {
-            if ($field->getName() === 'link') {
-                $value = $adventure->getLink();
+            if (!$field->isRelatedEntity()) {
+                $value = $propertyAccessor->getValue($adventure, $field->getName());
             } else {
-                $value = $adventure->getAuthors()->map(function (Author $author) {
-                    return $author->getId();
-                })->getValues();
+                $value = $propertyAccessor->getValue($adventure, $field->getName())
+                    ->map(function (RelatedEntityInterface $authorrelatedEntity) {
+                        return $authorrelatedEntity->getId();
+                    })
+                    ->getValues();
             }
             $this->assertSame($expectedValues[$i], $value);
         }
@@ -164,48 +189,51 @@ class AdventureRepositoryTest extends WebTestCase
         $linkField = $this->createMock(Field::class);
         $linkField->method('getName')->willReturn('link');
 
-        $authorField = $this->createMock(Field::class);
-        $authorField->method('getName')->willReturn('authors');
-        $authorField->method('isRelatedEntity')->willReturn(true);
-        $authorField->method('getRelatedEntityClass')->willReturn(Author::class);
+        $authorField = $this->relatedField('authors', Author::class);
+        $commonMonstersField = $this->relatedField('commonMonsters', Monster::class);
+        $bossMonstersField = $this->relatedField('bossMonsters', Monster::class);
 
         return [
             [$linkField, 'link1', 'link2', 2, [
-                'link2',
-                'link2',
-                'link2',
-                null
+                'link2', 'link2', 'link2', null
             ]],
             [$linkField, 'link1', null, 2, [
-                null,
-                'link2',
-                null,
-                null
+                null, 'link2', null, null
             ]],
             [$linkField, 'link42', 'link2', 0, [
-                'link1',
-                'link2',
-                'link1',
-                null
+                'link1', 'link2', 'link1', null
             ]],
             [$authorField, 1, 2, 2, [
-                [2],
-                [2],
-                [2],
-                []
+                [2], [2], [2], []
             ]],
             [$authorField, 1, null, 2, [
-                [],
-                [2],
-                [2],
-                []
+                [], [2], [2], []
             ]],
             [$authorField, 3, 6, 0, [
-                [1],
-                [2],
-                [1, 2],
-                []
+                [1], [2], [1, 2], []
+            ]],
+            [$commonMonstersField, 1, 2, 1, [
+                [2], [], [], []
+            ]],
+            [$bossMonstersField, 1, 2, 0, [
+                [3, 4], [], [], []
+            ]],
+            [$bossMonstersField, 3, 4, 1, [
+                [4], [], [], []
             ]],
         ];
+    }
+
+    /**
+     * @return Field|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function relatedField(string $fieldName, string $class)
+    {
+        $field = $this->createMock(Field::class);
+        $field->method('getName')->willReturn($fieldName);
+        $field->method('isRelatedEntity')->willReturn(true);
+        $field->method('getRelatedEntityClass')->willReturn($class);
+
+        return $field;
     }
 }
