@@ -3,11 +3,11 @@
 namespace AppBundle\DataFixtures\ORM;
 
 use AppBundle\Entity\MonsterType;
-use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
 
-class MonsterTypeData implements FixtureInterface
+class MonsterTypeData extends AbstractFixture
 {
     /**
      * Load a standard list of monster types
@@ -25,6 +25,7 @@ class MonsterTypeData implements FixtureInterface
         foreach ($data as $d) {
             $i = new MonsterType();
             $i->setName($d);
+            $this->addReference('monster-type-' . strtolower($d), $i);
 
             $em->persist($i);
         }

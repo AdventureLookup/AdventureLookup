@@ -3,13 +3,12 @@
 namespace AppBundle\DataFixtures\ORM;
 
 use AppBundle\Entity\Monster;
-use AppBundle\Entity\MonsterType;
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 
-class MonsterData implements FixtureInterface, DependentFixtureInterface
+class MonsterData extends AbstractFixture implements DependentFixtureInterface
 {
     /**
      * This method must return an array of fixtures classes
@@ -29,21 +28,20 @@ class MonsterData implements FixtureInterface, DependentFixtureInterface
      */
     public function load(ObjectManager $em)
     {
-        $typesRepo = $em->getRepository(MonsterType::class);
-        $aberration = $typesRepo->findOneBy(['name' => 'aberration']);
-        $beast = $typesRepo->findOneBy(['name' => 'beast']);
-        $celestial = $typesRepo->findOneBy(['name' => 'celestial']);
-        $construct = $typesRepo->findOneBy(['name' => 'construct']);
-        $dragon = $typesRepo->findOneBy(['name' => 'dragon']);
-        $elemental = $typesRepo->findOneBy(['name' => 'elemental']);
-        $fey = $typesRepo->findOneBy(['name' => 'fey']);
-        $fiend = $typesRepo->findOneBy(['name' => 'fiend']);
-        $giant = $typesRepo->findOneBy(['name' => 'giant']);
-        $humanoid = $typesRepo->findOneBy(['name' => 'humanoid']);
-        $monstrosity = $typesRepo->findOneBy(['name' => 'monstrosity']);
-        $ooze = $typesRepo->findOneBy(['name' => 'ooze']);
-        $plant = $typesRepo->findOneBy(['name' => 'plant']);
-        $undead = $typesRepo->findOneBy(['name' => 'undead']);
+        $aberration = $this->getReference('monster-type-aberration');
+        $beast = $this->getReference('monster-type-beast');
+        $celestial = $this->getReference('monster-type-celestial');
+        $construct = $this->getReference('monster-type-construct');
+        $dragon = $this->getReference('monster-type-dragon');
+        $elemental = $this->getReference('monster-type-elemental');
+        $fey = $this->getReference('monster-type-fey');
+        $fiend = $this->getReference('monster-type-fiend');
+        $giant = $this->getReference('monster-type-giant');
+        $humanoid = $this->getReference('monster-type-humanoid');
+        $monstrosity = $this->getReference('monster-type-monstrosity');
+        $ooze = $this->getReference('monster-type-ooze');
+        $plant = $this->getReference('monster-type-plant');
+        $undead = $this->getReference('monster-type-undead');
 
         $monsters = [
             ['name' => 'Orc', 'type' => $humanoid],
