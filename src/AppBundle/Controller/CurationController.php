@@ -3,11 +3,9 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Curation\BulkEditFormHandler;
-use AppBundle\Curation\BulkEditFormHelper;
 use AppBundle\Curation\BulkEditFormProvider;
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\ChangeRequest;
-use AppBundle\Repository\AdventureRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Knp\Component\Pager\PaginatorInterface;

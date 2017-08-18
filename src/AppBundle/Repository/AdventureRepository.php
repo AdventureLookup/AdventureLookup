@@ -59,12 +59,20 @@ class AdventureRepository extends EntityRepository
         $em = $this->getEntityManager();
         if ($field->isRelatedEntity()) {
             $qb = $this->createQueryBuilder('a');
-            $adventures = $qb
-                ->join('a.' . $field->getName(), 'r')
+            $relationName = $fieldName = $field->getName();
+            if (in_array($relationName, ['commonMonsters', 'bossMonsters'], true)) {
+                $relationName = 'monsters';
+            }
+            $qb
+                ->join('a.' . $relationName, 'r')
                 ->where($qb->expr()->eq('r.id', ':oldValue'))
-                ->setParameter('oldValue', (int)$oldValue)
-                ->getQuery()
-                ->execute();
+                ->setParameter('oldValue', (int)$oldValue);
+            if ($fieldName === 'commonMonsters') {
+                $qb->andWhere('r.isUnique = 0');
+            } else if ($fieldName === 'bossMonsters') {
+                $qb->andWhere('r.isUnique = 1');
+            }
+            $adventures = $qb->getQuery()->execute();
             foreach ($adventures as $adventure) {
                 /** @var ArrayCollection|RelatedEntityInterface[] $currentRelatedEntities */
                 $currentRelatedEntities = $propertyAccessor->getValue($adventure, $field->getName());
