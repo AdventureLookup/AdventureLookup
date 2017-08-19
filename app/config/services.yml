@@ -12,6 +12,9 @@ services:
         tags: ['controller.service_arguments']
 
 
+    Elasticsearch\ClientBuilder:
+        factory: ['Elasticsearch\ClientBuilder', 'create']
+
     AppBundle\Service\ElasticSearch:
         arguments:
             $config: "%elasticsearch%"

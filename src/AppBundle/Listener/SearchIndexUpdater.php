@@ -51,9 +51,9 @@ class SearchIndexUpdater implements EventSubscriber
      */
     private $isTestEnvironment;
 
-    public function __construct(ElasticSearch $elasticSearch, $environment)
+    public function __construct(ElasticSearch $elasticSearch, AdventureSerializer $serializer, $environment)
     {
-        $this->serializer = new AdventureSerializer();
+        $this->serializer = $serializer;
         $this->client = $elasticSearch->getClient();
         $this->indexName = $elasticSearch->getIndexName();
         $this->typeName = $elasticSearch->getTypeName();
