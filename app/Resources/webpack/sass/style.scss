@@ -26,3 +26,13 @@
 .pagination {
   @extend .justify-content-center;
 }
+
+.footer {
+  background-color: $gray-lightest;
+  @extend .pt-3;
+  @extend .mt-3;
+
+  p, ul {
+    font-size: $small-font-size;
+  }
+}
