@@ -8,8 +8,9 @@ import 'toastr/toastr.scss';
 import LazyLoad from "vanilla-lazyload/dist/lazyload";
 import './sass/style.scss';
 
-import './search.js';
-import './adventure.js';
+import './search';
+import './adventure';
+import './adventure_list';
 
 
 toastr.options = {

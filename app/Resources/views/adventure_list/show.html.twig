@@ -1,0 +1,36 @@
+{% extends 'profile/base.html.twig' %}
+
+{% block profile_content %}
+    <div id="adventure_list">
+        <div class="float-right" id="adventure_list-actions">
+            <button type="button" class="btn btn-secondary mr-2" id="adventure_list-edit-btn">Edit</button>
+
+            {{ form_start(delete_form, {attr: {class: 'float-right'}}) }}
+            {{ form_widget(delete_form) }}
+            {{ form_end(delete_form) }}
+        </div>
+
+        {{ form_start(edit_form, {attr: {id: 'adventure_list-edit-form', class: 'd-none form-inline mb-3'}}) }}
+        {{ form_widget(edit_form.name) }}
+        {{ form_widget(edit_form.submit, {attr: {class: 'btn btn-success ml-2'}, label: 'Save'}) }}
+        <button type="button" class="btn btn-link ml-2" id="adventure_list-cancel-btn">Cancel</button>
+        {{ form_end(edit_form) }}
+
+        <h2 id="adventure_list-title">{{ list.name }}</h2>
+        <div class="clearfix"></div>
+
+        <div class="list-group">
+            {% for adventure in list.adventures %}
+                <a href="{{ path('adventure_show', {slug: adventure.slug}) }}" class="list-group-item">
+                    {{ adventure.title }}
+                </a>
+            {% else %}
+                <div class="list-group-item list-group-item-info">
+                    You haven't added any adventures yet. To do so,
+                    search for your favourite adventure and use the
+                    "Bookmark" button.
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

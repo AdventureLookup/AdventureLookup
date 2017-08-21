@@ -1,0 +1,22 @@
+{% extends 'profile/base.html.twig' %}
+
+{% block profile_content %}
+    <p>You can create different lists to keep track of your favourite adventures.</p>
+    <div class="list-group">
+        {% for list in lists %}
+            <a href="{{ path('adventure_lists_show', {id: list.id}) }}" class="list-group-item d-flex justify-content-between align-items-center">
+                {{ list.name }}
+                <span class="badge badge-default badge-pill">{{ list.adventures|length }}</span>
+            </a>
+        {% else %}
+            <div class="list-group-item list-group-item-info">
+                You haven't created any lists yet.
+            </div>
+        {% endfor %}
+    </div>
+    <h4 class="mt-5">Add a new list</h4>
+    {{ form_start(form, {attr: {class: 'form-inline'}}) }}
+    {{ form_widget(form.name) }}
+    {{ form_widget(form.submit, {attr: {class: 'ml-2'}}) }}
+    {{ form_end(form) }}
+{% endblock %}
