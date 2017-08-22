@@ -3,8 +3,7 @@ dist: trusty
 language: php
 
 php:
-  - '7.0'
-  - '7.1'
+  - '7.0.21'
 
 env:
   global:
@@ -29,7 +28,8 @@ cache:
 install:
   - composer install -n
   - |
-    if [ ${TESTSUITE} == "browser" ]; then
+    if [ ${TESTSUITE} == "functional" ] || [ "$TESTSUITE" == "browser" ]; then
+      npm install npm@latest -g
       npm install;
       npm run prod;
     fi;
@@ -59,7 +59,7 @@ script:
   # Execute tests
   # Only gather coverage on PHP 7.1, ignore browser tests for coverage.
   - |
-    if [ ${TRAVIS_PHP_VERSION:0:3} == "7.0" ] || [ "$TESTSUITE" == "browser" ]; then
+    if [ "$TESTSUITE" == "browser" ]; then
       $PHPUNIT --testsuite $TESTSUITE;
     else
       $PHPUNIT --testsuite $TESTSUITE --coverage-clover=coverage.xml;

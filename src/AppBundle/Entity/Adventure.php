@@ -39,42 +39,36 @@ class Adventure
     /**
      * @var Author[]|Collection
      * @ORM\ManyToMany(targetEntity="Author", cascade={"persist"}, indexBy="adventures", inversedBy="adventures")
-     * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
      */
     private $authors;
 
     /**
      * @var Edition
      * @ORM\ManyToOne(targetEntity="Edition", fetch="EAGER", inversedBy="adventures")
-     * @Gedmo\Versioned()
      */
     private $edition;
 
     /**
      * @var Environment[]|Collection
      * @ORM\ManyToMany(targetEntity="Environment", indexBy="adventures", inversedBy="adventures")
-     * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
      */
     private $environments;
 
     /**
      * @var Item[]|Collection
      * @ORM\ManyToMany(targetEntity="Item", cascade={"persist"}, indexBy="adventures", inversedBy="adventures")
-     * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
      */
     private $items;
 
     /**
      * @var Publisher
      * @ORM\ManyToOne(targetEntity="Publisher", fetch="EAGER", inversedBy="adventures")
-     * @Gedmo\Versioned()
      */
     private $publisher;
 
     /**
      * @var Setting
      * @ORM\ManyToOne(targetEntity="Setting", fetch="EAGER", inversedBy="adventures")
-     * @Gedmo\Versioned()
      */
     private $setting;
 
@@ -82,7 +76,6 @@ class Adventure
      * @var Monster[]|Collection
      * @ORM\ManyToMany(targetEntity="Monster", cascade={"persist"}, indexBy="adventures", inversedBy="adventures")
      * @ORM\OrderBy({"isUnique" = "DESC", "name" = "ASC"})
-     * @ TODO: Doesn't  work for ManyToMany: Gedmo\Versioned()
      */
     private $monsters;
 
@@ -92,7 +85,6 @@ class Adventure
      * @ORM\Column(name="title", type="string", length=255, unique=true)
      * @Assert\NotBlank()
      * @Assert\Length(max=255)
-     * @Gedmo\Versioned()
      */
     private $title;
 
@@ -100,7 +92,6 @@ class Adventure
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
-     * @Gedmo\Versioned()
      */
     private $description;
 
@@ -109,7 +100,6 @@ class Adventure
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Assert\Range(min=0)
-     * @Gedmo\Versioned()
      */
     private $minStartingLevel;
 
@@ -118,7 +108,6 @@ class Adventure
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Assert\Range(min=0)
-     * @Gedmo\Versioned()
      */
     private $maxStartingLevel;
 
@@ -127,7 +116,6 @@ class Adventure
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Length(max=255)
-     * @Gedmo\Versioned()
      */
     private $startingLevelRange;
 
@@ -136,7 +124,6 @@ class Adventure
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Assert\Range(min=1)
-     * @Gedmo\Versioned()
      */
     private $numPages;
 
@@ -145,7 +132,6 @@ class Adventure
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Length(max=255)
-     * @Gedmo\Versioned()
      */
     private $foundIn;
 
@@ -154,7 +140,6 @@ class Adventure
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Length(max=255)
-     * @Gedmo\Versioned()
      */
     private $partOf;
 
@@ -164,7 +149,6 @@ class Adventure
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Length(max=255)
      * @Assert\Url()
-     * @Gedmo\Versioned()
      */
     private $link;
 
@@ -174,7 +158,6 @@ class Adventure
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Length(max=255)
      * @Assert\Url()
-     * @Gedmo\Versioned()
      */
     private $thumbnailUrl;
 
@@ -182,7 +165,6 @@ class Adventure
      * @var boolean
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Gedmo\Versioned()
      */
     private $soloable;
 
@@ -190,7 +172,6 @@ class Adventure
      * @var boolean
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Gedmo\Versioned()
      */
     private $pregeneratedCharacters;
 
@@ -198,7 +179,6 @@ class Adventure
      * @var boolean
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Gedmo\Versioned()
      */
     private $tacticalMaps;
 
@@ -206,7 +186,6 @@ class Adventure
      * @var boolean
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Gedmo\Versioned()
      */
     private $handouts;
 
@@ -254,6 +233,14 @@ class Adventure
      * @Gedmo\Blameable(on="change", field={"title"})
      */
     private $updatedBy;
+
+    /**
+     * @var \DateTime
+     *
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
 
     public function __construct()
     {
@@ -341,9 +328,11 @@ class Adventure
      *
      * @return Adventure
      */
-    public function setEdition($edition)
+    public function setEdition(Edition $edition = null)
     {
-        $edition->addAdventure($this);
+        if ($edition !== null) {
+            $edition->addAdventure($this);
+        }
         $this->edition = $edition;
         return $this;
     }
@@ -423,9 +412,11 @@ class Adventure
      *
      * @return Adventure
      */
-    public function setPublisher($publisher)
+    public function setPublisher(Publisher $publisher = null)
     {
-        $publisher->addAdventure($this);
+        if ($publisher !== null) {
+            $publisher->addAdventure($this);
+        }
         $this->publisher = $publisher;
         return $this;
     }
@@ -442,9 +433,11 @@ class Adventure
      * @param Setting $setting
      * @return Adventure
      */
-    public function setSetting(Setting $setting)
+    public function setSetting(Setting $setting = null)
     {
-        $setting->addAdventure($this);
+        if ($setting !== null) {
+            $setting->addAdventure($this);
+        }
         $this->setting = $setting;
         return $this;
     }
@@ -884,5 +877,13 @@ class Adventure
     public function getUpdatedBy()
     {
         return $this->updatedBy;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt(): \DateTime
+    {
+        return $this->createdAt;
     }
 }

@@ -1,0 +1,57 @@
+{% extends 'curation/base.html.twig' %}
+
+{% block curation_content %}
+    <form action="{{ path('curation_bulk_resolve_change_requests') }}" method="post">
+        <div class="table-responsive">
+            <table class="table table-sm table-striped">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>{{ knp_pagination_sortable(changeRequests, 'Adventure', 'a.title') }}</th>
+                    <th>{{ knp_pagination_sortable(changeRequests, 'Comment', 'c.comment') }}</th>
+                    <th>{{ knp_pagination_sortable(changeRequests, 'Author', 'c.createdBy') }}</th>
+                    <th>{{ knp_pagination_sortable(changeRequests, 'Date', 'c.createdAt') }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for changeRequest in changeRequests %}
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="change_request[]" value="{{ changeRequest.id|e('html_attr') }}"
+                                   title="Select change request {{ changeRequest.id }}" />
+                        </td>
+                        <td>
+                            <a href="{{ path('adventure_show', {slug: changeRequest.adventure.slug}) }}#change-requests"
+                               title="Show adventure" tabindex="-1">
+                                {{ changeRequest.adventure.title }}
+                            </a>
+                        </td>
+                        <td>{{ changeRequest.comment|nl2br }}</td>
+                        <td>{{ changeRequest.createdBy }}</td>
+                        <td><small>{{ changeRequest.createdAt|time_diff }}</small></td>
+                    </tr>
+                {% else %}
+                    <tr class="table-success text-center">
+                        <td colspan="5">There isn't a single open change request. Congratulations! 🎉</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {{ knp_pagination_render(changeRequests) }}
+
+        <h3>Bulk-resolve change requests</h3>
+        <p>
+            This functionality is only useful to bulk-resolve invalid change requests, presumably by the same person.
+            Be warned, <span class="text-danger">you won't be asked for confirmation</span>.
+        </p>
+        <div class="input-group">
+            <span class="input-group-btn">
+                <button class="btn btn-warning" type="submit" role="button"><i class="fa fa-check"></i> Resolve selected</button>
+            </span>
+            <input type="text" class="form-control w-100" maxlength="512" name="remarks"
+                   placeholder="Override curator remarks for all change requests being resolved">
+        </div>
+    </form>
+{% endblock %}
+

@@ -2,13 +2,16 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Form\UserType;
+use AppBundle\Form\Type\UserType;
 use AppBundle\Entity\User;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -16,12 +19,15 @@ class RegistrationController extends Controller
 {
     /**
      * @Route("/register", name="user_registration")
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
+     * @param SessionInterface $session
+     * @param TokenStorageInterface $tokenStorage
      * @param UserInterface|null $user
      * @return RedirectResponse|Response
      */
-    public function registerAction(Request $request, UserInterface $user = null)
+    public function registerAction(Request $request, SessionInterface $session, TokenStorageInterface $tokenStorage, UserInterface $user = null)
     {
         if ($user) {
             $this->addFlash('warning', "You are already logged in.");
@@ -48,8 +54,8 @@ class RegistrationController extends Controller
 
             $this->addFlash('success', 'Account created. You have been logged in.');
             $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-            $this->get('security.token_storage')->setToken($token);
-            $this->get('session')->set('_security_main', serialize($token));
+            $tokenStorage->setToken($token);
+            $session->set('_security_main', serialize($token));
 
             return $this->redirectToRoute('homepage');
         }

@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>{% block title %}Adventure Lookup{% endblock %}</title>
-        <link rel="stylesheet" href="{{ asset('assets/styles.css') }}?v=3">
+        <link rel="stylesheet" href="{{ asset('assets/app.css') }}">
         {% block stylesheets %}{% endblock %}
         <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
         <link rel="icon" type="image/png" href="{{ asset('favicon-32x32.png') }}" sizes="32x32">
@@ -12,7 +12,6 @@
         <link rel="manifest" href="{{ asset('manifest.json') }}">
         <link rel="mask-icon" href="{{ asset('safari-pinned-tab.svg') }}" color="#f9e144">
         <meta name="theme-color" content="#ffffff">
-        <script src="https://use.fontawesome.com/8bb52fe553.js"></script>
     </head>
     <body>
         <nav class="navbar navbar-toggleable-sm navbar-light bg-faded">
@@ -32,6 +31,9 @@
                         </li>
                     {% endif %}
                     {% if is_granted('ROLE_CURATOR') %}
+                        <li class="nav-item">
+                            <a class="nav-link{% if app.request.attributes.get('_route') starts with 'curation' %} active{% endif %}" href="{{ path('curation') }}">Curation Panel <span class="badge badge-success">new</span></a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link{% if app.request.attributes.get('_route') == 'easyadmin' %} active{% endif %}" href="{{ path('easyadmin') }}">Admin Panel</a>
                         </li>
@@ -76,18 +78,57 @@
 
         {% block body %}{% endblock %}
 
-        <footer>
+        <footer class="footer">
             <div class="container">
                 <div class="row">
-                    <div class="col text-right">
-                        <hr />
-                        <p>Natural 20! Made by <a href="https://github.com/cmfcmf">@cmfcmf.</a></p>
+                    <div class="col-lg-5 col-md-8">
+                        <h6>Adventure Lookup</h6>
+                        <p>
+                            Adventure Lookup is a catalog of adventures for Dungeons and Dragons and its clones.
+                            We need your help to expand the catalog and ensure each entry is reasonably accurate.
+                            Simply create an account to start adding adventures or submit change requests!
+                            If you added a substantive amount, you may
+                            <a href="https://www.reddit.com/r/AdventureLookup/comments/6th0n4/apply_here_to_be_a_curator/">apply here</a>
+                            to be promoted to a curator.
+                        <br>
+                            <a href="twitter.com/mattcolville">Matt Colville</a> first talked about the idea in
+                            <a href="https://www.youtube.com/watch?v=PIyLvicSu78">a video of his</a>
+                            in 2016. It wasn't until August 2017 before
+                            <a href="https://www.youtube.com/watch?v=D3OllWSRhuI">the site went live</a>.
+                        </p>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <h6>Questions?</h6>
+                        <p>
+                            Feel free to ask any questions in the official
+                            <a href="https://reddit.com/r/AdventureLookup">/r/AdventureLookup</a>
+                            subreddit. If you want to report a bug, typo or suggest a feature,
+                            you're welcome to create a new issue in our
+                            <a href="https://github.com/AdventureLookup/AdventureLookup">GitHub Repository</a>.
+                        </p>
+                    </div>
+                    <div class="col-lg-4 col-md-12">
+                        <h6>Get Involved!</h6>
+                        <p>
+                            If you know how to code, checkout the
+                            <a href="https://github.com/AdventureLookup/AdventureLookup">GitHub Repository</a>
+                            and help implement new features or join our
+                            <a href="https://discord.gg/0111UjFmfsOzDqan7">Discord developer chat</a>.
+                            Contributions and questions are always welcome!
+                        </p>
+                        <p>
+                            Adventure Lookup is made possible by
+                            <a href="https://github.com/cmfcmf">@cmfcmf</a> and
+                            <a href="https://github.com/AdventureLookup/AdventureLookup/graphs/contributors">other fine people</a>.
+                        </p>
                     </div>
                 </div>
             </div>
         </footer>
 
-        <script src="{{ asset('assets/main.js') }}?v=3"></script>
+        <script src="{{ asset('assets/manifest.js') }}"></script>
+        <script src="{{ asset('assets/vendor.js') }}"></script>
+        <script src="{{ asset('assets/app.js') }}"></script>
         {% block javascripts %}{% endblock %}
         {% if app.environment == 'prod' and google_analytics_code is not empty %}
             <script>

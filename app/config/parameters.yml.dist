@@ -15,7 +15,7 @@ parameters:
     mailer_password: ~
 
     # A secret key that's used to generate certain security-related tokens
-    secret: ThisTokenIsNotSoSecretChangeIt
+    secret: CHANGE_THIS_wam9p8u5f0m9sv8aikv9bktfpzudjeg98tfcykexsae4v9zb
 
     google_analytics_code: ~
 
@@ -24,3 +24,18 @@ parameters:
 
     # Email addresses to be notified if an error occurs
     error_email_addresses: []
+
+    # Affiliate code mappings. Will be applied to the links on the adventure detail page.
+    # Each mapping can specify multiple domains. Subdomains are ignored.
+    # A query parameter named $param will be added or overridden and set to the value
+    # provided in $code. Example:
+    #
+    # affiliate_mappings:
+    #     - domains: ['drivethrurpg.com']
+    #       param:   'affiliate_id'
+    #       code:    'abc123'
+    #     - domains: ['amazon.de', 'amazon.com']
+    #       param:   'something'
+    #       code:    '123abc'
+
+    affiliate_mappings: []

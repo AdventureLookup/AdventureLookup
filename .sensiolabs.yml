@@ -1,0 +1,8 @@
+rules:
+    web.apache_config:
+        enabled: false
+pre_composer_script: |
+    #!/bin/bash
+
+    echo "imports: [{ resource: config.yml }]" > app/config/config_prod.yml
+    sed "s/'%database_password%'/'%database_password%'\n        server_version: 5.7/g" -i app/config/config.yml

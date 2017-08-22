@@ -1,0 +1,38 @@
+{% extends 'curation/base.html.twig' %}
+
+{% block curation_content %}
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Watch out!</h4>
+        <p class="mb-0">
+            Any changes done here are taken into effect immediately and cannot be reversed.
+            There won't be any confirmation screen before saving the changes.
+        </p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <ul class="nav nav-pills flex-column" role="tablist">
+                {% for formAndField in formsAndFields %}
+                    <li class="nav-item">
+                        <a class="nav-link{% if loop.first %} active{% endif %}" data-toggle="tab"
+                           href="#bulk-edit-{{ formAndField.field.name }}" role="tab">{{ formAndField.field.title }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md">
+            <div class="tab-content">
+                {% for formAndField in formsAndFields %}
+                    <div class="tab-pane{% if loop.first %} active{% endif %}" id="bulk-edit-{{ formAndField.field.name }}" role="tabpanel">
+                        <h3>{{ formAndField.field.title }}</h3>
+                        {% set form = formAndField.form.createView() %}
+                        {{- form_start(form) -}}
+                        {{- form_widget(form) -}}
+                        {{- form_end(form) -}}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

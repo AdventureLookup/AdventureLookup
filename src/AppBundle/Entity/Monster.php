@@ -18,7 +18,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\MonsterRepository")
  * @UniqueEntity({"name", "isUnique"})
  */
-class Monster implements HasAdventuresInterface
+class Monster implements RelatedEntityInterface
 {
     /**
      * @var int

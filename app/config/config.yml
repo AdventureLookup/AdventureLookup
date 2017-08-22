@@ -26,14 +26,15 @@ framework:
         engines: ['twig']
     default_locale: '%locale%'
     trusted_hosts: ~
-    trusted_proxies: ~
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
         handler_id:  session.handler.native_file
         save_path:   "%kernel.root_dir%/../var/sessions/%kernel.environment%"
+        name: 'adl'
     fragments: ~
     http_method_override: true
-    assets: ~
+    assets:
+        json_manifest_path: '%kernel.project_dir%/web/assets/manifest.json'
     php_errors:
         log: true
 
@@ -122,7 +123,7 @@ knp_paginator:
         distinct: true           # ensure distinct results, useful when ORM queries are using GROUP BY statements
     template:
         pagination: 'KnpPaginatorBundle:Pagination:twitter_bootstrap_v4_pagination.html.twig'
-        sortable: 'KnpPaginatorBundle:Pagination:sortable_link.html.twig'
+        sortable: 'pagination/sortable_link.html.twig'
 
 ewz_recaptcha:
     public_key:  '%recaptcha_public_key%'

@@ -3,8 +3,10 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Adventure;
-use AppBundle\Form\AdventureType;
+use AppBundle\Field\FieldProvider;
+use AppBundle\Form\Type\AdventureType;
 use AppBundle\Security\AdventureVoter;
+use AppBundle\Service\AdventureSearch;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -24,17 +26,17 @@ class AdventureController extends Controller
      * @Method({"GET", "POST"})
      *
      * @param Request $request
+     * @param AdventureSearch $adventureSearch
+     * @param FieldProvider $fieldProvider
      * @return Response
      */
-    public function indexAction(Request $request)
+    public function indexAction(Request $request, AdventureSearch $adventureSearch, FieldProvider $fieldProvider)
     {
-        $search = $this->get('adventure_search');
-
         $q = $request->get('q', '');
         $page = (int)$request->get('page', 1);
         $filters = $request->get('f', []);
-        $fields = $this->get('app.field_provider')->getFields();
-        list($paginatedAdventureDocuments, $totalNumberOfResults, $stats) = $search->search($q, $filters, $page);
+        $fields = $fieldProvider->getFields();
+        list($paginatedAdventureDocuments, $totalNumberOfResults, $stats) = $adventureSearch->search($q, $filters, $page);
 
         return $this->render('adventure/index.html.twig', [
             'adventures' => $paginatedAdventureDocuments,
@@ -119,7 +121,7 @@ class AdventureController extends Controller
         $this->denyAccessUnlessGranted(AdventureVoter::EDIT, $adventure);
 
         $deleteForm = $this->createDeleteForm($adventure);
-        $editForm = $this->createForm('AppBundle\Form\AdventureType', $adventure);
+        $editForm = $this->createForm(AdventureType::class, $adventure);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {

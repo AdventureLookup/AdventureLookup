@@ -4,7 +4,7 @@ namespace AppBundle\Listener;
 
 
 use AppBundle\Entity\Adventure;
-use AppBundle\Entity\HasAdventuresInterface;
+use AppBundle\Entity\RelatedEntityInterface;
 use AppBundle\Service\AdventureSerializer;
 use AppBundle\Service\ElasticSearch;
 use Doctrine\Common\EventSubscriber;
@@ -93,7 +93,7 @@ class SearchIndexUpdater implements EventSubscriber
         $em = $eventArgs->getEntityManager();
         $uow = $em->getUnitOfWork();
         foreach ($uow->getScheduledEntityDeletions() as $entity) {
-            if ($entity instanceof HasAdventuresInterface) {
+            if ($entity instanceof RelatedEntityInterface) {
                 $entity->getAdventures()->getValues();
             }
         }
@@ -170,7 +170,7 @@ class SearchIndexUpdater implements EventSubscriber
         if ($entity instanceof Adventure) {
             return [$entity];
         }
-        if ($entity instanceof HasAdventuresInterface) {
+        if ($entity instanceof RelatedEntityInterface) {
             return $entity->getAdventures();
         }
 

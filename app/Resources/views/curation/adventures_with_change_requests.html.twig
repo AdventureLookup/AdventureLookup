@@ -1,0 +1,35 @@
+{% extends 'curation/base.html.twig' %}
+
+{% block curation_content %}
+    <form action="{{ path('curation_bulk_resolve_change_requests') }}" method="post">
+        <div class="table-responsive">
+            <table class="table table-sm table-striped">
+                <thead>
+                <tr>
+                    <th>{{ knp_pagination_sortable(adventures, 'Adventure', 'a.title') }}</th>
+                    <th>{{ knp_pagination_sortable(adventures, 'Number of change requests', 'changeRequestCount') }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for adventure in adventures %}
+                    <tr>
+                        <td>
+                            <a href="{{ path('adventure_show', {slug: adventure.slug}) }}#change-requests"
+                               title="Show adventure" tabindex="-1">
+                                {{ adventure.title }}
+                            </a>
+                        </td>
+                        <td>{{ adventure.changeRequestCount }}</td>
+                    </tr>
+                {% else %}
+                    <tr class="table-success text-center">
+                        <td colspan="2">There isn't a single open change request. Congratulations! 🎉</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {{ knp_pagination_render(adventures) }}
+    </form>
+{% endblock %}
+

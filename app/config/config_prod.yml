@@ -35,3 +35,4 @@ monolog:
             content_type: text/html
         console:
             type: console
+            process_psr_3_messages: false

@@ -25,11 +25,9 @@ Execute the following commands to finish the installation:
 # Install PHP dependencies
 composer install -n
  
-# Install Frontend dependencies
-yarn install
-nodejs node_modules/node-sass/scripts/install.js
-npm rebuild node-sass --no-bin-links
- 
+# Install Frontend dependencies, can be run outside the virtual machine
+npm install
+
 # Setup database
 php bin/console doctrine:migrations:migrate
  
@@ -48,26 +46,34 @@ If you didn't use Vagrant and use an existing MySQL database, adjust the `app/co
 ```
 # Start Symfony development server on port 8000 to run the application
 # Must be run inside the virtual machine you used `vagrant ssh` to get into earlier
-php bin/console server:start 0.0.0.0
+php bin/console server:start 0.0.0.0:8000
  
 # Start webpack to watch changes to assets and recompile them
 # Can be run inside the virtual machine or outside of the virtual machine
-npm run dev
+# If run inside the virtual machine:
+npm run dev-server-guest
+# If run outside the virtual machine:
+npm run dev-server-host
 ```
 
-The application is now running at http://localhost:8000/app_dev.php.
-Elasticsearch can be accessed at http://localhost:9200.
+The application is now running at http://localhost:8000.
+ElasticSearch can be accessed at http://localhost:9200.
 
 ## Running tests
 
-Tests use PHPUnit to run. There are two testsuites, one with functional tests and one with browser tests.
+Tests use PHPUnit to run. There are three testsuites, one with unit tests, one with functional tests 
+and one with browser tests. 
+Unit tests can be executed like this:
+```
+php vendor/symfony/phpunit-bridge/bin/simple-phpunit --testsuite unittests
+```
 Functional tests can be executed like so:
 ```
 php vendor/symfony/phpunit-bridge/bin/simple-phpunit --testsuite functional
 ```
 Browser tests require PhantomJS as well as the application running in the test environment. 
-To do that, execute `bash tests/start-phantomjs.sh` *once* before executing the tests. There is not
-need to call the script again until you reboot. Then execute the following to run the brow3ser tests:
+To do that, execute `bash scripts/start-phantomjs.sh` *once* before executing the tests. There is no
+need to call the script again until you reboot. Then execute the following to run the browser tests:
 ```
 php vendor/symfony/phpunit-bridge/bin/simple-phpunit --testsuite browser
 ```
@@ -108,6 +114,18 @@ Make sure to read the [Symfony guide on permissions](https://symfony.com/doc/cur
 
 Make sure to run `mysql_secure_installation`. Adjust port, username, host and password in `app/config/parameters.yml`.
 
+## Ports used in development
+
+| Port | Forwarded to host machine | Purpose                                        |
+|------|---------------------------|------------------------------------------------|
+| 3306 | no                        | MySQL                                          |
+| 8000 | yes                       | Application dev server                         |
+| 8001 | yes                       | Webpack dev server if run from within Vagrant  |
+| 8002 | no                        | Webpack dev server if run from outside Vagrant |
+| 8003 | no                        | Application test server                        |
+| 8510 | no                        | PhantomJS server                               |
+| 9200 | yes                       | ElasticSearch                                  |
+
 # Tools used
 
 - Ubuntu 16.04 as the server
@@ -116,5 +134,5 @@ Make sure to run `mysql_secure_installation`. Adjust port, username, host and pa
 - PHP7.0 to run the application
 - Symfony 3 as the web framework
 - Composer as PHP package manager
-- Yarn as Frontend package manager
-- Webpack for frontend assets
+- NPM 5 as Frontend package manager
+- Symfony Encore / Webpack for frontend assets
