@@ -6,7 +6,6 @@ namespace AppBundle\Security;
 use AppBundle\Entity\AdventureList;
 use AppBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class AdventureListVoter extends Voter
@@ -18,37 +17,33 @@ class AdventureListVoter extends Voter
     const DELETE = 'delete';
 
     /**
-     * Determines if the attribute and subject are supported by this voter.
-     *
-     * @param string $attribute An attribute
-     * @param mixed $subject The subject to secure, e.g. an object the user wants to access or any other PHP type
-     *
-     * @return bool True if the attribute and subject are supported, false otherwise
+     * {@inheritdoc}
      */
     protected function supports($attribute, $subject)
     {
-        if (!in_array($attribute, [self::LIST, self::CREATE, self::SHOW, self::EDIT, self::DELETE])) {
-            return false;
+        if ($attribute === self::LIST && $subject === 'adventure_list') {
+            return true;
         }
-        if (!($subject instanceof AdventureList) && !($attribute === self::LIST && $subject === 'adventure_list')) {
-            return false;
+        if ($subject instanceof AdventureList && in_array($attribute, [
+                self::CREATE,
+                self::SHOW,
+                self::EDIT,
+                self::DELETE
+            ])) {
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     /**
-     * Perform a single access check operation on a given attribute, subject and token.
-     * It is safe to assume that $attribute and $subject already passed the "supports()" method check.
-     *
-     * @param string $attribute
-     * @param mixed $subject
-     * @param TokenInterface $token
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
-    {
+    protected function voteOnAttribute(
+        $attribute,
+        $subject,
+        TokenInterface $token
+    ) {
         $user = $token->getUser();
         if (!($user instanceof User)) {
             // the user must be logged in; if not, deny access
