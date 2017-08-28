@@ -1,0 +1,49 @@
+<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+        <div class="dropdown mr-2" id="adventure_list-bookmark-menu">
+            <button class="btn btn-sm btn-secondary dropdown-toggle" href="#" id="adventure_list-bookmark-menu-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-bookmark"></i> Bookmark
+            </button>
+
+            <div class="dropdown-menu" aria-labelledby="adventure_list-bookmark-menu-btn">
+                <h6 class="dropdown-header">Your Lists</h6>
+                {% for list in lists %}
+                    <button class="dropdown-item" type="button"
+                            data-adventure-list-id="{{ list.id }}"
+                            data-toggle-url="{{ path('adventure_lists_toggle_contains_adventure', {
+                                list_id: list.id, adventure_id: adventure.id
+                            }) }}">
+                        {% if list.containsAdventure(adventure) %}
+                            <i class="fa fa-fw fa-check"></i>
+                        {% else %}
+                            <i class="fa fa-fw"></i>
+                        {% endif %}
+                        {{ list.name }}
+                    </button>
+                {% else %}
+                    <button class="dropdown-item disabled" type="button">Please create a list first, using the link below</button>
+                {% endfor %}
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{{ path('adventure_lists_index') }}">
+                    <i class="fa fa-fw fa-cog"></i>
+                    Manage lists
+                </a>
+            </div>
+        </div>
+    {% endif %}
+    {% if is_granted('edit', adventure) %}
+        <a class="btn btn-sm btn-secondary mr-2"
+           href="{{ path('adventure_edit', { 'id': adventure.id }) }}">
+            <i class="fa fa-edit"></i> Edit adventure
+        </a>
+    {% endif %}
+    {% if is_granted('delete', adventure) %}
+        {{ form_start(delete_form) }}
+        <button class="btn btn-sm btn-outline-danger"
+                onclick="return confirm('Do you really want to delete this adventure?')">
+            <i class="fa fa-trash"></i> Delete
+        </button>
+        {{ form_end(delete_form) }}
+    {% endif %}
+    <div class="clearfix"></div>
+</div>
