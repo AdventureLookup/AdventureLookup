@@ -200,10 +200,7 @@ class AdventureRepositoryTest extends WebTestCase
     public function testUpdateRelatedFieldSingle(Field $field, string $oldValue, string $newValue = null,
         int $expectedAffected, $expectedValues)
     {
-        $affected = $this->repository->updateField($field, $oldValue, $newValue);
-        $this->assertSame($expectedAffected, $affected);
-        /** @var Adventure[] $adventures */
-        $adventures = $this->repository->findBy([], ['title' => 'ASC']);
+        $adventures = $this->doTestUpdateRelatedField($field, $oldValue, $newValue, $expectedAffected);
 
         foreach ($adventures as $i => $adventure) {
             /** @var RelatedEntityInterface|null $value */
@@ -233,10 +230,7 @@ class AdventureRepositoryTest extends WebTestCase
     public function testUpdateRelatedFieldMultiple(Field $field, string $oldValue, string $newValue = null,
         int $expectedAffected, $expectedValues)
     {
-        $affected = $this->repository->updateField($field, $oldValue, $newValue);
-        $this->assertSame($expectedAffected, $affected);
-        /** @var Adventure[] $adventures */
-        $adventures = $this->repository->findBy([], ['title' => 'ASC']);
+        $adventures = $this->doTestUpdateRelatedField($field, $oldValue, $newValue, $expectedAffected);
 
         foreach ($adventures as $i => $adventure) {
             $values = $this->propertyAccessor->getValue($adventure, $field->getName())
@@ -305,5 +299,26 @@ class AdventureRepositoryTest extends WebTestCase
         $field->method('isMultiple')->willReturn($multiple);
 
         return $field;
+    }
+
+    /**
+     * @param Field $field
+     * @param string $oldValue
+     * @param string $newValue
+     * @param int $expectedAffected
+     * @return Adventure[]
+     */
+    private function doTestUpdateRelatedField(Field $field, string $oldValue, string $newValue = null, int $expectedAffected): array
+    {
+        $affected = $this->repository->updateField($field, $oldValue, $newValue);
+        $this->assertSame($expectedAffected, $affected);
+
+        if ($affected > 0) {
+            $em = $this->getContainer()->get('doctrine');
+            $relatedRepository = $em->getRepository($field->getRelatedEntityClass());
+            $this->assertNull($relatedRepository->find($oldValue));
+        }
+
+        return $this->repository->findBy([], ['title' => 'ASC']);
     }
 }
