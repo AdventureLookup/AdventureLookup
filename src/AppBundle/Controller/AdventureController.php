@@ -3,16 +3,19 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Adventure;
+use AppBundle\Entity\AdventureList;
 use AppBundle\Field\FieldProvider;
 use AppBundle\Form\Type\AdventureType;
 use AppBundle\Security\AdventureVoter;
 use AppBundle\Service\AdventureSearch;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Adventure controller.
@@ -92,18 +95,23 @@ class AdventureController extends Controller
      * @Method("GET")
      *
      * @param Adventure $adventure
+     * @param EntityManagerInterface $em
+     * @param UserInterface $user
      * @return Response
      */
-    public function showAction(Adventure $adventure)
+    public function showAction(Adventure $adventure, EntityManagerInterface $em,
+                               UserInterface $user = null)
     {
         $this->denyAccessUnlessGranted(AdventureVoter::VIEW, $adventure);
 
         $deleteForm = $this->createDeleteForm($adventure);
+        $adventureListRepository = $em->getRepository(AdventureList::class);
 
-        return $this->render('adventure/show.html.twig', array(
+        return $this->render('adventure/show.html.twig', [
             'adventure' => $adventure,
             'delete_form' => $deleteForm->createView(),
-        ));
+            'lists' => $adventureListRepository->myLists($user),
+        ]);
     }
 
     /**

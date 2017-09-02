@@ -53,7 +53,6 @@ class ProfileController extends Controller
         ], ['createdAt' => 'DESC']);
 
         return $this->render('profile/overview.html.twig', [
-            'user' => $user,
             'changeRequests' => $changeRequests,
             'adventures' => $adventures,
         ]);
