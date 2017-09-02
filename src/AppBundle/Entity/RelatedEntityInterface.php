@@ -27,4 +27,10 @@ interface RelatedEntityInterface
      * @return static
      */
     public function addAdventure(Adventure $adventure);
+
+    /**
+     * @param Adventure $adventure
+     * @return static
+     */
+    public function removeAdventure(Adventure $adventure);
 }
