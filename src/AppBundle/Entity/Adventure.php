@@ -299,9 +299,7 @@ class Adventure
      */
     public function addAuthor(Author $author)
     {
-        $author->addAdventure($this);
-        $this->authors->add($author);
-        return $this;
+        return $this->addRelatedEntity('authors', $author);
     }
 
     /**
@@ -330,11 +328,7 @@ class Adventure
      */
     public function setEdition(Edition $edition = null)
     {
-        if ($edition !== null) {
-            $edition->addAdventure($this);
-        }
-        $this->edition = $edition;
-        return $this;
+        return $this->setRelatedEntity('edition', $edition);
     }
 
     /**
@@ -352,9 +346,7 @@ class Adventure
      */
     public function addEnvironment(Environment $environment)
     {
-        $environment->addAdventure($this);
-        $this->environments->add($environment);
-        return $this;
+        return $this->addRelatedEntity('environments', $environment);
     }
 
     /**
@@ -383,9 +375,7 @@ class Adventure
      */
     public function addItem(Item $item)
     {
-        $item->addAdventure($this);
-        $this->items->add($item);
-        return $this;
+        return $this->addRelatedEntity('items', $item);
     }
 
     /**
@@ -414,11 +404,7 @@ class Adventure
      */
     public function setPublisher(Publisher $publisher = null)
     {
-        if ($publisher !== null) {
-            $publisher->addAdventure($this);
-        }
-        $this->publisher = $publisher;
-        return $this;
+        return $this->setRelatedEntity('publisher', $publisher);
     }
 
     /**
@@ -435,11 +421,7 @@ class Adventure
      */
     public function setSetting(Setting $setting = null)
     {
-        if ($setting !== null) {
-            $setting->addAdventure($this);
-        }
-        $this->setting = $setting;
-        return $this;
+        return $this->setRelatedEntity('setting', $setting);
     }
 
     /**
@@ -476,9 +458,7 @@ class Adventure
      */
     public function addMonster(Monster $monster)
     {
-        $monster->addAdventure($this);
-        $this->monsters->add($monster);
-        return $this;
+        return $this->addRelatedEntity('monsters', $monster);
     }
 
     /**
@@ -885,5 +865,36 @@ class Adventure
     public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
+    }
+
+    /**
+     * @param string $field
+     * @param RelatedEntityInterface|null $relatedEntity
+     * @return $this
+     */
+    private function setRelatedEntity(string $field, RelatedEntityInterface $relatedEntity = null): Adventure
+    {
+        if ($this->$field !== null) {
+            $this->$field->removeAdventure($this);
+        }
+        if ($relatedEntity !== null) {
+            $relatedEntity->addAdventure($this);
+        }
+        $this->$field = $relatedEntity;
+
+        return $this;
+    }
+
+    /**
+     * @param string $field
+     * @param RelatedEntityInterface|null $relatedEntity
+     * @return Adventure
+     */
+    private function addRelatedEntity(string $field, RelatedEntityInterface $relatedEntity = null): Adventure
+    {
+        $relatedEntity->addAdventure($this);
+        $this->$field->add($relatedEntity);
+
+        return $this;
     }
 }
