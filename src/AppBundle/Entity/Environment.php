@@ -117,6 +117,17 @@ class Environment implements RelatedEntityInterface
     }
 
     /**
+     * @param Adventure $adventure
+     * @return static
+     */
+    public function removeAdventure(Adventure $adventure)
+    {
+        $this->adventures->removeElement($adventure);
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getCreatedBy()
