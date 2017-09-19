@@ -11,10 +11,16 @@
     </div>
 {% endmacro %}
 
-{% macro filter_field(field, stats, searchFilter) %}
+{% macro filter_field(field, stats, searchFilter, hidden) %}
     {% import _self as macros %}
     {% set filter = searchFilter[field.name]|default([]) %}
     {% set show = true %} {# Currently, all filters are shown and expanded when the page is loaded #}
+    {% if hidden %}
+        {% set value = filter['v']|default('') %}
+        {% if value %}
+        <input type="hidden" name="f[{{ field.name }}][v]" value="{{ value }}" >
+        {% endif %}
+    {% else %}
     <div class="card mb-1 filter-card {{ show ? 'expanded' : '' }}" id="filter-{{ field.name }}">
         <div class="card-block filter-title">
             <h6 class="card-title">
@@ -83,26 +89,30 @@
             <button type="submit" class="btn btn-secondary pull-right btn-sm" role="button">Apply</button>
         </div>
     </div>
+    {% endif %}
 {% endmacro %}
 {% import _self as macros %}
-{{ macros.filter_field(fields['publisher'], stats, searchFilter) }}
-{{ macros.filter_field(fields['setting'], stats, searchFilter) }}
-{{ macros.filter_field(fields['edition'], stats, searchFilter) }}
-
-{{ macros.filter_field(fields['environments'], stats, searchFilter) }}
-{{ macros.filter_field(fields['items'], stats, searchFilter) }}
-{{ macros.filter_field(fields['bossMonsters'], stats, searchFilter) }}
-{{ macros.filter_field(fields['commonMonsters'], stats, searchFilter) }}
-
-{{ macros.filter_field(fields['numPages'], stats, searchFilter) }}
-{{ macros.filter_field(fields['minStartingLevel'], stats, searchFilter) }}
-{{ macros.filter_field(fields['maxStartingLevel'], stats, searchFilter) }}
-{{ macros.filter_field(fields['startingLevelRange'], stats, searchFilter) }}
-
-{{ macros.filter_field(fields['soloable'], stats, searchFilter) }}
-{{ macros.filter_field(fields['pregeneratedCharacters'], stats, searchFilter) }}
-{{ macros.filter_field(fields['handouts'], stats, searchFilter) }}
-{{ macros.filter_field(fields['tacticalMaps'], stats, searchFilter) }}
-
-{{ macros.filter_field(fields['partOf'], stats, searchFilter) }}
-{{ macros.filter_field(fields['foundIn'], stats, searchFilter) }}
+{% 
+set visible_fields = [
+              'publisher',
+              'setting',
+              'edition',
+              'environments',
+              'items',
+              'bossMonsters',
+              'commonMonsters',
+              'numPages',
+              'minStartingLevel',
+              'maxStartingLevel',
+              'startingLevelRange',
+              'soloable',
+              'pregeneratedCharacters',
+              'handouts',
+              'tacticalMaps',
+              'partOf',
+              'foundIn'
+             ]
+%}
+{% for field in fields %}
+{{ macros.filter_field(field, stats, searchFilter, field.name not in visible_fields) }}
+{% endfor %}

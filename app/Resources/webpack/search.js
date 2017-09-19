@@ -18,7 +18,12 @@ import {myLazyLoad} from "./index";
         const key = $(this).data('key');
         const fieldType = $(this).data('field-type');
         if (fieldType === 'string') {
-            $(`input[name^="f[${fieldName}][v]"][value="${value}"]`).prop('checked', false);
+            const $strInput = $(`input[name^="f[${fieldName}][v]"][value="${value}"]`);
+            if($strInput.is(':hidden')){
+                $strInput.remove()
+            } else {
+                $strInput.prop('checked', false);
+            }
         } else if (fieldType === 'boolean') {
             $(`input[name^="f[${fieldName}][v]"][value=""]`).prop('checked', true);
         } else if (fieldType === 'integer') {
@@ -47,11 +52,14 @@ import {myLazyLoad} from "./index";
             data: data,
         }).done(function (result) {
             $('#search-results').append($(result).find('#search-results'));
+
+            const $newLoadMoreBtn = $(result).find('#load-more-btn')[0];
+            $loadMoreBtn.attr('disabled', $($newLoadMoreBtn).is(':disabled'));
+
             myLazyLoad.update();
         }).fail(function () {
             alert('Something went wrong.');
         }).always(function () {
-            $loadMoreBtn.attr('disabled', false);
             $loadMoreBtn.find('.fa-spin').addClass('d-none');
         });
     });
