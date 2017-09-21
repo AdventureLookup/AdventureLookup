@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% block title %}{{ adventure.title }} - Adventure Lookup {% endblock %}
 
 {% macro search_icon(fieldName, content) %}
     {% set path = path('adventure_index', {('f[' ~ fieldName ~ '][v]'): content}) %}
