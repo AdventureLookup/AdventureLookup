@@ -7,6 +7,9 @@
   .filter-title {
     cursor: pointer;
   }
+  .form-check {
+      margin-bottom: 0;
+  }
 
   // Default state, filter not expanded
   .fa-caret-up, .filter-content {
