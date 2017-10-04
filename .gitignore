@@ -13,8 +13,10 @@ var/cache/*
 /var/sessions/*
 !var/sessions/.gitkeep
 vendor/
-web/bundles/
-web/assets/
+/web/bundles/*
+!/web/bundles/.gitkeep
+/web/assets/*
+!/web/assets/.gitkeep
 web/assets/vendor/
 
 npm-debug.log
