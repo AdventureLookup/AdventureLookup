@@ -1,0 +1,45 @@
+<nav class="navbar navbar-toggleable-sm navbar-light bg-faded">
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" role="button">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="{{ path('homepage') }}">Adventure Lookup</a>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link{% if app.request.attributes.get('_route') == 'adventure_index' %} active{% endif %}" href="{{ path('adventure_index') }}">Adventures</a>
+            </li>
+            {% if is_granted('ROLE_ADMIN') %}
+                <li class="nav-item">
+                    <a class="nav-link{% if app.request.attributes.get('_route') == 'audit' %} active{% endif %}" href="{{ path('audit') }}">Recent Activity</a>
+                </li>
+            {% endif %}
+            {% if is_granted('ROLE_CURATOR') %}
+                <li class="nav-item">
+                    <a class="nav-link{% if app.request.attributes.get('_route') starts with 'curation' %} active{% endif %}" href="{{ path('curation') }}">Curation Panel <span class="badge badge-success">new</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link{% if app.request.attributes.get('_route') == 'easyadmin' %} active{% endif %}" href="{{ path('easyadmin') }}">Admin Panel</a>
+                </li>
+            {% endif %}
+            {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                <li class="nav-item">
+                    <a class="nav-link{% if app.request.attributes.get('_route') == 'profile' %} active{% endif %}" href="{{ path('profile') }}">Your Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link{% if app.request.attributes.get('_route') == 'logout' %} active{% endif %}" href="{{ path('logout') }}">Logout</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link{% if app.request.attributes.get('_route') == 'login' %} active{% endif %}" href="{{ path('login') }}">Login</a>
+                </li>
+            {% endif %}
+        </ul>
+        {#
+        <form class="form-inline" action="{{ url('adventure_index') }}#search-results" method="get">
+            <input class="form-control mr-sm-2" type="text" name="q" placeholder="An adventure including..." value="{{ app.request.query.get('q', '') }}">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit" role="button">Search</button>
+        </form>
+        #}
+    </div>
+</nav>
