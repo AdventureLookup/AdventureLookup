@@ -6,9 +6,10 @@
     "prod": "encore production"
   },
   "dependencies": {
-    "bootstrap": "4.0.0-alpha.6",
+    "bootstrap": "^4.0.0-beta",
     "font-awesome": "^4.7.0",
     "font-awesome-webpack": "^0.0.5-beta.2",
+    "jquery": "^3.2.1",
     "selectize": "^0.12.4",
     "toastr": "^2.1.2",
     "vanilla-lazyload": "^8.0.3"

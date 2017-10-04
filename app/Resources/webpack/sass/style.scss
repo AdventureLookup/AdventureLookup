@@ -1,13 +1,16 @@
+@import '~bootstrap/scss/functions', '~bootstrap/scss/variables';
 @import 'variables';
 @import 'adventure';
 @import 'filter';
 @import 'filter_panel';
 
 // Third party / Vendor styles for successful integration
+@import 'vendor/bootstrap';
 @import 'vendor/selectize';
 
 html, body {
   margin: 0;
   padding: 0;
-  background-color: $gray-light;
+  background-color: $adl-grey-light;
+
 }
