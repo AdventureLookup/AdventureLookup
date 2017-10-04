@@ -1,38 +1,13 @@
-@import './bootstrap.scss';
+@import 'variables';
 @import 'adventure';
-@import 'search';
+@import 'filter';
+@import 'filter_panel';
 
+// Third party / Vendor styles for successful integration
+@import 'vendor/selectize';
 
-.selectize-control::before {
-  -moz-transition: opacity 0.2s;
-  -webkit-transition: opacity 0.2s;
-  transition: opacity 0.2s;
-  content: ' ';
-  z-index: 2;
-  position: absolute;
-  display: block;
-  top: 9px;
-  right: 34px;
-  width: 16px;
-  height: 16px;
-  background: url('~selectize/examples/images/spinner.gif');
-  background-size: 16px 16px;
-  opacity: 0;
-}
-.selectize-control.loading::before {
-  opacity: 0.7;
-}
-
-.pagination {
-  @extend .justify-content-center;
-}
-
-.footer {
-  background-color: $gray-lightest;
-  @extend .pt-3;
-  @extend .mt-3;
-
-  p, ul {
-    font-size: $small-font-size;
-  }
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: $gray-light;
 }
