@@ -5,12 +5,10 @@
     <div class="container" id="page--search-adventures">
         <div class="row">
             <div class="col">
-                <h1 class="mt-5">Adventure search</h1>
+                <h1>Adventure Lookup</h1>
                 {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                     <a class="mb-3 float-sm-right btn btn-success" href="{{ path('adventure_new') }}">Add a new adventure</a>
                 {% endif %}
-                <p>Find adventures fitting your search term!</p>
-                <div class="clearfix"></div>
                 <form method="post" action="{{ url('adventure_index') }}" id="search-form">
                     <div class="input-group input-group-lg">
                         <input class="form-control" name="q" type="text" value="{{ q }}" placeholder="goblins, mountains, ..." />
@@ -18,7 +16,6 @@
                             <button type="submit" class="btn btn-primary" role="button" id="search-btn">Search</button>
                         </span>
                     </div>
-                    <small class="form-text text-muted">Things you type in here will be split at <code>,</code> and then <code>AND</code>ed. Use the filters below for advanced searches (hit the 'Search' button again after filtering).</small>
                     <div class="row my-3">
                         <div class="col-md-3">
                             <div class="alert alert-info d-md-none">
@@ -30,12 +27,12 @@
                             </a>
                             {% include 'adventure/search_filters.html.twig' %}
                         </div>
-                        <div class="col-md-9">
-                            {% include 'adventure/search_filter_tags.html.twig' %}
-                            {% include 'adventure/search_results.html.twig' %}
-                        </div>
                     </div>
                 </form>
+            </div>
+            <div class="col-8">
+                {% include 'adventure/search_filter_tags.html.twig' %}
+                {% include 'adventure/search_results.html.twig' %}
             </div>
         </div>
     </div>
