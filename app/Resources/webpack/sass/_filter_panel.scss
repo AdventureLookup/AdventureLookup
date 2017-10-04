@@ -1,0 +1,21 @@
+#filter-panel {
+  margin-top: 20px;
+  padding: 0;
+  background-color: $adl-grey-dark;
+  font-family: 'Roboto', sans-serif;
+  text-transform: uppercase;
+
+  .title {
+    padding: $adl-filter-padding;
+    background-color: $adl-coral;
+    color: $white;
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: .2rem;
+    text-align: center;
+  }
+
+  .search {
+
+  }
+}
