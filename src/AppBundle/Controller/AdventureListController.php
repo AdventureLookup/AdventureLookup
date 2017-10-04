@@ -32,7 +32,7 @@ class AdventureListController extends Controller
     /**
      * @Route("/", name="adventure_lists_index")
      * @Method("GET")
-     * @Template("adventure_list/index.html.twig")
+     * @Template("profile/adventure_list.html.twig")
      *
      * @param EntityManagerInterface $em
      * @param UserInterface $user
@@ -92,7 +92,7 @@ class AdventureListController extends Controller
     /**
      * @Route("/{id}", name="adventure_lists_show", requirements={"id"="\d+"})
      * @Method("GET")
-     * @Template("adventure_list/show.html.twig")
+     * @Template("profile/adventure_show.html.twig")
      *
      * @param AdventureList $list
      * @return array
