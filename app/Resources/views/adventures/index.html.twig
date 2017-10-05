@@ -10,24 +10,17 @@
                     <a class="mb-3 float-sm-right btn btn-success" href="{{ path('adventure_new') }}">Add a new adventure</a>
                 {% endif %}
                 <form method="post" action="{{ url('adventure_index') }}" id="search-form">
-                    <div class="input-group input-group-lg">
-                        <input class="form-control" name="q" type="text" value="{{ q }}" placeholder="goblins, mountains, ..." />
-                        <span class="input-group-btn">
-                            <button type="submit" class="btn btn-primary" role="button" id="search-btn">Search</button>
-                        </span>
+                    <div id="filter-search">
+                        <input type="text" class="elastic-search" name="q" value="{{ q }}" placeholder="search for"/>
                     </div>
-                    <div class="row my-3">
-                        <div class="col-md-3">
-                            <div class="alert alert-info d-md-none">
-                                Please scroll down to skip the filters and see your search results!
-                            </div>
-                            <a class="btn btn-sm btn-secondary btn-block mb-1" role="button" href="{{ path('adventure_index', {q: q}) }}">
-                                <i class="fa fa-times"></i>
-                                Clear all Filters
-                            </a>
-                            {% include 'adventures/search_filters.html.twig' %}
-                        </div>
+                    <div id="filter-buttons">
+                        <a class="btn btn-secondary btn-block mb-1" role="button" href="{{ path('adventure_index', {q: q}) }}">
+                            <i class="fa fa-times"></i>
+                            Clear all Filters
+                        </a>
                     </div>
+
+                    {% include 'adventures/search_filters.html.twig' %}
                 </form>
             </div>
             <div class="col-9">

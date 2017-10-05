@@ -1,10 +1,10 @@
 {% macro filter_checkbox(field, value, checked, count, hidden) %}
-    <div class="form-check{% if hidden %} d-none{% endif %}">
-        <label class="form-check-label">
-            <input class="form-check-input" type="checkbox" name="f[{{ field.name }}][v][]"
-                   value="{{ value }}"
-                   {% if checked %}checked{% endif %}
-            />
+    {% set name = 'f[' ~ field.name ~ '][v][]' %}
+    <div class="option{% if hidden %} d-none{% endif %}">
+        <input type="checkbox" id="{{ name }}" name="{{ name }}" value="{{ value }}"
+               {% if checked %}checked{% endif %}
+        />
+        <label for="{{ name }}">
             {{ value }}
             <span class="badge-pill badge badge-default">{{ count }}</span>
         </label>
@@ -14,41 +14,32 @@
 {% macro filter_field(field, stats, searchFilter, hidden) %}
     {% import _self as macros %}
     {% set filter = searchFilter[field.name]|default([]) %}
-    {% set show = true %} {# Currently, all filters are shown and expanded when the page is loaded #}
     {% if hidden %}
         {% set value = filter['v']|default('') %}
         {% if value %}
         <input type="hidden" name="f[{{ field.name }}][v]" value="{{ value }}" >
         {% endif %}
     {% else %}
-    <div class="card mb-1 filter-card {{ show ? 'expanded' : '' }}" id="filter-{{ field.name }}">
-        <div class="card-block filter-title">
-            <h6 class="card-title">
-                {{ field.title }}
-                <i class="fa fa-fw fa-caret-up"></i>
-                <i class="fa fa-fw fa-caret-down"></i>
-            </h6>
-        </div>
-        <div class="card-block filter-content">
-            {% if field.description is not empty %}
-                <p class="card-text small">{{ field.description }}</p>
-            {% endif %}
+    <div class="filter" id="filter-{{ field.name }}">
+        <div class="title">{{ field.title }}</div>
+        <div class="options-list">
+            {#{% if field.description is not empty %}#}
+                {#<p class="card-text small">{{ field.description }}</p>#}
+            {#{% endif %}#}
             {% if field.type == 'string' %}
-                <div class="filters">
-                    {% set buckets = stats['vals_' ~ field.name]['buckets'] %}
-                    {% set showMoreAfter = 5 %}
-                    {% set valuesUsed = [] %}
-                    {% for bucket in buckets %}
-                        {% set valuesUsed = valuesUsed|merge([bucket.key]) %}
-                        {{ macros.filter_checkbox(field, bucket.key, bucket.key in filter['v']|default([]), bucket.doc_count, loop.index0 >= showMoreAfter) }}
-                    {% endfor %}
-                    {% for value in filter['v']|default([]) if value != '' and value not in valuesUsed %}
-                        {{ macros.filter_checkbox(field, value, true, 0, false) }}
-                    {% endfor %}
-                    {% if buckets|length > showMoreAfter %}
-                        <span class="show-more text-info text-center">more</span>
-                    {% endif %}
-                </div>
+                {% set buckets = stats['vals_' ~ field.name]['buckets'] %}
+                {% set showMoreAfter = 5 %}
+                {% set valuesUsed = [] %}
+                {% for bucket in buckets %}
+                    {% set valuesUsed = valuesUsed|merge([bucket.key]) %}
+                    {{ macros.filter_checkbox(field, bucket.key, bucket.key in filter['v']|default([]), bucket.doc_count, loop.index0 >= showMoreAfter) }}
+                {% endfor %}
+                {% for value in filter['v']|default([]) if value != '' and value not in valuesUsed %}
+                    {{ macros.filter_checkbox(field, value, true, 0, false) }}
+                {% endfor %}
+                {% if buckets|length > showMoreAfter %}
+                    <div class="option more">more</div>
+                {% endif %}
             {% elseif field.type == 'boolean' %}
                 <label class="form-check-label">
                     <input class="form-check-input" type="radio"
@@ -86,7 +77,6 @@
                     </div>
                 </div>
             {% endif %}
-            <button type="submit" class="btn btn-secondary pull-right btn-sm" role="button">Apply</button>
         </div>
     </div>
     {% endif %}

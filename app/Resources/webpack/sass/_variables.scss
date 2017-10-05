@@ -1,6 +1,13 @@
-$adl-grey-light: #ececed;
-$adl-grey-dark: #8e929d;
+$adl-grey-lightest: #ececed;
+$adl-grey-light: #808490;
+$adl-grey-dark: #595f6f;
 $adl-grey-darkest: #333740;
 $adl-coral: #f56e4e;
 
-$adl-filter-padding: 12px 18px;
+// Filter panel & Filters
+$adl-filter-min-height: 36px;
+$adl-filter-padding-top: 12px;
+$adl-filter-padding-side: 12px;
+$adl-filter-padding: $adl-filter-padding-top $adl-filter-padding-side;
+$adl-filter-text: #d5d6da;
+$adl-filter-text-muted: #6c717f;

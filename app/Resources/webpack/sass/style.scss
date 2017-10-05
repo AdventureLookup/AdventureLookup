@@ -13,6 +13,10 @@
 html, body {
   margin: 0;
   padding: 0;
-  background-color: $adl-grey-light;
+  background-color: $adl-grey-lightest;
   font-size: 12px;
+}
+
+label {
+  margin-bottom: 0;
 }
