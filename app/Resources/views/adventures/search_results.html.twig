@@ -1,60 +1,37 @@
-<h2 >{{ totalNumberOfResults }} {{ totalNumberOfResults == 1 ? 'adventure' : 'adventures' }} found</h2>
+<div id="search-title">
+    <div>
+        A community for lazy dungeon masters
+    </div>
+    <div>
+        {{ totalNumberOfResults }} {{ totalNumberOfResults == 1 ? 'adventure' : 'adventures' }} found
+    </div>
+</div>
 <div id="search-results">
     {% for adventure in adventures %}
-        <div class="card mb-3">
-            <div class="card-block">
+        <a href="{{ path('adventure_show', { 'slug': adventure.slug }) }}">
+            <div class="adventure">
                 {% if adventure.thumbnailUrl %}
-                    <img alt="Cover of {{ adventure.title }}" data-original="{{ adventure.thumbnailUrl }}" class="ml-sm-1 float-sm-right" style="max-width: 120px; max-height: 140px;" />
+                    <img alt="Cover of {{ adventure.title }}" data-original="{{ adventure.thumbnailUrl }}" class="thumbnail" />
                 {% endif %}
-                <h4 class="card-title">
-                    <a href="{{ path('adventure_show', { 'slug': adventure.slug }) }}">
-                        {{ adventure.title }}
-                    </a>
-                </h4>
-                <!--h6 class="card-subtitle mb-2 text-muted">Search score: {{ adventure.score }}</h6-->
-                <p>{{ adventure.description|easyadmin_truncate(250) }}</p>
-                <div class="clearfix"></div>
-                <hr>
-                <!-- Quick look info -->
-                <div class="container-fluid row justify-content-center">
-                    <div class="col-6 col-sm text-center">
-                        <i class="fa fa-gear"></i>
-                        <p class="text-muted mb-2">Edition</p>
-                        <h6>{{adventure.edition}}</h6>
-                    </div>
-                    <div class="col-6 col-sm text-center">
-                        <i class="fa fa-globe"></i>
-                        <p class="text-muted mb-2">Setting</p>
-                        <h6>{{adventure.setting}}</h6>
-                    </div>
-                    <div class="col-6 col-sm text-center">
-                        <i class="fa fa-flag"></i>
-                        <p class="text-muted mb-2">Starting Level</p>
-                        <h6>
-                            {% if adventure.minStartingLevel is not null and adventure.maxStartingLevel is not null %}
-                                {% if adventure.minStartingLevel == adventure.maxStartingLevel %}
-                                    {{ adventure.minStartingLevel }}
-                                {% else %}
-                                    {{adventure.minStartingLevel}}-{{adventure.maxStartingLevel}}
-                                {% endif %}
+                <div class="title">{{ adventure.title }}</div>
+                <div class="tags-container">
+                    <div class="tag tag-edition">{{ adventure.edition }}</div>
+                    <div class="tag tag-level">
+                        {% if adventure.minStartingLevel is not null and adventure.maxStartingLevel is not null %}
+                            {% if adventure.minStartingLevel == adventure.maxStartingLevel %}
+                                Level {{ adventure.minStartingLevel }}
                             {% else %}
-                                {{ adventure.startingLevelRange }}
+                                Levels {{adventure.minStartingLevel}}-{{adventure.maxStartingLevel}}
                             {% endif %}
-                        </h6>
+                        {% else %}
+                            {{ adventure.startingLevelRange }} Level
+                        {% endif %}
                     </div>
-                    <div class="col-6 col-sm text-center">
-                        <i class="fa fa-tree"></i>
-                        <p class="text-muted mb-2">Environment</p>
-                        <h6>{{adventure.environments|join(', ')}}</h6>
-                    </div>
-                    <div class="d-none d-sm-block col-sm text-center">
-                        <i class="fa fa-book"></i>
-                        <p class="text-muted mb-2">Length</p>
-                        <h6>{{ adventure.numPages }} pages</h6>
-                    </div>
+                    <div class="tag tag-length">{{ adventure.numPages }} pages</div>
                 </div>
+                <p class="description">{{ adventure.description|easyadmin_truncate(250) }}</p>
             </div>
-        </div>
+        </a>
     {% else %}
         {% if totalNumberOfResults == 0 %}
         <div class="alert alert-danger">We're sorry. Apparently there is no adventure matching your search. :(</div>

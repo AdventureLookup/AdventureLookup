@@ -4,6 +4,13 @@ $adl-grey-dark: #595f6f;
 $adl-grey-darkest: #333740;
 $adl-coral: #f56e4e;
 
+// Fonts
+$adl-line-height: $line-height-base;
+
+// Borders
+$adl-border-grey-big: 2px solid $adl-grey-lightest;
+$adl-border-radius-big: 30px;
+
 // Filter panel & Filters
 $adl-filter-min-height: 36px;
 $adl-filter-padding-top: 12px;
@@ -11,4 +18,3 @@ $adl-filter-padding-side: 12px;
 $adl-filter-padding: $adl-filter-padding-top $adl-filter-padding-side;
 $adl-filter-text: #d5d6da;
 $adl-filter-text-muted: #6c717f;
-

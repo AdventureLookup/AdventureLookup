@@ -1,6 +1,7 @@
 @import '~bootstrap/scss/functions', '~bootstrap/scss/variables';
 @import 'variables';
 @import 'adventure';
+@import 'adventures';
 @import 'filter';
 @import 'filter_panel';
 
@@ -8,7 +9,7 @@
 @import 'vendor/bootstrap';
 @import 'vendor/selectize';
 
-@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/css?family=Roboto|Arima+Madurai:100');
 
 html, body {
   margin: 0;
