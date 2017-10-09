@@ -5,7 +5,7 @@
   font-family: 'Roboto', sans-serif;
   text-transform: uppercase;
 
-  box-shadow: 4px 4px 0 #aaaaaa;
+  box-shadow: $adl-box-shadow;
 
   > .title {
     padding: $adl-filter-padding;
