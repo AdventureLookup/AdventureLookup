@@ -84,6 +84,11 @@ $card-padding: $card-padding-top $card-padding-side;
         &.tag-edition::before { content: '\f013'; }
         &.tag-level::before { content: '\f024'; }
         &.tag-length::before { content: '\f02d'; }
+        &.tag-featured {
+          background-color: $adl-coral;
+
+          &::before { content: '\f219'; }
+        }
       }
     }
 
