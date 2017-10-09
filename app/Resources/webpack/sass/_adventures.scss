@@ -9,10 +9,26 @@ $card-padding: $card-padding-top $card-padding-side;
 #search-title {
   display: flex;
   justify-content: space-between;
-  margin: 10px 0;
+  margin: 5px 0;
   font: 600 1.5rem 'Arima Madurai';
+  line-height: 1.5rem;
   color: #333333;
   text-transform: uppercase;
+}
+
+#search-bar {
+  display: flex;
+  margin-bottom: 10px;
+
+  >* { margin-right: 4px; }
+  >*:last-child { margin-right: 0; }
+
+  .elastic-search {
+    @extend .form-control;
+
+    flex-grow: 8;
+    font-size: 1.2rem;
+  }
 }
 
 #search-results {

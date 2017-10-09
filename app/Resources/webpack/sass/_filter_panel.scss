@@ -17,29 +17,7 @@
     text-align: center;
   }
 
-  #filter-search {
-    @extend .filter;
-
-    .elastic-search {
-      width: calc(100% - 28px);
-      min-height: $adl-filter-min-height;
-      padding: $adl-filter-padding;
-      border: 0;
-      background-color: $adl-grey-dark;
-      color: $adl-filter-text-muted;
-      font-size: 1.2rem;
-      text-transform: uppercase;
-
-      &:focus {
-        outline: 0;
-        color: $adl-filter-text;
-      }
-    }
-  }
-
   #filter-buttons {
-    @extend .filter;
-
     padding: 8px $adl-filter-padding-side;
   }
 }

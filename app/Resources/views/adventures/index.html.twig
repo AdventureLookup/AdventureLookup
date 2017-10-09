@@ -10,17 +10,6 @@
                     <a class="mb-3 float-sm-right btn btn-success" href="{{ path('adventure_new') }}">Add a new adventure</a>
                 {% endif %}
                 <form method="post" action="{{ url('adventure_index') }}" id="search-form">
-                    <div id="filter-search">
-                        <input type="text" class="elastic-search" name="q" value="{{ q }}" placeholder="search for"/>
-                    </div>
-                    <div id="filter-buttons">
-                        <a class="btn btn-secondary mb-1" role="button" href="{{ path('adventure_index', {q: q}) }}">
-                            <i class="fa fa-times"></i>
-                            Clear all Filters
-                        </a>
-                        <input type="submit" class="btn btn-primary mb-1" value="SEARCH" />
-                    </div>
-
                     {% include 'adventures/search_filters.html.twig' %}
                 </form>
             </div>
