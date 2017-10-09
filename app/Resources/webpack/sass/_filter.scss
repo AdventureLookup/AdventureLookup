@@ -4,24 +4,55 @@
   border-bottom: 2px solid $adl-grey-light;
   color: $adl-filter-text;
 
-  &.active {
+  // Is open
+  &.open {
     .option {
-      display: block;
+      display: flex !important;
+    }
+    .title:after {
+      content: '\f0d8';
+    }
+  }
+  // Has one or more options selected
+  &.active {
+    .title:after {
+      content: '\f00c';
     }
   }
 
   .title {
+    display: flex;
+    justify-content: space-between;
     padding: $adl-filter-padding;
     font-size: 1.2rem;
+    cursor: pointer;
+
+    &:after {
+      content: '\f0d7';
+      font: 1.75rem 'FontAwesome';
+    }
+    &:hover {
+      background-color: lighten($adl-grey-dark, 3%);
+    }
   }
 
   .options-list {
-
     .option {
+      display: none;
+      justify-content: space-between;
       background-color: $adl-grey-darkest;
       padding: 8px $adl-filter-padding-side;
       border-top: 1px solid $adl-grey-light;
       color: $adl-filter-text;
+      cursor: pointer;
+
+      &:hover {
+        background-color: lighten($adl-grey-darkest, 3%);
+      }
+      &.mark:after {
+        content: '\f00c';
+        font: 1.5rem 'FontAwesome';
+      }
 
       > input {
         display: none;

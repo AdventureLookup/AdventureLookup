@@ -29,6 +29,10 @@ $card-padding: $card-padding-top $card-padding-side;
     flex-grow: 8;
     font-size: 1.2rem;
   }
+
+  #search-submit {
+    cursor: pointer;
+  }
 }
 
 #search-results {
