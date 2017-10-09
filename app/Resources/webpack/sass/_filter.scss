@@ -3,7 +3,6 @@
   min-height: $adl-filter-min-height;
   border-bottom: 2px solid $adl-grey-light;
   color: $adl-filter-text;
-  font-size: 1.2rem;
 
   &.active {
     .option {
@@ -13,6 +12,7 @@
 
   .title {
     padding: $adl-filter-padding;
+    font-size: 1.2rem;
   }
 
   .options-list {
