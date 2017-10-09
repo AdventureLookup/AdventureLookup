@@ -5,7 +5,7 @@ Encore
     .setPublicPath('/assets')
     .cleanupOutputBeforeBuild()
 
-    .addEntry('app', './app/Resources/webpack/index.js')
+    .addEntry('app', './app/Resources/webpack/js/index.js')
     .createSharedEntry('vendor', [
         'jquery',
         'bootstrap',

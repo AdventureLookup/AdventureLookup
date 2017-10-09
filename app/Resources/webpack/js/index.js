@@ -6,7 +6,7 @@ import 'selectize/dist/js/standalone/selectize'
 import toastr from 'toastr/toastr';
 import 'toastr/toastr.scss';
 import LazyLoad from "vanilla-lazyload/dist/lazyload";
-import './sass/style.scss';
+import '../sass/style.scss';
 
 import './search';
 import './adventure';
