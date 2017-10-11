@@ -8,7 +8,6 @@ import 'toastr/toastr.scss';
 import LazyLoad from "vanilla-lazyload/dist/lazyload";
 import '../sass/style.scss';
 
-import './search';
 import './adventures';
 import './adventure';
 import './adventure_list';
