@@ -27,16 +27,18 @@
         </a>
     {% else %}
         {% if totalNumberOfResults == 0 %}
-        <div class="alert alert-danger">We're sorry. Apparently there is no adventure matching your search. :(</div>
+        <div class="no-results">No adventures match your search criteria</div>
         {% elseif adventures|length == 0 %}
-        <div class="alert alert-info">No more results match your search criteria.</div>
+        <div class="no-results">No more results match your search criteria</div>
         {% endif %}
     {% endfor %}
 </div>
 
-<div class="d-flex justify-content-center">
-    <button type="submit" role="button" class="btn btn-secondary" id="load-more-btn" {% if adventures|length == 0 %}disabled{% endif %}>
-        <i class="fa fa-spinner fa-spin d-none"></i>
-        Load more results
-    </button>
-</div>
+{% if adventures %}
+    <div class="d-flex justify-content-center">
+        <button type="submit" role="button" class="btn btn-secondary" id="load-more-btn" {% if adventures|length == 0 %}disabled{% endif %}>
+            <i class="fa fa-spinner fa-spin d-none"></i>
+            Load more results
+        </button>
+    </div>
+{% endif %}

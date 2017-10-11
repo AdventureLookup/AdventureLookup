@@ -125,4 +125,13 @@ $card-padding: $card-padding-top $card-padding-side;
       -webkit-box-orient: vertical;
     }
   }
+
+  .no-results{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    font: 600 1.25rem 'Arima Madurai';
+    text-transform: uppercase;
+  }
 }
