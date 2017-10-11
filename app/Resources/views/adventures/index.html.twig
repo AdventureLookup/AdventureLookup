@@ -12,6 +12,7 @@
                 <form method="post" action="{{ url('adventure_index') }}" id="search-form">
                     {% include 'adventures/search_filters.html.twig' %}
                 </form>
+                <div id="filter-more"></div>
             </div>
             <div class="col-9">
                 {% include 'adventures/search_results_header.html.twig' %}

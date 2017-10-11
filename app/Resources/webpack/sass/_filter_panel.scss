@@ -18,7 +18,20 @@
     text-align: center;
   }
 
-  #filter-buttons {
-    padding: 8px $adl-filter-padding-side;
+  #filter-more {
+    display: flex;
+    justify-content: center;
+    height: 30px;
+    background-color: $adl-grey-darkest;
+    color: #ffffff;
+
+    &:after {
+      content: '\f141';
+      font: 2.5rem 'FontAwesome';
+    }
+    &:hover {
+      cursor: pointer;
+      background-color: darken($adl-grey-darkest, 7.5%);
+    }
   }
 }

@@ -12,10 +12,18 @@
     </div>
 {% endmacro %}
 
-{% macro filter_field(field, stats, searchFilter, hidden) %}
+{#
+  Renders a filter block, note that filters which are not visible can still be shown via
+  the ellipsis button at the bottom of the filter panel. Hidden filters are rendered as
+  hidden elements to support secondary searches (the filter panel being the primary search)
+#}
+{% macro filter_field(field, stats, searchFilter, visible, hidden) %}
     {% import _self as macros %}
     {% set filter = searchFilter[field.name]|default([]) %}
-    {% set active = field.type == 'string' and filter['v'] is defined %}
+    {% set classes = [] %}
+    {% set classes = classes|merge(not visible ? ['d-none'] : []) %}
+    {% set classes = classes|merge(field.type in ['boolean', 'integer'] ? ['always-open'] : []) %}
+    {% set classes = classes|merge(field.type == 'string' and filter['v'] is defined ? ['filter-marked'] : []) %}
 
     {% if hidden %}
         {% set value = filter['v']|default('') %}
@@ -23,9 +31,7 @@
         <input type="hidden" name="f[{{ field.name }}][v]" value="{{ value }}" >
         {% endif %}
     {% else %}
-    <div class="filter {% if field.type in ['boolean', 'integer'] %}always-open{% endif %} {% if active %}filter-marked{% endif %}"
-         id="filter-{{ field.name }}"
-    >
+    <div class="filter {{ classes|join(' ') }}" id="filter-{{ field.name }}">
         <div class="title">{{ field.title }}</div>
         <div class="options-list">
             {#{% if field.description is not empty %}#}
@@ -84,28 +90,30 @@
     </div>
     {% endif %}
 {% endmacro %}
+
 {% import _self as macros %}
-{%
-set visible_fields = [
-              'publisher',
-              'setting',
-              'edition',
-              'environments',
-              'items',
-              'bossMonsters',
-              'commonMonsters',
-              'numPages',
-              'minStartingLevel',
-              'maxStartingLevel',
-              'startingLevelRange',
-              'soloable',
-              'pregeneratedCharacters',
-              'handouts',
-              'tacticalMaps',
-              'partOf',
-              'foundIn'
-             ]
+{% set showMoreAfter = 11 %}
+{% set visible_fields = [
+  'publisher',
+  'setting',
+  'edition',
+  'environments',
+  'items',
+  'bossMonsters',
+  'commonMonsters',
+  'numPages',
+  'minStartingLevel',
+  'maxStartingLevel',
+  'startingLevelRange',
+  'soloable',
+  'pregeneratedCharacters',
+  'handouts',
+  'tacticalMaps',
+  'partOf',
+  'foundIn'
+ ]
 %}
 {% for field in fields %}
-{{ macros.filter_field(field, stats, searchFilter, field.name not in visible_fields) }}
+    {% set showMoreAfter = showMoreAfter - (field.name in visible_fields) %}
+    {{ macros.filter_field(field, stats, searchFilter, showMoreAfter > 0, field.name not in visible_fields) }}
 {% endfor %}
