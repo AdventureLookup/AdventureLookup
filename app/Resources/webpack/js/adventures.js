@@ -33,6 +33,11 @@
     $(this).siblings('.d-none').removeClass('d-none');
     $(this).remove();
   });
+  // Show more filters (hopefully the lesser-used ones)
+  $('#filter-more').on('click', e => {
+    $('#filter-panel').find('.filter.d-none').removeClass('d-none');
+    $(e.target).hide();
+  });
   // Clicking on a filter tag removes it
   $('#search-tags').on('click', '.filter-tag', () => {
     const fieldName = $(this).data('field-name');

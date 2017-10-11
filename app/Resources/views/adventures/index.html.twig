@@ -4,15 +4,17 @@
     {% import _self as macros %}
     <div class="container" id="page--search-adventures">
         <div class="row">
-            <div id="filter-panel" class="col">
-                <div class="title">Adventure Lookup</div>
+            <div class="col">
+                <div id="filter-panel">
+                    <div class="title">Adventure Lookup</div>
+                    <form method="post" action="{{ url('adventure_index') }}" id="search-form">
+                        {% include 'adventures/search_filters.html.twig' %}
+                    </form>
+                    <div id="filter-more"></div>
+                </div>
                 {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                    <a class="mb-3 float-sm-right btn btn-success" href="{{ path('adventure_new') }}">Add a new adventure</a>
+                    <a id="create-adventure" class="btn btn-secondary" href="{{ path('adventure_new') }}">Add a new adventure</a>
                 {% endif %}
-                <form method="post" action="{{ url('adventure_index') }}" id="search-form">
-                    {% include 'adventures/search_filters.html.twig' %}
-                </form>
-                <div id="filter-more"></div>
             </div>
             <div class="col-9">
                 {% include 'adventures/search_results_header.html.twig' %}

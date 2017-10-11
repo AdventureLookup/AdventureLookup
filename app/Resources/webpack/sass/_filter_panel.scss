@@ -22,7 +22,7 @@
     display: flex;
     justify-content: center;
     height: 30px;
-    background-color: $adl-grey-darkest;
+    background-color: $adl-coral;
     color: #ffffff;
 
     &:after {
@@ -31,7 +31,24 @@
     }
     &:hover {
       cursor: pointer;
-      background-color: darken($adl-grey-darkest, 7.5%);
+      background-color: darken($adl-coral, 7.5%);
     }
+  }
+}
+
+#create-adventure {
+  display: flex;
+  width: 80%;
+  justify-content: space-evenly;
+  margin: 25px auto;
+  padding: 8px;
+  border-radius: 30px;
+  font: 600 1.3rem 'Arima Madurai';
+  text-transform: uppercase;
+
+  &:after {
+    content: '\f055';
+    font: 1.6rem 'FontAwesome';
+    line-height: 2rem;
   }
 }
