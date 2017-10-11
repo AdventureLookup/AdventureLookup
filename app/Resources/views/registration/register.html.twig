@@ -1,20 +1,18 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <h1 class="my-5">Create account</h1>
+    <div id="lrf-container">
+        <div id="lrf">
+            <div class="title">Create Account</div>
 
-                {{ form_start(form) }}
-                {{ form_row(form.username) }}
-                {{ form_row(form.email) }}
-                {{ form_row(form.plainPassword.first) }}
-                {{ form_row(form.plainPassword.second) }}
+            {{ form_start(form) }}
+            {{ form_row(form.username) }}
+            {{ form_row(form.email) }}
+            {{ form_row(form.plainPassword.first) }}
+            {{ form_row(form.plainPassword.second) }}
 
-                <button class="btn btn-primary" type="submit" role="button">Register!</button>
-                {{ form_end(form) }}
-            </div>
+            <button class="btn btn-primary" type="submit" role="button">Register!</button>
+            {{ form_end(form) }}
         </div>
     </div>
 {% endblock %}

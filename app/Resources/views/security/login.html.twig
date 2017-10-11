@@ -1,36 +1,35 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <h1 class="mt-5">Login</h1>
-                <p class="mb-3">
-                    If you haven't created an account yet, head over to <a href="{{ path('user_registration') }}">the registration page!</a>
-                    <br>
-                    If you forgot your password, <a href="{{ path('request_password_reset') }}">go here to reset it</a>.
-                </p>
+    <div id="lrf-container">
+        <div id="lrf">
+            <div class="title">Login</div>
+            <p class="mb-3">
+                If you haven't created an account yet, head over to <a href="{{ path('user_registration') }}">the registration page!</a>
+                <br>
+                If you forgot your password, <a href="{{ path('request_password_reset') }}">go here to reset it</a>.
+            </p>
 
-                {% if error %}
-                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                {% endif %}
+            {% if error %}
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
 
-                <form action="{{ path('login') }}" method="post">
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+            <form action="{{ path('login') }}" method="post">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-                    <div class="form-group">
-                        <label for="username">Username:</label>
-                        <input class="form-control" type="text" id="username" name="_username" value="{{ last_username }}" />
-                    </div>
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input class="form-control" type="text" id="username" name="_username" value="{{ last_username }}" />
+                </div>
 
-                    <div class="form-group">
-                        <label for="password">Password:</label>
-                        <input class="form-control" type="password" id="password" name="_password" />
-                    </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input class="form-control" type="password" id="password" name="_password" />
+                </div>
 
-                    <button class="btn btn-primary" type="submit" role="button">Login</button>
-                </form>
-            </div>
+                <button class="btn btn-primary" type="submit" role="button">Login</button>
+            </form>
+
         </div>
     </div>
 {% endblock %}
