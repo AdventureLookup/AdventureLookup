@@ -1,22 +1,21 @@
+$check-mark: '\f00c';
+
 .filter {
   position: relative;
   min-height: $adl-filter-min-height;
   border-bottom: 2px solid $adl-grey-light;
-  color: $adl-filter-text;
+  color: $adl-offwhite;
 
   // Is open
   &.open {
-    .option {
-      display: flex !important;
-    }
-    .title:after {
-      content: '\f0d8';
-    }
+    .option { display: flex; }
+    .option.more { display: block; }
+    .title:after { content: '\f0d8'; }
   }
   // Has one or more options selected
-  &.active {
+  &.filter-marked {
     .title:after {
-      content: '\f00c';
+      content: $check-mark;
     }
   }
 
@@ -25,43 +24,64 @@
     justify-content: space-between;
     padding: $adl-filter-padding;
     font-size: 1.2rem;
-    cursor: pointer;
 
     &:after {
       content: '\f0d7';
       font: 1.75rem 'FontAwesome';
     }
     &:hover {
-      background-color: lighten($adl-grey-dark, 3%);
+      background-color: darken($adl-grey-dark, 7.5%);
+      cursor: pointer;
     }
   }
 
-  .options-list {
-    .option {
-      display: none;
-      justify-content: space-between;
-      background-color: $adl-grey-darkest;
-      padding: 8px $adl-filter-padding-side;
-      border-top: 1px solid $adl-grey-light;
-      color: $adl-filter-text;
+  .option {
+    display: none;
+    justify-content: space-between;
+    background-color: $adl-grey-darkest;
+    padding: $adl-filter-padding;
+    border-bottom: 1px solid $adl-grey-light;
+    color: $adl-offwhite;
+
+    &:hover {
+      background-color: darken($adl-grey-darkest, 7.5%);
       cursor: pointer;
-
-      &:hover {
-        background-color: lighten($adl-grey-darkest, 3%);
-      }
-      &.mark:after {
-        content: '\f00c';
-        font: 1.5rem 'FontAwesome';
-      }
-
-      > input {
-        display: none;
-      }
+    }
+    &.filter-marked:after {
+      content: $check-mark;
+      font: 1.5rem 'FontAwesome';
     }
 
-    .more {
+    > input[type="checkbox"] {
+      display: none;
+    }
+
+    &.more {
+      padding: $adl-filter-padding-top/2;
       text-align: center;
-      font-size: 1rem;
+      font-size: .9rem;
+    }
+  }
+}
+
+// Don't suggest that the always-open filters can be collapsed
+.filter.always-open {
+  .title {
+    &:after {
+      content: '';
+    }
+    &:hover {
+      background-color: $adl-grey-dark;
+      cursor: default;
+    }
+  }
+
+  .option {
+    display: flex;
+
+    &:hover {
+      background-color: $adl-grey-darkest;
+      cursor: default;
     }
   }
 }

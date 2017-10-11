@@ -1,3 +1,5 @@
+$element-margin-bottom: 10px;
+
 $thumbnail-offset: 2rem;
 $thumbnail-width: 85px;
 $thumbnail-height: 100px;
@@ -6,10 +8,25 @@ $card-padding-top: 1rem;
 $card-padding-side: 1.8rem;
 $card-padding: $card-padding-top $card-padding-side;
 
+#search-tags {
+  margin: $element-margin-bottom 0;
+
+  > span.badge {
+    &::after {
+      content: '\f00d';
+      font: 1rem 'FontAwesome';
+    }
+    &:hover {
+      background-color: darken($adl-coral, 7.5%);
+      cursor: pointer;
+    }
+  }
+}
+
 #search-title {
   display: flex;
   justify-content: space-between;
-  margin: 5px 0;
+  margin: $element-margin-bottom/2 0;
   font: 600 1.5rem 'Arima Madurai';
   line-height: 1.5rem;
   color: #333333;
@@ -18,10 +35,10 @@ $card-padding: $card-padding-top $card-padding-side;
 
 #search-bar {
   display: flex;
-  margin-bottom: 10px;
+  margin-bottom: $element-margin-bottom;
 
-  >* { margin-right: 4px; }
-  >*:last-child { margin-right: 0; }
+  > * { margin-right: 4px; }
+  > *:last-child { margin-right: 0; }
 
   .elastic-search {
     @extend .form-control;
@@ -76,9 +93,9 @@ $card-padding: $card-padding-top $card-padding-side;
         margin-right: 6px;
         background-color: $adl-grey-light;
         border-radius: $adl-border-radius-big;
-        font-size: .8rem;
+        font-size: .9rem;
         text-transform: uppercase;
-        color: $white;
+        color: #ffffff;
 
         &::before {
           font: 1rem 'FontAwesome';

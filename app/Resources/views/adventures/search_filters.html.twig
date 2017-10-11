@@ -1,26 +1,31 @@
 {% macro filter_checkbox(field, value, checked, count, hidden) %}
     {% set name = 'f[' ~ field.name ~ '][v][]' %}
-    <div class="option{% if hidden %} d-none{% endif %}">
+    <div class="option{% if hidden %} d-none{% endif %}{% if checked %} filter-marked{% endif %}">
         <input type="checkbox" id="{{ name }}" name="{{ name }}" value="{{ value }}"
                {% if checked %}checked{% endif %}
         />
-        <label for="{{ name }}">
+
+        <div>
             {{ value }}
-            <span class="badge-pill badge badge-default">{{ count }}</span>
-        </label>
+            <span class="badge-pill badge badge-info">{{ count }}</span>
+        </div>
     </div>
 {% endmacro %}
 
 {% macro filter_field(field, stats, searchFilter, hidden) %}
     {% import _self as macros %}
     {% set filter = searchFilter[field.name]|default([]) %}
+    {% set active = field.type == 'string' and filter['v'] is defined %}
+
     {% if hidden %}
         {% set value = filter['v']|default('') %}
         {% if value %}
         <input type="hidden" name="f[{{ field.name }}][v]" value="{{ value }}" >
         {% endif %}
     {% else %}
-    <div class="filter" id="filter-{{ field.name }}">
+    <div class="filter {% if field.type in ['boolean', 'integer'] %}always-open{% endif %} {% if active %}filter-marked{% endif %}"
+         id="filter-{{ field.name }}"
+    >
         <div class="title">{{ field.title }}</div>
         <div class="options-list">
             {#{% if field.description is not empty %}#}
@@ -41,40 +46,38 @@
                     <div class="option more">more</div>
                 {% endif %}
             {% elseif field.type == 'boolean' %}
-                <label class="form-check-label">
-                    <input class="form-check-input" type="radio"
-                           name="f[{{ field.name }}][v]" value=""
-                           {% if filter['v']|default('') == '' %}checked{% endif %}
-                    /> All
-                </label>
-                <label class="form-check-label">
-                    <input class="form-check-input" type="radio"
-                           name="f[{{ field.name }}][v]" value="1"
-                           {% if filter['v']|default('') == '1' %}checked{% endif %}
-                    /> Yes
-                </label>
-                <label class="form-check-label">
-                    <input class="form-check-input" type="radio"
-                           name="f[{{ field.name }}][v]" value="0"
-                           {% if filter['v']|default('') == '0' %}checked{% endif %}
-                    /> No
-                </label>
+                <div class="option">
+                    <label class="form-check-label">
+                        <input class="form-check-input" type="radio"
+                               name="f[{{ field.name }}][v]" value=""
+                               {% if filter['v']|default('') == '' %}checked{% endif %}
+                        /> All
+                    </label>
+                    <label class="form-check-label">
+                        <input class="form-check-input" type="radio"
+                               name="f[{{ field.name }}][v]" value="1"
+                               {% if filter['v']|default('') == '1' %}checked{% endif %}
+                        /> Yes
+                    </label>
+                    <label class="form-check-label">
+                        <input class="form-check-input" type="radio"
+                               name="f[{{ field.name }}][v]" value="0"
+                               {% if filter['v']|default('') == '0' %}checked{% endif %}
+                        /> No
+                    </label>
+                </div>
             {% elseif field.type == 'integer' %}
-                <div class="row no-gutters mb-3">
-                    <div class="col">
-                        <input type="number" name="f[{{ field.name }}][v][min]" id="filter-{{ field.name }}-min"
-                               placeholder="min (inc.)" class="form-control form-control-sm"
-                               value="{{ filter['v']|default({min: ''})['min'] }}"
-                               title="min (inc.)"
-                        />
-                    </div>
-                    <div class="col">
-                        <input type="number" name="f[{{ field.name }}][v][max]" id="filter-{{ field.name }}-max"
-                               placeholder="max (inc.)" class="form-control form-control-sm"
-                               value="{{ filter['v']|default({max: ''})['max'] }}"
-                               title="max (inc.)"
-                        />
-                    </div>
+                <div class="option">
+                    <input type="number" name="f[{{ field.name }}][v][min]" id="filter-{{ field.name }}-min"
+                           placeholder="min (inc.)" class="form-control form-control-sm"
+                           value="{{ filter['v']|default({min: ''})['min'] }}"
+                           title="min (inc.)"
+                    />
+                    <input type="number" name="f[{{ field.name }}][v][max]" id="filter-{{ field.name }}-max"
+                           placeholder="max (inc.)" class="form-control form-control-sm"
+                           value="{{ filter['v']|default({max: ''})['max'] }}"
+                           title="max (inc.)"
+                    />
                 </div>
             {% endif %}
         </div>
@@ -82,7 +85,7 @@
     {% endif %}
 {% endmacro %}
 {% import _self as macros %}
-{% 
+{%
 set visible_fields = [
               'publisher',
               'setting',

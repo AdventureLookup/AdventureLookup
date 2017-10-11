@@ -1,0 +1,17 @@
+<div id="search-title">
+    <div>
+        A community for lazy dungeon masters
+    </div>
+    <div>
+        {{ totalNumberOfResults }} {{ totalNumberOfResults == 1 ? 'adventure' : 'adventures' }} found
+    </div>
+</div>
+<div id="search-bar">
+    <input type="text" class="elastic-search" name="q" value="{{ q }}" placeholder="SEARCH FOR"/>
+
+    <a class="btn btn-secondary" role="button" href="{{ path('adventure_index', {q: q}) }}">
+        <i class="fa fa-times"></i>
+        Clear all Filters
+    </a>
+    <input type="button" id="search-submit" class="btn btn-primary" value="SEARCH" />
+</div>

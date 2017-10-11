@@ -19,10 +19,10 @@
       checkbox = $option.find('input[type=checkbox]')[0];
 
     if (checkbox) {
-      $option.toggleClass('mark');
+      $option.toggleClass('filter-marked');
       checkbox.checked = !checkbox.checked;
       // Check or un-check the filter title
-      $filter.toggleClass('active', $filter.find('input[type=checkbox]:checked').length > 0);
+      $filter.toggleClass('filter-marked', $filter.find('input[type=checkbox]:checked').length > 0);
       e.preventDefault();
       return;
     }
