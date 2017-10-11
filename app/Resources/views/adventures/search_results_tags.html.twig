@@ -7,7 +7,8 @@
         {% if values|length > 0 %}
             {% set field = fields[fieldName] %}
             {% for key, value in values if value != '' %}
-                <span class="badge badge-primary filter-tag">
+                <span class="badge badge-primary filter-tag" data-field-name="{{ field.name }}" data-field-type="{{ field.type }}"
+                      data-value="{{ value }}" data-key="{{ key }}">
                 {{ field.title }}:
                     {% if field.type == 'boolean' %}
                         {{ value|bool2str }}
@@ -16,8 +17,7 @@
                     {% else %}
                         {{ value }}
                     {% endif %}
-                    <span role="button" aria-label="Remove" data-field-name="{{ field.name }}" data-field-type="{{ field.type }}"
-                          data-value="{{ value }}" data-key="{{ key }}"></span>
+                    <span role="button" aria-label="Remove"></span>
             </span>
             {% endfor %}
         {% endif %}

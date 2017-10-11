@@ -39,11 +39,12 @@
     $(e.target).hide();
   });
   // Clicking on a filter tag removes it
-  $('#search-tags').on('click', '.filter-tag', () => {
-    const fieldName = $(this).data('field-name');
-    const value = $(this).data('value');
-    const key = $(this).data('key');
-    const fieldType = $(this).data('field-type');
+  $('#search-tags').on('click', '.filter-tag', e => {
+    const fieldName = $(e.target).data('field-name'),
+      value = $(e.target).data('value'),
+      key = $(e.target).data('key'),
+      fieldType = $(e.target).data('field-type');
+
     if (fieldType === 'string') {
       const $strInput = $(`input[name^="f[${fieldName}][v]"][value="${value}"]`);
       if ($strInput.is(':hidden')) {
@@ -56,8 +57,9 @@
     } else if (fieldType === 'integer') {
       $(`input[name^="f[${fieldName}][v][${key}]"]`).val('');
     }
-    $(this).parent('.filter-tag').remove();
-    $('#search-btn').click();
+
+    $('#search-form').submit();
+    $(e.target).remove();
   });
   // Load more adventures
   let currentPage = 1;
