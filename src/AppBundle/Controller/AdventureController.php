@@ -107,7 +107,7 @@ class AdventureController extends Controller
         $deleteForm = $this->createDeleteForm($adventure);
         $adventureListRepository = $em->getRepository(AdventureList::class);
 
-        return $this->render('adventure/show.html.twig', [
+        return $this->render('adventure/index.html.twig', [
             'adventure' => $adventure,
             'delete_form' => $deleteForm->createView(),
             'lists' => $adventureListRepository->myLists($user),

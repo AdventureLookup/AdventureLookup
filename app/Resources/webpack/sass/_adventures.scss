@@ -89,11 +89,11 @@ $card-padding: $card-padding-top $card-padding-side;
       border-bottom: $adl-border-grey-big;
 
       .tag {
-        padding: 3px 1rem 3px .5rem;
+        padding: 3px 12px;
         margin-right: 6px;
         background-color: $adl-grey-light;
         border-radius: $adl-border-radius-big;
-        font-size: .9rem;
+        font-family: 'Roboto Condensed', sans-serif;
         text-transform: uppercase;
         color: #ffffff;
 

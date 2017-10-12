@@ -1,5 +1,3 @@
-$main-padding: 15px;
-
 #lrf-container {
   @extend .container;
 
@@ -9,13 +7,13 @@ $main-padding: 15px;
 
   #lrf {
     width: 40%;
-    padding: $main-padding;
+    padding: $adl-body-padding;
     margin-top: 50px;
     background-color: #fff;
     box-shadow: $adl-box-shadow;
 
     .title {
-      margin-bottom: $main-padding/2;
+      margin-bottom: $adl-body-padding/2;
       font: 600 2rem 'Roboto', sans-serif;
       text-align: center;
       text-transform: uppercase;
