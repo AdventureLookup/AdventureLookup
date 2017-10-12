@@ -38,13 +38,13 @@
 
     <div class="detail-container">
         <div class="detail-row">
-            <div>
+            <div class="col">
                 <div class="label">Written By</div>
                 {% for author in adventure.authors %}
                     {{ macros.search('authors', author.name, author.name) }}{{ not loop.last ? ', ' : '' }}
                 {% endfor %}
             </div>
-            <div>
+            <div class="col-3">
                 <div class="label">Published By</div>
                 {% if adventure.publisher %}
                     {{ macros.search('publisher', adventure.publisher.name) }}
@@ -52,7 +52,7 @@
                     Unknown
                 {% endif %}
             </div>
-            <div>
+            <div class="col-3">
                 <div class="label">Setting</div>
                 {% if adventure.setting %}
                     {{ macros.search('setting', adventure.setting.name) }}
@@ -63,32 +63,32 @@
         </div>
 
         <div class="detail-row">
-            <div>
+            <div class="col">
                 <div class="label">Environments</div>
                 {% for environment in adventure.environments %}
                     {{ macros.search('environments', environment.name) }}{{ not loop.last ? ', ' : '' }}
                 {% endfor %}
             </div>
-            <div>
+            <div class="col-7">
                 <div class="label">Link</div>
                 <a href="{{ adventure.link|add_affiliate_code|e('html_attr') }}">{{ adventure.link|add_affiliate_code }}</a>
             </div>
         </div>
 
         <div class="detail-row">
-            <div>
+            <div class="col-3">
                 <div class="label">Handouts?</div>
                 {{ macros.search('handouts', adventure.handouts, adventure.handouts|bool2str) }}
             </div>
-            <div>
+            <div class="col-3">
                 <div class="label">Battle Mats?</div>
                 {{ macros.search('tacticalMaps', adventure.tacticalMaps, adventure.tacticalMaps|bool2str) }}
             </div>
-            <div>
+            <div class="col-3">
                 <div class="label">Soloable?</div>
                 {{ macros.search('soloable', adventure.soloable, adventure.soloable|bool2str) }}
             </div>
-            <div>
+            <div class="col-3">
                 <div class="label">Includes Characters?</div>
                 {{ macros.search('pregeneratedCharacters', adventure.pregeneratedCharacters, adventure.pregeneratedCharacters|bool2str) }}
             </div>
@@ -106,7 +106,7 @@
         </div>
 
         <div class="detail-row">
-            <div>
+            <div class="col-4">
                 <div class="label">Boss Monsters and Villains</div>
                 <ul>
                     {% for monster in adventure.bossMonsters %}
@@ -119,7 +119,7 @@
                     {% endfor %}
                 </ul>
             </div>
-            <div>
+            <div class="col-4">
                 <div class="label">Common Monsters</div>
                 <ul>
                     {% for monster in adventure.commonMonsters %}
@@ -132,7 +132,7 @@
                     {% endfor %}
                 </ul>
             </div>
-            <div>
+            <div class="col-4">
                 <div class="label">Notable Items</div>
                 <ul>
                     {% for item in adventure.items %}

@@ -23,6 +23,7 @@ $check-mark: '\f00c';
     display: flex;
     justify-content: space-between;
     padding: $adl-filter-padding;
+    background-color: $adl-grey-dark;
     font-size: 1.2rem;
 
     &:after {

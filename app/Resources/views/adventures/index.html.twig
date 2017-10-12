@@ -6,15 +6,18 @@
         <div class="row">
             <div class="col">
                 <div id="adl-sidebar">
-                    <div class="title">Adventure Lookup</div>
-                    <form method="post" action="{{ url('adventure_index') }}" id="search-form">
-                        {% include 'adventures/search_filters.html.twig' %}
-                    </form>
-                    <div id="filter-more"></div>
-                </div>
-                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                    <div class="content">
+                        <div class="title">Adventure Lookup</div>
+                        <form method="post" action="{{ url('adventure_index') }}" id="search-form">
+                            {% include 'adventures/search_filters.html.twig' %}
+                        </form>
+                        <div id="filter-more"></div>
+                    </div>
+
+                    {#{% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}#}
                     <a id="create-adventure" class="btn btn-secondary" href="{{ path('adventure_new') }}">Add a new adventure</a>
-                {% endif %}
+                    {#{% endif %}#}
+                </div>
             </div>
             <div class="col-9">
                 {% include 'adventures/search_results_header.html.twig' %}

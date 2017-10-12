@@ -88,6 +88,11 @@ $card-padding: $card-padding-top $card-padding-side;
         text-transform: uppercase;
         color: $adl-grey-light;
       }
+
+      ul {
+        padding-left: 30px;
+        margin-bottom: 0;
+      }
     }
   }
 }
