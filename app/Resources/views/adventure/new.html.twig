@@ -2,9 +2,9 @@
 
 {% block body %}
     <div class="container" id="page--create-adventure" data-similar-titles-url="{{ path('similar_titles_search') }}" data-search-url="{{ path('api_autocomplete_field', {fieldName: '__FIELD__'}) }}">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-xl-7">
-                <h1 class="my-5">New adventure</h1>
+        <div class="row">
+            <div id="adventure-details" class="col">
+                <div class="title">New adventure</div>
                 <div class="alert alert-warning">AdventureLookup is for D&D and its clones. Not other systems/genres.</div>
 
                 {{ form_start(form) }}
