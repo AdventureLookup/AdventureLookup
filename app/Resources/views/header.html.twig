@@ -19,26 +19,4 @@
     {% else %}
         <a class="header-box-dark btn btn-secondary active" href="{{ path('login') }}">Login or Register</a>
     {% endif %}
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link{% if app.request.attributes.get('_route') == 'adventure_index' %} active{% endif %}" href="{{ path('adventure_index') }}">Adventures</a>
-            </li>
-            {% if is_granted('ROLE_ADMIN') %}
-                <li class="nav-item">
-                    <a class="nav-link{% if app.request.attributes.get('_route') == 'audit' %} active{% endif %}" href="{{ path('audit') }}">Recent Activity</a>
-                </li>
-            {% endif %}
-            {% if is_granted('ROLE_CURATOR') %}
-                <li class="nav-item">
-                    <a class="nav-link{% if app.request.attributes.get('_route') starts with 'curation' %} active{% endif %}" href="{{ path('curation') }}">Curation Panel <span class="badge badge-success">new</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link{% if app.request.attributes.get('_route') == 'easyadmin' %} active{% endif %}" href="{{ path('easyadmin') }}">Admin Panel</a>
-                </li>
-            {% endif %}
-
-        </ul>
-    </div>
 </div>
