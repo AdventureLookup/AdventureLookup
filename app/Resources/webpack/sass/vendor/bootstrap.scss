@@ -1,0 +1,26 @@
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1250px
+);
+
+$theme-colors: map-merge($theme-colors, ('primary': $adl-coral));
+$badge-font-size: .9rem;
+
+button.dropdown-toggle {
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+
+  &:after {
+    width: auto;
+    height: auto;
+    content: "\F0D7";
+    font: 1.4rem FontAwesome;
+    line-height: 1.2rem;
+    border: 0;
+  }
+}
+
+@import '~bootstrap/scss/bootstrap';

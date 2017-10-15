@@ -12,12 +12,12 @@ var/cache/*
 !var/logs/.gitkeep
 /var/sessions/*
 !var/sessions/.gitkeep
-vendor/
+/vendor/
 /web/bundles/*
 !/web/bundles/.gitkeep
 /web/assets/*
 !/web/assets/.gitkeep
-web/assets/vendor/
+/web/assets/vendor/
 
 npm-debug.log
 ubuntu-*.log
