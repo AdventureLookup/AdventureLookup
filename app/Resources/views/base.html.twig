@@ -15,7 +15,9 @@
         <meta name="theme-color" content="#ffffff">
     </head>
     <body>
-        {% include 'header.html.twig' %}
+        {% block header %}
+            {% include 'header.html.twig' %}
+        {% endblock %}
 
         {% if app.session.flashbag.peekAll is not empty %}
             <div class="container mb-4 mt-3">

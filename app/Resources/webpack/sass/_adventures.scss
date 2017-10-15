@@ -8,6 +8,16 @@ $card-padding-top: 1rem;
 $card-padding-side: 1.8rem;
 $card-padding: $card-padding-top $card-padding-side;
 
+#search-title {
+  display: flex;
+  justify-content: space-between;
+  margin: $adl-body-margin-top 0 $element-margin-bottom/2;
+  font: 600 1.5rem 'Arima Madurai';
+  line-height: 1.5rem;
+  color: #333333;
+  text-transform: uppercase;
+}
+
 #search-tags {
   margin: $element-margin-bottom 0;
 
@@ -21,16 +31,6 @@ $card-padding: $card-padding-top $card-padding-side;
       cursor: pointer;
     }
   }
-}
-
-#search-title {
-  display: flex;
-  justify-content: space-between;
-  margin: $element-margin-bottom/2 0;
-  font: 600 1.5rem 'Arima Madurai';
-  line-height: 1.5rem;
-  color: #333333;
-  text-transform: uppercase;
 }
 
 #search-bar {
