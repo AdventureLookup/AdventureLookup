@@ -41,10 +41,10 @@
   a.btn {
     display: flex;
     max-width: 80%;
-    justify-content: space-evenly;
+    justify-content: space-between;
     background-color: $adl-grey;
     margin: 12px auto;
-    padding: 8px 25px;
+    padding: 8px 10px;
     border-radius: 0;
     font: 1.2rem 'Roboto Condensed';
     text-transform: uppercase;

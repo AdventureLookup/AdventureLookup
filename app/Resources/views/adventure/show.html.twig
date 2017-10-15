@@ -1,4 +1,3 @@
-
 {% macro search_icon(fieldName, content) %}
     {% spaceless %}
         {% set path = path('adventure_index', {('f[' ~ fieldName ~ '][v]'): content}) %}
@@ -15,9 +14,44 @@
 
 {% import _self as macros %}
 <div id="adventure-details">
-    {% if adventure.thumbnailUrl %}
-        <img alt="Cover of {{ adventure.title }}" data-original="{{ adventure.thumbnailUrl }}" class="thumbnail" />
-    {% endif %}
+    <div class="thumbnail-container">
+        {% if adventure.thumbnailUrl %}
+            <img alt="Cover of {{ adventure.title }}" data-original="{{ adventure.thumbnailUrl }}" class="thumbnail"/>
+        {% endif %}
+        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+            <div class="dropdown" id="adventure_list-bookmark-menu">
+                <button class="btn btn-secondary dropdown-toggle" id="adventure_list-bookmark-menu-btn" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-bookmark"></i> Bookmark
+                </button>
+
+                <div class="dropdown-menu" aria-labelledby="adventure_list-bookmark-menu-btn">
+                    <h6 class="dropdown-header">Your Lists</h6>
+                    {% for list in lists %}
+                        <button class="dropdown-item" type="button"
+                                data-adventure-list-id="{{ list.id }}"
+                                data-toggle-url="{{ path('adventure_lists_toggle_contains_adventure', {
+                                    list_id: list.id, adventure_id: adventure.id
+                                }) }}">
+                            {% if list.containsAdventure(adventure) %}
+                                <i class="fa fa-fw fa-check"></i>
+                            {% else %}
+                                <i class="fa fa-fw"></i>
+                            {% endif %}
+                            {{ list.name }}
+                        </button>
+                    {% else %}
+                        <button class="dropdown-item disabled" type="button">Please create a list first, using the link below</button>
+                    {% endfor %}
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ path('adventure_lists_index') }}">
+                        <i class="fa fa-fw fa-cog"></i>
+                        Manage lists
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
     <div class="title">{{ adventure.title }}</div>
     <div class="tags-container">
         <div class="tag tag-edition">{{ adventure.edition.name }}</div>
@@ -26,7 +60,7 @@
                 {% if adventure.minStartingLevel == adventure.maxStartingLevel %}
                     Level {{ adventure.minStartingLevel }}
                 {% else %}
-                    Levels {{adventure.minStartingLevel}}-{{adventure.maxStartingLevel}}
+                    Levels {{ adventure.minStartingLevel }}-{{ adventure.maxStartingLevel }}
                 {% endif %}
             {% else %}
                 {{ adventure.startingLevelRange }} Level

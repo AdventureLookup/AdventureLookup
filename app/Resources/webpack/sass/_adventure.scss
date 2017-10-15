@@ -1,6 +1,6 @@
 $element-margin-bottom: 10px;
 
-$thumbnail-offset: 2rem;
+$thumbnail-offset: 1.5rem;
 $thumbnail-width: 85px;
 $thumbnail-height: 100px;
 
@@ -13,13 +13,24 @@ $card-padding: $card-padding-top $card-padding-side;
   color: #000;
   box-shadow: $adl-box-shadow;
 
-  .thumbnail {
+  .thumbnail-container {
     position: absolute;
     top: $thumbnail-offset;
     right: $thumbnail-offset;
-    max-width: $thumbnail-width;
-    max-height: $thumbnail-height;
-    border: $adl-border-grey-big;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 100px;
+
+    .thumbnail {
+      max-width: $thumbnail-width;
+      max-height: $thumbnail-height;
+      border: $adl-border-grey-big;
+    }
+
+    #adventure_list-bookmark-menu {
+      margin-top: 8px;
+    }
   }
 
   .title {
