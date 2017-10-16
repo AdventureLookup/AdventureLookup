@@ -8,8 +8,8 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 9200, host: 9200
 
   if Vagrant::Util::Platform.windows? then
-    puts "Windows OS detected - using slow shared folders."
-    config.vm.synced_folder ".", "/vagrant"
+    puts "Windows OS detected - using virtualbox-type shared folders"
+    config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
   else
     puts "Non-Windows OS detected - using nfs to share folder."
     config.vm.synced_folder ".", "/vagrant", :nfs => true
