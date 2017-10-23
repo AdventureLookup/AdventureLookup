@@ -2,7 +2,9 @@
 @import 'variables';
 @import 'adventure';
 @import 'adventures';
+@import 'curation';
 @import 'filter';
+@import 'general';
 @import 'header';
 @import 'login_register_forgot';
 @import 'sidebar';
@@ -11,6 +13,7 @@
 @import 'vendor/bootstrap';
 @import 'vendor/selectize';
 
+// Override vendor/bootstrap styles
 html, body {
   margin: 0;
   padding: 0;

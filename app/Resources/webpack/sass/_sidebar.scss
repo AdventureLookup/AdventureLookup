@@ -4,12 +4,13 @@
   padding: 0;
   font-family: 'Roboto', sans-serif;
   text-transform: uppercase;
+  text-align: center;
 
   > .content {
     box-shadow: $adl-box-shadow;
     margin-bottom: 8px;
 
-    > .title {
+    .sidebar-title {
       padding: $adl-filter-padding;
       background-color: $adl-coral;
       color: #ffffff;
@@ -17,6 +18,12 @@
       font-weight: 600;
       letter-spacing: .2rem;
       text-align: center;
+
+      &:hover {
+        cursor: pointer;
+        background-color: darken($adl-coral, 7.5%);
+        text-decoration: none;
+      }
     }
 
     #filter-more {
@@ -38,11 +45,9 @@
   }
 
   input[type="button"],
+  button,
   a.btn {
-    display: flex;
-    max-width: 80%;
-    justify-content: space-between;
-    background-color: $adl-grey;
+    display: table;
     margin: 12px auto;
     padding: 8px 10px;
     border-radius: 0;
@@ -57,7 +62,5 @@
       cursor: pointer;
       background-color: darken($adl-grey, 7.5%);
     }
-
-    &#create-adventure:after { content: '\f055'; }
   }
 }
