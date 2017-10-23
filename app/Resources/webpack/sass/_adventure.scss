@@ -4,12 +4,8 @@ $thumbnail-offset: 1.5rem;
 $thumbnail-width: 85px;
 $thumbnail-height: 100px;
 
-$card-padding-top: 1rem;
-$card-padding-side: 1.8rem;
-$card-padding: $card-padding-top $card-padding-side;
-
-#adventure-details {
-  @extend .body-content;
+#adventure-container {
+  @extend .content-container;
 
   .thumbnail-container {
     position: absolute;
@@ -31,15 +27,9 @@ $card-padding: $card-padding-top $card-padding-side;
     }
   }
 
-  .title {
-    padding: $card-padding;
-    font-size: 1.5rem;
-    font-weight: 600;
-  }
-
   .tags-container {
     display: flex;
-    padding: .8rem $card-padding-side;
+    padding: .8rem $adl-card-padding-side;
     overflow: hidden;
     border-top: $adl-border-grey-big;
     border-bottom: $adl-border-grey-big;
@@ -72,8 +62,8 @@ $card-padding: $card-padding-top $card-padding-side;
   .description {
     display: block;
     display: -webkit-box;
-    margin: $card-padding;
-    margin-right: calc(#{$card-padding-side} + #{$thumbnail-width} + #{$thumbnail-offset});
+    margin: $adl-card-padding;
+    margin-right: calc(#{$adl-card-padding-side} + #{$thumbnail-width} + #{$thumbnail-offset});
   }
 
   .detail-row {
@@ -86,7 +76,7 @@ $card-padding: $card-padding-top $card-padding-side;
 
     > div {
       flex-grow: 1;
-      padding: $card-padding-top $card-padding-side/2;
+      padding: $adl-card-padding-top $adl-card-padding-side/2;
 
       &:not(:last-child) {
         border-right: 1px solid $adl-grey-lightest;

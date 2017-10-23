@@ -9,6 +9,7 @@
   > .content {
     box-shadow: $adl-box-shadow;
     margin-bottom: 8px;
+    text-align: left;
 
     .sidebar-title {
       padding: $adl-filter-padding;
@@ -26,20 +27,20 @@
       }
     }
 
-    #filter-more {
-      display: flex;
-      justify-content: center;
-      height: 30px;
-      background-color: $adl-coral;
-      color: #ffffff;
+    .sidebar-block {
+      min-height: $adl-filter-min-height;
+      border-bottom: 2px solid $adl-grey-light;
+      color: $adl-offwhite;
 
-      &:after {
-        content: '\f141';
-        font: 2.5rem 'FontAwesome';
-      }
-      &:hover {
-        cursor: pointer;
-        background-color: darken($adl-coral, 7.5%);
+      .block-title {
+        padding: $adl-filter-padding;
+        background-color: $adl-grey-dark;
+        font-size: 1.2rem;
+
+        &:hover {
+          background-color: darken($adl-grey-dark, 7.5%);
+          cursor: pointer;
+        }
       }
     }
   }

@@ -4,10 +4,6 @@ $thumbnail-offset: 2rem;
 $thumbnail-width: 85px;
 $thumbnail-height: 100px;
 
-$card-padding-top: 1rem;
-$card-padding-side: 1.8rem;
-$card-padding: $card-padding-top $card-padding-side;
-
 #search-title {
   display: flex;
   justify-content: space-between;
@@ -76,14 +72,14 @@ $card-padding: $card-padding-top $card-padding-side;
     }
 
     .title {
-      padding: $card-padding;
+      padding: $adl-card-padding;
       font-size: 1.5rem;
       font-weight: 600;
     }
 
     .tags-container {
       display: flex;
-      padding: .8rem $card-padding-side;
+      padding: .8rem $adl-card-padding-side;
       overflow: hidden;
       border-top: $adl-border-grey-big;
       border-bottom: $adl-border-grey-big;
@@ -116,8 +112,8 @@ $card-padding: $card-padding-top $card-padding-side;
     .description {
       display: block;
       display: -webkit-box;
-      margin: $card-padding;
-      margin-right: calc(#{$card-padding-side} + #{$thumbnail-width} + #{$thumbnail-offset});
+      margin: $adl-card-padding;
+      margin-right: calc(#{$adl-card-padding-side} + #{$thumbnail-width} + #{$thumbnail-offset});
       max-height: 1rem*$adl-line-height*3;
       overflow: hidden;
       text-overflow: ellipsis;
