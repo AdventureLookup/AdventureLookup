@@ -3,7 +3,16 @@
 {% block body %}
     <div class="container" id="page--edit-adventure" data-similar-titles-url="{{ path('similar_titles_search') }}" data-search-url="{{ path('api_autocomplete_field', {fieldName: '__FIELD__'}) }}">
         <div class="row">
-            <div id="adventure-details" class="col">
+            <div class="col">
+                <div id="adl-sidebar">
+                    <div class="content">
+                        <a class="no-underline" href="{{ path('adventure_index') }}">
+                            <div class="sidebar-title">Adventure Lookup</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div id="adventure-details" class="col-9">
                 <div class="title">Edit adventure</div>
 
                 {{ form_start(form) }}
