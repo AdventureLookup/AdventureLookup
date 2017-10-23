@@ -6,6 +6,7 @@ $container-max-widths: (
 );
 
 $theme-colors: map-merge($theme-colors, ('primary': $adl-coral));
+$badge-font-weight: 400;
 $badge-font-size: .9rem;
 
 button.dropdown-toggle {
