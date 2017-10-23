@@ -1,4 +1,5 @@
 <div id="adl-header">
+    <a class="header-box-dark btn btn-secondary active" href="{{ path('adventure_index') }}">Adventures</a>
     {% if is_granted('ROLE_ADMIN') %}
         <a class="header-box-dark btn btn-secondary active" href="{{ path('audit') }}">Audit</a>
     {% endif %}
