@@ -12,11 +12,12 @@
             Edit adventure
         </a>
     {% else %}
-    <a href="#" class="btn btn-secondary" role="button">
-        <i class="fa fa-edit"></i>
-        Suggest Edits
-    </a>
+        <a class="btn btn-secondary" role="button" href="{{ path('changerequest_new', {adventure_id: adventure.id}) }}">
+            <i class="fa fa-edit"></i>
+            Suggest Edits
+        </a>
     {% endif %}
+
     <a href="https://github.com/adventurelookup/adventurelookup/issues"
        target="_blank" class="btn btn-secondary" role="button">
         <i class="fa fa-flag"></i>
