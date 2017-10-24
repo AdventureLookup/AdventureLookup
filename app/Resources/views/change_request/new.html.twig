@@ -4,13 +4,32 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                <h1 class="my-5">Create Change Request for "{{ adventure.title }}"</h1>
-                {{ form_start(form) }}
-                {{ form_widget(form) }}
-                <button type="submit" class="btn btn-success" role="button">
-                    Submit change request
-                </button>
-                {{ form_end(form) }}
+                <div id="adl-sidebar">
+                    <div class="content">
+                        <a class="no-underline" href="{{ path('adventure_index') }}">
+                            <div class="sidebar-title-big">A</div>
+                        </a>
+                        <a class="no-underline" href="{{ path('adventure_show', { slug: adventure.slug }) }}">
+                            <div class="sidebar-title-big btop"><i class="fa fa-arrow-left"></i></div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-11">
+                <div class="content-container">
+                    <div class="title">{{ adventure.title }} Change Request</div>
+                    <div class="content">
+                        {{ form_start(form) }}
+                        {{ form_widget(form) }}
+                        <button type="submit" class="btn btn-success" role="button">
+                            Submit change request
+                        </button>
+                        <a href="{{ path('adventure_show', { slug: adventure.slug }) }}" class="btn btn-secondary" role="button">
+                            Cancel
+                        </a>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

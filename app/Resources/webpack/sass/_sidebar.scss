@@ -27,6 +27,17 @@
       }
     }
 
+    .sidebar-title-big {
+      @extend .sidebar-title;
+
+      padding: $adl-filter-padding-top/2 $adl-filter-padding-side/2;
+      font-size: 2rem;
+
+      &.btop {
+        border-top: 2px solid $adl-grey-dark;
+      }
+    }
+
     .sidebar-block {
       min-height: $adl-filter-min-height;
       border-bottom: 2px solid $adl-grey-light;
