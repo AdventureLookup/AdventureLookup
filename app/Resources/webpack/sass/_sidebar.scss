@@ -67,20 +67,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%; // for buttons and inputs
     margin-top: 12px;
     padding: 8px 10px;
     border-radius: 0;
     font: 1.2rem 'Roboto Condensed';
-    color: #fff;
     text-transform: uppercase;
     box-shadow: $adl-box-shadow;
 
-    &:after {
-      font: 1.6rem 'FontAwesome';
-    }
-    &:hover {
+    &:not(.disabled):hover {
       cursor: pointer;
-      background-color: darken($adl-grey, 7.5%);
     }
 
     > :first-child {

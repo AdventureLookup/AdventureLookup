@@ -7,12 +7,16 @@
                 <div class="adl-sidebar">
                     <div class="content">
                         <a class="no-underline" href="{{ path('adventure_index') }}">
-                            <div class="sidebar-title">Adventure Lookup</div>
+                            <div class="sidebar-title-big">A</div>
+                        </a>
+
+                        <a class="no-underline" href="{{ path('adventure_show', { slug: adventure.slug }) }}">
+                            <div class="sidebar-title-big-secondary"><i class="fa fa-arrow-left"></i></div>
                         </a>
                     </div>
                 </div>
             </div>
-            <div id="adventure-container" class="col-9">
+            <div id="adventure-container" class="col-11">
                 <div class="title">Edit adventure</div>
 
                 {{ form_start(form) }}

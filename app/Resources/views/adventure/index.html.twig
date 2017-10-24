@@ -23,16 +23,10 @@
             <div class="col-2 mt-5">
                 <div class="adl-sidebar">
                     <div class="content-center">
-                        {% if is_granted('edit', adventure) %}
-                            <a href="{{ path('adventure_edit', { 'id': adventure.id }) }}"
-                               class="btn btn-secondary" role="button">
-                                <i class="fa fa-edit"></i>
-                                Edit adventure
-                            </a>
-                        {% elseif app.user %}
+                        {% if app.user %}
                             <div class="dropdown" id="adventure_list-bookmark-menu">
                                 <a href="#" class="btn btn-secondary dropdown-toggle" id="adventure_list-bookmark-menu-btn" data-toggle="dropdown"
-                                        aria-haspopup="true" aria-expanded="false">
+                                   aria-haspopup="true" aria-expanded="false">
                                     <i class="fa fa-bookmark"></i> Bookmark
                                 </a>
 
@@ -61,7 +55,14 @@
                                     </a>
                                 </div>
                             </div>
-
+                        {% endif %}
+                        {% if is_granted('edit', adventure) %}
+                            <a href="{{ path('adventure_edit', { 'id': adventure.id }) }}"
+                               class="btn btn-secondary" role="button">
+                                <i class="fa fa-edit"></i>
+                                Edit adventure
+                            </a>
+                        {% elseif app.user %}
                             <a class="btn btn-secondary" role="button" href="{{ path('changerequest_new', {adventure_id: adventure.id}) }}">
                                 <i class="fa fa-edit"></i>
                                 Suggest Edits
@@ -76,7 +77,7 @@
 
                         {% if is_granted('delete', adventure) %}
                             {{ form_start(delete_form) }}
-                            <button class="btn btn-sm btn-outline-danger"
+                            <button type="button" class="btn btn-sm btn-outline-danger"
                                     onclick="return confirm('Do you really want to delete this adventure?')">
                                 <i class="fa fa-trash"></i> Delete
                             </button>

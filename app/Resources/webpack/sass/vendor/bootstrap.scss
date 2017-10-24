@@ -27,6 +27,7 @@ button.dropdown-toggle {
 
 @import '~bootstrap/scss/bootstrap';
 
-button.dropdown-item:hover {
+// Override bootstrap behavior
+button.dropdown-item:not(.disabled):hover {
   cursor: pointer;
 }
