@@ -6,6 +6,7 @@ $container-max-widths: (
 );
 
 $theme-colors: map-merge($theme-colors, ('primary': $adl-coral));
+$alert-margin-bottom: 0;
 $badge-font-weight: 400;
 $badge-font-size: .9rem;
 
