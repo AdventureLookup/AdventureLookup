@@ -77,7 +77,7 @@
 
                         {% if is_granted('delete', adventure) %}
                             {{ form_start(delete_form) }}
-                            <button type="button" class="btn btn-sm btn-outline-danger"
+                            <button type="submit" class="btn btn-sm btn-outline-danger"
                                     onclick="return confirm('Do you really want to delete this adventure?')">
                                 <i class="fa fa-trash"></i> Delete
                             </button>

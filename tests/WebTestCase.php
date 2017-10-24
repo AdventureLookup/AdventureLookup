@@ -58,6 +58,6 @@ class WebTestCase extends \Liip\FunctionalTestBundle\Test\WebTestCase
     protected function assertWorkingIndex(Session $session)
     {
         $session->visit('/adventures');
-        $this->assertTrue($session->getPage()->hasContent('Adventure search'));
+        $this->assertTrue($session->getPage()->hasContent('Adventure Lookup'));
     }
 }
