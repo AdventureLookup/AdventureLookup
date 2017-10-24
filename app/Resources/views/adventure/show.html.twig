@@ -21,7 +21,7 @@
     </div>
     <div class="title">{{ adventure.title }}</div>
     <div class="tags-container">
-        <div class="tag tag-edition">{{ adventure.edition.name }}</div>
+        <div class="tag tag-edition">{{ adventure.edition.name|default('') }}</div>
         <div class="tag tag-level">
             {% if adventure.minStartingLevel is not null and adventure.maxStartingLevel is not null %}
                 {% if adventure.minStartingLevel == adventure.maxStartingLevel %}

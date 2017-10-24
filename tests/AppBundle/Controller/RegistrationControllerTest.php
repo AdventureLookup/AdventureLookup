@@ -55,7 +55,7 @@ class RegistrationControllerTest extends WebTestCase
         $session->visit('/register');
         $page = $session->getPage();
 
-        $this->assertTrue($page->hasContent('Create account'));
+        $this->assertTrue($page->hasContent('Create Account'));
 
         $page->fillField('user[username]', $username);
         $page->fillField('user[email]', $email);
