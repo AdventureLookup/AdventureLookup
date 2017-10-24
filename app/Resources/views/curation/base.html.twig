@@ -3,25 +3,41 @@
 {% block body %}
     <div class="container">
         <div class="row">
-            <div id="curation-container" class="col">
-                <h1 class="my-5">Curation</h1>
+            <div class="col">
+                <div class="adl-sidebar">
+                    <div class="content">
+                        <a class="no-underline" href="{{ path('adventure_index') }}">
+                            <div class="sidebar-title-big">A</div>
+                        </a>
+                        <a class="no-underline" href="{{ path('adventure_index') }}">
+                            <div class="sidebar-title-big-secondary"><i class="fa fa-home"></i></div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-11">
+                <div id="curation-container">
+                    <div class="title">Curation</div>
 
-                <ul class="nav nav-tabs mb-3">
-                    <li class="nav-item">
-                        <a class="nav-link{% if app.request.attributes.get('_route') == 'curation_adventures_with_change_requests' %} active{% endif %}"
-                           href="{{ path('curation_adventures_with_change_requests') }}">Adventures with the most unresolved change requests</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link{% if app.request.attributes.get('_route') == 'curation_pending_change_requests' %} active{% endif %}"
-                           href="{{ path('curation_pending_change_requests') }}">Newest unresolved Change Requests</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link{% if app.request.attributes.get('_route') == 'curation_bulk_edit_adventures' %} active{% endif %}"
-                           href="{{ path('curation_bulk_edit_adventures') }}">Bulk edit adventures</a>
-                    </li>
-                </ul>
+                    <div class="content">
+                        <ul class="nav nav-tabs mb-3">
+                            <li class="nav-item">
+                                <a class="nav-link{% if app.request.attributes.get('_route') == 'curation_adventures_with_change_requests' %} active{% endif %}"
+                                   href="{{ path('curation_adventures_with_change_requests') }}">Adventures with the most unresolved change requests</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link{% if app.request.attributes.get('_route') == 'curation_pending_change_requests' %} active{% endif %}"
+                                   href="{{ path('curation_pending_change_requests') }}">Newest unresolved Change Requests</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link{% if app.request.attributes.get('_route') == 'curation_bulk_edit_adventures' %} active{% endif %}"
+                                   href="{{ path('curation_bulk_edit_adventures') }}">Bulk edit adventures</a>
+                            </li>
+                        </ul>
 
-                {% block curation_content %}{% endblock %}
+                        {% block curation_content %}{% endblock %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
