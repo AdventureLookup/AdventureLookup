@@ -18,7 +18,7 @@ class AppKernel extends Kernel
             new AppBundle\AppBundle(),
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
-            new JavierEguiluz\Bundle\EasyAdminBundle\EasyAdminBundle(),
+            new EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle(),
             new DataDog\AuditBundle\DataDogAuditBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
             new EWZ\Bundle\RecaptchaBundle\EWZRecaptchaBundle(),
