@@ -30,17 +30,23 @@
     .sidebar-title-big {
       @extend .sidebar-title;
 
-      padding: $adl-filter-padding-top/2 $adl-filter-padding-side/2;
+      padding: $adl-filter-padding-top $adl-filter-padding-side/2;
       font-size: 2rem;
+    }
 
-      &.btop {
-        border-top: 2px solid $adl-grey-dark;
+    .sidebar-title-big-secondary {
+      @extend .sidebar-title-big;
+      background-color: $adl-grey-dark;
+
+      &:hover {
+        background-color: darken($adl-grey-dark, 7.5%);
+        cursor: pointer;
       }
     }
 
     .sidebar-block {
       min-height: $adl-filter-min-height;
-      border-bottom: 2px solid $adl-grey-light;
+      border-bottom: $adl-border-grey-lightest-big;
       color: $adl-offwhite;
 
       .block-title {
