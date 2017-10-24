@@ -1,4 +1,4 @@
-#adl-sidebar {
+.adl-sidebar {
   align-self: flex-start;
   margin-top: 20px;
   padding: 0;
@@ -9,7 +9,6 @@
   > .content {
     box-shadow: $adl-box-shadow;
     margin-bottom: 8px;
-    text-align: left;
 
     .sidebar-title {
       padding: $adl-filter-padding;
@@ -62,14 +61,17 @@
     }
   }
 
-  input[type="button"],
-  button,
+  input[type="button"].btn,
+  button.btn,
   a.btn {
-    display: table;
-    margin: 12px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 12px;
     padding: 8px 10px;
     border-radius: 0;
     font: 1.2rem 'Roboto Condensed';
+    color: #fff;
     text-transform: uppercase;
     box-shadow: $adl-box-shadow;
 
@@ -79,6 +81,10 @@
     &:hover {
       cursor: pointer;
       background-color: darken($adl-grey, 7.5%);
+    }
+
+    > :first-child {
+      margin-right: 3px;
     }
   }
 }

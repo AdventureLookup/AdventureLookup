@@ -5,10 +5,85 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                {% include 'adventure/sidebar.html.twig' %}
+                <div class="adl-sidebar">
+                    <div class="content">
+                        <a class="no-underline" href="{{ path('adventure_index') }}">
+                            <div class="sidebar-title-big">A</div>
+                        </a>
+
+                        <a class="no-underline" href="{{ path('adventure_index') }}">
+                            <div class="sidebar-title-big-secondary"><i class="fa fa-search"></i></div>
+                        </a>
+                    </div>
+                </div>
             </div>
             <div class="col-9">
                 {% include 'adventure/show.html.twig' %}
+            </div>
+            <div class="col-2 mt-5">
+                <div class="adl-sidebar">
+                    <div class="content-center">
+                        {% if is_granted('edit', adventure) %}
+                            <a href="{{ path('adventure_edit', { 'id': adventure.id }) }}"
+                               class="btn btn-secondary" role="button">
+                                <i class="fa fa-edit"></i>
+                                Edit adventure
+                            </a>
+                        {% elseif app.user %}
+                            <div class="dropdown" id="adventure_list-bookmark-menu">
+                                <a href="#" class="btn btn-secondary dropdown-toggle" id="adventure_list-bookmark-menu-btn" data-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-bookmark"></i> Bookmark
+                                </a>
+
+                                <div class="dropdown-menu" aria-labelledby="adventure_list-bookmark-menu-btn">
+                                    <h6 class="dropdown-header">Your Lists</h6>
+                                    {% for list in lists %}
+                                        <button class="dropdown-item" type="button"
+                                                data-adventure-list-id="{{ list.id }}"
+                                                data-toggle-url="{{ path('adventure_lists_toggle_contains_adventure', {
+                                                    list_id: list.id, adventure_id: adventure.id
+                                                }) }}">
+                                            {% if list.containsAdventure(adventure) %}
+                                                <i class="fa fa-fw fa-check"></i>
+                                            {% else %}
+                                                <i class="fa fa-fw"></i>
+                                            {% endif %}
+                                            {{ list.name }}
+                                        </button>
+                                    {% else %}
+                                        <button class="dropdown-item disabled" type="button">Please create a list first, using the link below</button>
+                                    {% endfor %}
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{{ path('adventure_lists_index') }}">
+                                        <i class="fa fa-fw fa-cog"></i>
+                                        Manage lists
+                                    </a>
+                                </div>
+                            </div>
+
+                            <a class="btn btn-secondary" role="button" href="{{ path('changerequest_new', {adventure_id: adventure.id}) }}">
+                                <i class="fa fa-edit"></i>
+                                Suggest Edits
+                            </a>
+                        {% endif %}
+
+                        <a href="https://github.com/adventurelookup/adventurelookup/issues"
+                           target="_blank" class="btn btn-secondary" role="button">
+                            <i class="fa fa-flag"></i>
+                            Report Issue
+                        </a>
+
+                        {% if is_granted('delete', adventure) %}
+                            {{ form_start(delete_form) }}
+                            <button class="btn btn-sm btn-outline-danger"
+                                    onclick="return confirm('Do you really want to delete this adventure?')">
+                                <i class="fa fa-trash"></i> Delete
+                            </button>
+                            {{ form_end(delete_form) }}
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

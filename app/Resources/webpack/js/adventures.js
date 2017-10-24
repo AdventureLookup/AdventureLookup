@@ -10,7 +10,7 @@
     $('#search-form').submit();
   });
   // Toggle open a filters' options
-  $('#adl-sidebar').on('click', '.filter > .title', e => {
+  $('.adl-sidebar').on('click', '.filter > .title', e => {
     $(e.target).closest('.filter').toggleClass('open');
   });
   // Set appropriate input option and update visuals for the whole filter
@@ -35,7 +35,7 @@
   });
   // Show more filters (hopefully the lesser-used ones)
   $('#filter-more').on('click', e => {
-    $('#adl-sidebar').find('.filter.d-none').removeClass('d-none');
+    $('.adl-sidebar').find('.filter.d-none').removeClass('d-none');
     $(e.target).hide();
   });
   // Clicking on a filter tag removes it
