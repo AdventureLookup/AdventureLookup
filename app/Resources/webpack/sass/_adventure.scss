@@ -19,7 +19,7 @@ $thumbnail-height: 100px;
     .thumbnail {
       max-width: $thumbnail-width;
       max-height: $thumbnail-height;
-      border: $adl-border-grey-big;
+      border: $adl-border-grey-lightest-big;
     }
 
     #adventure_list-bookmark-menu {
@@ -31,8 +31,8 @@ $thumbnail-height: 100px;
     display: flex;
     padding: .8rem $adl-card-padding-side;
     overflow: hidden;
-    border-top: $adl-border-grey-big;
-    border-bottom: $adl-border-grey-big;
+    border-top: $adl-border-grey-lightest-big;
+    border-bottom: $adl-border-grey-lightest-big;
 
     .tag {
       padding: 3px 12px;

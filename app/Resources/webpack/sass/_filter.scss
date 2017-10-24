@@ -3,7 +3,7 @@ $check-mark: '\f00c';
 .filter {
   position: relative;
   min-height: $adl-filter-min-height;
-  border-bottom: 2px solid $adl-grey-light;
+  border-bottom: $adl-border-grey-lightest-big;
   color: $adl-offwhite;
 
   // Is open
