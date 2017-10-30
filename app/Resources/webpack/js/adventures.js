@@ -28,10 +28,19 @@
       return;
     }
   });
-  // If a filter has more options than displayed, clicking on "more" shows them (obviously)
-  $optionsList.on('click', '.show-more', () => {
-    $(this).siblings('.d-none').removeClass('d-none');
-    $(this).remove();
+  // If a filter has more options than displayed, clicking on 'show-more' shows them (obviously)
+  $optionsList.on('click', '.show-more', e => {
+    let more = e.target;
+    $(more).siblings('.d-none').toggleClass('d-none').toggleClass('d-none-inactive');
+    $(more).hide();
+    $(more).siblings('.show-less').show();
+  });
+  // If a filter has more options than displayed, clicking on 'show-less' hides them
+  $optionsList.on('click', '.show-less', e => {
+    let less = e.target;
+    $(less).siblings('.d-none-inactive').toggleClass('d-none').toggleClass('d-none-inactive');
+    $(less).hide();
+    $(less).siblings('.show-more').show();
   });
   // Show more filters (hopefully the lesser-used ones)
   $('#filter-more').on('click', e => {

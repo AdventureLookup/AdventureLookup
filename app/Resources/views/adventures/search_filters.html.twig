@@ -49,10 +49,11 @@
                     {{ macros.filter_checkbox(field, value, true, 0, false) }}
                 {% endfor %}
                 {% if buckets|length > showMoreAfter %}
-                    <div class="option show-more">more</div>
+                    <div class="option show-more"><i class="fa fa-arrow-down"></i></div>
+                    <div class="option show-less"><i class="fa fa-arrow-up"></i></div>
                 {% endif %}
             {% elseif field.type == 'boolean' %}
-                <div class="option">
+                <div class="option">z
                     <label class="form-check-label">
                         <input class="form-check-input" type="radio"
                                name="f[{{ field.name }}][v]" value=""

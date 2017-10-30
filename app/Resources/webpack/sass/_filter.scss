@@ -9,7 +9,6 @@ $check-mark: '\f00c';
   // Is open
   &.open {
     .option { display: flex; }
-    .option.show-more { display: block; }
     .title:after { content: '\f0d8'; }
   }
   // Has one or more options selected
@@ -59,8 +58,13 @@ $check-mark: '\f00c';
 
     &.show-more {
       padding: $adl-filter-padding-top/2;
-      text-align: center;
+      justify-content: space-around;
       font-size: .9rem;
+    }
+
+    &.show-less {
+      @extend .show-more;
+      display: none;
     }
   }
 }
