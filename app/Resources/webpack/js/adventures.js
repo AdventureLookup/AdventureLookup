@@ -1,10 +1,12 @@
-(function () {
-  const $results = $('#search-results'),
-    $optionsList = $('.options-list');
+import LazyLoad from "vanilla-lazyload/dist/lazyload";
 
-  if (!$results.length) {
+(function () {
+  if (!$('#search-results').length) {
     return;
   }
+
+  const myLazyLoad = new LazyLoad(),
+    $optionsList = $('.options-list');
 
   $('#search-submit').on('click', () => {
     $('#search-form').submit();

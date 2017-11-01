@@ -5,7 +5,6 @@ import 'selectize/dist/css/selectize.bootstrap3.css'
 import 'selectize/dist/js/standalone/selectize'
 import toastr from 'toastr/toastr';
 import 'toastr/toastr.scss';
-import LazyLoad from "vanilla-lazyload/dist/lazyload";
 import '../sass/style.scss';
 
 import './adventures';
@@ -30,10 +29,6 @@ toastr.options = {
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
 };
-
-// Lazy-load images using
-// https://github.com/verlok/lazyload
-export const myLazyLoad = new LazyLoad();
 
 // Hack to reload CSS using HMR
 // https://github.com/symfony/webpack-encore/pull/8#issuecomment-312599836
