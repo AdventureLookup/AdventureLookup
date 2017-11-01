@@ -33,14 +33,14 @@
     let more = e.target;
     $(more).siblings('.d-none').toggleClass('d-none').toggleClass('d-none-inactive');
     $(more).hide();
-    $(more).siblings('.show-less').show();
+    $(more).siblings('.show-less').css('display', 'flex');
   });
   // If a filter has more options than displayed, clicking on 'show-less' hides them
   $optionsList.on('click', '.show-less', e => {
     let less = e.target;
     $(less).siblings('.d-none-inactive').toggleClass('d-none').toggleClass('d-none-inactive');
     $(less).hide();
-    $(less).siblings('.show-more').show();
+    $(less).siblings('.show-more').css('display', 'flex');
   });
   // Show more filters (hopefully the lesser-used ones)
   $('#filter-more').on('click', e => {
