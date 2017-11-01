@@ -16,7 +16,7 @@
 <div id="adventure-container">
     <div class="thumbnail-container">
         {% if adventure.thumbnailUrl %}
-            <img alt="Cover of {{ adventure.title }}" data-original="{{ adventure.thumbnailUrl }}" class="thumbnail"/>
+            <img alt="Cover of {{ adventure.title }}" src="{{ adventure.thumbnailUrl }}" class="thumbnail" />
         {% endif %}
     </div>
     <div class="title">{{ adventure.title }}</div>
