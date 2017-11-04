@@ -10,13 +10,13 @@
             {{ form_end(delete_form) }}
         </div>
 
-        {{ form_start(edit_form, {attr: {id: 'adventure_list-edit-form', class: 'd-none form-inline mb-3'}}) }}
+        {{ form_start(edit_form, {attr: {id: 'adventure_list-edit-form', class: 'title d-none form-inline mb-3'}}) }}
         {{ form_widget(edit_form.name) }}
         {{ form_widget(edit_form.submit, {attr: {class: 'btn btn-success ml-2'}, label: 'Save'}) }}
         <button type="button" class="btn btn-link ml-2" id="adventure_list-cancel-btn">Cancel</button>
         {{ form_end(edit_form) }}
 
-        <div class="title">{{ list.name }}</div>
+        <div id="adventure_list-title" class="title">{{ list.name }}</div>
         <div class="content">
             <div class="list-group">
                 {% for adventure in list.adventures %}
