@@ -1,0 +1,23 @@
+<div id="adl-header">
+    <a class="header-box-dark btn btn-secondary active" href="{{ path('adventure_index') }}">Adventures</a>
+    {% if is_granted('ROLE_CURATOR') %}
+        <a class="header-box-dark btn btn-secondary active" href="{{ path('curation') }}">Curation</a>
+        <a class="header-box-dark btn btn-secondary active" href="{{ path('easyadmin') }}">Admin</a>
+    {% endif %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <a class="header-box-dark btn btn-secondary active" href="{{ path('audit') }}">Audit</a>
+    {% endif %}
+    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+        <div class="dropdown">
+            <button class="header-box-dark btn btn-secondary dropdown-toggle" type="button" id="adl-header-login-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ app.user.username }}
+            </button>
+            <div class="dropdown-menu" aria-labelledby="adl-header-login-dropdown">
+                <a class="dropdown-item" href="{{ path('profile') }}">Profile</a>
+                <a class="dropdown-item" href="{{ path('logout') }}">Logout</a>
+            </div>
+        </div>
+    {% else %}
+        <a class="header-box-dark btn btn-secondary active" href="{{ path('login') }}">Login or Register</a>
+    {% endif %}
+</div>

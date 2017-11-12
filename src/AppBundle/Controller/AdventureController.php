@@ -41,7 +41,7 @@ class AdventureController extends Controller
         $fields = $fieldProvider->getFields();
         list($paginatedAdventureDocuments, $totalNumberOfResults, $stats) = $adventureSearch->search($q, $filters, $page);
 
-        return $this->render('adventure/index.html.twig', [
+        return $this->render('adventures/index.html.twig', [
             'adventures' => $paginatedAdventureDocuments,
             'totalNumberOfResults' => $totalNumberOfResults,
             'page' => $page,
@@ -107,7 +107,7 @@ class AdventureController extends Controller
         $deleteForm = $this->createDeleteForm($adventure);
         $adventureListRepository = $em->getRepository(AdventureList::class);
 
-        return $this->render('adventure/show.html.twig', [
+        return $this->render('adventure/index.html.twig', [
             'adventure' => $adventure,
             'delete_form' => $deleteForm->createView(),
             'lists' => $adventureListRepository->myLists($user),

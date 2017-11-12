@@ -1,0 +1,26 @@
+#lrf-container {
+  @extend .container;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  #lrf {
+    width: 100%;
+    padding: $adl-body-padding;
+    margin-top:$adl-body-margin-top;
+    background-color: #fff;
+    box-shadow: $adl-box-shadow;
+
+    @include breakpoint($sm) {
+      width: 40%;
+    }
+
+    .title {
+      margin-bottom: $adl-body-padding/2;
+      font: 600 2rem 'Roboto', sans-serif;
+      text-align: center;
+      text-transform: uppercase;
+    }
+  }
+}

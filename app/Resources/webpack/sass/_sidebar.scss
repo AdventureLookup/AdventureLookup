@@ -1,0 +1,86 @@
+.adl-sidebar {
+  align-self: flex-start;
+  margin-top: 20px;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+  text-transform: uppercase;
+  text-align: center;
+
+  > .content {
+    box-shadow: $adl-box-shadow;
+    margin-bottom: 8px;
+
+    .sidebar-title {
+      padding: $adl-filter-padding;
+      background-color: $adl-coral;
+      color: #ffffff;
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: .2rem;
+      text-align: center;
+
+      &:hover {
+        cursor: pointer;
+        background-color: darken($adl-coral, 7.5%);
+        text-decoration: none;
+      }
+    }
+
+    .sidebar-title-big {
+      @extend .sidebar-title;
+
+      padding: $adl-filter-padding-top $adl-filter-padding-side/2;
+      font-size: 2rem;
+    }
+
+    .sidebar-title-big-secondary {
+      @extend .sidebar-title-big;
+      background-color: $adl-grey-dark;
+
+      &:hover {
+        background-color: darken($adl-grey-dark, 7.5%);
+        cursor: pointer;
+      }
+    }
+
+    .sidebar-block {
+      min-height: $adl-filter-min-height;
+      border-bottom: $adl-border-grey-lightest-big;
+      color: $adl-offwhite;
+
+      .block-title {
+        padding: $adl-filter-padding;
+        background-color: $adl-grey-dark;
+        font-size: 1.2rem;
+
+        &:hover {
+          background-color: darken($adl-grey-dark, 7.5%);
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  input[type="button"].btn,
+  button.btn,
+  a.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%; // for buttons and inputs
+    margin-top: 12px;
+    padding: 8px 10px;
+    border-radius: 0;
+    font: 1.2rem 'Roboto Condensed';
+    text-transform: uppercase;
+    box-shadow: $adl-box-shadow;
+
+    &:not(.disabled):hover {
+      cursor: pointer;
+    }
+
+    > :first-child {
+      margin-right: 3px;
+    }
+  }
+}

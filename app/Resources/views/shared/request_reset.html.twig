@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}{% endblock %}
+{% block body %}
+    <div id="lrf-container">
+        <div id="lrf">
+            <div class="title">Reset Password</div>
+
+            <p class="mb-3">
+                If you forgot your account's password, you can request a password reset link to be sent to your email address.
+            </p>
+
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <button class="btn btn-primary" type="submit" role="button">Send Password Reset Link</button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

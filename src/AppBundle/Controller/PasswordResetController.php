@@ -60,7 +60,7 @@ class PasswordResetController extends Controller
             return $this->redirectToRoute('login');
         }
 
-        return $this->render('password_reset/request_reset.html.twig', [
+        return $this->render('shared/request_reset.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -117,7 +117,7 @@ class PasswordResetController extends Controller
             return $this->redirectToRoute('login');
         }
 
-        return $this->render('password_reset/do_reset.html.twig', [
+        return $this->render('shared/do_reset.html.twig', [
             'form' => $form->createView(),
         ]);
     }

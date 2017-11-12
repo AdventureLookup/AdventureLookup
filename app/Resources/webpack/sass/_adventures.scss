@@ -1,0 +1,133 @@
+$element-margin-bottom: 10px;
+
+$thumbnail-offset: 2rem;
+$thumbnail-width: 85px;
+$thumbnail-height: 100px;
+
+#search-title {
+  display: flex;
+  justify-content: space-between;
+  margin: $adl-body-margin-top 0 $element-margin-bottom/2;
+  font: 600 1.5rem 'Arima Madurai';
+  line-height: 1.5rem;
+  color: #333333;
+  text-transform: uppercase;
+}
+
+#search-tags {
+  margin: $element-margin-bottom 0;
+
+  > span.badge {
+    &::after {
+      content: '\f00d';
+      font: 1rem 'FontAwesome';
+    }
+    &:hover {
+      background-color: darken($adl-coral, 7.5%);
+      cursor: pointer;
+    }
+  }
+}
+
+#search-bar {
+  display: flex;
+  margin-bottom: $element-margin-bottom;
+
+  > * { margin-right: 4px; }
+  > *:last-child { margin-right: 0; }
+
+  .elastic-search {
+    @extend .form-control;
+
+    flex-grow: 8;
+    font-size: 1.2rem;
+  }
+
+  #search-submit {
+    cursor: pointer;
+  }
+}
+
+#search-results {
+  // don't show underline for the entire adventure block
+  > a {
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  .adventure {
+    @extend .card;
+    margin-bottom: 1rem;
+    color: #000;
+    box-shadow: $adl-box-shadow;
+
+    .thumbnail {
+      position: absolute;
+      top: $thumbnail-offset;
+      right: $thumbnail-offset;
+      max-width: $thumbnail-width;
+      max-height: $thumbnail-height;
+      border: $adl-border-grey-lightest-big;
+    }
+
+    .title {
+      padding: $adl-card-padding;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .tags-container {
+      display: flex;
+      padding: .8rem $adl-card-padding-side;
+      overflow: hidden;
+      border-top: $adl-border-grey-lightest-big;
+      border-bottom: $adl-border-grey-lightest-big;
+
+      .tag {
+        padding: 3px 12px;
+        margin-right: 6px;
+        background-color: $adl-grey-light;
+        border-radius: $adl-border-radius-big;
+        font-family: 'Roboto Condensed', sans-serif;
+        text-transform: uppercase;
+        color: #ffffff;
+
+        &::before {
+          font: 1rem 'FontAwesome';
+          padding-right: .25rem;
+        }
+
+        &.tag-edition::before { content: '\f013'; }
+        &.tag-level::before { content: '\f024'; }
+        &.tag-length::before { content: '\f02d'; }
+        &.tag-featured {
+          background-color: $adl-coral;
+
+          &::before { content: '\f219'; }
+        }
+      }
+    }
+
+    .description {
+      display: block;
+      display: -webkit-box;
+      margin: $adl-card-padding;
+      margin-right: calc(#{$adl-card-padding-side} + #{$thumbnail-width} + #{$thumbnail-offset});
+      max-height: 1rem*$adl-line-height*3;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+  }
+
+  .no-results{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    font: 600 1.25rem 'Arima Madurai';
+    text-transform: uppercase;
+  }
+}

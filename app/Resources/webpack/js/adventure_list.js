@@ -3,7 +3,7 @@ import toastr from 'toastr/toastr';
 (function () {
     if ($('#adventure_list').length) {
         handleNameEdit();
-    } else if ($('.adventure-show--details').length) {
+    } else if ($('#adventure_list-bookmark-menu').length) {
         handleBookmarkMenu();
     }
     

@@ -111,6 +111,6 @@ class BrowserTestCase extends TestCase
     protected function assertWorkingIndex(Session $session)
     {
         $this->visit($session, '/adventures');
-        $this->assertTrue($session->getPage()->hasContent('Adventure search'));
+        $this->assertTrue($session->getPage()->hasContent('A community for lazy dungeon masters'));
     }
 }
