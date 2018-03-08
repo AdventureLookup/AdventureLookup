@@ -4,7 +4,7 @@ namespace AppBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
-use Knp\Component\Pager\Paginator;
+use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -28,10 +28,10 @@ class AuditController extends Controller
      * @Method("GET")
      *
      * @param Request $request
-     * @param Paginator $paginator
+     * @param PaginatorInterface $paginator
      * @return Response
      */
-    public function indexAction(Request $request, Paginator $paginator)
+    public function indexAction(Request $request, PaginatorInterface $paginator)
     {
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
