@@ -15,54 +15,67 @@ Vagrant.configure("2") do |config|
      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
   end
   config.vm.provision "shell", inline: <<-SHELL
-     apt -y update
+     set -ev
+
+     apt-get -y -qq update
+
+     # Create 2GB Swap. Otherwise, some composer operations might run out of memory.
+     fallocate -l 2G /swapfile
+     chmod 600 /swapfile
+     mkswap /swapfile
+     swapon /swapfile
+     echo "/swapfile   none    swap    sw    0   0" >> /etc/fstab
 
      # MySQL
      export DEBIAN_FRONTEND=noninteractive
      debconf-set-selections <<< 'mysql-server mysql-server/root_password password root'
      debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password root'
-     apt -y install mysql-server libmysqlclient-dev libssl-dev
+     apt-get -y -qq install mysql-server libmysqlclient-dev libssl-dev
 
      # Create Database
      mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS adl"
 
      # PHP
-     apt -y install php7.0 php7.0-curl php7.0-fpm php7.0-mysql php7.0-zip php7.0-cli php7.0-xml php7.0-mbstring php7.0-sqlite3 php7.0-intl php-xdebug
+     apt-get -y -qq install php7.0 php7.0-curl php7.0-fpm php7.0-mysql php7.0-zip php7.0-cli php7.0-xml php7.0-mbstring php7.0-sqlite3 php7.0-intl php-xdebug
+
+     # Increase realpath cache size and ttl for better performance
+     sed -i "s/^;realpath_cache_size =$/realpath_cache_size = 4096k/" /etc/php/7.0/cli/php.ini
+     sed -i "s/^;realpath_cache_ttl =$/realpath_cache_ttl = 7200/"    /etc/php/7.0/cli/php.ini
 
      # Utilities
-     apt -y install htop git nano vim
-
-     # Apache (not needed for development)
-     # apache2 libapache2-mod-php7.0
+     apt-get -y -qq install htop git nano vim
 
      # Oracle Java 8
      add-apt-repository -y ppa:webupd8team/java
-     apt -y update
-     echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
-     echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
-     apt -y install oracle-java8-installer
+     apt-get -y -qq update
+     echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
+     echo debconf shared/accepted-oracle-license-v1-1 seen   true | debconf-set-selections
+     apt-get -y -qq install oracle-java8-installer > /dev/null
 
      # Node (JavaScript runtime)
      curl -sL https://deb.nodesource.com/setup_6.x | bash -
-     apt install -y nodejs
+     apt-get -y -qq install nodejs
 
      # Update NPM
-     npm install npm@latest -g
+     npm install npm@latest -g --loglevel=warn
 
      # PhantomJS headless browser
-     wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
-     tar -xvjf phantomjs-2.1.1-linux-x86_64.tar.bz2
+     wget -q https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
+     tar -xjf phantomjs-2.1.1-linux-x86_64.tar.bz2
      mv phantomjs-2.1.1-linux-x86_64 /opt/phantomjs
      ln -s /opt/phantomjs/bin/phantomjs /usr/bin/phantomjs
+     apt-get -y -qq install libfontconfig1
 
      # Composer (PHP Package Manager)
-     php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-     php -r "if (hash_file('SHA384', 'composer-setup.php') === '669656bab3166a7aff8a7506b8cb2d1c292f042046c5a994c43155c0be6190fa0355160742ab2e1c88d40d5be660b410') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-     php composer-setup.php --install-dir=/usr/bin --filename=composer
-     php -r "unlink('composer-setup.php');"
+     bash /vagrant/scripts/install-composer.sh
+
+     # Speed up composer install by parallel downloads
+     sudo -u ubuntu -H sh -c "composer global require --no-progress hirak/prestissimo"
+     # Display changes for updated packages
+     sudo -u ubuntu -H sh -c "composer global require --no-progress pyrech/composer-changelogs"
 
      # Elasticsearch
-     wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.5.0.deb
+     wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.5.0.deb
      dpkg -i elasticsearch-5.5.0.deb
      systemctl enable elasticsearch.service
      rm elasticsearch-5.5.0.deb
