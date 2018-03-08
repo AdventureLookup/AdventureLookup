@@ -77,12 +77,12 @@
                 <div class="option">
                     <input type="number" name="f[{{ field.name }}][v][min]" id="filter-{{ field.name }}-min"
                            placeholder="min (inc.)" class="form-control form-control-sm"
-                           value="{{ filter['v']|default({min: ''})['min'] }}"
+                           value="{{ filter['v']|default({min: ''})['min']|default('') }}"
                            title="min (inc.)"
                     />
                     <input type="number" name="f[{{ field.name }}][v][max]" id="filter-{{ field.name }}-max"
                            placeholder="max (inc.)" class="form-control form-control-sm"
-                           value="{{ filter['v']|default({max: ''})['max'] }}"
+                           value="{{ filter['v']|default({max: ''})['max']|default('') }}"
                            title="max (inc.)"
                     />
                 </div>

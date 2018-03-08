@@ -1,4 +1,5 @@
 import LazyLoad from "vanilla-lazyload/dist/lazyload";
+import qsm, {URL_REMOVE, URL_SET} from 'query-string-manipulator';
 
 (function () {
   if (!$('#search-results').length) {
@@ -24,11 +25,23 @@ import LazyLoad from "vanilla-lazyload/dist/lazyload";
     if (checkbox) {
       $option.toggleClass('filter-marked');
       checkbox.checked = !checkbox.checked;
+      $(checkbox).trigger('change.address-bar');
       // Check or un-check the filter title
       $filter.toggleClass('filter-marked', $filter.find('input[type=checkbox]:checked').length > 0);
       e.preventDefault();
       return;
     }
+  });
+  // Change the address bar to match search term and filters
+  $('input').on('change.address-bar blur.address-bar keyup.address-bar keydown.address-bar keypress.address-bar', e => {
+    const name = $(e.target).attr('name'),
+      type = $(e.target).attr('type'),
+      checked = $(e.target).prop('checked'),
+      value = $(e.target).val();
+    const qsmAction = ((!value) || (type === 'checkbox' && !checked))
+      ? { [URL_REMOVE]: [name] }
+      : { [URL_SET]: { [name]: value } };
+    window.history.pushState('', '', qsm(window.location.href, qsmAction));
   });
   // If a filter has more options than displayed, clicking on 'show-more' shows them (obviously)
   $optionsList.on('click', '.show-more', e => {

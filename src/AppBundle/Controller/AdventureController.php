@@ -183,7 +183,6 @@ class AdventureController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('adventure_delete', array('id' => $adventure->getId())))
             ->setMethod('DELETE')
-            ->getForm()
-        ;
+            ->getForm();
     }
 }
