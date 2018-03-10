@@ -219,6 +219,14 @@ class Adventure
     private $changeRequests;
 
     /**
+     * @var Review[]|Collection
+     *
+     * @ORM\OneToMany(targetEntity="Review", mappedBy="adventure", orphanRemoval=true)
+     * @ORM\OrderBy({"createdAt" = "DESC"})
+     */
+    private $reviews;
+
+    /**
      * @var string
      *
      * @Gedmo\Blameable(on="create")
@@ -251,6 +259,7 @@ class Adventure
         $this->items = new ArrayCollection();
         $this->monsters = new ArrayCollection();
         $this->changeRequests = new ArrayCollection();
+        $this->reviews = new ArrayCollection();
 
         $this->approved = false;
     }
@@ -841,6 +850,52 @@ class Adventure
     public function getChangeRequests()
     {
         return $this->changeRequests;
+    }
+
+    /**
+     * @return Review[]|Collection
+     */
+    public function getReviews()
+    {
+        return $this->reviews;
+    }
+
+    /**
+     * @return int
+     */
+    public function getNumberOfThumbsUp()
+    {
+        return $this->reviews->filter(function (Review $review) {
+            return $review->isThumbsUp();
+        })->count();
+    }
+
+    /**
+     * @return int
+     */
+    public function getNumberOfThumbsDown()
+    {
+        return $this->reviews->filter(function (Review $review) {
+            return $review->isThumbsDown();
+        })->count();
+    }
+
+    /**
+     * @param User|null $user
+     *
+     * @return Review|null
+     */
+    public function getReviewBy(User $user = null)
+    {
+        if ($user === null) {
+            return null;
+        }
+
+        $reviews = $this->reviews->filter(function (Review $review) use ($user) {
+            return $review->getCreatedBy() == $user->getUsername();
+        });
+
+        return $reviews->count() > 0 ? $reviews->first() : null;
     }
 
     /**

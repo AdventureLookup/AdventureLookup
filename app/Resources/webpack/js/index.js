@@ -3,12 +3,14 @@ import 'bootstrap/dist/js/bootstrap.js';
 import 'font-awesome-webpack';
 import 'selectize/dist/css/selectize.bootstrap3.css'
 import 'selectize/dist/js/standalone/selectize'
+import autosize from 'autosize';
 import toastr from 'toastr/toastr';
 import 'toastr/toastr.scss';
 import '../sass/style.scss';
 
 import './adventures';
 import './adventure';
+import './reviews';
 import './adventure_list';
 
 
@@ -29,6 +31,8 @@ toastr.options = {
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
 };
+
+autosize(document.querySelectorAll('textarea.autosize'));
 
 // Hack to reload CSS using HMR
 // https://github.com/symfony/webpack-encore/pull/8#issuecomment-312599836

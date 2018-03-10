@@ -15,6 +15,10 @@
   .content {
     padding: 0 $adl-card-padding-side;
   }
+
+  & > .alert {
+    border-radius: 0;
+  }
 }
 
 // some links shouldn't have underlines

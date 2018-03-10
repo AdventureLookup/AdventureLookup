@@ -138,6 +138,8 @@ easy_admin:
         menu:
             - Adventure
             - ChangeRequest
+            - Review
+            - { label: '' }
             - Author
             - Edition
             - Environment
@@ -173,6 +175,17 @@ easy_admin:
                 sort: ['resolved', 'ASC']
             form:
                 fields: ['adventure', 'fieldName', 'comment', 'resolved']
+        Review:
+            class: AppBundle\Entity\Review
+            label: 'Reviews'
+            list:
+                title: 'Reviews'
+                fields: ['adventure', 'rating', 'comment', 'createdBy', 'createdAt']
+                sort: ['createdAt', 'DESC']
+            search:
+                sort: ['createdAt', 'DESC']
+            form:
+                fields: ['rating', 'comment']
         Author:
             class: AppBundle\Entity\Author
             label: 'Authors'

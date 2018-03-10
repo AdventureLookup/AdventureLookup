@@ -4,7 +4,7 @@
 {% block body %}
     <div class="container">
         <div class="row">
-            <div class="col">
+            <div class="col-1">
                 <div class="adl-sidebar">
                     <div class="content">
                         <a class="no-underline" href="{{ path('adventure_index') }}">
@@ -18,7 +18,9 @@
                 </div>
             </div>
             <div class="col-9">
-                {% include 'adventure/show.html.twig' %}
+                {% include 'adventure/_details.html.twig' %}
+
+                <h2 class="subheading mt-5">From the community</h2>
             </div>
             <div class="col-2 mt-5">
                 <div class="adl-sidebar">
@@ -82,6 +84,32 @@
                                 <i class="fa fa-trash"></i> Delete
                             </button>
                             {{ form_end(delete_form) }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-9">
+                {% include 'adventure/_reviews.html.twig' %}
+            </div>
+            <div class="col-2">
+                <div class="adl-sidebar mt-0">
+                    <div class="content-center">
+                        {% if app.user %}
+                            <a href="javascript:void(0)" class="btn btn-secondary" role="button" id="add-review-btn">
+                                <i class="fa fa-star"></i>
+                                {{ adventure.reviewBy(app.user) ? 'Edit' : 'Add' }} Your Review
+                            </a>
+                            <a href="javascript:void(0)" class="btn btn-primary d-none" role="button" id="confirm-review-btn">
+                                <i class="fa fa-check"></i>
+                                Save Review
+                            </a>
+                            <a href="javascript:void(0)" class="btn btn-secondary d-none" role="button" id="cancel-review-btn">
+                                <i class="fa fa-times"></i>
+                                Cancel
+                            </a>
                         {% endif %}
                     </div>
                 </div>

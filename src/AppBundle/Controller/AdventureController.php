@@ -4,14 +4,17 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\AdventureList;
+use AppBundle\Entity\Review;
 use AppBundle\Field\FieldProvider;
 use AppBundle\Form\Type\AdventureType;
+use AppBundle\Form\Type\ReviewType;
 use AppBundle\Security\AdventureVoter;
 use AppBundle\Service\AdventureSearch;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -108,11 +111,15 @@ class AdventureController extends Controller
         $this->denyAccessUnlessGranted(AdventureVoter::VIEW, $adventure);
 
         $deleteForm = $this->createDeleteForm($adventure);
+        $reviewForm = $this->createReviewForm($adventure);
+        $reviewDeleteForm = $this->createdReviewDeleteFormTemplate();
         $adventureListRepository = $em->getRepository(AdventureList::class);
 
         return $this->render('adventure/index.html.twig', [
             'adventure' => $adventure,
             'delete_form' => $deleteForm->createView(),
+            'review_form' => $reviewForm->createView(),
+            'review_delete_form' => $reviewDeleteForm->createView(),
             'lists' => $adventureListRepository->myLists($user),
         ]);
     }
@@ -179,7 +186,7 @@ class AdventureController extends Controller
      *
      * @param Adventure $adventure The adventure entity
      *
-     * @return \Symfony\Component\Form\Form The form
+     * @return FormInterface
      */
     private function createDeleteForm(Adventure $adventure)
     {
@@ -188,5 +195,40 @@ class AdventureController extends Controller
             ->setMethod('DELETE')
             ->getForm()
         ;
+    }
+
+    /**
+     * Creates a form to create/edit a review for the specified adventure.
+     *
+     * @param Adventure $adventure
+     * @return FormInterface
+     */
+    private function createReviewForm(Adventure $adventure)
+    {
+        $review = $adventure->getReviewBy($this->getUser());
+        if ($review === null) {
+            $review = new Review($adventure);
+            $actionUrl = $this->generateUrl('review_new', ['id' => $adventure->getId()]);
+        } else {
+            $actionUrl = $this->generateUrl('review_edit', ['id' => $review->getId()]);
+        }
+
+        return $this->createForm(ReviewType::class, $review, [
+            'action' => $actionUrl
+        ]);
+    }
+
+    /**
+     * Creates a form template to delete a review.
+     * The action needs to be set manually inside the template:
+     * {{ form_start(form, {'action': path('review_delete', {id: <ID>})}) }}
+     *
+     * @return FormInterface
+     */
+    private function createdReviewDeleteFormTemplate()
+    {
+        return $this->createFormBuilder()
+            ->setMethod('DELETE')
+            ->getForm();
     }
 }

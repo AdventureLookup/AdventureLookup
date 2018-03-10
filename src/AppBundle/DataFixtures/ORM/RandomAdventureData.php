@@ -11,11 +11,13 @@ use AppBundle\Entity\Environment;
 use AppBundle\Entity\Item;
 use AppBundle\Entity\Monster;
 use AppBundle\Entity\Publisher;
+use AppBundle\Entity\Review;
 use AppBundle\Entity\Setting;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use ReflectionClass;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -64,6 +66,9 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
 
         $faker = Faker\Factory::create();
 
+        $reviewCreatedByProperty = (new ReflectionClass(Review::class))->getProperty('createdBy');
+        $reviewCreatedByProperty->setAccessible(true);
+
         for ($i = 0; $i < 200; $i++) {
             $adventure = new Adventure();
             $adventure
@@ -102,6 +107,24 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
                         $changeRequest->setCuratorRemarks($faker->realText($faker->numberBetween(20, 200)));
                     }
                     $em->persist($changeRequest);
+                }
+            }
+
+            if ($faker->boolean(80)) {
+                for ($j = 0; $j < $faker->numberBetween(1, 300); $j++) {
+                    $review = new Review($adventure);
+                    if ($faker->boolean) {
+                        $review->setThumbsUp();
+                    } else {
+                        $review->setThumbsDown();
+                    }
+                    if ($faker->boolean(70)) {
+                        $review->setComment($faker->realText($faker->numberBetween(20, 500)));
+                    }
+
+                    $reviewCreatedByProperty->setValue($review, $faker->userName);
+
+                    $em->persist($review);
                 }
             }
 
