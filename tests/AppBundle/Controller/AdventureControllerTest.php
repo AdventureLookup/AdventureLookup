@@ -8,6 +8,15 @@ use Tests\WebTestCase;
 
 class AdventureControllerTest extends WebTestCase
 {
+    public function testInvalidFilters()
+    {
+        $this->loadFixtures([AdventureData::class]);
+
+        $session = $this->makeSession();
+        $session->visit('/adventures/?filters=not-an-array');
+        $this->assertTrue($session->getPage()->hasContent('A community for lazy dungeon masters'));
+    }
+
     public function testDelete()
     {
         $referenceRepository = $this->loadFixtures([AdventureData::class])->getReferenceRepository();
