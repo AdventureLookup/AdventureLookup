@@ -165,13 +165,16 @@ class NewAdventureTest extends BrowserTestCase
             (function () {
                 var selectize = $('#appbundle_adventure_{$name}')[0].selectize;
                 var options = selectize.options;
+                var found = false;
                 $.each(options, function (key, option) {
                     if (option.title === '{$value}') {
                         selectize.addItem(option.value);
-                        return; // TODO: Does this really exit the function?
+                        found = true;
                     }
                 });
-                selectize.createItem('{$value}');
+                if (!found) {
+                    selectize.createItem('{$value}');  
+                } 
             })()
         ");
         if ($isNewValue) {
