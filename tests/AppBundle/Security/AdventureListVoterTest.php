@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
-class AdventureListVoterTest extends \PHPUnit_Framework_TestCase
+class AdventureListVoterTest extends VoterTest
 {
     const TOKEN_SECRET = '123';
     const LIST_ATTRIBUTE = 'list';
@@ -129,18 +129,5 @@ class AdventureListVoterTest extends \PHPUnit_Framework_TestCase
                 VoterInterface::ACCESS_DENIED,
             ],
         ];
-    }
-
-    private function createAnonymousToken(): TokenInterface
-    {
-        return new AnonymousToken(self::TOKEN_SECRET, 'anon.');
-    }
-
-    private function createUserToken(User $user = null)
-    {
-        if ($user === null) {
-            $user = new User();
-        }
-        return new UsernamePasswordToken($user, [], 'user_provider');
     }
 }
