@@ -50,7 +50,7 @@
         "jcalderonzumba/mink-phantomjs-driver": "^0.3.3",
         "liip/functional-test-bundle": "^1.8",
         "sensio/generator-bundle": "^3.0",
-        "symfony/phpunit-bridge": "^3.0",
+        "symfony/phpunit-bridge": "^4.0.6",
         "symfony/web-server-bundle": "^3.3"
     },
     "scripts": {

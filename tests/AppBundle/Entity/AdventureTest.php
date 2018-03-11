@@ -9,8 +9,9 @@ use AppBundle\Entity\Monster;
 use AppBundle\Entity\Publisher;
 use AppBundle\Entity\Setting;
 use Doctrine\Common\Collections\ArrayCollection;
+use PHPUnit\Framework\TestCase;
 
-class AdventureTest extends \PHPUnit_Framework_TestCase
+class AdventureTest extends TestCase
 {
     /**
      * @var Adventure
