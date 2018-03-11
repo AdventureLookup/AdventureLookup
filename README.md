@@ -71,8 +71,8 @@ Functional tests can be executed like so:
 ```
 php vendor/symfony/phpunit-bridge/bin/simple-phpunit --testsuite functional
 ```
-Browser tests require PhantomJS as well as the application running in the test environment. 
-To do that, execute `bash scripts/start-phantomjs.sh` *once* before executing the tests. There is no
+Browser tests require Google Chrome with remote debugging enabled as well as the application running in the test environment. 
+To do that, execute `bash scripts/prepare-browser-tests.sh` *once* before executing the tests. There is no
 need to call the script again until you reboot. Then execute the following to run the browser tests:
 ```
 php vendor/symfony/phpunit-bridge/bin/simple-phpunit --testsuite browser
@@ -116,15 +116,16 @@ Make sure to run `mysql_secure_installation`. Adjust port, username, host and pa
 
 ## Ports used in development
 
-| Port | Forwarded to host machine | Purpose                                        |
-|------|---------------------------|------------------------------------------------|
-| 3306 | no                        | MySQL                                          |
-| 8000 | yes                       | Application dev server                         |
-| 8001 | yes                       | Webpack dev server if run from within Vagrant  |
-| 8002 | no                        | Webpack dev server if run from outside Vagrant |
-| 8003 | no                        | Application test server                        |
-| 8510 | no                        | PhantomJS server                               |
-| 9200 | yes                       | ElasticSearch                                  |
+| Port | Forwarded to host machine | Purpose                                           |
+|------|---------------------------|---------------------------------------------------|
+| 3306 | no                        | MySQL                                             |
+| 5900 | yes                       | VNC server (see scripts/prepare-browser-tests.sh) |
+| 8000 | yes                       | Application dev server                            |
+| 8001 | yes                       | Webpack dev server if run from within Vagrant     |
+| 8002 | no                        | Webpack dev server if run from outside Vagrant    |
+| 8003 | no                        | Application test server                           |
+| 9200 | yes                       | ElasticSearch                                     |
+| 9222 | no                        | Chrome Remote Debugging                           |
 
 # Tools used
 

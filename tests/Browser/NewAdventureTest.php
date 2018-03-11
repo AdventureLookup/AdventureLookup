@@ -44,6 +44,8 @@ class NewAdventureTest extends BrowserTestCase
         $page = $session->getPage();
         if (!$triggerValidationError) {
             $this->fillField($session, 'title', self::TITLE);
+        } else {
+            $this->disableFormValidation($session);
         }
         $page->findButton('Save')->click();
 
@@ -73,6 +75,8 @@ class NewAdventureTest extends BrowserTestCase
 
         if (!$triggerValidationError) {
             $this->fillField($session, 'title', self::TITLE);
+        } else {
+            $this->disableFormValidation($session);
         }
         $this->fillField($session, 'description', self::DESCRIPTION);
 
@@ -97,10 +101,10 @@ class NewAdventureTest extends BrowserTestCase
 
         $this->fillField($session, 'minStartingLevel', self::MIN_STARTING_LEVEL);
         $this->fillField($session, 'maxStartingLevel', self::MAX_STARTING_LEVEL);
-        $this->fillField($session, 'startingLevelRange', self::STARTING_LEVEL_RANGE);
+        $this->fillSelectizedInput($session, 'startingLevelRange', self::STARTING_LEVEL_RANGE, false);
         $this->fillField($session, 'numPages', self::NUM_PAGES);
-        $this->fillField($session, 'foundIn', self::FOUND_IN);
-        $this->fillField($session, 'partOf', self::PART_OF);
+        $this->fillSelectizedInput($session, 'foundIn', self::FOUND_IN, false);
+        $this->fillSelectizedInput($session, 'partOf', self::PART_OF, false);
         $this->fillField($session, 'link', self::LINK);
         $this->fillField($session, 'thumbnailUrl', self::THUMBNAIL_URL);
 
@@ -164,15 +168,14 @@ class NewAdventureTest extends BrowserTestCase
                 $.each(options, function (key, option) {
                     if (option.title === '{$value}') {
                         selectize.addItem(option.value);
-                        return;
+                        return; // TODO: Does this really exit the function?
                     }
                 });
                 selectize.createItem('{$value}');
             })()
         ");
         if ($isNewValue) {
-            $page = $session->getPage();
-            $page->pressButton('Add');
+            $session->getPage()->pressButton('Add');
         }
     }
 
