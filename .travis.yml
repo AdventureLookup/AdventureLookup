@@ -29,6 +29,11 @@ cache:
     - $HOME/.composer/cache/files
     - node_modules
 
+stages:
+  - test
+  - name: deploy
+    if: branch = dev
+
 before_install:
   - INI=~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo date.timezone = Europe/Berlin >> $INI
