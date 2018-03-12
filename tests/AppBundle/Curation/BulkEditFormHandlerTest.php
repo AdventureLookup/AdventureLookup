@@ -9,11 +9,12 @@ use AppBundle\Entity\Adventure;
 use AppBundle\Field\Field;
 use AppBundle\Repository\AdventureRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use PHPUnit_Framework_MockObject_MockObject;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class BulkEditFormHandlerTest extends \PHPUnit_Framework_TestCase
+class BulkEditFormHandlerTest extends TestCase
 {
     /**
      * @var BulkEditFormHandler
@@ -21,22 +22,22 @@ class BulkEditFormHandlerTest extends \PHPUnit_Framework_TestCase
     private $formHandler;
 
     /**
-     * @var Request|PHPUnit_Framework_MockObject_MockObject
+     * @var Request|MockObject
      */
     private $request;
 
     /**
-     * @var Field|PHPUnit_Framework_MockObject_MockObject
+     * @var Field|MockObject
      */
     private $field;
 
     /**
-     * @var AdventureRepository|PHPUnit_Framework_MockObject_MockObject
+     * @var AdventureRepository|MockObject
      */
     private $repository;
 
     /**
-     * @var FormInterface|PHPUnit_Framework_MockObject_MockObject
+     * @var FormInterface|MockObject
      */
     private $form;
 

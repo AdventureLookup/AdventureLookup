@@ -288,7 +288,7 @@ class AdventureRepositoryTest extends WebTestCase
     }
 
     /**
-     * @return Field|\PHPUnit_Framework_MockObject_MockObject
+     * @return Field|\MockObject
      */
     private function relatedField(string $fieldName, string $class, bool $multiple)
     {

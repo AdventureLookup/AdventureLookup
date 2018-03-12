@@ -8,6 +8,7 @@ $check-mark: '\f00c';
 
   // Is open
   &.open {
+    .options-list { display: initial; }
     .option { display: flex; }
     .title:after { content: '\f0d8'; }
   }
@@ -34,6 +35,8 @@ $check-mark: '\f00c';
       cursor: pointer;
     }
   }
+
+  .options-list { display: none; }
 
   .option {
     display: none;

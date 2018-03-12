@@ -31,8 +31,8 @@
         "excelwebzone/recaptcha-bundle": "^1.4",
         "fzaninotto/faker": "^1.6",
         "incenteev/composer-parameter-handler": "^2.0",
-        "javiereguiluz/easyadmin-bundle": "^1.16",
-        "knplabs/knp-paginator-bundle": "^2.6",
+        "easycorp/easyadmin-bundle": "^1.16",
+        "knplabs/knp-paginator-bundle": "^2.7.2",
         "league/uri": "^5.0",
         "sensio/distribution-bundle": "^5.0",
         "sensio/framework-extra-bundle": "^3.0.2",
@@ -46,11 +46,11 @@
     "require-dev": {
         "behat/mink": "^1.7",
         "behat/mink-browserkit-driver": "^1.3",
+        "dmore/chrome-mink-driver": "^2.6",
         "doctrine/doctrine-fixtures-bundle": "^2.3",
-        "jcalderonzumba/mink-phantomjs-driver": "^0.3.3",
         "liip/functional-test-bundle": "^1.8",
         "sensio/generator-bundle": "^3.0",
-        "symfony/phpunit-bridge": "^3.0",
+        "symfony/phpunit-bridge": "^4.0.6",
         "symfony/web-server-bundle": "^3.3"
     },
     "scripts": {

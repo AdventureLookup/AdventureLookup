@@ -38,6 +38,9 @@ class AdventureController extends Controller
         $q = $request->get('q', '');
         $page = (int)$request->get('page', 1);
         $filters = $request->get('f', []);
+        if (!is_array($filters)) {
+            $filters = [];
+        }
         $fields = $fieldProvider->getFields();
         list($paginatedAdventureDocuments, $totalNumberOfResults, $stats) = $adventureSearch->search($q, $filters, $page);
 

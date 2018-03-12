@@ -5,7 +5,7 @@ namespace AppBundle\Listener;
 
 use AppBundle\Entity\Monster;
 use AppBundle\Entity\User;
-use JavierEguiluz\Bundle\EasyAdminBundle\Event\EasyAdminEvents;
+use EasyCorp\Bundle\EasyAdminBundle\Event\EasyAdminEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;

@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Tests\Twig;
 
 use AppBundle\Twig\AppExtension;
+use PHPUnit\Framework\TestCase;
 
-class AppExtensionTest extends \PHPUnit_Framework_TestCase
+class AppExtensionTest extends TestCase
 {
     /**
      * @var AppExtension

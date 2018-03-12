@@ -11,7 +11,8 @@ use AppBundle\Field\FieldProvider;
 use AppBundle\Repository\AdventureRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use PHPUnit_Framework_MockObject_MockObject;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -20,7 +21,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\RouterInterface;
 
-class BulkEditFormProviderTest extends \PHPUnit_Framework_TestCase
+class BulkEditFormProviderTest extends TestCase
 {
     const RELATED_ENTITY_CLASS = 'A\Related\Entity\Class';
     const EDIT_ROUTE = '/some/edit/route';
@@ -30,32 +31,32 @@ class BulkEditFormProviderTest extends \PHPUnit_Framework_TestCase
     private $formProvider;
 
     /**
-     * @var AdventureRepository|PHPUnit_Framework_MockObject_MockObject
+     * @var AdventureRepository|MockObject
      */
     private $repository;
 
     /**
-     * @var EntityManagerInterface|PHPUnit_Framework_MockObject_MockObject
+     * @var EntityManagerInterface|MockObject
      */
     private $em;
 
     /**
-     * @var FormFactoryInterface|PHPUnit_Framework_MockObject_MockObject
+     * @var FormFactoryInterface|MockObject
      */
     private $formFactory;
 
     /**
-     * @var RouterInterface|PHPUnit_Framework_MockObject_MockObject
+     * @var RouterInterface|MockObject
      */
     private $router;
 
     /**
-     * @var FieldProvider|PHPUnit_Framework_MockObject_MockObject
+     * @var FieldProvider|MockObject
      */
     private $fieldProvider;
 
     /**
-     * @var FormBuilderInterface|PHPUnit_Framework_MockObject_MockObject
+     * @var FormBuilderInterface|MockObject
      */
     private $formBuilder;
 
