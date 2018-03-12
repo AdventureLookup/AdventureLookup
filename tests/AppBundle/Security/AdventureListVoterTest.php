@@ -6,12 +6,13 @@ namespace Tests\AppBundle\Security;
 use AppBundle\Entity\AdventureList;
 use AppBundle\Entity\User;
 use AppBundle\Security\AdventureListVoter;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
-class AdventureListVoterTest extends \PHPUnit_Framework_TestCase
+class AdventureListVoterTest extends TestCase
 {
     const TOKEN_SECRET = '123';
     const LIST_ATTRIBUTE = 'list';
