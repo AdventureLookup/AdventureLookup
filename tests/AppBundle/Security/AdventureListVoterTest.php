@@ -6,9 +6,6 @@ namespace Tests\AppBundle\Security;
 use AppBundle\Entity\AdventureList;
 use AppBundle\Entity\User;
 use AppBundle\Security\AdventureListVoter;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 class AdventureListVoterTest extends VoterTest

@@ -5,17 +5,20 @@ namespace Tests;
 
 use Behat\Mink\Mink;
 use Behat\Mink\Session;
+use DMore\ChromeDriver\ChromeDriver;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Yaml\Yaml;
-use Zumba\Mink\Driver\PhantomJSDriver;
 
 class BrowserTestCase extends TestCase
 {
     const HOST = "http://localhost:" . self::PORT;
     const PORT = '8003';
+
+    /** @var Mink */
+    private $mink;
 
     /**
      * Creates an instance of a Mink Session.
@@ -40,6 +43,13 @@ class BrowserTestCase extends TestCase
         self::executeCommand('php bin/console doctrine:database:drop --force --env test');
         self::executeCommand('php bin/console doctrine:schema:create --env test');
         self::executeCommand('php bin/console app:elasticsearch:reindex --env test');
+    }
+
+    protected function tearDown()
+    {
+        // This will close the connection to Google Chrome if a mink session
+        // was started using createMinkSession().
+        $this->mink = null;
     }
 
     protected function visit(Session $session, string $path)
@@ -85,12 +95,20 @@ class BrowserTestCase extends TestCase
 
     private function createMinkSession(): Session
     {
-        $mink = new Mink([
-            'phantomjs' => new Session(new PhantomJSDriver('http://localhost:8510')),
-        ]);
-        $mink->setDefaultSessionName('phantomjs');
+        $chromeDriver = new ChromeDriver(
+            'http://localhost:9222',
+            null,
+            self::HOST,
+            ['downloadBehavior' => 'allow', 'downloadPath' => '/tmp/']);
 
-        return $mink->getSession();
+        // It is important to keep a reference to the Mink object.
+        // Otherwise, its destructor is called which closes the websocket connection.
+        $this->mink = new Mink([
+            'chrome' => new Session($chromeDriver),
+        ]);
+        $this->mink->setDefaultSessionName('chrome');
+
+        return $this->mink->getSession();
     }
 
     protected function authenticateSession($authentication, Session $session)
@@ -112,5 +130,17 @@ class BrowserTestCase extends TestCase
     {
         $this->visit($session, '/adventures');
         $this->assertTrue($session->getPage()->hasContent('A community for lazy dungeon masters'));
+    }
+
+    /**
+     * @param Session $session
+     */
+    protected function disableFormValidation(Session $session)
+    {
+        $session->executeScript("
+var nodes = document.getElementsByTagName('form');
+for (var i = 0; i < nodes.length; ++i) {
+  nodes[i].setAttribute('novalidate', 'novalidate');
+}");
     }
 }

@@ -4,20 +4,21 @@
 namespace Tests\AppBundle\Security;
 
 use AppBundle\Entity\User;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 
-abstract class VoterTest extends \PHPUnit_Framework_TestCase
+abstract class VoterTest extends TestCase
 {
     const TOKEN_SECRET = '123';
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AccessDecisionManagerInterface
+     * @return MockObject|AccessDecisionManagerInterface
      */
-    protected function createAccessDecisionManagerMock(
-    ): \PHPUnit_Framework_MockObject_MockObject
+    protected function createAccessDecisionManagerMock(): MockObject
     {
         $accessDecisionManager = $this->createMock(AccessDecisionManagerInterface::class);
         $that = $this;
@@ -40,12 +41,12 @@ abstract class VoterTest extends \PHPUnit_Framework_TestCase
     /**
      * @param $userId
      * @param $roles
-     * @return User|\PHPUnit_Framework_MockObject_MockObject
+     * @return User|MockObject
      */
     protected function createUser(
         $userId,
         $roles
-    ): \PHPUnit_Framework_MockObject_MockObject {
+    ): MockObject {
         $myself = $this->createMock(User::class);
         $myself->method('getId')->willReturn($userId);
         $myself->method('getUsername')->willReturn("user " . $userId);

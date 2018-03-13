@@ -3,6 +3,7 @@
 
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/xenial64"
+  config.vm.network "forwarded_port", guest: 5900, host: 5900
   config.vm.network "forwarded_port", guest: 8000, host: 8000
   config.vm.network "forwarded_port", guest: 8001, host: 8001
   config.vm.network "forwarded_port", guest: 9200, host: 9200
@@ -59,12 +60,13 @@ Vagrant.configure("2") do |config|
      # Update NPM
      npm install npm@latest -g --loglevel=warn
 
-     # PhantomJS headless browser
-     wget -q https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
-     tar -xjf phantomjs-2.1.1-linux-x86_64.tar.bz2
-     mv phantomjs-2.1.1-linux-x86_64 /opt/phantomjs
-     ln -s /opt/phantomjs/bin/phantomjs /usr/bin/phantomjs
-     apt-get -y -qq install libfontconfig1
+     # Headless testing utilities
+     apt-get -y -qq install xvfb x11vnc fluxbox
+     # Chrome
+     wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+     echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' | tee /etc/apt/sources.list.d/google-chrome.list
+     apt-get -y -qq update
+     apt-get -y -qq install google-chrome-stable
 
      # Composer (PHP Package Manager)
      bash /vagrant/scripts/install-composer.sh
