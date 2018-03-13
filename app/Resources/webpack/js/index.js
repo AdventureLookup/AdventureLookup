@@ -1,10 +1,7 @@
 import 'jquery/src/jquery'
 import 'bootstrap/dist/js/bootstrap.js';
-import 'font-awesome-webpack';
-import 'selectize/dist/css/selectize.bootstrap3.css'
 import 'selectize/dist/js/standalone/selectize'
 import toastr from 'toastr/toastr';
-import 'toastr/toastr.scss';
 import '../sass/style.scss';
 
 import './adventures';

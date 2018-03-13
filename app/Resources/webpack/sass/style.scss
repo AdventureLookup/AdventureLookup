@@ -1,6 +1,17 @@
 @import 'mixins/breakpoint';
 @import '~bootstrap/scss/functions', '~bootstrap/scss/variables';
+
+// adl-* variables
 @import 'variables';
+
+//// Third party / Vendor styles.
+// These files include customized vendor variables and styles.
+@import 'vendor/bootstrap';
+@import 'vendor/selectize';
+@import 'vendor/fontawesome';
+// These files can be included as-is.
+@import '~toastr/toastr.scss';
+
 @import 'adventure';
 @import 'adventures';
 @import 'curation';
@@ -10,23 +21,3 @@
 @import 'login_register_forgot';
 @import 'profile';
 @import 'sidebar';
-
-// Third party / Vendor styles for successful integration
-@import 'vendor/bootstrap';
-@import 'vendor/selectize';
-
-// Override vendor/bootstrap styles
-html, body {
-  margin: 0;
-  padding: 0;
-  background-color: $adl-grey-lightest;
-  font-size: 12px;
-
-  > .container {
-    margin-bottom: 20px;
-  }
-}
-
-label {
-  margin-bottom: 0;
-}

@@ -31,3 +31,18 @@ button.dropdown-toggle {
 button.dropdown-item:not(.disabled):hover {
   cursor: pointer;
 }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: $adl-grey-lightest;
+  font-size: 12px;
+
+  > .container {
+    margin-bottom: 20px;
+  }
+}
+
+label {
+  margin-bottom: 0;
+}
