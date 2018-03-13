@@ -18,7 +18,7 @@ abstract class VoterTest extends TestCase
     /**
      * @return MockObject|AccessDecisionManagerInterface
      */
-    protected function createAccessDecisionManagerMock(): MockObject
+    protected function createAccessDecisionManagerMock()
     {
         $accessDecisionManager = $this->createMock(AccessDecisionManagerInterface::class);
         $that = $this;
@@ -43,10 +43,7 @@ abstract class VoterTest extends TestCase
      * @param $roles
      * @return User|MockObject
      */
-    protected function createUser(
-        $userId,
-        $roles
-    ): MockObject {
+    protected function createUser($userId, $roles) {
         $myself = $this->createMock(User::class);
         $myself->method('getId')->willReturn($userId);
         $myself->method('getUsername')->willReturn("user " . $userId);
