@@ -64,9 +64,9 @@ class NewAdventureTest extends BrowserTestCase
     }
 
     /**
-     * @dataProvider triggerValidationErrorProvider
+     * @dataProvider complexAdventureDataProvider
      */
-    public function testAddComplexAdventure(bool $triggerValidationError)
+    public function testAddComplexAdventure(bool $triggerValidationError, bool $useStartingLevelRange)
     {
         $this->loadFixtures([UserData::class, RelatedEntitiesData::class]);
         $session = $this->makeSession(true);
@@ -99,9 +99,12 @@ class NewAdventureTest extends BrowserTestCase
             $this->fillSelectizedInput($session, 'bossMonsters', $monster, true);
         }
 
-        $this->fillField($session, 'minStartingLevel', self::MIN_STARTING_LEVEL);
-        $this->fillField($session, 'maxStartingLevel', self::MAX_STARTING_LEVEL);
-        $this->fillSelectizedInput($session, 'startingLevelRange', self::STARTING_LEVEL_RANGE, false);
+        if ($useStartingLevelRange) {
+            $this->fillSelectizedInput($session, 'startingLevelRange', self::STARTING_LEVEL_RANGE, false);
+        } else {
+            $this->fillField($session, 'minStartingLevel', self::MIN_STARTING_LEVEL);
+            $this->fillField($session, 'maxStartingLevel', self::MAX_STARTING_LEVEL);
+        }
         $this->fillField($session, 'numPages', self::NUM_PAGES);
         $this->fillSelectizedInput($session, 'foundIn', self::FOUND_IN, false);
         $this->fillSelectizedInput($session, 'partOf', self::PART_OF, false);
@@ -119,37 +122,41 @@ class NewAdventureTest extends BrowserTestCase
             $page->findButton('Save')->click();
         }
 
-        $this->assertPath($session, '/adventures/' . self::SLUG . '');
-        $this->assertTrue($page->hasContent(self::TITLE));
-        $this->assertTrue($page->hasContent(self::DESCRIPTION));
+        $this->assertPath($session, '/adventures/' . self::SLUG);
+        $adventureContainer = $page->findById('adventure-container');
+        $this->assertContains(self::TITLE, $adventureContainer->getText());
+        $this->assertContains(self::DESCRIPTION, $adventureContainer->getText());
 
         foreach (self::AUTHORS as $author) {
-            $this->assertTrue($page->hasContent($author));
+            $this->assertContains($author, $adventureContainer->getText());
         }
-        $this->assertTrue($page->hasContent(self::EDITION));
+        $this->assertContains(self::EDITION, $adventureContainer->getText(), '', true);
         foreach (self::ENVIRONMENTS as $environment) {
-            $this->assertTrue($page->hasContent($environment));
+            $this->assertContains($environment, $adventureContainer->getText());
         }
         foreach (self::ITEMS as $item) {
-            $this->assertTrue($page->hasContent($item));
+            $this->assertContains($item, $adventureContainer->getText());
         }
-        $this->assertTrue($page->hasContent(self::PUBLISHER));
-        $this->assertTrue($page->hasContent(self::SETTING));
+        $this->assertContains(self::PUBLISHER, $adventureContainer->getText());
+        $this->assertContains(self::SETTING, $adventureContainer->getText());
         foreach (self::COMMON_MONSTERS as $monster) {
-            $this->assertTrue($page->hasContent($monster));
+            $this->assertContains($monster, $adventureContainer->getText());
         }
         foreach (self::BOSS_MONSTERS as $monster) {
-            $this->assertTrue($page->hasContent($monster));
+            $this->assertContains($monster, $adventureContainer->getText());
         }
 
-        $this->assertTrue($page->hasContent(self::MIN_STARTING_LEVEL));
-        $this->assertTrue($page->hasContent(self::MAX_STARTING_LEVEL));
-        $this->assertTrue($page->hasContent(self::STARTING_LEVEL_RANGE));
-        $this->assertTrue($page->hasContent(self::NUM_PAGES));
-        $this->assertTrue($page->hasContent(self::FOUND_IN));
-        $this->assertTrue($page->hasContent(self::PART_OF));
-        $this->assertTrue($page->hasContent(self::LINK));
-        $this->assertTrue($page->has('css', 'img[src="' . self::THUMBNAIL_URL . '"]'));
+        if ($useStartingLevelRange) {
+            $this->assertContains(self::STARTING_LEVEL_RANGE, $adventureContainer->getText(), '', true);
+        } else {
+            $this->assertContains(self::MIN_STARTING_LEVEL, $adventureContainer->getText());
+            $this->assertContains(self::MAX_STARTING_LEVEL, $adventureContainer->getText());
+        }
+        $this->assertContains(self::NUM_PAGES, $adventureContainer->getText());
+        $this->assertContains(self::FOUND_IN, $adventureContainer->getText());
+        $this->assertContains(self::PART_OF, $adventureContainer->getText());
+        $this->assertContains(self::LINK, $adventureContainer->getText());
+        $this->assertTrue($adventureContainer->has('css', 'img[src="' . self::THUMBNAIL_URL . '"]'));
 
         $this->assertWorkingIndex($session);
     }
@@ -187,6 +194,16 @@ class NewAdventureTest extends BrowserTestCase
         return [
             [false],
             [true]
+        ];
+    }
+
+    public function complexAdventureDataProvider()
+    {
+        return [
+            // trigger error, use starting level range
+            [false, false],
+            [false, true],
+            [true, false],
         ];
     }
 }
