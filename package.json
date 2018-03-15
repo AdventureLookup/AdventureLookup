@@ -9,7 +9,6 @@
     "autosize": "^4.0.0",
     "bootstrap": "^4.0.0-beta",
     "font-awesome": "^4.7.0",
-    "font-awesome-webpack": "^0.0.5-beta.2",
     "jquery": "^3.2.1",
     "popper.js": "^1.12.5",
     "selectize": "^0.12.4",
