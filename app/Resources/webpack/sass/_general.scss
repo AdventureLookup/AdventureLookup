@@ -25,3 +25,10 @@
 a.no-underline:hover {
   text-decoration: none;
 }
+
+%secondaryFont {
+  font: $adl-secondary-font-weight $adl-secondary-font-height $adl-secondary-font-name;
+  line-height: $adl-secondary-font-height;
+  color: #333333;
+  text-transform: uppercase;
+}

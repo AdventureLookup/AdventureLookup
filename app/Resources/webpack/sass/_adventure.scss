@@ -5,10 +5,7 @@ $thumbnail-width: 85px;
 $thumbnail-height: 100px;
 
 .subheading {
-  font: 600 1.5rem 'Arima Madurai';
-  line-height: 1.5rem;
-  color: #333333;
-  text-transform: uppercase;
+  @extend %secondaryFont;
 }
 
 #adventure-container {
