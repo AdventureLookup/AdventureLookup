@@ -19,7 +19,7 @@
             <img alt="Cover of {{ adventure.title }}" src="{{ adventure.thumbnailUrl }}" class="thumbnail" />
         {% endif %}
     </div>
-    <div class="title">{{ adventure.title }}</div>
+    <h2 class="title">{{ adventure.title }}</h2>
     <div class="tags-container">
         <div class="tag tag-edition">{{ adventure.edition.name|default('') }}</div>
         <div class="tag tag-level">

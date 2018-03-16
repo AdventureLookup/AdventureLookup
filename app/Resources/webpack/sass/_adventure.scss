@@ -4,6 +4,10 @@ $thumbnail-offset: 1.5rem;
 $thumbnail-width: 85px;
 $thumbnail-height: 100px;
 
+.subheading {
+  @extend %secondaryFont;
+}
+
 #adventure-container {
   @extend .content-container;
 
@@ -93,5 +97,63 @@ $thumbnail-height: 100px;
         margin-bottom: 0;
       }
     }
+  }
+}
+
+#review-container {
+  @extend .content-container;
+
+  .review {
+    padding: $adl-card-padding;
+    border-top: 1px solid $adl-grey-lightest;
+
+    .review-icon {
+      color: $adl-offwhite;
+    }
+
+    blockquote {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+#create-review-container {
+  @extend .content-container;
+
+  #review-thumbs-row {
+    padding-left: $adl-card-padding-side;
+    padding-right: $adl-card-padding-side;
+    color: $adl-grey-dark;
+
+    #review-thumbs-message {
+      text-transform: uppercase;
+      border-right: 1px solid $adl-grey-lightest;
+      font-size: 1.5rem;
+      font-weight: 600;
+      padding-top: $adl-card-padding-top;
+      padding-bottom: $adl-card-padding-top;
+    }
+
+    #review-thumbs-up {
+      border-right: 1px solid $adl-grey-lightest;
+    }
+
+    #review-thumbs-up, #review-thumbs-down {
+      cursor: pointer;
+      padding-top: $adl-card-padding-top;
+      i {
+        font-size: 1.5rem + $adl-card-padding-top;
+      }
+
+      &.active i {
+        color: $adl-coral;
+      }
+    }
+  }
+
+  #review_comment {
+    border: none;
+    border-top: 1px solid $adl-grey-lightest;
+    padding: $adl-card-padding-side;
   }
 }

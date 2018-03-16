@@ -8,10 +8,7 @@ $thumbnail-height: 100px;
   display: flex;
   justify-content: space-between;
   margin: $adl-body-margin-top 0 $element-margin-bottom/2;
-  font: 600 1.5rem 'Arima Madurai';
-  line-height: 1.5rem;
-  color: #333333;
-  text-transform: uppercase;
+  @extend %secondaryFont;
 }
 
 #search-tags {
@@ -122,12 +119,11 @@ $thumbnail-height: 100px;
     }
   }
 
-  .no-results{
+  .no-results {
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 300px;
-    font: 600 1.25rem 'Arima Madurai';
-    text-transform: uppercase;
+    @extend %secondaryFont;
   }
 }
