@@ -53,7 +53,7 @@
                     <div class="option show-less"><i class="fa fa-arrow-up"></i></div>
                 {% endif %}
             {% elseif field.type == 'boolean' %}
-                <div class="option">z
+                <div class="option">
                     <label class="form-check-label">
                         <input class="form-check-input" type="radio"
                                name="f[{{ field.name }}][v]" value=""
@@ -76,12 +76,12 @@
             {% elseif field.type == 'integer' %}
                 <div class="option">
                     <input type="number" name="f[{{ field.name }}][v][min]" id="filter-{{ field.name }}-min"
-                           placeholder="min (inc.)" class="form-control form-control-sm"
+                           placeholder="min (inc.)" class="form-control form-control-sm w-50"
                            value="{{ filter['v']|default({min: ''})['min'] }}"
                            title="min (inc.)"
                     />
                     <input type="number" name="f[{{ field.name }}][v][max]" id="filter-{{ field.name }}-max"
-                           placeholder="max (inc.)" class="form-control form-control-sm"
+                           placeholder="max (inc.)" class="form-control form-control-sm w-50"
                            value="{{ filter['v']|default({max: ''})['max'] }}"
                            title="max (inc.)"
                     />
