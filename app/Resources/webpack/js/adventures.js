@@ -6,11 +6,28 @@ import LazyLoad from "vanilla-lazyload/dist/lazyload";
   }
 
   const myLazyLoad = new LazyLoad(),
-    $optionsList = $('.options-list');
+    $optionsList = $('.options-list'),
+    $searchQuery = $('#search-query'),
+    $searchForm = $("#search-form");
 
-  $('#search-submit').on('click', () => {
-    $('#search-form').submit();
+  function search() {
+    $searchQuery.attr("disabled", true);
+
+    // Copy search query from query box into hidden input inside the
+    // <form id="search-form">.
+    $('#search-query-form').val($searchQuery.val());
+
+    $searchForm.submit();
+  }
+
+  $searchQuery.on('keypress', function (e) {
+    if(e.which === 13) {
+      search();
+    }
   });
+
+  $('#search-submit').on('click', search);
+
   // Toggle open a filters' options
   $('.adl-sidebar').on('click', '.filter > .title', e => {
     $(e.target).closest('.filter').toggleClass('open');
@@ -49,6 +66,7 @@ import LazyLoad from "vanilla-lazyload/dist/lazyload";
     $('.adl-sidebar').find('.filter.d-none').removeClass('d-none');
     $(e.target).hide();
   });
+
   // Clicking on a filter tag removes it
   $('#search-tags').on('click', '.filter-tag', e => {
     const fieldName = $(e.target).data('field-name'),
@@ -69,12 +87,13 @@ import LazyLoad from "vanilla-lazyload/dist/lazyload";
       $(`input[name^="f[${fieldName}][v][${key}]"]`).val('');
     }
 
-    $('#search-form').submit();
     $(e.target).remove();
+
+    search();
   });
+
   // Load more adventures
   let currentPage = 1;
-  const $searchForm = $("#search-form");
   const $loadMoreBtn = $('#load-more-btn');
   $loadMoreBtn.click(function () {
     $loadMoreBtn.attr('disabled', true);
@@ -86,15 +105,17 @@ import LazyLoad from "vanilla-lazyload/dist/lazyload";
       url: $searchForm.attr('action'),
       data: data,
     }).done(function (result) {
-      $('#search-results').append($(result).find('#search-results'));
+      if ($(result).find('#load-more-btn').length === 0) {
+          $loadMoreBtn.remove();
+      }
 
-      const $newLoadMoreBtn = $(result).find('#load-more-btn')[0];
-      $loadMoreBtn.attr('disabled', $($newLoadMoreBtn).is(':disabled'));
+      $('#search-results').append($(result).find('#search-results'));
 
       myLazyLoad.update();
     }).fail(function () {
       alert('Something went wrong.');
     }).always(function () {
+      $loadMoreBtn.attr('disabled', false);
       $loadMoreBtn.find('.fa-spin').addClass('d-none');
     });
   });

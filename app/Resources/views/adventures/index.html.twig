@@ -9,6 +9,7 @@
                     <div class="content">
                         <div class="sidebar-title">Adventure Lookup</div>
                         <form method="post" action="{{ url('adventure_index') }}" id="search-form">
+                            <input type="hidden" value="{{ q }}" name="q" id="search-query-form" />
                             {% include 'adventures/search_filters.html.twig' %}
                         </form>
                         <div id="filter-more"></div>

@@ -33,7 +33,7 @@ $thumbnail-height: 100px;
   > * { margin-right: 4px; }
   > *:last-child { margin-right: 0; }
 
-  .elastic-search {
+  #search-query {
     @extend .form-control;
 
     flex-grow: 8;
@@ -119,11 +119,19 @@ $thumbnail-height: 100px;
     }
   }
 
-  .no-results {
+  %no-results {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 300px;
     @extend %secondaryFont;
+  }
+
+  .no-results {
+    @extend %no-results;
+    min-height: 300px;
+  }
+  .no-more-results {
+    @extend %no-results;
+    min-height: 150px;
   }
 }
