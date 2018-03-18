@@ -22,7 +22,7 @@
     {% set filter = searchFilter[field.name]|default([]) %}
     {% set classes = [] %}
     {% set classes = classes|merge(not visible ? ['d-none'] : []) %}
-    {% set classes = classes|merge(field.type in ['boolean', 'integer'] ? ['always-open'] : []) %}
+    {% set classes = classes|merge(field.type in ['boolean', 'integer'] ? ['open always-open'] : []) %}
     {% set classes = classes|merge(field.type == 'string' and filter['v'] is defined ? ['filter-marked'] : []) %}
 
     {% if hidden %}
