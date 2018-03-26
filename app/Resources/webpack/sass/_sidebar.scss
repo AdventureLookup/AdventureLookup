@@ -6,6 +6,10 @@
   text-transform: uppercase;
   text-align: center;
 
+  @include media-breakpoint-down(sm) {
+    margin-top: 40px;
+  }
+
   > .content {
     box-shadow: $adl-box-shadow;
     margin-bottom: 8px;
