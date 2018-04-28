@@ -1,8 +1,9 @@
 # Adventure Lookup
 
 Repository of Adventure Lookup, proposed by [/u/mattcolville](https://www.reddit.com/user/mattcolville).
+AdventureLookup is live at https://adventurelookup.com. 
 
-# Setting up a development environment
+## Setting up a development environment
 
 To get you up and running quickly, you should use [Vagrant](https://vagrantup.com) and [VirtualBox](https://virtualbox.org) to start up a VM with all the dependencies preinstalled.
 
@@ -18,30 +19,38 @@ vagrant up
  
 # Log into the VM
 vagrant ssh
+
+# You should be inside the /vagrant folder.
 ```
 
 Execute the following commands to finish the installation:
 ```
 # Install PHP dependencies
-composer install -n
+composer install -n --no-suggest
  
 # Install Frontend dependencies, can be run outside the virtual machine
 npm install
 
-# Setup database
+# Setup database (confirm with 'y')
 php bin/console doctrine:migrations:migrate
  
 # Create Elasticsearch index
 php bin/console app:elasticsearch:reindex
  
-# Import dummy adventures
+# Import dummy adventures (confirm with 'y')
 php bin/console doctrine:fixtures:load --fixtures src/AppBundle/DataFixtures/ORM/RandomAdventureData.php
 php bin/console app:elasticsearch:reindex
 ```
 
-If you didn't use Vagrant and use an existing MySQL database, adjust the `app/config/parameters.yml` file to match your database credentials.
+You can execute the following command to create dummy users:
+```
+# Creates 'user', 'curator' and 'admin' users, all with password 'asdf'
+php bin/console doctrine:fixtures:load --append --fixtures src/AppBundle/DataFixtures/ORM/TestUserData.php
+```
 
-# Running the application
+If you didn't use Vagrant but an existing MySQL database, adjust the `app/config/parameters.yml` file to match your database credentials.
+
+### Running the application
 
 ```
 # Start Symfony development server on port 8000 to run the application
@@ -54,12 +63,14 @@ php bin/console server:start 0.0.0.0:8000
 npm run dev-server-guest
 # If run outside the virtual machine:
 npm run dev-server-host
+
+# Wait until you see 'DONE Compiled successfully in XXXXms' (may take a few seconds)
 ```
 
 The application is now running at http://localhost:8000.
 ElasticSearch can be accessed at http://localhost:9200.
 
-## Running tests
+### Running tests
 
 Tests use PHPUnit to run. There are three testsuites, one with unit tests, one with functional tests 
 and one with browser tests. 
@@ -78,43 +89,7 @@ need to call the script again until you reboot. Then execute the following to ru
 php vendor/symfony/phpunit-bridge/bin/simple-phpunit --testsuite browser
 ```
 
-# Running the application in production
-
-## Apache configuration
-
-Install `apache2` and `libapache2-mod-php7.0`. Create a VHost like this:
-```
-<VirtualHost *:80>
-    ServerAdmin webmaster@localhost
-    DocumentRoot /var/www/html/AdventureLookup/web
-    <Directory /var/www/html/AdventureLookup/web>
-        AllowOverride All
-        Order Allow,Deny
-        Allow from All
-        <IfModule mod_rewrite.c>
-            Options -MultiViews
-            RewriteEngine On
-            RewriteCond %{REQUEST_FILENAME} !-f
-            RewriteRule ^(.*)$ app.php [QSA,L]
-        </IfModule>
-    </Directory>
-    ErrorLog ${APACHE_LOG_DIR}/error.log
-    CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
-```
-
-For more information about server configuration, checkout the [Symfony guide on server config](https://symfony.com/doc/current/setup/web_server_configuration.html).
-Also, adjust adjust `/etc/apache2/conf-enabled/security.conf` to make Apache production-ready.
-
-### Permissions
-
-Make sure to read the [Symfony guide on permissions](https://symfony.com/doc/current/setup/file_permissions.html) if you run into permission problems.
-
-## MySQL
-
-Make sure to run `mysql_secure_installation`. Adjust port, username, host and password in `app/config/parameters.yml`.
-
-## Ports used in development
+### Ports used in development
 
 | Port | Forwarded to host machine | Purpose                                           |
 |------|---------------------------|---------------------------------------------------|
@@ -127,7 +102,15 @@ Make sure to run `mysql_secure_installation`. Adjust port, username, host and pa
 | 9200 | yes                       | ElasticSearch                                     |
 | 9222 | no                        | Chrome Remote Debugging                           |
 
-# Tools used
+## Contributing
+
+AdventureLookup is an open-source project. We are trying to make contributing as easy
+as possible by providing the Vagrant image described above. If you run into any issues
+while setting up your development environment, please let us know by opening an issue.
+If you're ready to work on your first issue or create your first pull request, please
+checkout the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+
+## Tools used
 
 - Ubuntu 16.04 as the server
 - MySQL 5.7 to store the adventures
@@ -137,3 +120,19 @@ Make sure to run `mysql_secure_installation`. Adjust port, username, host and pa
 - Composer as PHP package manager
 - NPM 5 as Frontend package manager
 - Symfony Encore / Webpack for frontend assets
+
+## Running the application in production
+
+For information about server configuration, checkout the [Symfony guide on server config](https://symfony.com/doc/current/setup/web_server_configuration.html).
+Make sure to read the [Symfony guide on permissions](https://symfony.com/doc/current/setup/file_permissions.html) if you run into permission problems.
+
+You should configure your websever to set never-expiring cache headers for
+the /assets path (located in web/assets). Example Nginx configuration:
+
+```nginx
+location /assets {
+    expires max;
+    add_header Pragma public;
+    add_header Cache-Control "public";
+}
+```
