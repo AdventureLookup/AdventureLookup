@@ -2,7 +2,6 @@ $(function () {
     const $addReviewBtn = $('#add-review-btn');
     const $confirmReviewBtn = $('#confirm-review-btn');
     const $cancelReviewBtn = $('#cancel-review-btn');
-    const $reviewContainer = $('#review-container');
     const $createReviewContainer = $('#create-review-container');
     const $thumbsUp = $('#review-thumbs-up');
     const $thumbsDown = $('#review-thumbs-down');
@@ -22,8 +21,6 @@ $(function () {
         $addReviewBtn.addClass('d-none');
         $confirmReviewBtn.removeClass('d-none');
         $cancelReviewBtn.removeClass('d-none');
-
-        $reviewContainer.addClass('d-none');
         $createReviewContainer.removeClass('d-none');
     });
 
@@ -31,8 +28,6 @@ $(function () {
         $addReviewBtn.removeClass('d-none');
         $confirmReviewBtn.addClass('d-none');
         $cancelReviewBtn.addClass('d-none');
-
-        $reviewContainer.removeClass('d-none');
         $createReviewContainer.addClass('d-none');
     });
 

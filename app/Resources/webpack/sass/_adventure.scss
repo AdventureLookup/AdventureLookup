@@ -31,48 +31,20 @@ $thumbnail-height: 100px;
     }
   }
 
-  .tags-container {
-    display: flex;
-    padding: .8rem $adl-card-padding-side;
-    overflow: hidden;
-    border-top: $adl-border-grey-lightest-big;
-    border-bottom: $adl-border-grey-lightest-big;
-
-    .tag {
-      padding: 3px 12px;
-      margin-right: 6px;
-      background-color: $adl-grey-light;
-      border-radius: $adl-border-radius-big;
-      font-family: 'Roboto Condensed', sans-serif;
-      text-transform: uppercase;
-      color: #ffffff;
-
-      &::before {
-        font: 1rem 'FontAwesome';
-        padding-right: .25rem;
-      }
-
-      &.tag-edition::before { content: '\f013'; }
-      &.tag-level::before { content: '\f024'; }
-      &.tag-length::before { content: '\f02d'; }
-      &.tag-featured {
-        background-color: $adl-coral;
-
-        &::before { content: '\f219'; }
-      }
-    }
-  }
-
   .description {
     display: block;
     display: -webkit-box;
     margin: $adl-card-padding;
-    margin-right: calc(#{$adl-card-padding-side} + #{$thumbnail-width} + #{$thumbnail-offset});
+
+    @include breakpoint($sm) {
+      margin-right: calc(#{$adl-card-padding-side} + #{$thumbnail-width} + #{$thumbnail-offset});
+    }
   }
 
   .detail-row {
+    @extend .row;
+
     display: flex;
-    border-bottom: 1px solid $adl-grey-lightest;
 
     &:first-child {
       border-top: 1px solid $adl-grey-lightest;
@@ -81,6 +53,8 @@ $thumbnail-height: 100px;
     > div {
       flex-grow: 1;
       padding: $adl-card-padding-top $adl-card-padding-side/2;
+
+      border-bottom: 1px solid $adl-grey-lightest;
 
       &:not(:last-child) {
         border-right: 1px solid $adl-grey-lightest;
@@ -140,7 +114,6 @@ $thumbnail-height: 100px;
 
     #review-thumbs-up, #review-thumbs-down {
       cursor: pointer;
-      padding-top: $adl-card-padding-top;
       i {
         font-size: 1.5rem + $adl-card-padding-top;
       }

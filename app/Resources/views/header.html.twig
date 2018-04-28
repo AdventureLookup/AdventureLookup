@@ -1,11 +1,11 @@
 <div id="adl-header">
     <a class="header-box-dark btn btn-secondary active" href="{{ path('adventure_index') }}">Adventures</a>
     {% if is_granted('ROLE_CURATOR') %}
-        <a class="header-box-dark btn btn-secondary active" href="{{ path('curation') }}">Curation</a>
-        <a class="header-box-dark btn btn-secondary active" href="{{ path('easyadmin') }}">Admin</a>
+        <a class="d-none d-sm-inline-block header-box-dark btn btn-secondary active" href="{{ path('curation') }}">Curation</a>
+        <a class="d-none d-sm-inline-block header-box-dark btn btn-secondary active" href="{{ path('easyadmin') }}">Admin</a>
     {% endif %}
     {% if is_granted('ROLE_ADMIN') %}
-        <a class="header-box-dark btn btn-secondary active" href="{{ path('audit') }}">Audit</a>
+        <a class="d-none d-sm-inline-block header-box-dark btn btn-secondary active" href="{{ path('audit') }}">Audit</a>
     {% endif %}
     {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
         <div class="dropdown">
@@ -14,6 +14,15 @@
             </button>
             <div class="dropdown-menu" aria-labelledby="adl-header-login-dropdown">
                 <a class="dropdown-item" href="{{ path('profile') }}">Profile</a>
+
+                {% if is_granted('ROLE_CURATOR') %}
+                    <a class="dropdown-item d-sm-none" href="{{ path('curation') }}">Curation</a>
+                    <a class="dropdown-item d-sm-none" href="{{ path('easyadmin') }}">Admin</a>
+                {% endif %}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a class="dropdown-item d-sm-none" href="{{ path('audit') }}">Audit</a>
+                {% endif %}
+
                 <a class="dropdown-item" href="{{ path('logout') }}">Logout</a>
             </div>
         </div>

@@ -16,7 +16,7 @@
 <div id="adventure-container">
     <div class="thumbnail-container">
         {% if adventure.thumbnailUrl %}
-            <img alt="Cover of {{ adventure.title }}" src="{{ adventure.thumbnailUrl }}" class="thumbnail" />
+            <img alt="Cover of {{ adventure.title }}" src="{{ adventure.thumbnailUrl }}" class="thumbnail d-none d-sm-block" />
         {% endif %}
     </div>
     <h2 class="title">{{ adventure.title }}</h2>
@@ -37,7 +37,7 @@
     </div>
     <p class="description">{{ adventure.description|nl2br }}</p>
 
-    <div class="detail-container">
+    <div class="container">
         <div class="detail-row">
             <div class="col">
                 <div class="label">Written By</div>
@@ -107,7 +107,7 @@
         </div>
 
         <div class="detail-row">
-            <div class="col-4">
+            <div class="col-xs-12 col-sm-6 col-lg">
                 <div class="label">Boss Monsters and Villains</div>
                 <ul>
                     {% for monster in adventure.bossMonsters %}
@@ -120,7 +120,7 @@
                     {% endfor %}
                 </ul>
             </div>
-            <div class="col-4">
+            <div class="col-xs-12 col-sm-6 col-lg">
                 <div class="label">Common Monsters</div>
                 <ul>
                     {% for monster in adventure.commonMonsters %}
@@ -133,7 +133,7 @@
                     {% endfor %}
                 </ul>
             </div>
-            <div class="col-4">
+            <div class="col-xs-12 col-sm-12 col-lg">
                 <div class="label">Notable Items</div>
                 <ul>
                     {% for item in adventure.items %}

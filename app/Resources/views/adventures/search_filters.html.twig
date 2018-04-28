@@ -54,34 +54,37 @@
                 {% endif %}
             {% elseif field.type == 'boolean' %}
                 <div class="option">
-                    <label class="form-check-label">
-                        <input class="form-check-input" type="radio"
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="{{ field.name }}-radio-1"
                                name="f[{{ field.name }}][v]" value=""
                                {% if filter['v']|default('') == '' %}checked{% endif %}
-                        /> All
-                    </label>
-                    <label class="form-check-label">
-                        <input class="form-check-input" type="radio"
+                        />
+                        <label class="form-check-label" for="{{ field.name }}-radio-1">All</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="{{ field.name }}-radio-2"
                                name="f[{{ field.name }}][v]" value="1"
                                {% if filter['v']|default('') == '1' %}checked{% endif %}
-                        /> Yes
-                    </label>
-                    <label class="form-check-label">
-                        <input class="form-check-input" type="radio"
+                        />
+                        <label class="form-check-label" for="{{ field.name }}-radio-2">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="{{ field.name }}-radio-3"
                                name="f[{{ field.name }}][v]" value="0"
                                {% if filter['v']|default('') == '0' %}checked{% endif %}
-                        /> No
-                    </label>
+                        />
+                        <label class="form-check-label" for="{{ field.name }}-radio-3">No</label>
+                    </div>
                 </div>
             {% elseif field.type == 'integer' %}
-                <div class="option">
+                <div class="option range-option">
                     <input type="number" name="f[{{ field.name }}][v][min]" id="filter-{{ field.name }}-min"
-                           placeholder="min (inc.)" class="form-control form-control-sm w-50"
+                           placeholder="min (inc.)" class="form-control form-control-sm"
                            value="{{ filter['v']|default({min: ''})['min'] }}"
                            title="min (inc.)"
                     />
                     <input type="number" name="f[{{ field.name }}][v][max]" id="filter-{{ field.name }}-max"
-                           placeholder="max (inc.)" class="form-control form-control-sm w-50"
+                           placeholder="max (inc.)" class="form-control form-control-sm"
                            value="{{ filter['v']|default({max: ''})['max'] }}"
                            title="max (inc.)"
                     />

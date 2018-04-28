@@ -74,48 +74,21 @@ $thumbnail-height: 100px;
       font-weight: 600;
     }
 
-    .tags-container {
-      display: flex;
-      padding: .8rem $adl-card-padding-side;
-      overflow: hidden;
-      border-top: $adl-border-grey-lightest-big;
-      border-bottom: $adl-border-grey-lightest-big;
-
-      .tag {
-        padding: 3px 12px;
-        margin-right: 6px;
-        background-color: $adl-grey-light;
-        border-radius: $adl-border-radius-big;
-        font-family: 'Roboto Condensed', sans-serif;
-        text-transform: uppercase;
-        color: #ffffff;
-
-        &::before {
-          font: 1rem 'FontAwesome';
-          padding-right: .25rem;
-        }
-
-        &.tag-edition::before { content: '\f013'; }
-        &.tag-level::before { content: '\f024'; }
-        &.tag-length::before { content: '\f02d'; }
-        &.tag-featured {
-          background-color: $adl-coral;
-
-          &::before { content: '\f219'; }
-        }
-      }
-    }
-
     .description {
       display: block;
       display: -webkit-box;
       margin: $adl-card-padding;
-      margin-right: calc(#{$adl-card-padding-side} + #{$thumbnail-width} + #{$thumbnail-offset});
-      max-height: 1rem*$adl-line-height*3;
+      max-height: 1rem * $adl-line-height * 3;
       overflow: hidden;
       text-overflow: ellipsis;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
+    }
+
+    @include media-breakpoint-up(sm) {
+      .title, .description, .tags-container {
+        padding-right: calc(#{$thumbnail-width} + #{$thumbnail-offset});
+      }
     }
   }
 

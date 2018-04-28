@@ -29,12 +29,12 @@ import LazyLoad from "vanilla-lazyload/dist/lazyload";
   $('#search-submit').on('click', search);
 
   // Toggle open a filters' options
-  $('.adl-sidebar').on('click', '.filter > .title', e => {
+  $('.adl-sidebar').on('click', '.filter:not(.always-open) > .title', e => {
     $(e.target).closest('.filter').toggleClass('open');
   });
   // Set appropriate input option and update visuals for the whole filter
   $optionsList.on('click', '.option', e => {
-    let $option = $(e.target),
+    let $option = $(e.target).closest('.option'),
       $filter = $option.closest('.filter'),
       checkbox = $option.find('input[type=checkbox]')[0];
 

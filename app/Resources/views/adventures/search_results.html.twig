@@ -3,7 +3,7 @@
         <a href="{{ path('adventure_show', { 'slug': adventure.slug }) }}">
             <div class="adventure">
                 {% if adventure.thumbnailUrl %}
-                    <img alt="Cover of {{ adventure.title }}" data-original="{{ adventure.thumbnailUrl }}" class="thumbnail" />
+                    <img alt="Cover of {{ adventure.title }}" data-original="{{ adventure.thumbnailUrl }}" class="thumbnail d-none d-sm-block" />
                 {% endif %}
                 <div class="title">{{ adventure.title }}</div>
                 <div class="tags-container">
