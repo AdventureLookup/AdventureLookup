@@ -35,9 +35,15 @@ Vagrant.configure("2") do |config|
   SHELL
 
   config.vm.provision "initial", type: "shell", inline: <<-SHELL
+     # Make apt-get commands as quiet as possible by using ""-qq -o=Dpkg::Use-Pty=0"
+     # https://askubuntu.com/a/668859
+     function apt_quiet {
+       apt-get -y -qq -o=Dpkg::Use-Pty=0 ${@}
+     }
+
      set -ev
 
-     apt-get -y -qq update
+     apt_quiet update
 
      # Create 2GB Swap. Otherwise, some composer operations might run out of memory.
      fallocate -l 2G /swapfile
@@ -50,50 +56,58 @@ Vagrant.configure("2") do |config|
      export DEBIAN_FRONTEND=noninteractive
      debconf-set-selections <<< 'mysql-server mysql-server/root_password password root'
      debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password root'
-     apt-get -y -qq install mysql-server libmysqlclient-dev libssl-dev
+     apt_quiet install mysql-server libmysqlclient-dev libssl-dev
 
      # Create Database
      mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS adl"
 
      # PHP
-     apt-get -y -qq install php7.0 php7.0-curl php7.0-fpm php7.0-mysql php7.0-zip php7.0-cli php7.0-xml php7.0-mbstring php7.0-sqlite3 php7.0-intl php-xdebug
+     apt_quiet install php7.0 php7.0-curl php7.0-fpm php7.0-mysql php7.0-zip php7.0-cli php7.0-xml php7.0-mbstring php7.0-sqlite3 php7.0-intl php-xdebug
 
      # Increase realpath cache size and ttl for better performance
      sed -i "s/^;realpath_cache_size =$/realpath_cache_size = 4096k/" /etc/php/7.0/cli/php.ini
      sed -i "s/^;realpath_cache_ttl =$/realpath_cache_ttl = 7200/"    /etc/php/7.0/cli/php.ini
 
      # Utilities
-     apt-get -y -qq install htop git nano vim
+     apt_quiet install htop git nano vim
 
      # Oracle Java 8
      add-apt-repository -y ppa:webupd8team/java
-     apt-get -y -qq update
+     apt_quiet update
      echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
      echo debconf shared/accepted-oracle-license-v1-1 seen   true | debconf-set-selections
-     apt-get -y -qq install oracle-java8-installer > /dev/null
+     apt_quiet install oracle-java8-installer > /dev/null
 
      # Node (JavaScript runtime)
-     curl -sL https://deb.nodesource.com/setup_6.x | bash -
-     apt-get -y -qq install nodejs
+     curl -sL https://deb.nodesource.com/setup_8.x | bash -
+     apt_quiet install nodejs
 
-     # Update NPM
-     npm install npm@latest -g --loglevel=warn
+     # Install latest NPM 5.x
+     npm install npm@^5 -g --loglevel=warn
 
      # Headless testing utilities
-     apt-get -y -qq install xvfb x11vnc fluxbox
+     apt_quiet install xvfb x11vnc fluxbox
      # Chrome
      wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
      echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' | tee /etc/apt/sources.list.d/google-chrome.list
-     apt-get -y -qq update
-     apt-get -y -qq install google-chrome-stable
+     apt_quiet update
+     apt_quiet install google-chrome-stable
 
      # Composer (PHP Package Manager)
      bash /vagrant/scripts/install-composer.sh
 
-     # Speed up composer install by parallel downloads
-     sudo -u ubuntu -H sh -c "composer global require --no-progress hirak/prestissimo"
-     # Display changes for updated packages
-     sudo -u ubuntu -H sh -c "composer global require --no-progress pyrech/composer-changelogs"
+     if [ -d "/home/vagrant" ]; then
+       # Speed up composer install by parallel downloads
+       sudo -u vagrant -H sh -c "composer global require --quiet -n hirak/prestissimo"
+       # Display changes for updated packages
+       sudo -u vagrant -H sh -c "composer global require --quiet -n pyrech/composer-changelogs"
+     fi
+     if [ -d "/home/ubuntu" ]; then
+       # Speed up composer install by parallel downloads
+       sudo -u ubuntu -H sh -c "composer global require --quiet -n hirak/prestissimo"
+       # Display changes for updated packages
+       sudo -u ubuntu -H sh -c "composer global require --quiet -n pyrech/composer-changelogs"
+     fi
 
      # Elasticsearch
      wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.5.0.deb
