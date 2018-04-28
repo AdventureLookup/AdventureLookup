@@ -15,7 +15,26 @@ Vagrant.configure("2") do |config|
      vb.memory = "2048"
      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
   end
-  config.vm.provision "shell", inline: <<-SHELL
+
+  # Previous versions of the Ubuntu Vagrant box only had the "ubuntu" user.
+  # As of January 2018, newer boxes also have a "vagrant" user. People who
+  # update their Vagrant box will automatically switch to the new user
+  # the next time they "vagrant ssh". This provisioner makes sure the
+  # .bashrc files always contains the 'cd /vagrant' line.
+  config.vm.provision "always", type: "shell", run: "always", inline: <<-SHELL
+    if [ -d "/home/vagrant" ]; then
+      if ! grep -q "cd /vagrant" /home/vagrant/.bashrc ; then
+        echo "cd /vagrant" >> /home/vagrant/.bashrc
+      fi
+    fi
+    if [ -d "/home/ubuntu" ]; then
+      if ! grep -q "cd /vagrant" /home/ubuntu/.bashrc ; then
+        echo "cd /vagrant" >> /home/ubuntu/.bashrc
+      fi
+    fi
+  SHELL
+
+  config.vm.provision "initial", type: "shell", inline: <<-SHELL
      set -ev
 
      apt-get -y -qq update
@@ -88,7 +107,5 @@ Vagrant.configure("2") do |config|
      sed -i -e 's/2g/256m/g' /etc/elasticsearch/jvm.options
      # Listen on 0.0.0.0
      echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
-
-     echo "cd /vagrant" >> /home/ubuntu/.bashrc
   SHELL
 end
