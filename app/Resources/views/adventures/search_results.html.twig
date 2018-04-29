@@ -8,17 +8,10 @@
                 <div class="title">{{ adventure.title }}</div>
                 <div class="tags-container">
                     <div class="tag tag-edition">{{ adventure.edition }}</div>
-                    <div class="tag tag-level">
-                        {% if adventure.minStartingLevel is not null and adventure.maxStartingLevel is not null %}
-                            {% if adventure.minStartingLevel == adventure.maxStartingLevel %}
-                                Level {{ adventure.minStartingLevel }}
-                            {% else %}
-                                Levels {{adventure.minStartingLevel}}-{{adventure.maxStartingLevel}}
-                            {% endif %}
-                        {% else %}
-                            {{ adventure.startingLevelRange }} Level
-                        {% endif %}
-                    </div>
+                    {% set level = format_level(adventure) %}
+                    {% if level %}
+                        <div class="tag tag-level">{{ level }}</div>
+                    {% endif %}
                     <div class="tag tag-length">{{ adventure.numPages }} pages</div>
                 </div>
                 <p class="description">{{ adventure.description }}</p>
