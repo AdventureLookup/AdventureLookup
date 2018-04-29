@@ -4,6 +4,7 @@ namespace AppBundle\Twig;
 
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\AdventureDocument;
+use AppBundle\Entity\User;
 use League\Uri\Components\Host;
 use League\Uri\Components\Query;
 use League\Uri\Modifiers\Formatter;
@@ -33,6 +34,7 @@ class AppExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFunction('format_level', [$this, 'formatLevel']),
+            new \Twig_SimpleFunction('format_roles', [$this, 'formatRoles']),
         ];
     }
 
@@ -53,6 +55,20 @@ class AppExtension extends \Twig_Extension
         }
 
         return null;
+    }
+
+    public function formatRoles(User $user)
+    {
+        $roles = array_map(function ($role) {
+            $roleMap = [
+                'ROLE_USER' => 'User',
+                'ROLE_CURATOR' => 'Curator',
+                'ROLE_ADMIN' => 'Admin',
+            ];
+            return isset($roleMap[$role]) ? $roleMap[$role] : $role;
+        }, $user->getRoles());
+
+        return implode(", ", $roles);
     }
 
     public function bool2str($boolean)
