@@ -12,7 +12,7 @@
             <div class="card-header">
                 Your Adventures
             </div>
-            <div class="list-group list-group-flush">
+            <div class="list-group list-group-flush list-group-paginated">
                 {% for adventure in adventures %}
                     <a href="{{ path('adventure_show', {slug: adventure.slug}) }}"
                        class="list-group-item list-group-item-action{% if adventure.changeRequests|length > 0 %} list-group-item-warning{% endif %}">
@@ -32,9 +32,11 @@
             <div class="card-header">
                 Your Change Requests
             </div>
-            <div class="list-group list-group-flush">
+            <div class="list-group list-group-flush list-group-paginated">
                 {% for changeRequest in changeRequests %}
-                    <a href="{{ path('adventure_show', {slug: changeRequest.adventure.slug}) }}" class="list-group-item list-group-item-action {% if changeRequest.resolved %}list-group-item-success{% endif %}">
+                    <a href="{{ path('adventure_show', {slug: changeRequest.adventure.slug}) }}"
+                       class="list-group-item list-group-item-action {% if changeRequest.resolved %}list-group-item-success{% endif %}"
+                       id="change-request-{{ changeRequest.id }}">
                         <div class="d-flex w-100 justify-content-between">
                             <h6 class="mb-1">
                                 {% if changeRequest.fieldName %}

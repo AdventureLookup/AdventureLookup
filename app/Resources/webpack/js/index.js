@@ -9,6 +9,7 @@ import './adventures';
 import './adventure';
 import './reviews';
 import './adventure_list';
+import './paginated_list_group';
 
 
 toastr.options = {
