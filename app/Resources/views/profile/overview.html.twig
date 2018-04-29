@@ -30,12 +30,28 @@
         </div>
         <div class="card mb-3">
             <div class="card-header">
-                Your unresolved Change Requests
+                Your Change Requests
             </div>
             <div class="list-group list-group-flush">
                 {% for changeRequest in changeRequests %}
-                    <a href="{{ path('adventure_show', {slug: changeRequest.adventure.slug}) }}" class="list-group-item list-group-item-action">
-                        #{{ changeRequest.id }} ({{ changeRequest.adventure.title }})
+                    <a href="{{ path('adventure_show', {slug: changeRequest.adventure.slug}) }}" class="list-group-item list-group-item-action {% if changeRequest.resolved %}list-group-item-success{% endif %}">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">
+                                {% if changeRequest.fieldName %}
+                                    Request to change "{{ changeRequest.fieldName }}"
+                                {% else %}
+                                    General change request
+                                {% endif %}
+                                {% if changeRequest.resolved %}
+                                    <small>RESOLVED</small>
+                                {% endif %}
+                            </h6>
+                            <small>{{ changeRequest.createdAt|time_diff }}</small>
+                        </div>
+                        <p class="mb-1">{{ changeRequest.comment|nl2br }}</p>
+                        {% if changeRequest.curatorRemarks is not empty %}
+                            <p class="mb-1"><em>Curator remarks: {{ changeRequest.curatorRemarks }}</em></p>
+                        {% endif %}
                     </a>
                 {% else %}
                     <button disabled class="list-group-item">You don't have any pending change requests</button>
