@@ -184,15 +184,39 @@ class SearchIndexUpdater implements EventSubscriber
      */
     public function updateSearchIndexForAdventure(Adventure $adventure)
     {
-        $id = $adventure->getId();
-        if (!is_numeric($id)) {
-            throw new \RuntimeException('Trying to index an adventure without an id set! This should not have happened.');
+        $this->updateSearchIndexForAdventures([$adventure]);
+    }
+
+    /**
+     * Updates the search index for the given adventures.
+     *
+     * @param Adventure[] $adventures
+     */
+    public function updateSearchIndexForAdventures($adventures)
+    {
+        if (empty($adventures)) {
+            return;
         }
-        $this->client->index([
+
+        $body = [];
+        foreach ($adventures as $adventure) {
+            $id = $adventure->getId();
+            if (!is_numeric($id)) {
+                throw new \RuntimeException('Trying to index an adventure without an id set! This should not have happened.');
+            }
+            $body[] = [
+                'index' => [
+                    '_index' => $this->indexName,
+                    '_type' => $this->typeName,
+                    '_id' => $id,
+                ]
+            ];
+            $body[] = $this->serializer->toElasticDocument($adventure);
+        }
+        $this->client->bulk([
             'index' => $this->indexName,
             'type' => $this->typeName,
-            'id' => $id,
-            'body' => $this->serializer->toElasticDocument($adventure),
+            'body' => $body,
             'refresh' => $this->isTestEnvironment,
         ]);
     }
