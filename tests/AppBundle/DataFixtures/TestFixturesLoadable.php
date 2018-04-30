@@ -7,25 +7,20 @@ use AppBundle\DataFixtures\ORM\RandomAdventureData;
 use AppBundle\DataFixtures\ORM\TestUserData;
 use Tests\WebTestCase;
 
+/**
+ * Test whether the fixtures can be loaded.
+ * Note: This will not generate code coverage, because the LiipFunctionalTestBundle
+ * is smart and caches the databases created by loading the fixtures in previous
+ * tests. This might be improvable once they release version 2 of the bundle,
+ * since they refactored fixture loading into multiple services.
+ */
 class TestFixturesLoadable extends WebTestCase
 {
-    /**
-     * @covers \AppBundle\DataFixtures\ORM\AuthorData
-     * @covers \AppBundle\DataFixtures\ORM\EditionData
-     * @covers \AppBundle\DataFixtures\ORM\EnvironmentData
-     * @covers \AppBundle\DataFixtures\ORM\ItemData
-     * @covers \AppBundle\DataFixtures\ORM\MonsterData
-     * @covers \AppBundle\DataFixtures\ORM\PublisherData
-     * @covers \AppBundle\DataFixtures\ORM\SettingData
-     */
     public function testLoadRandomAdventures()
     {
         $this->loadFixtures([RandomAdventureData::class]);
     }
 
-    /**
-     * @covers \AppBundle\DataFixtures\ORM\TestUserData
-     */
     public function testLoadTestUsers()
     {
         $this->loadFixtures([TestUserData::class]);
