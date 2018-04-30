@@ -5,7 +5,7 @@
     <div class="container">
         <div class="row">
             {# ADL sidebar #}
-            <div class="col-3 mt-5           col-sm-2                     col-lg-1">
+            <div class="col-3 mt-5 col-sm-2 col-lg-1">
                 <div class="adl-sidebar">
                     <div class="content">
                         <a class="no-underline" href="{{ path('adventure_index') }}">
@@ -19,11 +19,11 @@
                 </div>
             </div>
             {# Content #}
-            <div class="col-12 order-last                                 col-lg-9 order-lg-2">
+            <div class="col-12 order-last col-lg-9 order-lg-2">
                 {% include 'adventure/_details.html.twig' %}
             </div>
             {# Buttons #}
-            <div class="col-9 mt-5           col-sm-10                    col-lg-2 order-lg-3 mt-lg-5">
+            <div class="col-9 mt-5 col-sm-10 col-lg-2 order-lg-3 mt-lg-5">
                 <div class="adl-sidebar mt-0">
                     {% if app.user %}
                         <div class="row">
@@ -105,7 +105,7 @@
             <div class="col-xs-12 order-last col-md-9 order-md-1 offset-lg-1">
                 {% include 'adventure/_reviews.html.twig' %}
             </div>
-            <div class="col-xs-12            col-md-3 order-md-2 col-lg-2 mb-5 mb-md-0">
+            <div class="col-xs-12 col-md-3 order-md-2 col-lg-2 mb-5 mb-md-0">
                 <div class="adl-sidebar mt-0">
                     {% if app.user %}
                         <a href="javascript:void(0)" class="btn btn-secondary" role="button" id="add-review-btn">
