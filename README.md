@@ -1,7 +1,18 @@
 # Adventure Lookup
 
 Repository of Adventure Lookup, proposed by [/u/mattcolville](https://www.reddit.com/user/mattcolville).
-AdventureLookup is live at https://adventurelookup.com. 
+
+| Branch | Travis CI                                        | Code Analysis                          | Link                            | 
+| ------ | ------------------------------------------------ | -------------------------------------- | ------------------------------- | 
+| master | [![Build Status][travis-svg-master]][travis-url] | -                                      | https://adventurelookup.com     |
+| dev    | [![Build Status][travis-svg-dev]][travis-url]    | [![codecov][codecov-svg]][codecov-url] | https://dev.adventurelookup.com |
+
+[travis-url]:        https://travis-ci.org/AdventureLookup/AdventureLookup
+[travis-svg-master]: https://travis-ci.org/AdventureLookup/AdventureLookup.svg?branch=master
+[travis-svg-dev]:    https://travis-ci.org/AdventureLookup/AdventureLookup.svg?branch=dev
+
+[codecov-url]: https://codecov.io/gh/AdventureLookup/AdventureLookup
+[codecov-svg]: https://codecov.io/gh/AdventureLookup/AdventureLookup/branch/dev/graph/badge.svg
 
 ## Setting up a development environment
 
