@@ -28,7 +28,7 @@
             </div>
             <p class="mb-1">{{ changeRequest.comment|nl2br }}</p>
             {% if changeRequest.curatorRemarks is not empty %}
-                <p class="mb-1">Curator remarks: {{ changeRequest.curatorRemarks }}</p>
+                <p class="mb-1"><em>Curator remarks: {{ changeRequest.curatorRemarks }}</em></p>
             {% endif %}
             <div class="d-flex w-100 justify-content-between">
                 {% if is_granted('toggle_resolved', changeRequest) %}

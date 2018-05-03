@@ -86,9 +86,7 @@ class ProfileControllerTest extends WebTestCase
 
         /** @var ChangeRequest $changeRequest */
         $changeRequest = $referenceRepository->getReference($reference);
-        $linkToChangeRequest = $page->findLink(
-            "#{$changeRequest->getId()} ({$changeRequest->getAdventure()->getTitle()})"
-        );
+        $linkToChangeRequest = $page->findById("change-request-{$changeRequest->getId()}");
 
         if (!$shouldDisplay) {
             $this->assertNull($linkToChangeRequest);
@@ -164,7 +162,7 @@ class ProfileControllerTest extends WebTestCase
         return [
             ['your-unresolved-change-request', false],
             ['my-unresolved-change-request', true],
-            ['my-resolved-change-request', false],
+            ['my-resolved-change-request', true],
         ];
     }
 
