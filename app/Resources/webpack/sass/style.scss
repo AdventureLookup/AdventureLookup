@@ -11,9 +11,11 @@
 @import 'vendor/fontawesome';
 // These files can be included as-is.
 @import '~toastr/toastr.scss';
+@import '~cookieconsent/build/cookieconsent.min';
 
 @import 'adventure';
 @import 'adventures';
+@import 'tags';
 @import 'curation';
 @import 'filter';
 @import 'general';

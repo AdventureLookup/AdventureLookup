@@ -6,6 +6,10 @@
   text-transform: uppercase;
   text-align: center;
 
+  @include media-breakpoint-down(md) {
+    margin-top: 0;
+  }
+
   > .content {
     box-shadow: $adl-box-shadow;
     margin-bottom: 8px;
@@ -61,9 +65,7 @@
     }
   }
 
-  input[type="button"].btn,
-  button.btn,
-  a.btn {
+  .btn {
     display: flex;
     align-items: center;
     justify-content: center;

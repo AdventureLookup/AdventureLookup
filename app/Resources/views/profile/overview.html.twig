@@ -6,7 +6,7 @@
         <p>
             Your username is <em>{{ app.user.username }}</em><br/>
             Your email address is <em>{{ app.user.email }}</em><br/>
-            You currently have the following roles: <em>{{ app.user.roles|join(', ') }}</em><br/>
+            You currently have the following roles: <em>{{ format_roles(app.user) }}</em><br/>
         </p>
         <div class="card mb-3">
             <div class="card-header">

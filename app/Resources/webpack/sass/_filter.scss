@@ -7,7 +7,14 @@
   // Is open
   &.open {
     .options-list { display: initial; }
-    .option { display: flex; }
+    .option {
+      display: flex;
+      &.range-option {
+        @include media-breakpoint-down(md) {
+          flex-direction: column;
+        }
+      }
+    }
     .title:after { content: $fa-var-caret-up; }
   }
   // Has one or more options selected
@@ -43,6 +50,7 @@
     padding: $adl-filter-padding;
     border-bottom: 1px solid $adl-grey-light;
     color: $adl-offwhite;
+    text-align: left;
 
     &:hover {
       background-color: darken($adl-grey-darkest, 7.5%);
@@ -67,6 +75,12 @@
       @extend .show-more;
       display: none;
     }
+
+    &.range-option input {
+      @include media-breakpoint-up(lg) {
+        width: 50%;
+      }
+    }
   }
 }
 
@@ -84,6 +98,11 @@
 
   .option {
     display: flex;
+    &.range-option {
+      @include media-breakpoint-down(md) {
+        flex-direction: column;
+      }
+    }
 
     &:hover {
       background-color: $adl-grey-darkest;

@@ -1,3 +1,21 @@
+{% if app.user %}
+    <div id="create-review-container" class="mt-0 mb-3 d-none" data-has-reviewed="{{ adventure.reviewBy(app.user) ? '1' : '0' }}">
+        <div class="row" id="review-thumbs-row">
+            <div class="col-auto d-flex align-items-center" id="review-thumbs-up">
+                <i class="fa fa-fw fa-thumbs-up fa-flip-horizontal"></i>
+            </div>
+            <div class="col" id="review-thumbs-message"></div>
+            <div class="col-auto d-flex align-items-center" id="review-thumbs-down">
+                <i class="fa fa-fw fa-thumbs-down"></i>
+            </div>
+        </div>
+        {{ form_start(review_form, {'attr': {'id': 'review_form'}}) }}
+        {{ form_widget(review_form.rating) }}
+        {{ form_widget(review_form.comment) }}
+        {{ form_end(review_form) }}
+    </div>
+{% endif %}
+
 <div id="review-container" class="mt-0">
     <div class="row">
         <div class="col">
@@ -22,7 +40,7 @@
             </p>
             <blockquote>
                 <div class="row">
-                    <div class="col col-auto">
+                    <div class="col col-auto d-none d-sm-flex">
                         <i class="fa fa-quote-left fa-3x review-icon"></i>
                     </div>
                     <div class="col">
@@ -49,21 +67,3 @@
         </div>
     {% endfor %}
 </div>
-
-{% if app.user %}
-    <div id="create-review-container" class="mt-0 d-none" data-has-reviewed="{{ adventure.reviewBy(app.user) ? '1' : '0' }}">
-        <div class="row" id="review-thumbs-row">
-            <div class="col-auto" id="review-thumbs-up">
-                <i class="fa fa-fw fa-thumbs-up fa-flip-horizontal"></i>
-            </div>
-            <div class="col" id="review-thumbs-message"></div>
-            <div class="col-auto" id="review-thumbs-down">
-                <i class="fa fa-fw fa-thumbs-down"></i>
-            </div>
-        </div>
-        {{ form_start(review_form, {'attr': {'id': 'review_form'}}) }}
-        {{ form_widget(review_form.rating) }}
-        {{ form_widget(review_form.comment) }}
-        {{ form_end(review_form) }}
-    </div>
-{% endif %}

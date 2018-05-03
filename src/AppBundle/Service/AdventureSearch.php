@@ -87,8 +87,10 @@ class AdventureSearch
 
         $hits = $result['hits']['hits'];
         $adventureDocuments = $this->searchResultsToAdventureDocuments($hits);
+        $totalResults = $result['hits']['total'];
+        $hasMoreResults = $totalResults > $page * self::ADVENTURES_PER_PAGE;
 
-        return [$adventureDocuments, $result['hits']['total'], $result['aggregations']];
+        return [$adventureDocuments, $totalResults, $hasMoreResults, $result['aggregations']];
     }
 
     public function similarTitles($title): array

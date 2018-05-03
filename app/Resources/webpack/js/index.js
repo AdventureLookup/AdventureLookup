@@ -4,12 +4,26 @@ import 'selectize/dist/js/standalone/selectize'
 import autosize from 'autosize';
 import toastr from 'toastr/toastr';
 import '../sass/style.scss';
+import 'cookieconsent/build/cookieconsent.min';
 
 import './adventures';
 import './adventure';
 import './reviews';
 import './adventure_list';
 
+window.cookieconsent.initialise({
+    palette: {
+        popup: { background: "#fff" },
+        button: {
+            background: "#f56e4e",
+            text: "#fff",
+        },
+    },
+    revokable: false,
+    location: false,
+    theme: "edgeless",
+    position: "bottom-left",
+});
 
 toastr.options = {
     "closeButton": false,

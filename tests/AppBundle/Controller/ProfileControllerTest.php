@@ -44,7 +44,7 @@ class ProfileControllerTest extends WebTestCase
         $page = $session->getPage();
         $this->assertTrue($page->hasContent("Your username is {$user->getUsername()}"));
         $this->assertTrue($page->hasContent($user->getEmail()));
-        $this->assertTrue($page->hasContent(implode(', ', $user->getRoles())));
+        $this->assertTrue($page->hasContent('You currently have the following roles: User'));
     }
 
     /**
