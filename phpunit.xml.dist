@@ -18,10 +18,12 @@
             <directory>tests/AppBundle</directory>
             <exclude>tests/AppBundle/Controller</exclude>
             <exclude>tests/AppBundle/Repository</exclude>
+            <exclude>tests/AppBundle/DataFixtures</exclude>
         </testsuite>
         <testsuite name="functional">
             <directory>tests/AppBundle/Controller</directory>
             <directory>tests/AppBundle/Repository</directory>
+            <directory>tests/AppBundle/DataFixtures</directory>
         </testsuite>
         <testsuite name="browser">
             <directory>tests/Browser</directory>
@@ -32,9 +34,8 @@
         <whitelist>
             <directory>src</directory>
             <exclude>
-                <directory>src/*Bundle/Resources</directory>
-                <directory>src/*/*Bundle/Resources</directory>
-                <directory>src/*/Bundle/*Bundle/Resources</directory>
+                <directory>src/AppBundle/DataFixtures</directory>
+                <directory>src/AppBundle/Resources</directory>
             </exclude>
         </whitelist>
     </filter>

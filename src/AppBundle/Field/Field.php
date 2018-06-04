@@ -135,9 +135,9 @@ class Field
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getRelatedEntityClass(): string
+    public function getRelatedEntityClass()
     {
         return $this->relatedEntityClass;
     }
