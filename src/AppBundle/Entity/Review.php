@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -49,6 +50,14 @@ class Review
      * @ORM\Column(type="text", nullable=true)
      */
     private $comment;
+
+    /**
+     * @var ReviewVote[]|Collection
+     *
+     * @ORM\OneToMany(targetEntity="ReviewVote", mappedBy="review", orphanRemoval=true, fetch="EAGER")
+     * @ORM\OrderBy({"vote" = "ASC"})
+     */
+    private $votes;
 
     /**
      * @var string
@@ -180,6 +189,26 @@ class Review
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    /**
+     * @return int
+     */
+    public function countUpVotes(): int
+    {
+        return $this->votes->filter(function (ReviewVote $vote) {
+            return $vote->isUpvote();
+        })->count();
+    }
+
+    /**
+     * @return int
+     */
+    public function countDownVotes(): int
+    {
+        return $this->votes->filter(function (ReviewVote $vote) {
+            return $vote->isDownvote();
+        })->count();
     }
 }
 

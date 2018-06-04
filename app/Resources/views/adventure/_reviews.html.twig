@@ -35,8 +35,14 @@
     {% endif %}
     {% for review in adventure.reviews if review.comment is not empty %}
         <div class="review">
-            <p>
-                <strong>{{ review.createdBy }}</strong> has played this adventure and would {{ review.thumbsDown ? 'not' : '' }} recommend it.
+            <p class="d-flex w-100 justify-content-between">
+                <span>
+                    <strong>{{ review.createdBy }}</strong> has played this adventure and would {{ review.thumbsDown ? 'not' : '' }} recommend it.
+                </span>
+                <span>
+                    <i class="fa fa-fw fa-thumbs-up"></i> {{ review.countUpVotes }}
+                    <i class="fa fa-fw fa-thumbs-down"></i> {{ review.countDownVotes }}
+                </span>
             </p>
             <blockquote>
                 <div class="row">
@@ -48,18 +54,31 @@
                     </div>
                 </div>
             </blockquote>
-            {% if is_granted('delete', review) %}
-                <small class="text-right d-block">
-                    {{ form_start(review_delete_form, {'action': path('review_delete', {id: review.id})}) }}
-                    {{ form_widget(review_delete_form) }}
-                    <button type="submit" class="text-danger btn btn-link"
-                            role="button"
-                            onclick="return confirm('Do you really want to delete this review?')">
-                        <i class="fa fa-trash"></i> Delete Review
-                    </button>
-                    {{ form_end(review_delete_form) }}
-                </small>
-            {% endif %}
+            <div class="d-flex w-100 justify-content-between">
+                <div>
+                    <span>Has this review been helpful?</span>
+                    <div class="btn-group btn-group-toggle review-voting" data-review-id="{{ review.id }}">
+                        <label class="btn btn-sm btn-outline-secondary active">
+                            <input type="checkbox" autocomplete="off" class="review-voting-up" checked> yes
+                        </label>
+                        <label class="btn btn-sm btn-outline-secondary">
+                            <input type="checkbox" autocomplete="off" class="review-voting-down"> no
+                        </label>
+                    </div>
+                </div>
+                {% if is_granted('delete', review) %}
+                    <span>
+                        {{ form_start(review_delete_form, {'action': path('review_delete', {id: review.id})}) }}
+                        {{ form_widget(review_delete_form) }}
+                        <button type="submit" class="text-danger btn btn-link"
+                                role="button"
+                                onclick="return confirm('Do you really want to delete this review?')">
+                            <i class="fa fa-trash"></i> Delete Review
+                        </button>
+                        {{ form_end(review_delete_form) }}
+                    </span>
+                {% endif %}
+            </div>
         </div>
     {% else %}
         <div class="review">

@@ -14,6 +14,7 @@ class ReviewVoter extends Voter
     const CREATE = 'create';
     const EDIT = 'edit';
     const DELETE = 'delete';
+    const VOTE = 'vote';
 
     /**
      * @var AccessDecisionManagerInterface
@@ -38,7 +39,7 @@ class ReviewVoter extends Voter
         if ($subject === 'review' && $attribute === self::CREATE) {
             return true;
         }
-        if ($subject instanceof Review && in_array($attribute, [self::EDIT, self::DELETE])) {
+        if ($subject instanceof Review && in_array($attribute, [self::EDIT, self::DELETE, self::VOTE])) {
             return true;
         }
 
@@ -64,6 +65,8 @@ class ReviewVoter extends Voter
                 return $this->canEdit($subject, $token);
             case self::DELETE:
                 return $this->canDelete($subject, $token);
+            case self::VOTE:
+                return $this->canVote($subject, $token);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -103,6 +106,18 @@ class ReviewVoter extends Voter
     {
         return $this->isLoggedIn($token) &&
             ($this->isCreatedBy($review, $token) || $this->isCurator($token));
+    }
+
+    /**
+     * Logged in users can vote for other people's reviews.
+     *
+     * @param Review $review
+     * @param TokenInterface $token
+     * @return bool
+     */
+    private function canVote(Review $review, TokenInterface $token)
+    {
+        return $this->isLoggedIn($token) && !$this->isCreatedBy($review, $token);
     }
 
     /**
