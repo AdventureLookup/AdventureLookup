@@ -49,7 +49,7 @@ class AdventureSearch
      */
     public function search(string $q, array $filters, int $page)
     {
-        if ($page < 1 ||  $page * self::ADVENTURES_PER_PAGE > 5000) {
+        if ($page < 1 || $page * self::ADVENTURES_PER_PAGE > 5000) {
             throw new BadRequestHttpException();
         }
 
@@ -85,8 +85,35 @@ class AdventureSearch
             ],
         ]);
 
-        $hits = $result['hits']['hits'];
-        $adventureDocuments = $this->searchResultsToAdventureDocuments($hits);
+        $adventureDocuments = array_map(function ($hit) {
+            return new AdventureDocument(
+                $hit['_id'],
+                $hit['_source']['authors'],
+                $hit['_source']['edition'],
+                $hit['_source']['environments'],
+                $hit['_source']['items'],
+                $hit['_source']['publisher'],
+                $hit['_source']['setting'],
+                $hit['_source']['commonMonsters'],
+                $hit['_source']['bossMonsters'],
+                $hit['_source']['title'],
+                $hit['_source']['description'],
+                $hit['_source']['slug'],
+                $hit['_source']['minStartingLevel'],
+                $hit['_source']['maxStartingLevel'],
+                $hit['_source']['startingLevelRange'],
+                $hit['_source']['numPages'],
+                $hit['_source']['foundIn'],
+                $hit['_source']['partOf'],
+                $hit['_source']['link'],
+                $hit['_source']['thumbnailUrl'],
+                $hit['_source']['soloable'],
+                $hit['_source']['pregeneratedCharacters'],
+                $hit['_source']['tacticalMaps'],
+                $hit['_source']['handouts'],
+                $hit['_score']
+            );
+        }, $result['hits']['hits']);
         $totalResults = $result['hits']['total'];
         $hasMoreResults = $totalResults > $page * self::ADVENTURES_PER_PAGE;
 
@@ -163,7 +190,7 @@ class AdventureSearch
         ]);
 
         $results = [];
-        foreach($response['hits']['hits'] as $hit) {
+        foreach ($response['hits']['hits'] as $hit) {
             if (!isset($hit['highlight'])) {
                 continue;
             }
@@ -216,43 +243,6 @@ class AdventureSearch
         }
 
         return $results;
-    }
-
-    /**
-     * @param array $hits
-     * @return AdventureDocument[]
-     */
-    private function searchResultsToAdventureDocuments(array $hits): array
-    {
-        return array_map(function ($hit) {
-            return new AdventureDocument(
-                $hit['_id'],
-                $hit['_source']['authors'],
-                $hit['_source']['edition'],
-                $hit['_source']['environments'],
-                $hit['_source']['items'],
-                $hit['_source']['publisher'],
-                $hit['_source']['setting'],
-                $hit['_source']['commonMonsters'],
-                $hit['_source']['bossMonsters'],
-                $hit['_source']['title'],
-                $hit['_source']['description'],
-                $hit['_source']['slug'],
-                $hit['_source']['minStartingLevel'],
-                $hit['_source']['maxStartingLevel'],
-                $hit['_source']['startingLevelRange'],
-                $hit['_source']['numPages'],
-                $hit['_source']['foundIn'],
-                $hit['_source']['partOf'],
-                $hit['_source']['link'],
-                $hit['_source']['thumbnailUrl'],
-                $hit['_source']['soloable'],
-                $hit['_source']['pregeneratedCharacters'],
-                $hit['_source']['tacticalMaps'],
-                $hit['_source']['handouts'],
-                $hit['_score']
-            );
-        }, $hits);
     }
 
     /**
@@ -310,8 +300,12 @@ class AdventureSearch
     {
         $fields = $this->fieldProvider
             ->getFields()
-            ->filter(function (Field $field) { return $field->isFreetextSearchable(); })
-            ->map(function (Field $field) { return $field->getName() . '^' . $field->getSearchBoost(); })
+            ->filter(function (Field $field) {
+                return $field->isFreetextSearchable();
+            })
+            ->map(function (Field $field) {
+                return $field->getName() . '^' . $field->getSearchBoost();
+            })
             ->getValues();
 
         $terms = explode(',', $q);
