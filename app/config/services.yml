@@ -5,12 +5,15 @@ services:
         public: false
     AppBundle\:
         resource: '../../src/AppBundle/*'
-        exclude: '../../src/AppBundle/{Entity,Repository,DataFixtures}'
+        exclude: '../../src/AppBundle/{Entity,Repository,DataFixtures,Command}'
     AppBundle\Controller\:
         resource: '../../src/AppBundle/Controller'
         public: true
         tags: ['controller.service_arguments']
 
+    AppBundle\Command\:
+        resource: '../../src/AppBundle/Command/*'
+        tags: ['console.command']
 
     AppBundle\Service\ElasticSearch:
         arguments:

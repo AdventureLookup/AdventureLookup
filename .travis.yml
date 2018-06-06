@@ -7,6 +7,7 @@ php:
 env:
   global:
     - SYMFONY_ENV=test
+    - SYMFONY_PHPUNIT_DIR=$HOME/.symfony-phpunit
     - PHPUNIT=vendor/symfony/phpunit-bridge/bin/simple-phpunit
   matrix:
     - TESTSUITE=unittests
@@ -27,6 +28,7 @@ addons:
 cache:
   directories:
     - $HOME/.composer/cache/files
+    - $HOME/.symfony-phpunit
     - node_modules
 
 stages:
