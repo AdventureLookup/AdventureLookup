@@ -1,0 +1,162 @@
+# EasyAdminBundle
+# GitHub: https://github.com/javiereguiluz/EasyAdminBundle
+# Docs:   http://symfony.com/doc/current/bundles/EasyAdminBundle/index.html
+easy_admin:
+    site_name: 'Adventure Lookup'
+    design:
+        menu:
+            - Adventure
+            - ChangeRequest
+            - Review
+            - { label: '' }
+            - Author
+            - Edition
+            - Environment
+            - Item
+            - Monster
+            - BossMonster
+            - MonsterType
+            - Publisher
+            - Setting
+            - User
+            - { label: '' }
+            - { label: 'Back to Frontend', route: 'homepage', icon: 'chevron-circle-left' }
+    list:
+        max_results: 30
+    entities:
+        Adventure:
+            class: AppBundle\Entity\Adventure
+            label: 'Adventures'
+            disabled_actions: ['new', 'edit']
+            list:
+                title: "Adventures"
+                fields: ['id', 'title', 'createdBy']
+                actions:
+                    - { name: 'adventure_edit', type: 'route', label: 'Edit' }
+        ChangeRequest:
+            class: AppBundle\Entity\ChangeRequest
+            label: 'Change Requests'
+            list:
+                title: 'Change Requests'
+                fields: ['adventure', 'fieldName', 'comment', 'resolved', 'createdBy']
+                sort: ['resolved', 'ASC']
+            search:
+                sort: ['resolved', 'ASC']
+            form:
+                fields: ['adventure', 'fieldName', 'comment', 'resolved']
+        Review:
+            class: AppBundle\Entity\Review
+            label: 'Reviews'
+            list:
+                title: 'Reviews'
+                fields: ['adventure', 'rating', 'comment', 'createdBy', 'createdAt']
+                sort: ['createdAt', 'DESC']
+            search:
+                sort: ['createdAt', 'DESC']
+            form:
+                fields: ['rating', 'comment']
+        Author:
+            class: AppBundle\Entity\Author
+            label: 'Authors'
+            form:
+                fields: ['name']
+            list:
+                sort: ['name', 'ASC']
+            search:
+                sort: ['name', 'ASC']
+        Edition:
+            class: AppBundle\Entity\Edition
+            label: 'Editions'
+            form:
+                fields: ['name', 'position']
+            list:
+                sort: ['position', 'DESC']
+            search:
+                sort: ['position', 'DESC']
+        Environment:
+            class: AppBundle\Entity\Environment
+            label: 'Environments'
+            form:
+                fields: ['name']
+            list:
+                sort: ['name', 'ASC']
+            search:
+                sort: ['name', 'ASC']
+        Item:
+            class: AppBundle\Entity\Item
+            label: 'Items'
+            form:
+                fields: ['name']
+            list:
+                sort: ['name', 'ASC']
+            search:
+                sort: ['name', 'ASC']
+        Monster:
+            class: AppBundle\Entity\Monster
+            label: 'Common Monsters'
+            form:
+                fields: ['name', 'types']
+            list:
+                dql_filter: "entity.isUnique = FALSE"
+                fields: ['name', 'types', 'adventures', 'createdBy', 'updatedBy']
+                sort: ['name', 'ASC']
+            search:
+                sort: ['name', 'ASC']
+        BossMonster:
+            class: AppBundle\Entity\Monster
+            label: 'Boss Monsters'
+            form:
+                fields: ['name', 'types']
+            list:
+                dql_filter: "entity.isUnique = TRUE"
+                fields: ['name', 'types', 'adventures', 'createdBy', 'updatedBy']
+                sort: ['name', 'ASC']
+            search:
+                sort: ['name', 'ASC']
+        MonsterType:
+            class: AppBundle\Entity\MonsterType
+            label: 'Monster Types'
+            form:
+                fields: ['name']
+            list:
+                sort: ['name', 'ASC']
+            search:
+                sort: ['name', 'ASC']
+        Publisher:
+            class: AppBundle\Entity\Publisher
+            label: 'Publishers'
+            form:
+                fields: ['name']
+            list:
+                sort: ['name', 'ASC']
+            search:
+                sort: ['name', 'ASC']
+        Setting:
+            class: AppBundle\Entity\Setting
+            label: 'Settings'
+            form:
+                fields: ['name']
+            list:
+                sort: ['name', 'ASC']
+            search:
+                sort: ['name', 'ASC']
+        User:
+            class: AppBundle\Entity\User
+            label: 'Users'
+            disabled_actions: ['new', 'delete']
+            form:
+                fields:
+                    - isActive
+                    - property: 'roles'
+                      type: 'collection'
+                      type_options:
+                          entry_type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType'
+                          entry_options:
+                              choices:
+                                  ROLE_USER: ROLE_USER
+                                  ROLE_CURATOR: ROLE_CURATOR
+                                  ROLE_ADMIN: ROLE_ADMIN
+            list:
+                title: "Users"
+                fields: [username, email, roles]
+                sort: ['roles', 'ASC']

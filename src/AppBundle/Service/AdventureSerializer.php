@@ -4,53 +4,73 @@ namespace AppBundle\Service;
 
 
 use AppBundle\Entity\Adventure;
-use AppBundle\Entity\Author;
-use AppBundle\Entity\Environment;
-use AppBundle\Entity\Item;
-use AppBundle\Entity\Monster;
+use AppBundle\Entity\RelatedEntityInterface;
+use AppBundle\Field\FieldProvider;
+use Doctrine\Common\Collections\Collection;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class AdventureSerializer
 {
-    public function toElasticDocument(Adventure $adventure): array
+    /**
+     * @var FieldProvider
+     */
+    private $fieldProvider;
+
+    /**
+     * @var PropertyAccessor
+     */
+    private $propertyAccessor;
+
+    public function __construct(FieldProvider $fieldProvider)
     {
-        $ser = [
-            'authors' => $adventure->getAuthors()->map(function (Author $author) { return $author->getName(); })->getValues(),
-            'edition' => $this->getNameOrNull($adventure->getEdition()),
-            'environments' => $adventure->getEnvironments()->map(function (Environment $environment) { return $environment->getName(); })->getValues(),
-            'items' => $adventure->getItems()->map(function (Item $item) { return $item->getName(); })->getValues(),
-            'publisher' => $this->getNameOrNull($adventure->getPublisher()),
-            'setting' => $this->getNameOrNull($adventure->getSetting()),
-            'commonMonsters' => $adventure->getCommonMonsters()
-                ->map(function (Monster $monster) { return $monster->getName(); })->getValues(),
-            'bossMonsters' => $adventure->getBossMonsters()
-                ->map(function (Monster $monster) { return $monster->getName(); })->getValues(),
-
-            'title' => $adventure->getTitle(),
-            'description' => $adventure->getDescription(),
-            'slug' => $adventure->getSlug(),
-            'minStartingLevel' => $adventure->getMinStartingLevel(),
-            'maxStartingLevel' => $adventure->getMaxStartingLevel(),
-            'startingLevelRange' => $adventure->getStartingLevelRange(),
-            'numPages' => $adventure->getNumPages(),
-            'foundIn' => $adventure->getFoundIn(),
-            'partOf' => $adventure->getPartOf(),
-            'link' => $adventure->getLink(),
-            'thumbnailUrl' => $adventure->getThumbnailUrl(),
-            'soloable' => $adventure->isSoloable(),
-            'pregeneratedCharacters' => $adventure->hasPregeneratedCharacters(),
-            'tacticalMaps' => $adventure->hasTacticalMaps(),
-            'handouts' => $adventure->hasHandouts(),
-        ];
-
-        return $ser;
+        $this->fieldProvider = $fieldProvider;
+        $this->propertyAccessor = new PropertyAccessor();
     }
 
     /**
-     * @param $entity
+     * Converts an adventure entity into an indexable array.
+     *
+     * @param Adventure $adventure
+     * @return array
+     */
+    public function toElasticDocument(Adventure $adventure): array
+    {
+        $doc= [];
+        $doc['slug'] = $adventure->getSlug();
+
+        foreach ($this->fieldProvider->getFields() as $field) {
+            $value = $this->propertyAccessor->getValue(
+                $adventure,
+                $field->getName()
+            );
+            if ($value instanceof RelatedEntityInterface) {
+                $value = $this->relatedEntityToName($value);
+            } else if ($value instanceof Collection) {
+                $value = $this->relatedEntitiesToNames($value);
+            }
+
+            $doc[$field->getName()] = $value;
+        }
+        return $doc;
+    }
+
+    /**
+     * @param RelatedEntityInterface $entity
      * @return null|string
      */
-    private function getNameOrNull($entity)
+    private function relatedEntityToName(RelatedEntityInterface $entity = null)
     {
         return $entity === null ? null : $entity->getName();
+    }
+
+    /**
+     * @param Collection|RelatedEntityInterface[] $relatedEntities
+     * @return string[]
+     */
+    private function relatedEntitiesToNames(Collection $relatedEntities): array
+    {
+        return $relatedEntities->map(function (RelatedEntityInterface $entity) {
+            return $entity->getName();
+        })->getValues();
     }
 }

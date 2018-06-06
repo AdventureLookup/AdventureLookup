@@ -129,16 +129,8 @@ class AppElasticsearchReindexCommand extends Command
         $output->writeln('Reindexing documents');
 
         $adventures = $this->em->getRepository(Adventure::class)->findAll();
-        $progress = new ProgressBar($output, count($adventures));
-        $progress->start();
+        $this->searchIndexUpdater->updateSearchIndexForAdventures($adventures);
 
-        foreach($adventures as $adventure) {
-            $this->searchIndexUpdater->updateSearchIndexForAdventure($adventure);
-            $progress->advance();
-        }
-
-        $progress->finish();
-        $output->writeln('');
         $output->writeln('Reindexed documents.');
     }
 }

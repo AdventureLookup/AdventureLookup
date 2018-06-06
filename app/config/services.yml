@@ -15,6 +15,9 @@ services:
         resource: '../../src/AppBundle/Command/*'
         tags: ['console.command']
 
+    Elasticsearch\ClientBuilder:
+        factory: ['Elasticsearch\ClientBuilder', 'create']
+
     AppBundle\Service\ElasticSearch:
         arguments:
             $config: "%elasticsearch%"

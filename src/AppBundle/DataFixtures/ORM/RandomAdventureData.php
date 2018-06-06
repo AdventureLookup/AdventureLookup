@@ -92,7 +92,8 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
                 ->setMonsters(new ArrayCollection($faker->randomElements($monsters, $faker->numberBetween(0, 20))));
 
             if ($faker->boolean(20)) {
-                for ($j = 0; $j < $faker->numberBetween(1, 5); $j++) {
+                $n = $faker->numberBetween(1, 5);
+                for ($j = 0; $j < $n; $j++) {
                     $changeRequest = new ChangeRequest();
                     $changeRequest
                         ->setComment($faker->realText($faker->numberBetween(20, 500)))
@@ -111,7 +112,8 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
             }
 
             if ($faker->boolean(80)) {
-                for ($j = 0; $j < $faker->numberBetween(1, 300); $j++) {
+                $n = $faker->numberBetween(1, 300);
+                for ($j = 0; $j < $n; $j++) {
                     $review = new Review($adventure);
                     if ($faker->boolean) {
                         $review->setThumbsUp();
@@ -122,7 +124,7 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
                         $review->setComment($faker->realText($faker->numberBetween(20, 500)));
                     }
 
-                    $reviewCreatedByProperty->setValue($review, $faker->userName);
+                    $reviewCreatedByProperty->setValue($review, $j . "-" . $faker->userName);
 
                     $em->persist($review);
                 }
