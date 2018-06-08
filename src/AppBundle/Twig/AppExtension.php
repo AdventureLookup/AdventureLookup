@@ -8,7 +8,11 @@ use AppBundle\Entity\User;
 use League\Uri\Components\Host;
 use League\Uri\Components\Query;
 use League\Uri\Modifiers\Formatter;
-use League\Uri\Schemes\Http;
+use League\Uri\Http;
+use League\Uri\PublicSuffix\CurlHttpClient;
+use League\Uri\PublicSuffix\ICANNSectionManager;
+use League\Uri\QueryParser;
+use Psr\SimpleCache\CacheInterface;
 
 class AppExtension extends \Twig_Extension
 {
@@ -17,9 +21,15 @@ class AppExtension extends \Twig_Extension
      */
     private $affiliateMappings = [];
 
-    public function __construct(array $affiliateMappings)
+    /**
+     * @var CacheInterface
+     */
+    private $cache;
+
+    public function __construct(array $affiliateMappings, CacheInterface $cache)
     {
         $this->affiliateMappings = $affiliateMappings;
+        $this->cache = $cache;
     }
 
     public function getFilters()
@@ -91,16 +101,22 @@ class AppExtension extends \Twig_Extension
         }
 
         $uri = Http::createFromString($url);
-        $domain = (new Host($uri->getHost()))->getRegisterableDomain();
 
-        foreach ($this->affiliateMappings as $affiliateMapping) {
-            foreach ($affiliateMapping['domains'] as $affiliateDomain) {
-                if ($affiliateDomain === $domain) {
-                    $queryParameters = Query::extract($uri->getQuery());
-                    $queryParameters[$affiliateMapping['param']] = $affiliateMapping['code'];
+        if (!empty($this->affiliateMappings)) {
+            $queryParser = new QueryParser();
+            $rules = (new ICANNSectionManager($this->cache, new CurlHttpClient()))->getRules();
 
-                    $uri = $uri->withQuery(Query::createFromPairs($queryParameters)->getContent());
-                    break 2;
+            $domain = (new Host($uri->getHost(), $rules))->getRegistrableDomain();
+
+            foreach ($this->affiliateMappings as $affiliateMapping) {
+                foreach ($affiliateMapping['domains'] as $affiliateDomain) {
+                    if ($affiliateDomain === $domain) {
+                        $queryParameters = $queryParser->extract($uri->getQuery());
+                        $queryParameters[$affiliateMapping['param']] = $affiliateMapping['code'];
+
+                        $uri = $uri->withQuery(Query::createFromPairs($queryParameters)->getContent());
+                        break 2;
+                    }
                 }
             }
         }

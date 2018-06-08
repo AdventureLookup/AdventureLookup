@@ -6,6 +6,7 @@ namespace Tests\Twig;
 
 use AppBundle\Twig\AppExtension;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Cache\Simple\FilesystemCache;
 
 class AppExtensionTest extends TestCase
 {
@@ -16,7 +17,7 @@ class AppExtensionTest extends TestCase
 
     public function setUp()
     {
-        $this->extension = new AppExtension([
+        $affiliateMappings = [
             [
                 'domains' => ['example.com', 'example.org'],
                 'param' => 'aff_id',
@@ -27,7 +28,8 @@ class AppExtensionTest extends TestCase
                 'param' => 'aff_id2',
                 'code' => 'aff_code2'
             ],
-        ]);
+        ];
+        $this->extension = new AppExtension($affiliateMappings, new FilesystemCache());
     }
 
     /**
