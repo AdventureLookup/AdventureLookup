@@ -12,7 +12,9 @@ use AppBundle\Entity\Item;
 use AppBundle\Entity\Monster;
 use AppBundle\Entity\Publisher;
 use AppBundle\Entity\Review;
+use AppBundle\Entity\ReviewVote;
 use AppBundle\Entity\Setting;
+use AppBundle\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
@@ -64,15 +66,26 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
         /** @var Monster[] $monsters */
         $monsters = $doctrine->getRepository('AppBundle:Monster')->findAll();
 
+        $users = [];
+        for ($i = 0; $i < 100; $i++) {
+            $user = new User();
+            $username = "user-" . $i;
+            $user->setUsername($username);
+            $user->setPassword("123456");
+            $user->setEmail($username . "@example.com");
+            $em->persist($user);
+            $users[] = $user;
+        }
+
         $faker = Faker\Factory::create();
 
         $reviewCreatedByProperty = (new ReflectionClass(Review::class))->getProperty('createdBy');
         $reviewCreatedByProperty->setAccessible(true);
 
-        for ($i = 0; $i < 200; $i++) {
+        for ($i = 0; $i < 100; $i++) {
             $adventure = new Adventure();
             $adventure
-                ->setTitle($faker->catchPhrase)
+                ->setTitle($faker->unique()->catchPhrase)
                 ->setDescription($faker->realText(2000))
                 ->setNumPages($faker->numberBetween(1, 200))
                 ->setFoundIn($faker->catchPhrase)
@@ -92,8 +105,8 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
                 ->setMonsters(new ArrayCollection($faker->randomElements($monsters, $faker->numberBetween(0, 20))));
 
             if ($faker->boolean(20)) {
-                $n = $faker->numberBetween(1, 5);
-                for ($j = 0; $j < $n; $j++) {
+                $nChangeRequests = $faker->numberBetween(1, 5);
+                for ($j = 0; $j < $nChangeRequests; $j++) {
                     $changeRequest = new ChangeRequest();
                     $changeRequest
                         ->setComment($faker->realText($faker->numberBetween(20, 500)))
@@ -112,8 +125,8 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
             }
 
             if ($faker->boolean(80)) {
-                $n = $faker->numberBetween(1, 300);
-                for ($j = 0; $j < $n; $j++) {
+                $nReviews = $faker->numberBetween(0, 300);
+                for ($j = 0; $j < $nReviews; $j++) {
                     $review = new Review($adventure);
                     if ($faker->boolean) {
                         $review->setThumbsUp();
@@ -122,6 +135,12 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
                     }
                     if ($faker->boolean(70)) {
                         $review->setComment($faker->realText($faker->numberBetween(20, 500)));
+
+                        $nVotes = $faker->numberBetween(0, 30);
+                        for ($k = 0; $k < $nVotes; $k++) {
+                            $reviewVote = new ReviewVote($review, $users[$k], $faker->boolean(60));
+                            $em->persist($reviewVote);
+                        }
                     }
 
                     $reviewCreatedByProperty->setValue($review, $j . "-" . $faker->userName);

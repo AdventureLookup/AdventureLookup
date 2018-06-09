@@ -53,9 +53,9 @@ class ReviewVote
      */
     private $vote;
 
-    public function __construct(Review $review, User $user, int $vote)
+    public function __construct(Review $review, User $user, bool $vote)
     {
-        $this->vote = $vote === 1;
+        $this->vote = $vote;
         $this->review = $review;
         $this->user = $user;
     }
@@ -98,7 +98,7 @@ class ReviewVote
     /**
      * @return bool
      */
-    public function isUpVote(): bool
+    public function isUpvote(): bool
     {
         return $this->vote;
     }
@@ -106,7 +106,7 @@ class ReviewVote
     /**
      * @return bool
      */
-    public function isDownVote(): bool
+    public function isDownvote(): bool
     {
         return !$this->vote;
     }

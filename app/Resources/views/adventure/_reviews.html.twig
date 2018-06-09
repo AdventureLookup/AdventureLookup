@@ -16,7 +16,7 @@
     </div>
 {% endif %}
 
-<div id="review-container" class="mt-0">
+<div id="review-container" class="mt-0" data-vote-url="{{ path('review_vote', {'id': '_ID_'}) }}" data-vote-csrf-token="{{ csrf_token('review_voting') }}">
     <div class="row">
         <div class="col">
             <h3 class="title">Reviews</h3>
@@ -33,15 +33,15 @@
     {% elseif adventure.reviewBy(app.user) %}
         <div class="alert alert-success">You've already rated/reviewed this adventure.</div>
     {% endif %}
-    {% for review in adventure.reviews if review.comment is not empty %}
-        <div class="review">
+    {% for review in adventure.sortedReviewsWithComments %}
+        <div class="review" data-review-id="{{ review.id }}">
             <p class="d-flex w-100 justify-content-between">
                 <span>
                     <strong>{{ review.createdBy }}</strong> has played this adventure and would {{ review.thumbsDown ? 'not' : '' }} recommend it.
                 </span>
                 <span>
-                    <i class="fa fa-fw fa-thumbs-up"></i> {{ review.countUpVotes }}
-                    <i class="fa fa-fw fa-thumbs-down"></i> {{ review.countDownVotes }}
+                    <i class="fa fa-fw fa-thumbs-up"></i> <span class="review-upvotes">{{ review.countUpvotes }}</span>
+                    <i class="fa fa-fw fa-thumbs-down"></i> <span class="review-downvotes">{{ review.countDownvotes }}</span>
                 </span>
             </p>
             <blockquote>
@@ -56,15 +56,13 @@
             </blockquote>
             <div class="d-flex w-100 justify-content-between">
                 <div>
-                    <span>Has this review been helpful?</span>
-                    <div class="btn-group btn-group-toggle review-voting" data-review-id="{{ review.id }}">
-                        <label class="btn btn-sm btn-outline-secondary active">
-                            <input type="checkbox" autocomplete="off" class="review-voting-up" checked> yes
-                        </label>
-                        <label class="btn btn-sm btn-outline-secondary">
-                            <input type="checkbox" autocomplete="off" class="review-voting-down"> no
-                        </label>
-                    </div>
+                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                        <span>Has this review been helpful?</span>
+                        <div class="review-voting d-inline">
+                            <button class="btn btn-sm btn-{% if review.hasUpvoteBy(app.user) %}success{% else %}outline-secondary{% endif %} review-vote-up">yes</button>
+                            <button class="btn btn-sm btn-{% if review.hasDownvoteBy(app.user) %}success{% else %}outline-secondary{% endif %} review-vote-down">no</button>
+                        </div>
+                    {% endif %}
                 </div>
                 {% if is_granted('delete', review) %}
                     <span>

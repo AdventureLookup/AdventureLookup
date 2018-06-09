@@ -312,7 +312,7 @@ class Adventure
     }
 
     /**
-     * @param Author[] $authors
+     * @param Author[]|Collection $authors
      *
      * @return Adventure
      */
@@ -359,7 +359,7 @@ class Adventure
     }
 
     /**
-     * @param Environment[] $environments
+     * @param Environment[]|Collection $environments
      *
      * @return Adventure
      */
@@ -388,7 +388,7 @@ class Adventure
     }
 
     /**
-     * @param Item[] $items
+     * @param Item[]|Collection $items
      *
      * @return Adventure
      */
@@ -858,6 +858,39 @@ class Adventure
     public function getReviews()
     {
         return $this->reviews;
+    }
+
+    /**
+     * @return Review[]|Collection
+     */
+    public function getSortedReviewsWithComments()
+    {
+        $reviews = $this->reviews->filter(function (Review $review) {
+            return !empty($review->getComment());
+        })->map(function (Review $review) {
+            $positive = $review->countUpvotes();
+            $negative = $review->countDownvotes();
+
+            // Calculate score using lower bound of Wilson score confidence interval
+            // as described here: http://www.evanmiller.org/how-not-to-sort-by-average-rating.html
+            if ($positive + $negative == 0) {
+                $score = 0;
+            } else {
+                $score = (($positive + 1.9208) / ($positive + $negative) - 1.96 * sqrt(($positive * $negative) / ($positive + $negative) + 0.9604) / ($positive + $negative)) / (1 + 3.8416 / ($positive + $negative));
+            }
+            return [
+                'review' => $review,
+                'score' => $score,
+            ];
+        })->toArray();
+
+        usort($reviews, function ($a, $b) {
+            return $b['score'] <=> $a['score'];
+        });
+
+        return (new ArrayCollection($reviews))->map(function ($r) {
+            return $r['review'];
+        });
     }
 
     /**

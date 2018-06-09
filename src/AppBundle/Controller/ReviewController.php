@@ -17,8 +17,8 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * @Route("/review")
@@ -110,7 +110,7 @@ class ReviewController extends Controller
     }
 
     /**
-     * @Route("/vote/{id}", name="review_vote")
+     * @Route("/vote/{id}", name="review_vote", defaults={"_format": "json"})
      * @Method("POST")
      * @ParamConverter()
      *
@@ -120,11 +120,16 @@ class ReviewController extends Controller
      */
     public function voteAction(Review $review, Request $request)
     {
-        $this->denyAccessUnlessGranted(ReviewVoter::VOTE, $review);
+        if (!$this->isGranted(ReviewVoter::VOTE, $review)) {
+            throw new HttpException(Response::HTTP_FORBIDDEN);
+        }
+        if (!$this->isCsrfTokenValid('review_voting', $request->request->get('_token'))) {
+            throw new HttpException(Response::HTTP_FORBIDDEN);
+        }
 
         $vote = $request->request->getInt('vote');
         if (!in_array($vote, [1, 0, -1], true)) {
-            throw new BadRequestHttpException();
+            throw new HttpException(Response::HTTP_BAD_REQUEST);
         }
 
         $doctrine = $this->getDoctrine();
@@ -133,23 +138,31 @@ class ReviewController extends Controller
         $user = $this->getUser();
         $reviewVote = $doctrine
             ->getRepository(ReviewVote::class)
-            ->findOneBy(['user' => $user->getId()]);
+            ->findOneBy([
+                'user' => $user->getId(),
+                'review' => $review
+        ]);
 
         if (null !== $reviewVote) {
             if ($vote === 0) {
                 $em->remove($reviewVote);
             } else {
-                $reviewVote->setVote($vote);
+                $reviewVote->setVote($vote === 1);
             }
         } else {
             if ($vote !== 0) {
-                $reviewVote = new ReviewVote($review, $user, $vote);
+                $reviewVote = new ReviewVote($review, $user, $vote === 1);
                 $em->persist($reviewVote);
             }
         }
         $em->flush();
 
-        return new JsonResponse();
+        $em->refresh($review);
+
+        return new JsonResponse([
+            'upvotes' => $review->countUpvotes(),
+            'downvotes' => $review->countDownvotes(),
+        ]);
     }
 
     /**
