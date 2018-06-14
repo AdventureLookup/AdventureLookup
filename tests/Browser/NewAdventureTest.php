@@ -27,7 +27,7 @@ class NewAdventureTest extends BrowserTestCase
     const FOUND_IN = 'Dugeon Magazine';
     const PART_OF = 'Tales from another World';
     const LINK = 'http://example.com';
-    const THUMBNAIL_URL = 'http://lorempixel.com/130/160/';
+    const THUMBNAIL_URL = 'http://localhost:8003/mstile-150x150.png';
 
     const CREATE_ADVENTURE_PATH = '/adventure';
 
