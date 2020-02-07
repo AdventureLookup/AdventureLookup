@@ -2,7 +2,6 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/xenial64"
   config.vm.network "forwarded_port", guest: 5900, host: 5900
   config.vm.network "forwarded_port", guest: 8000, host: 8000
   config.vm.network "forwarded_port", guest: 8001, host: 8001
@@ -11,9 +10,18 @@ Vagrant.configure("2") do |config|
 
   config.vm.network "private_network", type: "dhcp"
 
-  config.vm.provider "virtualbox" do |vb|
-     vb.memory = "2048"
-     vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+  config.vm.provider "virtualbox" do |vb, override|
+    override.vm.box = "ubuntu/xenial64"
+    vb.memory = "2048"
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+  end
+
+  config.vm.provider "docker" do |d, override|
+    d.build_dir = "./scripts/vagrant-docker"
+    d.remains_running = true
+    d.has_ssh = true
+    override.ssh.username = "vagrant"
+    override.ssh.password = "vagrant"
   end
 
   # Previous versions of the Ubuntu Vagrant box only had the "ubuntu" user.
@@ -41,16 +49,28 @@ Vagrant.configure("2") do |config|
        apt-get -y -qq -o=Dpkg::Use-Pty=0 ${@}
      }
 
+     function is_docker {
+      if [ -f /.dockerenv ]; then
+          return 0
+      else
+          return 1
+      fi
+     }
+
      set -ev
 
      apt_quiet update
 
-     # Create 2GB Swap. Otherwise, some composer operations might run out of memory.
-     fallocate -l 2G /swapfile
-     chmod 600 /swapfile
-     mkswap /swapfile
-     swapon /swapfile
-     echo "/swapfile   none    swap    sw    0   0" >> /etc/fstab
+     if is_docker; then
+        echo Skipping swap creation for docker container
+     else
+        # Create 2GB Swap. Otherwise, some composer operations might run out of memory.
+        fallocate -l 2G /swapfile
+        chmod 600 /swapfile
+        mkswap /swapfile
+        swapon /swapfile
+        echo "/swapfile   none    swap    sw    0   0" >> /etc/fstab
+     fi
 
      # MySQL
      export DEBIAN_FRONTEND=noninteractive
@@ -69,7 +89,7 @@ Vagrant.configure("2") do |config|
      sed -i "s/^;realpath_cache_ttl =$/realpath_cache_ttl = 7200/"    /etc/php/7.0/cli/php.ini
 
      # Utilities
-     apt_quiet install htop git nano vim unzip
+     apt_quiet install htop git nano vim unzip curl wget
 
      # OpenJDK 8
      apt_quiet install openjdk-8-jre > /dev/null
@@ -106,10 +126,10 @@ Vagrant.configure("2") do |config|
      fi
 
      # Elasticsearch
-     wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.5.0.deb
-     dpkg -i elasticsearch-5.5.0.deb
+     wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.5.3.deb
+     dpkg -i elasticsearch-5.5.3.deb
      systemctl enable elasticsearch.service
-     rm elasticsearch-5.5.0.deb
+     rm elasticsearch-5.5.3.deb
      service elasticsearch start
 
      ### Development Elasticsearch settings:
