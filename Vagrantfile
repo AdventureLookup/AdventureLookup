@@ -69,14 +69,10 @@ Vagrant.configure("2") do |config|
      sed -i "s/^;realpath_cache_ttl =$/realpath_cache_ttl = 7200/"    /etc/php/7.0/cli/php.ini
 
      # Utilities
-     apt_quiet install htop git nano vim
+     apt_quiet install htop git nano vim unzip
 
-     # Oracle Java 8
-     add-apt-repository -y ppa:webupd8team/java
-     apt_quiet update
-     echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
-     echo debconf shared/accepted-oracle-license-v1-1 seen   true | debconf-set-selections
-     apt_quiet install oracle-java8-installer > /dev/null
+     # OpenJDK 8
+     apt_quiet install openjdk-8-jre > /dev/null
 
      # Node (JavaScript runtime)
      curl -sL https://deb.nodesource.com/setup_8.x | bash -
