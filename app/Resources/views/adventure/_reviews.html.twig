@@ -33,7 +33,7 @@
     {% elseif adventure.reviewBy(app.user) %}
         <div class="alert alert-success">You've already rated/reviewed this adventure.</div>
     {% endif %}
-    {% for review in adventure.reviews if review.comment is not empty %}
+    {% for review in adventure.reviews|filter(review => review.comment is not empty) %}
         <div class="review">
             <p>
                 <strong>{{ review.createdBy }}</strong> has played this adventure and would {{ review.thumbsDown ? 'not' : '' }} recommend it.

@@ -75,21 +75,8 @@ class BrowserTestCase extends TestCase
 
     private static function executeCommand($command)
     {
-        $process = new Process($command);
-
-        // Make sure the working directory is the root of the application.
-        // Do so by removing anything after 'vendor' in the path to the simple-phpunit script.
-        $dir = $_SERVER['SCRIPT_NAME'];
-        $testFolderPosition = strrpos($dir, 'vendor');
-        if ($testFolderPosition !== null) {
-            $process->setWorkingDirectory(substr($dir, 0, $testFolderPosition));
-        }
-
-        $process->run();
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
-
+        $process = new Process($command, __DIR__ . DIRECTORY_SEPARATOR . "..");
+        $process->mustRun();
         return trim($process->getOutput(), "\n");
     }
 

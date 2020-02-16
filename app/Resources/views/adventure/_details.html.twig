@@ -1,15 +1,15 @@
 {% macro search_icon(fieldName, content) %}
-    {% spaceless %}
+    {% apply spaceless %}
         {% set path = path('adventure_index', {('f[' ~ fieldName ~ '][v]'): content}) %}
         <a href="{{ path }}" title="Search for similar adventures"><i class="fa fa-search"></i></a>
-    {% endspaceless %}
+    {% endapply %}
 {% endmacro %}
 
 {% macro search(fieldName, value, content) %}
-    {% spaceless %}
+    {% apply spaceless %}
         {% set path = path('adventure_index', {('f[' ~ fieldName ~ '][v]'): value}) %}
         <a href="{{ path }}" title="Search for similar adventures">{{ content ?: value }}</a>
-    {% endspaceless %}
+    {% endapply %}
 {% endmacro %}
 
 {% import _self as macros %}
