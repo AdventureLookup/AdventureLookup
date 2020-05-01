@@ -65,6 +65,7 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
         $monsters = $doctrine->getRepository('AppBundle:Monster')->findAll();
 
         $faker = Faker\Factory::create();
+        $faker->addProvider(new \Mmo\Faker\PicsumProvider($faker));
 
         $reviewCreatedByProperty = (new ReflectionClass(Review::class))->getProperty('createdBy');
         $reviewCreatedByProperty->setAccessible(true);
@@ -78,7 +79,7 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
                 ->setFoundIn($faker->catchPhrase)
                 ->setPartOf($faker->boolean() ? $faker->catchPhrase : null)
                 ->setLink($faker->url)
-                ->setThumbnailUrl($faker->imageUrl(260, 300))
+                ->setThumbnailUrl($faker->picsumUrl(260, 300))
                 ->setSoloable($faker->boolean())
                 ->setPregeneratedCharacters($faker->boolean())
                 ->setTacticalMaps($faker->boolean())

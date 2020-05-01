@@ -136,6 +136,6 @@ Vagrant.configure("2") do |config|
      # Decrease memory to 256MB
      sed -i -e 's/2g/256m/g' /etc/elasticsearch/jvm.options
      # Listen on 0.0.0.0
-     echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
+     echo "http.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
   SHELL
 end
