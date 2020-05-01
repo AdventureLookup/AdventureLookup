@@ -45,7 +45,7 @@
                     {% set valuesUsed = valuesUsed|merge([bucket.key]) %}
                     {{ macros.filter_checkbox(field, bucket.key, bucket.key in filter['v']|default([]), bucket.doc_count, loop.index0 >= showMoreAfter) }}
                 {% endfor %}
-                {% for value in filter['v']|default([]) if value != '' and value not in valuesUsed %}
+                {% for value in filter['v']|default([])|filter(value => value != '' and value not in valuesUsed) %}
                     {{ macros.filter_checkbox(field, value, true, 0, false) }}
                 {% endfor %}
                 {% if buckets|length > showMoreAfter %}
