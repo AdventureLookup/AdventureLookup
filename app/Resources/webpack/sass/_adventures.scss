@@ -15,6 +15,7 @@ $thumbnail-height: 100px;
   margin: $element-margin-bottom 0;
 
   > span.badge {
+    margin-right: 4px;
     &::after {
       content: '\f00d';
       font: 1rem 'FontAwesome';

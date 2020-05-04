@@ -5,16 +5,8 @@
     <div class="container" id="page--search-adventures">
         <div class="row">
             <div class="col-xs-12 col-md-4 col-lg-3">
-                <div class="adl-sidebar mt-5 mt-md-0">
-                    <div class="content">
-                        <div class="sidebar-title">Adventure Lookup</div>
-                        <form method="post" action="{{ url('adventure_index') }}" id="search-form">
-                            <input type="hidden" value="{{ q }}" name="q" id="search-query-form" />
-                            {% include 'adventures/search_filters.html.twig' %}
-                        </form>
-                        <div id="filter-more"></div>
-                    </div>
-
+                <div class="adl-sidebar mt-5 mt-md-0" id="sidebar-react-root" data-fields="{{ fields.toArray | json_encode | e("html_attr") }}" data-url="{{ url('adventure_index') | e("html_attr") }}" data-initial-filter-values="{{ searchFilter | json_encode | e("html_attr")}}" data-initial-query="{{ q | e("html_attr") }}" data-field-stats="{{ stats | json_encode | e("html_attr") }}"></div>
+                <div class="adl-sidebar">
                     {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                     <a class="btn btn-outline-primary" href="{{ path('adventure_new') }}">
                         <i class="fa fa-plus-circle"></i>
@@ -25,7 +17,6 @@
             </div>
             <div class="col-xs-12 col-md-8 col-lg-9">
                 {% include 'adventures/search_results_header.html.twig' %}
-                {% include 'adventures/search_results_tags.html.twig' %}
                 {% include 'adventures/search_results.html.twig' %}
             </div>
         </div>

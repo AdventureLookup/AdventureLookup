@@ -3,7 +3,7 @@
 
 namespace AppBundle\Field;
 
-class Field
+class Field implements \JsonSerializable
 {
     /**
      * @var string
@@ -140,5 +140,16 @@ class Field
     public function getRelatedEntityClass()
     {
         return $this->relatedEntityClass;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            "name" => $this->name,
+            "type" => $this->type,
+            "multiple" => $this->multiple,
+            "title" => $this->title,
+            "description" => $this->description,
+        ];
     }
 }
