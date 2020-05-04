@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7a9b1020341241abcc796e7546a996cb",
+    "content-hash": "c1c6cda6c87eb4c492c7f169a4ef4e68",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -2327,6 +2327,56 @@
                 "wss"
             ],
             "time": "2018-03-14T08:33:20+00:00"
+        },
+        {
+            "name": "mmo/faker-images",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/morawskim/faker-images.git",
+                "reference": "3b8e8fbfce3008c0ce3660bf63b1457f0a19ce16"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/morawskim/faker-images/zipball/3b8e8fbfce3008c0ce3660bf63b1457f0a19ce16",
+                "reference": "3b8e8fbfce3008c0ce3660bf63b1457f0a19ce16",
+                "shasum": ""
+            },
+            "require": {
+                "fzaninotto/faker": "~1.4",
+                "php": "^5.3.3 || ^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.7",
+                "squizlabs/php_codesniffer": "^2.9.2"
+            },
+            "suggest": {
+                "ext-curl": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Mmo\\Faker\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marcin Morawski",
+                    "email": "marcin@morawskim.pl"
+                }
+            ],
+            "description": "Different images provider for Faker",
+            "keywords": [
+                "faker",
+                "images",
+                "picsum",
+                "provider"
+            ],
+            "time": "2020-02-02T16:20:03+00:00"
         },
         {
             "name": "monolog/monolog",
