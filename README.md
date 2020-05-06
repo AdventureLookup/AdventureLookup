@@ -16,6 +16,8 @@ Repository of Adventure Lookup, proposed by [/u/mattcolville](https://www.reddit
 
 ## Setting up a development environment
 
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/AdventureLookup/AdventureLookup) 
+
 To get you up and running quickly, you should use [Vagrant](https://vagrantup.com) and either [VirtualBox](https://virtualbox.org) or [Docker](https://www.docker.com/) to start up a VM/container with all the dependencies preinstalled.
 
 Using VirtualBox is recommended if you have no experience with Docker or are using Windows without Hyper-V available/enabled. In all other cases, Docker is recommended.

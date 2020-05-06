@@ -4,6 +4,7 @@
     "dev": "encore dev -w",
     "dev-server-guest": "encore dev-server --hot --host 0.0.0.0 --port 8001",
     "dev-server-host": "encore dev-server --hot --port 8002",
+    "dev-server-gitpod": "encore dev-server --hot --port 8002 --public $(gp url 8002) --disable-host-check",
     "prod": "encore production"
   },
   "dependencies": {
