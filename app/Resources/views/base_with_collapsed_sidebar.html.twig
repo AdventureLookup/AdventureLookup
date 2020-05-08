@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="adl-sidebar">
+                    <div class="content">
+                        <a class="no-underline" href="{{ path('adventure_index') }}">
+                            <div class="sidebar-title-big">A</div>
+                        </a>
+                        <a class="no-underline" href="{{ path('adventure_index') }}">
+                            <div class="sidebar-title-big-secondary"><i class="fa fa-home"></i></div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-11">
+                <div class="content-container">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
