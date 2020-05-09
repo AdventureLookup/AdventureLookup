@@ -20,7 +20,8 @@ services:
 
     AppBundle\Service\ElasticSearch:
         arguments:
-            $config: "%elasticsearch%"
+            $host: "%elasticsearch_host%"
+            $indexName: "%elasticsearch_index_name%"
         tags:
             - { name: monolog.logger, channel: elasticsearch }
 

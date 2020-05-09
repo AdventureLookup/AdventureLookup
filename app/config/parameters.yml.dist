@@ -40,3 +40,6 @@ parameters:
 
     affiliate_mappings: []
     announcement: ~
+
+    elasticsearch_host: 'localhost:9200'
+    elasticsearch_index_name: 'adventure'
