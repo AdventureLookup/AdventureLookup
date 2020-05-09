@@ -516,12 +516,10 @@ class AdventureSearch
                             ]
                         ]
                     ];
-                } else {
-                    $fieldNameForSearch = $fieldName;
-                    if ($field->getType() == 'string') {
-                        $fieldNameForSearch .= '.keyword';
-                    }
-                    $filterMatches[] = ['term' => [$fieldNameForSearch => $value]];
+                } else if ($field->getType() === 'string') {
+                    $filterMatches[] = ['term' => [$fieldName . '.keyword' => $value]];
+                } else if ($field->getType() === 'boolean') {
+                    $filterMatches[] = ['term' => [$fieldName => $value === "1"]];
                 }
             }
 
