@@ -148,7 +148,7 @@ checkout the [CONTRIBUTING.md](CONTRIBUTING.md) file.
 - Ubuntu 16.04 as the server
 - MySQL 5.7 to store the adventures
 - Elasticsearch 5.5 to search the adventures
-- PHP7.0 to run the application
+- PHP7.4 to run the application
 - Symfony 3 as the web framework
 - Composer as PHP package manager
 - Node.js 12 and npm 6 for frontend package management

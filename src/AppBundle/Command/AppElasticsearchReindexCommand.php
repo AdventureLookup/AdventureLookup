@@ -46,11 +46,10 @@ class AppElasticsearchReindexCommand extends Command
         ;
     }
 
-    // TODO: Add when using PHP 7.1
-    /* private */ const FIELD_NON_SEARCHABLE = [
+    private const FIELD_NON_SEARCHABLE = [
         'enabled' => false
     ];
-    const FIELD_STRING = [
+    private const FIELD_STRING = [
         'type' => 'text',
         'fields' => [
             'keyword' => [
@@ -59,13 +58,13 @@ class AppElasticsearchReindexCommand extends Command
             ]
         ]
     ];
-    const FIELD_TEXT = [
+    private const FIELD_TEXT = [
         'type' => 'text',
     ];
-    const FIELD_INTEGER = [
+    private const FIELD_INTEGER = [
         'type' => 'integer',
     ];
-    const FIELD_BOOLEAN = [
+    private const FIELD_BOOLEAN = [
         'type' => 'boolean',
     ];
     const FIELD_DATE = [

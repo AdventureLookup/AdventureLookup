@@ -11,7 +11,7 @@ Vagrant.configure("2") do |config|
   config.vm.network "private_network", type: "dhcp"
 
   config.vm.provider "virtualbox" do |vb, override|
-    override.vm.box = "ubuntu/xenial64"
+    override.vm.box = "ubuntu/focal64"
     vb.memory = "2048"
     vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
   end
@@ -64,11 +64,11 @@ Vagrant.configure("2") do |config|
      mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS adl"
 
      # PHP
-     apt_quiet install php7.0 php7.0-curl php7.0-fpm php7.0-mysql php7.0-zip php7.0-cli php7.0-xml php7.0-mbstring php7.0-sqlite3 php7.0-intl php-xdebug
+     apt_quiet install php7.4 php7.4-curl php7.4-fpm php7.4-mysql php7.4-zip php7.4-cli php7.4-xml php7.4-mbstring php7.4-sqlite3 php7.4-intl php-xdebug
 
      # Increase realpath cache size and ttl for better performance
-     sed -i "s/^;realpath_cache_size =$/realpath_cache_size = 4096k/" /etc/php/7.0/cli/php.ini
-     sed -i "s/^;realpath_cache_ttl =$/realpath_cache_ttl = 7200/"    /etc/php/7.0/cli/php.ini
+     sed -i "s/^;realpath_cache_size =$/realpath_cache_size = 4096k/" /etc/php/7.4/cli/php.ini
+     sed -i "s/^;realpath_cache_ttl =$/realpath_cache_ttl = 7200/"    /etc/php/7.4/cli/php.ini
 
      # Utilities
      apt_quiet install htop git nano vim unzip curl wget
