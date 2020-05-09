@@ -6,9 +6,7 @@ use AppBundle\Entity\Adventure;
 use AppBundle\Listener\SearchIndexUpdater;
 use AppBundle\Service\ElasticSearch;
 use Doctrine\ORM\EntityManagerInterface;
-use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -75,17 +73,13 @@ class AppElasticsearchReindexCommand extends Command
     {
         $client = $this->elasticSearch->getClient();
         $indexName = $this->elasticSearch->getIndexName();
-        $typeName = $this->elasticSearch->getTypeName();
 
-        try {
+        if ($client->indices()->exists([ 'index' => $indexName ])) {
             $client->indices()->delete([
                 'index' => $indexName,
             ]);
             $output->writeln('Deleted index.');
-        } catch (Missing404Exception $e) {
-
         }
-
         $client->indices()->create([
             'index' => $indexName,
         ]);
@@ -125,11 +119,8 @@ class AppElasticsearchReindexCommand extends Command
 
         $client->indices()->putMapping([
             'index' => $indexName,
-            'type' => $typeName,
             'body' => [
-                SearchIndexUpdater::TYPE => [
-                    'properties' => $mappings
-                ]
+                'properties' => $mappings
             ]
         ]);
         $output->writeln('Created mappings');

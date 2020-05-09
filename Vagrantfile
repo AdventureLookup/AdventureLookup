@@ -108,10 +108,10 @@ Vagrant.configure("2") do |config|
      fi
 
      # Elasticsearch
-     wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.5.3.deb
-     dpkg -i elasticsearch-5.5.3.deb
+     wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.6.2-amd64.deb
+     dpkg -i elasticsearch-7.6.2-amd64.deb
      systemctl enable elasticsearch.service
-     rm elasticsearch-5.5.3.deb
+     rm elasticsearch-7.6.2-amd64.deb
      service elasticsearch start
 
      ### Development Elasticsearch settings:

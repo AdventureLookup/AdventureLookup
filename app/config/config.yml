@@ -10,7 +10,6 @@ parameters:
     locale: en
     elasticsearch:
         index_name: 'adventure'
-        type_name: 'all'
     container.dumper.inline_class_loader: true
     container.autowiring.strict_mode: true
 

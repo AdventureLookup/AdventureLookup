@@ -30,11 +30,6 @@ class AdventureSearch
     private $indexName;
 
     /**
-     * @var string
-     */
-    private $typeName;
-
-    /**
      * @var TimeProvider
      */
     private $timeProvider;
@@ -44,7 +39,6 @@ class AdventureSearch
         $this->fieldProvider = $fieldProvider;
         $this->client = $elasticSearch->getClient();
         $this->indexName = $elasticSearch->getIndexName();
-        $this->typeName = $elasticSearch->getTypeName();
         $this->timeProvider = $timeProvider;
     }
 
@@ -159,7 +153,6 @@ class AdventureSearch
 
         $result = $this->client->search([
             'index' => $this->indexName,
-            'type' => $this->typeName,
             'body' => [
                 'query' => $query,
                 'from' => self::ADVENTURES_PER_PAGE * ($page - 1),
@@ -203,7 +196,7 @@ class AdventureSearch
                 $hit['_score']
             );
         }, $result['hits']['hits']);
-        $totalResults = $result['hits']['total'];
+        $totalResults = $result['hits']['total']['value'];
         $hasMoreResults = $totalResults > $page * self::ADVENTURES_PER_PAGE;
 
         return [$adventureDocuments, $totalResults, $hasMoreResults, $result['aggregations']];
@@ -217,7 +210,6 @@ class AdventureSearch
 
         $result = $this->client->search([
             'index' => $this->indexName,
-            'type' => $this->typeName,
             'body' => [
                 'query' => [
                     'match' => [
@@ -260,7 +252,6 @@ class AdventureSearch
         $fieldName = $field->getName();
         $response = $this->client->search([
             'index' => $this->indexName,
-            'type' => $this->typeName,
             'body' => [
                 'query' => [
                     'match_phrase_prefix' => [
@@ -319,7 +310,6 @@ class AdventureSearch
 
         $response = $this->client->search([
             'index' => $this->indexName,
-            'type' => $this->typeName,
             'body' => [
                 'size' => 0,
                 'aggregations' => $aggregations

@@ -15,11 +15,6 @@ class ElasticSearch
     private $indexName;
 
     /**
-     * @var string
-     */
-    private $typeName;
-
-    /**
      * @var Client
      */
     private $client;
@@ -28,7 +23,6 @@ class ElasticSearch
     {
         $this->client = $clientBuilder->setLogger($logger)->build();
         $this->indexName = $config['index_name'];
-        $this->typeName = $config['type_name'];
     }
 
     /**
@@ -37,14 +31,6 @@ class ElasticSearch
     public function getIndexName(): string
     {
         return $this->indexName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTypeName(): string
-    {
-        return $this->typeName;
     }
 
     /**
