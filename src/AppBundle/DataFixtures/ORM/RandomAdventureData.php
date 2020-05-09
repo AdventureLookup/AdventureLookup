@@ -43,6 +43,8 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
      */
     public function load(ObjectManager $em)
     {
+        $isHeroku = 'heroku' === $this->container->getParameter('kernel.environment');
+
         /** @var ManagerRegistry $doctrine */
         $doctrine = $this->container->get('doctrine');
 
@@ -67,7 +69,10 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
         $reviewCreatedByProperty = (new ReflectionClass(Review::class))->getProperty('createdBy');
         $reviewCreatedByProperty->setAccessible(true);
 
-        for ($i = 0; $i < 200; ++$i) {
+        // Create less adventures on Heroku. The free tier database only allows 10000 rows
+        // and 200 adventures use more than 10000 rows.
+        $count = $isHeroku ? 50 : 200;
+        for ($i = 0; $i < $count; ++$i) {
             $adventure = new Adventure();
             $adventure
                 ->setTitle($faker->unique->catchPhrase)
@@ -143,6 +148,10 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
             }
 
             $em->persist($adventure);
+            if ($isHeroku && 9 === $i % 10) {
+                // Flush more often on Heroku to not run into the memory limit.
+                $em->flush();
+            }
         }
         $em->flush();
     }
