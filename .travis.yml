@@ -2,7 +2,8 @@ dist: trusty
 sudo: false
 language: php
 php:
-  - '7.0.21'
+  - '7.4'
+
 env:
   global:
     - SYMFONY_ENV=test
