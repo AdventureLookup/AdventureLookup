@@ -36,7 +36,9 @@ class ApiController extends Controller
 
         return new JsonResponse([
             "total_count" => $totalNumberOfResults,
-            "adventures" => $adventures
+            "adventures" => array_map(function (AdventureDocument $adventure) {
+                return $this->serializeAdventureDocument($adventure);
+            }, $adventures)
         ]);
     }
 
@@ -76,7 +78,7 @@ class ApiController extends Controller
         })->toArray();
 
         return new JsonResponse([
-            "adventure" => AdventureDocument::fromAdventure($adventure),
+            "adventure" => $this->serializeAdventureDocument(AdventureDocument::fromAdventure($adventure)),
             "reviews" => $reviews,
             "change_requests" => $changeRequests
         ]);
@@ -92,5 +94,39 @@ class ApiController extends Controller
     public function docsAction() {
 
         return $this->render("api/docs.html.twig");
+    }
+
+    /**
+     * @param AdventureDocument $adventure
+     * @return array
+     */
+    private function serializeAdventureDocument(AdventureDocument $adventure): array
+    {
+        return [
+            "id" => $adventure->getId(),
+            "title" => $adventure->getTitle(),
+            "description" => $adventure->getDescription(),
+            "slug" => $adventure->getSlug(),
+            "authors" => $adventure->getAuthors(),
+            "edition" => $adventure->getEdition(),
+            "environments" => $adventure->getEnvironments(),
+            "items" => $adventure->getItems(),
+            "publisher" => $adventure->getPublisher(),
+            "setting" => $adventure->getSetting(),
+            "common_monsters" => $adventure->getCommonMonsters(),
+            "boss_monsters" => $adventure->getBossMonsters(),
+            "min_starting_level" => $adventure->getMinStartingLevel(),
+            "max_starting_level" => $adventure->getMaxStartingLevel(),
+            "starting_level_range" => $adventure->getStartingLevelRange(),
+            "num_pages" => $adventure->getNumPages(),
+            "found_in" => $adventure->getFoundIn(),
+            "part_of" => $adventure->getPartOf(),
+            "official_url" => $adventure->getLink(),
+            "thumbnail_url" => $adventure->getThumbnailUrl(),
+            "soloable" => $adventure->isSoloable(),
+            "has_pregenerated_characters" => $adventure->hasPregeneratedCharacters(),
+            "has_tactical_maps" => $adventure->isTacticalMaps(),
+            "has_handouts" => $adventure->isHandouts()
+        ];
     }
 }

@@ -3,7 +3,7 @@
 namespace AppBundle\Entity;
 
 
-class AdventureDocument implements \JsonSerializable
+class AdventureDocument
 {
     private $id;
 
@@ -413,37 +413,5 @@ class AdventureDocument implements \JsonSerializable
     private static function getNameOrNull($entity)
     {
         return $entity === null ? null : $entity->getName();
-    }
-
-    public function jsonSerialize()
-    {
-        // Warning: All fields listed here are publicly exposed via the API.
-        // Do not list any fields containing user information.
-        return [
-            "id" => $this->id,
-            "title" => $this->title,
-            "description" => $this->description,
-            "slug" => $this->slug,
-            "authors" => $this->authors,
-            "edition" => $this->edition,
-            "environments" => $this->environments,
-            "items" => $this->items,
-            "publisher" => $this->publisher,
-            "setting" => $this->setting,
-            "common_monsters" => $this->commonMonsters,
-            "boss_monsters" => $this->bossMonsters,
-            "min_starting_level" => $this->minStartingLevel,
-            "max_starting_level" => $this->maxStartingLevel,
-            "starting_level_range" => $this->startingLevelRange,
-            "num_pages" => $this->numPages,
-            "found_in" => $this->foundIn,
-            "part_of" => $this->partOf,
-            "official_url" => $this->link,
-            "thumbnail_url" => $this->thumbnailUrl,
-            "soloable" => $this->soloable,
-            "has_pregenerated_characters" => $this->pregeneratedCharacters,
-            "has_tactical_maps" => $this->tacticalMaps,
-            "has_handouts" => $this->handouts
-        ];
     }
 }
