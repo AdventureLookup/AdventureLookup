@@ -50,5 +50,9 @@ class AdventureSearchTest extends TestCase
             "edition" => ["v" => "DND"],
             "numPages" => ["min" => "2"]
         ], 1], $this->search->requestToSearchParams($request));
+
+        // Invalid filter should not break anything
+        $request = Request::create("/?f=2");
+        $this->assertEquals(["", [], 1], $this->search->requestToSearchParams($request));
     }
 }
