@@ -11,7 +11,7 @@
       Returns a paginated list of all adventures. Use the <code>page</code> query parameter to select the page (1-indexed, default 1).
       You can use the <code>q</code> parameter to filter adventures by a search query and the <code>f</code> parameter to apply filters. To find out more about the syntax and available filters, use the normal web-based search and look at the <code>f</code> parameter in your browser's dev tools.
     </div>
-    <div class="title"><a href="{{ path('api_adventure', {id: '123'}) }}">/api/adventure/{id}</a></div>
+    <div class="title"><a href="{{ path('api_adventure', {id: 'ADVENTURE-ID-HERE'}) }}">/api/adventure/{id}</a></div>
     <div class="content">
       Returns detailed data for an adventure specified by its <code>id</code>. In contrast to the other endpoint, this also includes reviews for the adventure.
     </div>
