@@ -6,8 +6,9 @@ namespace Tests\AppBundle\Field;
 use AppBundle\Exception\FieldDoesNotExistException;
 use AppBundle\Field\FieldProvider;
 use Doctrine\Common\Collections\Collection;
+use PHPUnit\Framework\TestCase;
 
-class FieldProviderTest extends \PHPUnit_Framework_TestCase
+class FieldProviderTest extends TestCase
 {
     /**
      * @var FieldProvider

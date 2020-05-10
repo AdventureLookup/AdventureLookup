@@ -14,6 +14,8 @@ use League\Uri\PublicSuffix\ICANNSectionManager;
 use League\Uri\QueryParser;
 use Psr\SimpleCache\CacheInterface;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension
 {
@@ -36,16 +38,16 @@ class AppExtension extends AbstractExtension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter('bool2str', [$this, 'bool2str']),
-            new \Twig_SimpleFilter('add_affiliate_code', [$this, 'addAffiliateCode'])
+            new TwigFilter('bool2str', [$this, 'bool2str']),
+            new TwigFilter('add_affiliate_code', [$this, 'addAffiliateCode'])
         ];
     }
 
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('format_level', [$this, 'formatLevel']),
-            new \Twig_SimpleFunction('format_roles', [$this, 'formatRoles']),
+            new TwigFunction('format_level', [$this, 'formatLevel']),
+            new TwigFunction('format_roles', [$this, 'formatRoles']),
         ];
     }
 

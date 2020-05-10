@@ -11,8 +11,9 @@ use AppBundle\Field\Field;
 use AppBundle\Field\FieldProvider;
 use AppBundle\Service\AdventureSerializer;
 use Doctrine\Common\Collections\ArrayCollection;
+use PHPUnit\Framework\TestCase;
 
-class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
+class AdventureSerializerTest extends TestCase
 {
     const TITLE = 'a title';
     const SLUG = 'a-title';
