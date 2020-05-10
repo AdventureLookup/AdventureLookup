@@ -133,9 +133,9 @@ class BulkEditFormProvider
 
         if ($field->getRelatedEntityClass() === Monster::class) {
             if ($field->getName() === 'commonMonsters') {
-                $formChoices = $this->getFieldChoicesForRelatedField($repository, 'name', 'tbl.isUnique = 0');
+                $formChoices = $this->getFieldChoicesForRelatedField($repository, 'name', 'tbl.isUnique = FALSE');
             } else if ($field->getName() === 'bossMonsters') {
-                $formChoices = $this->getFieldChoicesForRelatedField($repository, 'name', 'tbl.isUnique = 1');
+                $formChoices = $this->getFieldChoicesForRelatedField($repository, 'name', 'tbl.isUnique = TRUE');
             } else {
                 throw new \LogicException(sprintf('Unknown monster field %s', $field->getName()));
             }
