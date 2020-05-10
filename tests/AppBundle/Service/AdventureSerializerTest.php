@@ -38,7 +38,7 @@ class AdventureSerializerTest extends TestCase
 
     private $CREATED_AT;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->fieldProvider = $this->createMock(FieldProvider::class);
         $this->serializer = new AdventureSerializer($this->fieldProvider);

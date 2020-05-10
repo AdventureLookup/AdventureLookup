@@ -60,7 +60,7 @@ class BulkEditFormProviderTest extends TestCase
      */
     private $formBuilder;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->repository = $this->createMock(AdventureRepository::class);
         $this->em = $this->createMock(EntityManagerInterface::class);

@@ -40,7 +40,7 @@ class AppElasticsearchReindexCommand extends Command
     {
         $this
             ->setName('app:elasticsearch:reindex')
-            ->setDescription('Reindex the whole Elasticsearch index')
+            ->setDescription('Drop, create and reindex the whole Elasticsearch index')
         ;
     }
 

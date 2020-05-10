@@ -38,14 +38,13 @@ class BrowserTestCase extends TestCase
         return $session;
     }
 
-    protected function setUp()
-    {
+    protected function setUp(): void    {
         self::executeCommand('php bin/console doctrine:database:drop --force --env test');
         self::executeCommand('php bin/console doctrine:schema:create --env test');
         self::executeCommand('php bin/console app:elasticsearch:reindex --env test');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         // This will close the connection to Google Chrome if a mink session
         // was started using createMinkSession().
