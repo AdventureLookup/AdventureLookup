@@ -129,7 +129,7 @@ class AdventureController extends Controller
     /**
      * Finds and displays a random adventure entity.
      *
-     * @Route("/randomadventure", name="adventure_random")
+     * @Route("/random-adventure", name="adventure_random")
      * @Method("GET")
      *
      * @param EntityManagerInterface $em
@@ -146,11 +146,9 @@ class AdventureController extends Controller
             SELECT a.id, a.slug from adventure a ORDER by RAND() limit 1
         ",$rsm);
 
-        $random_adventure = $query->getResult();
-        // var_dump($random_adventure);
+        $randomAdventure = $query->getResult();
 
-        $a = $random_adventure[0];
-        // var_dump($a);
+        $a = $randomAdventure[0];
 
         if (!$a) {
             throw $this->createNotFoundException(
