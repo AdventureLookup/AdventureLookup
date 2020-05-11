@@ -74,13 +74,6 @@
                                     </a>
                                 {% endif %}
                             </div>
-                            <div class="col-sm-6 col-md-4 col-lg-12">
-                                <a href="https://github.com/adventurelookup/adventurelookup/issues"
-                                   target="_blank" class="btn btn-secondary" role="button">
-                                    <i class="fa fa-flag"></i>
-                                    Report Bug
-                                </a>
-                            </div>
                             {% if is_granted('delete', adventure) %}
                                 <div class="col-sm-6 col-md-4 col-lg-12">
                                     {{ form_start(delete_form) }}
