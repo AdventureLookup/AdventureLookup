@@ -131,9 +131,11 @@ class AdventureSearch
             'type' => $this->typeName,
             'body' => [
                 'query' => [
-                    'fuzzy' => [
+                    'match' => [
                         'title' => [
-                            'value' => $title,
+                            'query' => $title,
+                            'operator' => 'and',
+                            'fuzziness' => 'AUTO'
                         ]
                     ]
                 ],
