@@ -11,6 +11,7 @@ use AppBundle\Form\Type\ReviewType;
 use AppBundle\Security\AdventureVoter;
 use AppBundle\Service\AdventureSearch;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -123,6 +124,42 @@ class AdventureController extends Controller
             'review_delete_form' => $reviewDeleteForm->createView(),
             'lists' => $adventureListRepository->myLists($user),
         ]);
+    }
+
+    /**
+     * Finds and displays a random adventure entity.
+     *
+     * @Route("/randomadventure", name="adventure_random")
+     * @Method("GET")
+     *
+     * @param EntityManagerInterface $em
+     * @return Response
+     */
+    public function randomAction(EntityManagerInterface $em)
+    {
+        $rsm = new ResultSetMapping();
+        $rsm->addEntityResult(Adventure::class, 'a');
+        $rsm->addFieldResult('a', 'id', 'id');
+        $rsm->addFieldResult('a', 'slug', 'slug');
+
+        $query = $em->createNativeQuery("
+            SELECT a.id, a.slug from adventure a ORDER by RAND() limit 1
+        ",$rsm);
+
+        $random_adventure = $query->getResult();
+        // var_dump($random_adventure);
+
+        $a = $random_adventure[0];
+        // var_dump($a);
+
+        if (!$a) {
+            throw $this->createNotFoundException(
+                'No adventure found'
+            );
+        }
+
+        return $this->redirectToRoute('adventure_show', ['slug' => $a->getSlug()]);
+
     }
 
     /**
