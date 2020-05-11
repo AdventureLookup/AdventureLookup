@@ -13,11 +13,14 @@
     "font-awesome": "^4.7.0",
     "jquery": "^3.5.0",
     "popper.js": "^1.16.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
     "selectize": "^0.12.6",
     "toastr": "^2.1.4",
     "vanilla-lazyload": "^8.17.0"
   },
   "devDependencies": {
+    "@babel/preset-react": "^7.9.4",
     "@symfony/webpack-encore": "^0.28.2",
     "autoprefixer": "^9.7.4",
     "less": "^3.10.3",

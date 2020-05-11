@@ -16,6 +16,7 @@ Encore
 
   .enableSassLoader()
   .enablePostCssLoader()
+  .enableReactPreset()
   .autoProvidejQuery()
   .autoProvideVariables({
     'Tether': 'tether',
