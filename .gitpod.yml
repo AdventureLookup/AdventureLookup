@@ -1,5 +1,8 @@
 tasks:
   - command: /home/gitpod/elasticsearch-5.5.3/bin/elasticsearch
+    # Run ElasticSearch when prebuilding the workspace, so that adventures can be indexed.
+    # It has to run in the background so that the prebuild does not wait for it to exit.
+    prebuild: /home/gitpod/elasticsearch-5.5.3/bin/elasticsearch &
   - init: |
       mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';"
       mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS adl;"
@@ -44,7 +47,7 @@ github:
     # add a "Review in Gitpod" button to the pull request's description (defaults to false)
     addBadge: true
     # add a label once the prebuild is ready to pull requests (defaults to false)
-    addLabel: true
+    addLabel: false
 
 vscode:
   extensions:
