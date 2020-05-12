@@ -19,4 +19,4 @@ RUN sudo apt-get update \
   && sudo update-alternatives --set php /usr/bin/php7.0
 
 # Re-install composer, because the version shipped with GitPod requires PHP7.4
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
+RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/bin --filename=composer
