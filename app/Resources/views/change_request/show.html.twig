@@ -46,9 +46,9 @@
                             <input type="hidden" name="_csrf_token" value="{{ csrf_token('curatorRemarksForChangeRequest') }}" />
                             <div class="input-group input-group-sm">
                                 <input type="text" class="form-control" placeholder="Publicly comment on this change request (i.e. if invalid)" name="remarks" maxlength="512" value="{{ changeRequest.curatorRemarks }}">
-                                <span class="input-group-btn">
+                                <div class="input-group-append">
                                     <button class="btn btn-secondary" type="submit" role="button">Update Remarks</button>
-                                </span>
+                                </div>
                             </div>
                         </div>
                     </form>

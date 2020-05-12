@@ -21,6 +21,9 @@ class ReviewType extends AbstractType
                 'label_attr' => [
                     'class' => 'd-none'
                 ],
+                'attr' => [
+                    'class' => 'd-none'
+                ]
             ])
             ->add('comment', TextareaType::class, [
                 'required' => false,
@@ -31,7 +34,7 @@ class ReviewType extends AbstractType
                 ],
             ]);
     }
-    
+
     /**
      * {@inheritdoc}
      */

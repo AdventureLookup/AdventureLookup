@@ -75,10 +75,10 @@
                                 {% endif %}
                             </div>
                             <div class="col-sm-6 col-md-4 col-lg-12">
-                                <a href="https://github.com/adventurelookup/adventurelookup/issues"
-                                   target="_blank" class="btn btn-secondary" role="button">
-                                    <i class="fa fa-flag"></i>
-                                    Report Bug
+                                <a href="{{ path('adventure_random') }}"
+                                   class="btn btn-outline-secondary" role="button">
+                                    <i class="fa fa-random"></i>
+                                    Random Adventure
                                 </a>
                             </div>
                             {% if is_granted('delete', adventure) %}
