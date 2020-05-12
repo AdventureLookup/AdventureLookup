@@ -3,14 +3,15 @@ tasks:
     # Run ElasticSearch when prebuilding the workspace, so that adventures can be indexed.
     # It has to run in the background so that the prebuild does not wait for it to exit.
     prebuild: /home/gitpod/elasticsearch-5.5.3/bin/elasticsearch &
-  - init: |
+  - before: gp await-port 9200
+    init: |
       mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';"
       mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS adl;"
       composer install -n --no-suggest
       php bin/console doctrine:migrations:migrate --no-interaction
       php bin/console doctrine:fixtures:load --no-interaction --fixtures src/AppBundle/DataFixtures/ORM/RandomAdventureData.php --fixtures src/AppBundle/DataFixtures/ORM/TestUserData.php
       php bin/console app:elasticsearch:reindex
-    command: gp await-port 9200 && php bin/console server:start 0.0.0.0:8000
+    command: php bin/console server:start 0.0.0.0:8000
   - init: npm install
     command: npm run dev-server-gitpod
     openMode: split-right
