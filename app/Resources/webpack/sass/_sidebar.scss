@@ -38,6 +38,15 @@
       font-size: 2rem;
     }
 
+    .sidebar-title-big i.fa {
+      @extend .sidebar-title-big;
+  
+      line-height: inherit;
+      display: inline-flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
     .sidebar-title-big-secondary {
       @extend .sidebar-title-big;
       background-color: $adl-grey-dark;
@@ -45,6 +54,16 @@
       &:hover {
         background-color: darken($adl-grey-dark, 7.5%);
         cursor: pointer;
+      }
+    }
+
+    .sidebar-title-big-offwhite {
+      @extend .sidebar-title-big;
+      color: $adl-grey-dark;
+      background-color: $adl-offwhite;
+  
+      &:hover {
+        background-color: darken($adl-offwhite, 7.5%);
       }
     }
 
