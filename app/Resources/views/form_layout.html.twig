@@ -1,0 +1,30 @@
+{% extends "bootstrap_4_layout.html.twig"  %}
+
+{#
+    TODO: Remove this template entirely in Symfony 4.1
+    https://symfony.com/blog/new-in-symfony-4-1-form-field-help
+#}
+
+{% block choice_widget %}
+    {{ parent() }}
+
+    {% if help is defined %}
+        <span class="form-text text-muted">{{ help }}</span>
+    {% endif %}
+{% endblock %}
+
+{% block form_widget_simple %}
+    {{ parent() }}
+
+    {% if help is defined %}
+        <span class="form-text text-muted">{{ help }}</span>
+    {% endif %}
+{% endblock %}
+
+{% block textarea_widget %}
+    {{ parent() }}
+
+    {% if help is defined %}
+        <span class="form-text text-muted">{{ help }}</span>
+    {% endif %}
+{% endblock %}
