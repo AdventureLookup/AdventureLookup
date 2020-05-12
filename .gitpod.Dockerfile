@@ -20,3 +20,7 @@ RUN sudo apt-get update \
 
 # Re-install composer, because the version shipped with GitPod requires PHP7.4
 RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/bin --filename=composer
+
+# Set authentication plugin to mysql_native_password to fix compatibility with PHP7.0
+# https://www.php.net/manual/de/mysqli.requirements.php
+RUN echo '[mysqld]\ndefault-authentication-plugin=mysql_native_password' > /etc/mysql/mysql.conf.d/php7.0-fix.cnf
