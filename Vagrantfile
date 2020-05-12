@@ -24,24 +24,6 @@ Vagrant.configure("2") do |config|
     override.ssh.password = "vagrant"
   end
 
-  # Previous versions of the Ubuntu Vagrant box only had the "ubuntu" user.
-  # As of January 2018, newer boxes also have a "vagrant" user. People who
-  # update their Vagrant box will automatically switch to the new user
-  # the next time they "vagrant ssh". This provisioner makes sure the
-  # .bashrc files always contains the 'cd /vagrant' line.
-  config.vm.provision "always", type: "shell", run: "always", inline: <<-SHELL
-    if [ -d "/home/vagrant" ]; then
-      if ! grep -q "cd /vagrant" /home/vagrant/.bashrc ; then
-        echo "cd /vagrant" >> /home/vagrant/.bashrc
-      fi
-    fi
-    if [ -d "/home/ubuntu" ]; then
-      if ! grep -q "cd /vagrant" /home/ubuntu/.bashrc ; then
-        echo "cd /vagrant" >> /home/ubuntu/.bashrc
-      fi
-    fi
-  SHELL
-
   config.vm.provision "initial", type: "shell", inline: <<-SHELL
      # Make apt-get commands as quiet as possible by using ""-qq -o=Dpkg::Use-Pty=0"
      # https://askubuntu.com/a/668859
@@ -137,5 +119,29 @@ Vagrant.configure("2") do |config|
      sed -i -e 's/2g/256m/g' /etc/elasticsearch/jvm.options
      # Listen on 0.0.0.0
      echo "http.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
+  SHELL
+
+  # This provisioner must be below the other provisioner. Otherwise it would
+  # try to start services before they are installed.
+  config.vm.provision "always", type: "shell", run: "always", inline: <<-SHELL
+    # Previous versions of the Ubuntu Vagrant box only had the "ubuntu" user.
+    # As of January 2018, newer boxes also have a "vagrant" user. People who
+    # update their Vagrant box will automatically switch to the new user
+    # the next time they "vagrant ssh". This provisioner makes sure the
+    # .bashrc files always contains the 'cd /vagrant' line.
+    if [ -d "/home/vagrant" ]; then
+      if ! grep -q "cd /vagrant" /home/vagrant/.bashrc ; then
+        echo "cd /vagrant" >> /home/vagrant/.bashrc
+      fi
+    fi
+    if [ -d "/home/ubuntu" ]; then
+      if ! grep -q "cd /vagrant" /home/ubuntu/.bashrc ; then
+        echo "cd /vagrant" >> /home/ubuntu/.bashrc
+      fi
+    fi
+
+    # These do not start automatically in the Docker provisioner.
+    service mysql start
+    service elasticsearch start
   SHELL
 end
