@@ -23,7 +23,11 @@ ports:
     onOpen: ignore
   - port: 8002
     onOpen: ignore
+  - port: 8003
+    onOpen: ignore
   - port: 9200
+    onOpen: ignore
+  - port: 9222
     onOpen: ignore
   - port: 9300
     onOpen: ignore
