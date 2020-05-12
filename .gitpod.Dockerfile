@@ -18,6 +18,13 @@ RUN sudo apt-get update \
   && sudo rm -rf /var/lib/apt/lists/* \
   && sudo update-alternatives --set php /usr/bin/php7.0
 
+# Install Google Chrome
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - \
+  && echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' | sudo tee /etc/apt/sources.list.d/google-chrome.list \
+  && sudo apt-get update \
+  && sudo apt-get -y install google-chrome-stable \
+  && sudo rm -rf /var/lib/apt/lists/* 
+
 # Re-install composer, because the version shipped with GitPod requires PHP7.4
 RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/bin --filename=composer
 
