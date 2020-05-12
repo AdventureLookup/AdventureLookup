@@ -38,4 +38,13 @@ class AdventureControllerTest extends WebTestCase
         // Make sure adventure isn't part of the index any more
         $this->assertFalse($session->getPage()->hasContent($adventure->getTitle()));
     }
+
+    public function testRandomAdventure()
+    {
+        $client = static::createClient();
+
+        $client->request('GET', '/random-adventure');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+    }
 }
