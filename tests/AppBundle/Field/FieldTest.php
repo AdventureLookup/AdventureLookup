@@ -49,6 +49,20 @@ class FieldTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(self::RELATED_ENTITY_CLASS, $field->getRelatedEntityClass());
     }
 
+    public function testJSONSerialization()
+    {
+        $field = new Field(self::NAME, self::TYPE, self::MULTIPLE, self::SEARCHABLE, self::TITLE,
+        self::DESCRIPTION, self::SEARCH_BOOST, self::RELATED_ENTITY_CLASS);
+
+        $this->assertEquals([
+            "name" => self::NAME,
+            "type" => self::TYPE,
+            "multiple" => self::MULTIPLE,
+            "title" => self::TITLE,
+            "description" => self::DESCRIPTION,
+        ], json_decode(json_encode($field), true));
+    }
+
     /**
      * @dataProvider aggregationFieldNameDataProvider
      */

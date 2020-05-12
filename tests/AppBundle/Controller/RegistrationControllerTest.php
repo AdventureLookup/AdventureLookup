@@ -31,12 +31,12 @@ class RegistrationControllerTest extends WebTestCase
         $session = $this->makeSession();
         $page = $this->submitForm($session, $username, $email, $password);
 
-        $errorMessages = $page->findAll('css', '.form-control-feedback li');
+        $errorMessages = $page->findAll('css', '.form-error-message');
         $this->assertCount(array_sum($expectedErrors), $errorMessages);
 
         foreach ($expectedErrors as $expectedError => $count) {
             $this->assertCount($count,
-                $page->findAll('css', '.form-control-feedback li:contains("' . $expectedError . '")'));
+                $page->findAll('css', '.form-error-message:contains("' . $expectedError . '")'));
         }
     }
 
