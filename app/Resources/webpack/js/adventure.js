@@ -37,7 +37,7 @@ function debounce(func, wait, immediate) {
             const similarAdventuresWarning = $('.similar-adventures-warning');
             const similarAdventuresList = $('.similar-adventures-list');
             if (data.length === 0) {
-                similarAdventuresWarning.addClass('hidden-xs-up');
+                similarAdventuresWarning.addClass('d-none');
             } else {
                 similarAdventuresList.empty();
                 for (let i = 0; i < data.length; i++) {
@@ -49,7 +49,7 @@ function debounce(func, wait, immediate) {
                     link.attr('href', '/adventures/' + adventure['slug']);
                     similarAdventuresList.append($('<li></li>').append(link));
                 }
-                similarAdventuresWarning.removeClass('hidden-xs-up');
+                similarAdventuresWarning.removeClass('d-none');
             }
         })
     }, DEBOUNCE));

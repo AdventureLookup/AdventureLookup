@@ -13,8 +13,9 @@ use League\Uri\PublicSuffix\CurlHttpClient;
 use League\Uri\PublicSuffix\ICANNSectionManager;
 use League\Uri\QueryParser;
 use Psr\SimpleCache\CacheInterface;
+use Twig\Extension\AbstractExtension;
 
-class AppExtension extends \Twig_Extension
+class AppExtension extends AbstractExtension
 {
     /**
      * @var array

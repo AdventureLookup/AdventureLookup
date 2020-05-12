@@ -135,6 +135,7 @@ class AdventureSearch
                         'title' => [
                             'query' => $title,
                             'operator' => 'and',
+                            'fuzziness' => 'AUTO'
                         ]
                     ]
                 ],

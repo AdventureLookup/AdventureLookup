@@ -2,8 +2,8 @@
 
 Repository of Adventure Lookup, proposed by [/u/mattcolville](https://www.reddit.com/user/mattcolville).
 
-| Branch | Travis CI                                        | Code Analysis                          | Link                            | 
-| ------ | ------------------------------------------------ | -------------------------------------- | ------------------------------- | 
+| Branch | Travis CI                                        | Code Analysis                          | Link                            |
+| ------ | ------------------------------------------------ | -------------------------------------- | ------------------------------- |
 | master | [![Build Status][travis-svg-master]][travis-url] | -                                      | https://adventurelookup.com     |
 | dev    | [![Build Status][travis-svg-dev]][travis-url]    | [![codecov][codecov-svg]][codecov-url] | https://dev.adventurelookup.com |
 
@@ -16,45 +16,53 @@ Repository of Adventure Lookup, proposed by [/u/mattcolville](https://www.reddit
 
 ## Setting up a development environment
 
-To get you up and running quickly, you should use [Vagrant](https://vagrantup.com) and [VirtualBox](https://virtualbox.org) to start up a VM with all the dependencies preinstalled.
+To get you up and running quickly, you should use [Vagrant](https://vagrantup.com) and either [VirtualBox](https://virtualbox.org) or [Docker](https://www.docker.com/) to start up a VM/container with all the dependencies preinstalled.
 
-After downloading and installing Vagrant and VirtualBox:
-```
+Using VirtualBox is recommended if you have no experience with Docker or are using Windows without Hyper-V available/enabled. In all other cases, Docker is recommended.
+
+After downloading and installing Vagrant and either VirtualBox or Docker:
+
+```bash
 # Clone the repo to your local machine (this is readonly; you need to fork if you want write)
 git clone git@github.com:AdventureLookup/AdventureLookup.git
- 
-cd AdventureLookup
- 
-# Create and provision the VM
-vagrant up
- 
-# Log into the VM
-vagrant ssh
 
-# You should be inside the /vagrant folder.
+cd AdventureLookup
+
+# Create and provision the VM
+# This takes quite some time on the very first start
+
+# If you installed Docker:
+vagrant up --provider=docker
+
+# If you installed VirtualBox
+vagrant up --provider=virtualbox
 ```
 
 Execute the following commands to finish the installation:
-```
+```bash
+# Log into the VM
+vagrant ssh
+# You should be inside the /vagrant folder.
+
 # Install PHP dependencies
 composer install -n --no-suggest
- 
+
 # Install Frontend dependencies, can be run outside the virtual machine
 npm install
 
 # Setup database (confirm with 'y')
 php bin/console doctrine:migrations:migrate
- 
+
 # Create Elasticsearch index
 php bin/console app:elasticsearch:reindex
- 
+
 # Import dummy adventures (confirm with 'y')
 php bin/console doctrine:fixtures:load --fixtures src/AppBundle/DataFixtures/ORM/RandomAdventureData.php
 php bin/console app:elasticsearch:reindex
 ```
 
 You can execute the following command to create dummy users:
-```
+```bash
 # Creates 'user', 'curator' and 'admin' users, all with password 'asdf'
 php bin/console doctrine:fixtures:load --append --fixtures src/AppBundle/DataFixtures/ORM/TestUserData.php
 ```
@@ -63,11 +71,11 @@ If you didn't use Vagrant but an existing MySQL database, adjust the `app/config
 
 ### Running the application
 
-```
+```bash
 # Start Symfony development server on port 8000 to run the application
 # Must be run inside the virtual machine you used `vagrant ssh` to get into earlier
 php bin/console server:start 0.0.0.0:8000
- 
+
 # Start webpack to watch changes to assets and recompile them
 # Can be run inside the virtual machine or outside of the virtual machine
 # If run inside the virtual machine:
@@ -83,21 +91,22 @@ ElasticSearch can be accessed at http://localhost:9200.
 
 ### Running tests
 
-Tests use PHPUnit to run. There are three testsuites, one with unit tests, one with functional tests 
-and one with browser tests. 
+Tests use PHPUnit to run. There are three testsuites, one with unit tests, one with functional tests
+and one with browser tests.
 Unit tests can be executed like this:
-```
+```bash
 php vendor/symfony/phpunit-bridge/bin/simple-phpunit --testsuite unittests
 ```
 Functional tests can be executed like so:
-```
+```bash
 php vendor/symfony/phpunit-bridge/bin/simple-phpunit --testsuite functional
 ```
-Browser tests require Google Chrome with remote debugging enabled as well as the application running in the test environment. 
+Browser tests require Google Chrome with remote debugging enabled as well as the application running in the test environment.
 To do that, execute `bash scripts/prepare-browser-tests.sh` *once* before executing the tests. There is no
 need to call the script again until you reboot. Then execute the following to run the browser tests:
-```
+```bash
 npm run prod
+php bin/console cache:clear --env test
 php vendor/symfony/phpunit-bridge/bin/simple-phpunit --testsuite browser
 ```
 
