@@ -33,7 +33,7 @@
     {% elseif adventure.reviewBy(app.user) %}
         <div class="alert alert-success">You've already rated/reviewed this adventure.</div>
     {% endif %}
-    {% for review in adventure.sortedReviewsWithComments %}
+    {% for review in adventure.sortedReviewsWithComments(app.user) %}
         <div class="review" data-review-id="{{ review.id }}">
             <p class="d-flex w-100 justify-content-between">
                 <span>
@@ -47,7 +47,7 @@
             <blockquote>
                 <div class="row">
                     <div class="col col-auto d-none d-sm-flex">
-                        <i class="fa fa-quote-left fa-3x review-icon"></i>
+                        <i class="fa fa-thumbs-{{ review.thumbsUp ? 'up' : 'down' }} fa-3x review-icon"></i>
                     </div>
                     <div class="col">
                         {{ review.comment|nl2br }}
@@ -55,8 +55,8 @@
                 </div>
             </blockquote>
             <div class="d-flex w-100 justify-content-between">
-                <div>
-                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                <div class="text-muted">
+                    {% if is_granted('vote', review) %}
                         <span>Has this review been helpful?</span>
                         <div class="review-voting d-inline">
                             <button class="btn btn-sm btn-{% if review.hasUpvoteBy(app.user) %}success{% else %}outline-secondary{% endif %} review-vote-up">yes</button>
