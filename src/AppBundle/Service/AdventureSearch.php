@@ -90,6 +90,23 @@ class AdventureSearch
             case 'createdAt-desc':
                 $sort = ['createdAt' => 'desc'];
             break;
+            case 'reviews':
+                // We use the Wilson Score instead of the average of positive and negative reviews
+                // https://www.elastic.co/de/blog/better-than-average-sort-by-best-rating-with-elasticsearch
+                $sort = [
+                    "_script" => [
+                        "order" => "desc",
+                        "type" => "number",
+                        "script" => [
+                            "inline" => "
+                                long p = doc['positiveReviews'].value;
+                                long n = doc['negativeReviews'].value;
+                                return p + n > 0 ? ((p + 1.9208) / (p + n) - 1.96 * Math.sqrt((p * n) / (p + n) + 0.9604) / (p + n)) / (1 + 3.8416 / (p + n)) : 0;
+                            "
+                        ]
+                    ]
+                ];
+            break;
             default:
                 $sort = ['_score'];
             break;
@@ -152,6 +169,8 @@ class AdventureSearch
                 $hit['_source']['pregeneratedCharacters'],
                 $hit['_source']['tacticalMaps'],
                 $hit['_source']['handouts'],
+                $hit['_source']['positiveReviews'],
+                $hit['_source']['negativeReviews'],
                 $hit['_score']
             );
         }, $result['hits']['hits']);

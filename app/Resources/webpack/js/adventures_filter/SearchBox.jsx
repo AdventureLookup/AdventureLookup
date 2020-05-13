@@ -2,6 +2,7 @@ import * as React from "react";
 
 const sortByOptions = [
   { title: "Best match", value: "" },
+  { title: "Reviews", value: "reviews" },
   { title: "Title", value: "title" },
   { title: "Most pages", value: "numPages-desc" },
   { title: "Least pages", value: "numPages-asc" },

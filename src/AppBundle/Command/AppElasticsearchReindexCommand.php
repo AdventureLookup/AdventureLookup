@@ -119,6 +119,8 @@ class AppElasticsearchReindexCommand extends Command
             'handouts' => self::FIELD_BOOLEAN,
 
             'createdAt' => self::FIELD_DATE,
+            'numPositiveReviews' => self::FIELD_INTEGER,
+            'numNegativeReviews' => self::FIELD_INTEGER,
         ];
 
         $client->indices()->putMapping([
