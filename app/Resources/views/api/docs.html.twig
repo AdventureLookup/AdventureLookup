@@ -1,0 +1,22 @@
+{% extends 'base_with_collapsed_sidebar.html.twig' %}
+
+{% block content %}
+    <div class="title">API Docs</div>
+    <div class="content">
+      The API provides readonly access to the adventure data hosted at this site.
+      There are two API endpoints, both of which are described below.
+    </div>
+    <div class="title"><a href="{{ path('api_adventures') }}">/api/adventures</a></div>
+    <div class="content">
+      Returns a paginated list of all adventures. Use the <code>page</code> query parameter to select the page (1-indexed, default 1).
+      You can use the <code>q</code> parameter to filter adventures by a search query and the <code>f</code> parameter to apply filters. To find out more about the syntax and available filters, use the normal web-based search and look at the <code>f</code> parameter in your browser's dev tools.
+    </div>
+    <div class="title"><a href="{{ path('api_adventure', {id: 'ADVENTURE-ID-HERE'}) }}">/api/adventure/{id}</a></div>
+    <div class="content">
+      Returns detailed data for an adventure specified by its <code>id</code>. In contrast to the other endpoint, this also includes reviews for the adventure.
+    </div>
+    <div class="title">Feedback welcome!</div>
+    <div class="content">
+      This API is quite new. Please create an issue in the AdventureLookup GitHub repository if you have any feedback or want to expand this documentation.
+    </div>
+{% endblock %}

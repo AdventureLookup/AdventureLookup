@@ -4,6 +4,7 @@
 namespace Tests\AppBundle\Entity;
 
 use AppBundle\Entity\Adventure;
+use AppBundle\Entity\ChangeRequest;
 use AppBundle\Entity\Edition;
 use AppBundle\Entity\Monster;
 use AppBundle\Entity\Publisher;
@@ -30,6 +31,25 @@ class AdventureTest extends TestCase
             $this->makeCommonMonster(),
             $this->makeBossMonster(),
         ]));
+
+        $changeRequests = new \ReflectionProperty($this->subject, 'changeRequests');
+        $changeRequests->setAccessible(true);
+        $changeRequests->setValue($this->subject, new ArrayCollection([
+            $this->makeChangeRequest(true),
+            $this->makeChangeRequest(false),
+        ]));
+    }
+
+    public function testGetChangeRequests()
+    {
+        $this->assertCount(2, $this->subject->getChangeRequests());
+    }
+
+    public function testGetUnresolvedChangeRequests()
+    {
+        $changeRequests = $this->subject->getUnresolvedChangeRequests();
+        $this->assertCount(1, $changeRequests);
+        $this->assertFalse($changeRequests->first()->isResolved());
     }
 
     public function testGetMonsters()
@@ -132,5 +152,12 @@ class AdventureTest extends TestCase
         $monster->setIsUnique(true);
 
         return $monster;
+    }
+
+    private function makeChangeRequest(bool $resolved): ChangeRequest
+    {
+        $changeRequest = new ChangeRequest();
+        $changeRequest->setResolved($resolved);
+        return $changeRequest;
     }
 }
