@@ -126,7 +126,7 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
             }
 
             if ($faker->boolean(80)) {
-                $nReviews = $faker->numberBetween(0, 300);
+                $nReviews = $faker->numberBetween(1, 20);
                 for ($j = 0; $j < $nReviews; $j++) {
                     $review = new Review($adventure);
                     if ($faker->boolean) {
