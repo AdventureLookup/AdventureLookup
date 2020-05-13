@@ -47,7 +47,7 @@ class AdventureSearch
      * @param int $page
      * @return array
      */
-    public function search(string $q, array $filters, int $page)
+    public function search(string $q, array $filters, int $page, string $sortBy)
     {
         if ($page < 1 || $page * self::ADVENTURES_PER_PAGE > 5000) {
             throw new BadRequestHttpException();
@@ -67,21 +67,62 @@ class AdventureSearch
             $matches = ['match_all' => new \stdClass()];
         }
 
+        $query = [
+            // All matches must evaluate to true for a result to be returned.
+            'bool' => [
+                "must" => $matches
+            ]
+        ];
+
+        switch ($sortBy) {
+            case 'title':
+                $sort = 'title.keyword';
+            break;
+            case 'numPages-desc':
+                $sort = ['numPages' => 'desc'];
+            break;
+            case 'numPages-asc':
+                $sort = ['numPages' => 'asc'];
+            break;
+            case 'createdAt-asc':
+                $sort = ['createdAt' => 'asc'];
+            break;
+            case 'createdAt-desc':
+                $sort = ['createdAt' => 'desc'];
+            break;
+            default:
+                $sort = ['_score'];
+            break;
+        }
+
+        if (strpos($sortBy, 'random-') === 0) {
+            // We use a seed to allow for pagination.
+            $seed = substr($sortBy, strlen('random-'));
+
+            // Sorting in a random order cannot be done using the 'sort' parameter, but requires adjusting the query
+            // to use the random_score function for scoring.
+            // https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-function-score-query.html
+            $query = [
+                "function_score" => [
+                    "query" => $query,
+                    "random_score" => [
+                        "seed" => $seed
+                    ]
+                ]
+            ];
+        }
+
         $result = $this->client->search([
             'index' => $this->indexName,
             'type' => $this->typeName,
             'body' => [
-                'query' => [
-                    // All queries must evaluate to true for a result to be returned.
-                    'bool' => [
-                        "must" => $matches
-                    ]
-                ],
+                'query' => $query,
                 'from' => self::ADVENTURES_PER_PAGE * ($page - 1),
                 'size' => self::ADVENTURES_PER_PAGE,
                 // Also return aggregations for all fields, i.e. min/max for integer fields
                 // or the most common strings for string fields.
                 'aggs' => $this->fieldAggregations(),
+                'sort' => $sort
             ],
         ]);
 

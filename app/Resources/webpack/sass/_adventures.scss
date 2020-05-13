@@ -31,18 +31,8 @@ $thumbnail-height: 100px;
   display: flex;
   margin-bottom: $element-margin-bottom;
 
-  > * { margin-right: 4px; }
-  > *:last-child { margin-right: 0; }
-
-  #search-query {
-    @extend .form-control;
-
-    flex-grow: 8;
+  button, input {
     font-size: 1.2rem;
-  }
-
-  #search-submit {
-    cursor: pointer;
   }
 }
 

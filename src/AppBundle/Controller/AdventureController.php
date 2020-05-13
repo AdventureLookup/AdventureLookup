@@ -40,16 +40,17 @@ class AdventureController extends Controller
     public function indexAction(Request $request, AdventureSearch $adventureSearch, FieldProvider $fieldProvider)
     {
         $q = $request->get('q', '');
+        $sortBy = $request->get('sortBy', '');
         $page = (int)$request->get('page', 1);
         $filters = $request->get('f', []);
         if (!is_array($filters)) {
             $filters = [];
         }
         $fields = $fieldProvider->getFields();
-        list($paginatedAdventureDocuments, $totalNumberOfResults, $hasMoreResults, $stats) = $adventureSearch->search($q, $filters, $page);
+        list($adventures, $totalNumberOfResults, $hasMoreResults, $stats) = $adventureSearch->search($q, $filters, $page, $sortBy);
 
         return $this->render('adventures/index.html.twig', [
-            'adventures' => $paginatedAdventureDocuments,
+            'adventures' => $adventures,
             'totalNumberOfResults' => $totalNumberOfResults,
             'hasMoreResults' => $hasMoreResults,
             'page' => $page,
@@ -57,6 +58,7 @@ class AdventureController extends Controller
             'searchFilter' => $filters,
             'fields' => $fields,
             'q' => $q,
+            'sortBy' => $sortBy
         ]);
     }
 

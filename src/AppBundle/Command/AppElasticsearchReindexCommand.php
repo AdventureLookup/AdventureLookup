@@ -68,6 +68,9 @@ class AppElasticsearchReindexCommand extends Command
     const FIELD_BOOLEAN = [
         'type' => 'boolean',
     ];
+    const FIELD_DATE = [
+        'type' => 'date'
+    ];
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -114,6 +117,8 @@ class AppElasticsearchReindexCommand extends Command
             'pregeneratedCharacters' => self::FIELD_BOOLEAN,
             'tacticalMaps' => self::FIELD_BOOLEAN,
             'handouts' => self::FIELD_BOOLEAN,
+
+            'createdAt' => self::FIELD_DATE,
         ];
 
         $client->indices()->putMapping([

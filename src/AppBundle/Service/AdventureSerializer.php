@@ -37,6 +37,7 @@ class AdventureSerializer
     {
         $doc= [];
         $doc['slug'] = $adventure->getSlug();
+        $doc['createdAt'] = $adventure->getCreatedAt()->format('c');
 
         foreach ($this->fieldProvider->getFields() as $field) {
             $value = $this->propertyAccessor->getValue(

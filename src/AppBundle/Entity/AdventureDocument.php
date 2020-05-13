@@ -11,6 +11,9 @@ class AdventureDocument
 
     private $slug;
 
+    /**
+     * @var float|null
+     */
     private $score;
 
     /**
@@ -143,7 +146,7 @@ class AdventureDocument
         bool $pregeneratedCharacters = null,
         bool $tacticalMaps = null,
         bool $handouts = null,
-        float $score = 0.0)
+        float $score = null)
     {
         $this->id = $id;
         $this->authors = $authors;
@@ -225,7 +228,7 @@ class AdventureDocument
     /**
      * @return float
      */
-    public function getScore(): float
+    public function getScore()
     {
         return $this->score;
     }
