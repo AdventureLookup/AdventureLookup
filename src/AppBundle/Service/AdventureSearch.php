@@ -7,6 +7,7 @@ use AppBundle\Entity\AdventureDocument;
 use AppBundle\Exception\FieldDoesNotExistException;
 use AppBundle\Field\Field;
 use AppBundle\Field\FieldProvider;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class AdventureSearch
@@ -39,6 +40,21 @@ class AdventureSearch
         $this->client = $elasticSearch->getClient();
         $this->indexName = $elasticSearch->getIndexName();
         $this->typeName = $elasticSearch->getTypeName();
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function requestToSearchParams(Request $request)
+    {
+        $q = $request->get('q', '');
+        $page = (int)$request->get('page', 1);
+        $filters = $request->get('f', []);
+        if (!is_array($filters)) {
+            $filters = [];
+        }
+        return [$q, $filters, $page];
     }
 
     /**

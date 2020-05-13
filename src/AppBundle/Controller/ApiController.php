@@ -2,57 +2,69 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Exception\FieldDoesNotExistException;
-use AppBundle\Field\FieldProvider;
+use AppBundle\Entity\Adventure;
+use AppBundle\Entity\AdventureDocument;
+use AppBundle\Security\AdventureVoter;
 use AppBundle\Service\AdventureSearch;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use AppBundle\Service\Serializer;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * External API controller.
+ *
+ * @Route("/api")
+ */
 class ApiController extends Controller
 {
     /**
-     * @Route("/autocomplete/field/{fieldName}", name="api_autocomplete_field")
-     * @Method("GET")
+     * @Route("/adventures/", name="api_adventures")
+     * @Method({"GET"})
      *
      * @param Request $request
-     * @param FieldProvider $fieldProvider
      * @param AdventureSearch $adventureSearch
-     * @param string $fieldName
+     * @param Serializer $serializer
      * @return JsonResponse
      */
-    public function autocompleteFieldValueAction(Request $request, FieldProvider $fieldProvider, AdventureSearch $adventureSearch, string $fieldName)
+    public function indexAction(Request $request, AdventureSearch $adventureSearch, Serializer $serializer)
     {
-        try {
-            $field = $fieldProvider->getField($fieldName);
-        } catch (FieldDoesNotExistException $e) {
-            throw new NotFoundHttpException();
-        }
+        list($q, $filters, $page) = $adventureSearch->requestToSearchParams($request);
+        list($adventures, $totalNumberOfResults) = $adventureSearch->search($q, $filters, $page);
 
-        $q = $request->query->get('q');
-        $results = $adventureSearch->autocompleteFieldContent($field, $q);
-
-        return new JsonResponse($results);
+        return new JsonResponse([
+            "total_count" => $totalNumberOfResults,
+            "adventures" => array_map(function (AdventureDocument $adventure) use ($serializer) {
+                return $serializer->serializeAdventureDocument($adventure);
+            }, $adventures)
+        ]);
     }
 
     /**
-     * @Route("/autocomplete/similar-titles", name="similar_titles_search")
+     * @Route("/adventures/{id}", name="api_adventure")
      * @Method("GET")
      *
-     * @param Request $request
-     * @param AdventureSearch $adventureSearch
+     * @param Adventure $adventure
+     * @param Serializer $serializer
      * @return JsonResponse
      */
-    public function findSimilarTitlesAction(Request $request, AdventureSearch $adventureSearch)
+    public function showAction(Adventure $adventure, Serializer $serializer)
     {
-        $q = $request->query->get('q', false);
-        if ($q === false) {
-            throw new NotFoundHttpException();
-        }
+        $this->denyAccessUnlessGranted(AdventureVoter::VIEW, $adventure);
+        return new JsonResponse($serializer->serializeAdventureWithReviewsAndUnresolvedChangeRequests($adventure));
+    }
 
-        return new JsonResponse($adventureSearch->similarTitles($q));
+
+    /**
+     * @Route("", name="api_docs")
+     * @Method("GET")
+     *
+     * @return Response
+     */
+    public function docsAction() {
+
+        return $this->render("api/docs.html.twig");
     }
 }
