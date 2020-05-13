@@ -10,6 +10,18 @@
     <div class="content">
       Returns a paginated list of all adventures. Use the <code>page</code> query parameter to select the page (1-indexed, default 1).
       You can use the <code>q</code> parameter to filter adventures by a search query and the <code>f</code> parameter to apply filters. To find out more about the syntax and available filters, use the normal web-based search and look at the <code>f</code> parameter in your browser's dev tools.
+
+      The <code>sortBy</code> parameter can be used to sort the adventures. Possible values are:
+      <ul>
+        <li><code>(nothing)</code>: Best matches first</li>
+        <li><code>reviews</code>: Adventures sorted by reviews</li>
+        <li><code>title</code>: Sort by title</li>
+        <li><code>numPages-desc</code> Most pages</li>
+        <li><code>numPages-asc</code> Least pages</li>
+        <li><code>createdAt-desc</code> Recently added</li>
+        <li><code>createdAt-asc</code> Least recently added</li>
+        <li><code>random-SEED</code> Random sorting, seeded with everything that follows after the hypen. The seed can be any string, e.g. the current date. It is useful to keep the same sorting when accessing multiple pages of search results.</li>
+      </ul>
     </div>
     <div class="title"><a href="{{ path('api_adventure', {id: 'ADVENTURE-ID-HERE'}) }}">/api/adventure/{id}</a></div>
     <div class="content">
