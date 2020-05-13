@@ -18,6 +18,7 @@ export function SearchBox({
   onSortByChanged,
   isSubmitting,
   onSubmit,
+  setSeed,
 }) {
   return (
     <div id="search-bar">
@@ -41,9 +42,9 @@ export function SearchBox({
           </button>
         </div>
       </div>
-      <div class="dropdown">
+      <div className="dropdown">
         <button
-          class="btn btn-outline-secondary dropdown-toggle"
+          className="btn btn-outline-secondary dropdown-toggle"
           type="button"
           id="sortButton"
           data-toggle="dropdown"
@@ -54,27 +55,37 @@ export function SearchBox({
           Sort by
         </button>
         <div
-          class="dropdown-menu dropdown-menu-right"
+          className="dropdown-menu dropdown-menu-right"
           aria-labelledby="sortButton"
         >
           {sortByOptions.map(({ title, value }) => (
             <a
-              class="dropdown-item"
-              href="javascript:void(0)"
-              onClick={() => onSortByChanged(value)}
+              key={value}
+              className="dropdown-item"
+              href="#"
+              onClick={(e) => {
+                // prevent appending '#' to the URL
+                e.preventDefault();
+                onSortByChanged(value);
+              }}
             >
               {sortBy === value && <i className="fa fa-check mr-1" />}
               {title}
             </a>
           ))}
           <a
-            class="dropdown-item"
-            href="javascript:void(0)"
-            onClick={() => onSortByChanged(`random-${Date.now()}`)}
+            className="dropdown-item"
+            href="#"
+            onClick={(e) => {
+              // prevent appending '#' to the URL
+              e.preventDefault();
+              // Set a new seed evertime this option is selected. This allows the user to continue to shuffle
+              // the adventures if they don't like the current random ordering.
+              setSeed(Date.now());
+              onSortByChanged("random");
+            }}
           >
-            {sortBy.indexOf("random-") === 0 && (
-              <i className="fa fa-check mr-1" />
-            )}
+            {sortBy === "random" && <i className="fa fa-check mr-1" />}
             Random
           </a>
         </div>

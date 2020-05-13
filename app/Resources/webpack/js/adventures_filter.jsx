@@ -13,6 +13,7 @@ import { Root } from "./adventures_filter/Root";
   const url = root.dataset.url;
   const initialQuery = root.dataset.initialQuery;
   const initialSortBy = root.dataset.initialSortBy;
+  const initialSeed = root.dataset.initialSeed;
   const fieldStats = JSON.parse(root.dataset.fieldStats);
   ReactDOM.render(
     <Root
@@ -21,6 +22,7 @@ import { Root } from "./adventures_filter/Root";
       initialFilterValues={initialFilterValues}
       initialQuery={initialQuery}
       initialSortBy={initialSortBy}
+      initialSeed={initialSeed}
       fieldStats={fieldStats}
     />,
     root

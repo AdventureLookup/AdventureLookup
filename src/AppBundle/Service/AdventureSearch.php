@@ -34,12 +34,18 @@ class AdventureSearch
      */
     private $typeName;
 
-    public function __construct(FieldProvider $fieldProvider, ElasticSearch $elasticSearch)
+    /**
+     * @var TimeProvider
+     */
+    private $timeProvider;
+
+    public function __construct(FieldProvider $fieldProvider, ElasticSearch $elasticSearch, TimeProvider $timeProvider)
     {
         $this->fieldProvider = $fieldProvider;
         $this->client = $elasticSearch->getClient();
         $this->indexName = $elasticSearch->getIndexName();
         $this->typeName = $elasticSearch->getTypeName();
+        $this->timeProvider = $timeProvider;
     }
 
     /**
@@ -50,21 +56,29 @@ class AdventureSearch
     {
         $q = $request->get('q', '');
         $sortBy = $request->get('sortBy', '');
+        // Use a timestamp with millisecond precision as the seed when none is provided.
+        // We deliberately do not use time() for two reasons
+        // 1. We use Date.now() in JS, which also returns a timestamp in milliseconds
+        // 2. Simply using time() to get a timestamp in seconds sometimes leads to the same seed
+        //    when you refresh the browser too quickly.
+        $seed = (string)$request->get('seed', $this->timeProvider->millis());
         $page = (int)$request->get('page', 1);
         $filters = $request->get('f', []);
         if (!is_array($filters)) {
             $filters = [];
         }
-        return [$q, $filters, $page, $sortBy];
+        return [$q, $filters, $page, $sortBy, $seed];
     }
 
     /**
      * @param string $q
      * @param array $filters
      * @param int $page
+     * @param string $sortBy
+     * @param string $seed   Random seed used when adventures have to be sorted randomly.
      * @return array
      */
-    public function search(string $q, array $filters, int $page, string $sortBy)
+    public function search(string $q, array $filters, int $page, string $sortBy, string $seed)
     {
         if ($page < 1 || $page * self::ADVENTURES_PER_PAGE > 5000) {
             throw new BadRequestHttpException();
@@ -129,10 +143,7 @@ class AdventureSearch
             break;
         }
 
-        if (strpos($sortBy, 'random-') === 0) {
-            // We use a seed to allow for pagination.
-            $seed = substr($sortBy, strlen('random-'));
-
+        if ($sortBy === 'random') {
             // Sorting in a random order cannot be done using the 'sort' parameter, but requires adjusting the query
             // to use the random_score function for scoring.
             // https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-function-score-query.html

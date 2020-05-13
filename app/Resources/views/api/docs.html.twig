@@ -20,7 +20,7 @@
         <li><code>numPages-asc</code> Least pages</li>
         <li><code>createdAt-desc</code> Recently added</li>
         <li><code>createdAt-asc</code> Least recently added</li>
-        <li><code>random-SEED</code> Random sorting, seeded with everything that follows after the hypen. The seed can be any string, e.g. the current date. It is useful to keep the same sorting when accessing multiple pages of search results.</li>
+        <li><code>random</code> Random sorting. To seed the random generator and make pagination possible, provide a seed in the <code>seed</code> parameter. The seed can be any string, e.g. the current date.</li>
       </ul>
     </div>
     <div class="title"><a href="{{ path('api_adventure', {id: 'ADVENTURE-ID-HERE'}) }}">/api/adventure/{id}</a></div>

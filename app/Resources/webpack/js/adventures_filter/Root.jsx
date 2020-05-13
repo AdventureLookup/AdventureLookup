@@ -10,12 +10,14 @@ export function Root({
   initialFilterValues,
   initialQuery,
   initialSortBy,
+  initialSeed,
   fieldStats,
 }) {
   const [showMoreFilters, setShowMoreFilters] = React.useState(false);
   const [query, setQuery] = React.useState(initialQuery);
   const [sortBy, setSortBy] = React.useState(initialSortBy);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [seed, setSeed] = React.useState(initialSeed);
   const formRef = React.useRef(null);
 
   const onSubmit = () => {
@@ -26,12 +28,12 @@ export function Root({
     formRef.current.submit();
   };
 
-  // Automatically submit the form whenever sortBy changes.
+  // Automatically submit the form whenever sortBy or the seed changes.
   React.useEffect(() => {
-    if (sortBy !== initialSortBy) {
+    if (sortBy !== initialSortBy || seed !== initialSeed) {
       onSubmit();
     }
-  }, [sortBy]);
+  }, [sortBy, seed]);
 
   return (
     <>
@@ -42,6 +44,7 @@ export function Root({
         <form method="post" action={url} id="search-form" ref={formRef}>
           <input type="hidden" value={query} name="q" />
           <input type="hidden" value={sortBy} name="sortBy" />
+          <input type="hidden" value={seed} name="seed" />
           <Filters
             fields={fields}
             showMoreFilters={showMoreFilters}
@@ -67,6 +70,7 @@ export function Root({
             onSortByChanged={setSortBy}
             isSubmitting={isSubmitting}
             onSubmit={onSubmit}
+            setSeed={setSeed}
           />
           <SearchTags
             initialFilterValues={initialFilterValues}
