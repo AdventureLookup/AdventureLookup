@@ -36,6 +36,17 @@ $thumbnail-height: 100px;
   }
 }
 
+#search-tips {
+  display: block;
+  margin-bottom: $element-margin-bottom;
+  margin-top: -$element-margin-bottom + 2px;
+  padding-left: 10px;
+
+  font-weight: $adl-secondary-font-weight;
+  font-family: $adl-secondary-font-name;
+  color: #333333;
+}
+
 #search-results {
   // don't show underline for the entire adventure block
   > a {

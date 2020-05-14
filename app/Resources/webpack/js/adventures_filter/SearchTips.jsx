@@ -1,6 +1,23 @@
 import * as React from "react";
 
 export function SearchTips() {
+  const [expanded, setExpanded] = React.useState(false);
+
+  if (!expanded) {
+    return (
+      <a
+        id="search-tips"
+        href="#"
+        onClick={(e) => {
+          e.preventDefault();
+          setExpanded(true);
+        }}
+      >
+        show search tips
+      </a>
+    );
+  }
+
   return (
     <div className="adl-card">
       <div className="card-body">

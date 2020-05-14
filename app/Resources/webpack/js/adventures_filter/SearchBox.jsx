@@ -21,8 +21,6 @@ export function SearchBox({
   onSubmit,
   setSeed,
 }) {
-  const [showTips, setShowTips] = React.useState(false);
-
   return (
     <>
       <div id="search-bar">
@@ -33,8 +31,6 @@ export function SearchBox({
             placeholder="SEARCH FOR"
             value={query}
             disabled={isSubmitting}
-            onFocus={() => setShowTips(true)}
-            onBlur={() => setShowTips(false)}
             onChange={(e) => onQueryChanged(e.target.value)}
             onKeyPress={(key) => key.which === 13 && onSubmit()}
           />
@@ -97,7 +93,7 @@ export function SearchBox({
           </div>
         </div>
       </div>
-      {showTips && <SearchTips />}
+      <SearchTips />
     </>
   );
 }
