@@ -37,6 +37,9 @@ class AdventureSerializer
     {
         $doc= [];
         $doc['slug'] = $adventure->getSlug();
+        $doc['createdAt'] = $adventure->getCreatedAt()->format('c');
+        $doc['positiveReviews'] = $adventure->getNumberOfThumbsUp();
+        $doc['negativeReviews'] = $adventure->getNumberOfThumbsDown();
 
         foreach ($this->fieldProvider->getFields() as $field) {
             $value = $this->propertyAccessor->getValue(

@@ -31,8 +31,8 @@ class ApiController extends Controller
      */
     public function indexAction(Request $request, AdventureSearch $adventureSearch, Serializer $serializer)
     {
-        list($q, $filters, $page) = $adventureSearch->requestToSearchParams($request);
-        list($adventures, $totalNumberOfResults) = $adventureSearch->search($q, $filters, $page);
+        list($q, $filters, $page, $sortBy, $seed) = $adventureSearch->requestToSearchParams($request);
+        list($adventures, $totalNumberOfResults) = $adventureSearch->search($q, $filters, $page, $sortBy, $seed);
 
         return new JsonResponse([
             "total_count" => $totalNumberOfResults,

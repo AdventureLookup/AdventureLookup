@@ -12,6 +12,8 @@
                     data-url="{{ url('adventure_index') | e("html_attr") }}"
                     data-initial-filter-values="{{ searchFilter | json_encode | e("html_attr")}}"
                     data-initial-query="{{ q | e("html_attr") }}"
+                    data-initial-sort-by="{{ sortBy | e("html_attr") }}"
+                    data-initial-seed="{{ seed | e("html_attr") }}"
                     data-field-stats="{{ stats | json_encode | e("html_attr") }}"
                 ></div>
                 <div class="adl-sidebar">

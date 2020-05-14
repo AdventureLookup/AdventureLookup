@@ -11,6 +11,9 @@ class AdventureDocument
 
     private $slug;
 
+    /**
+     * @var float|null
+     */
     private $score;
 
     /**
@@ -118,6 +121,16 @@ class AdventureDocument
      */
     private $partOf;
 
+    /**
+     * @var int
+     */
+    private $numPositiveReviews;
+
+    /**
+     * @var int
+     */
+    private $numNegativeReviews;
+
     public function __construct(
         int $id,
         array $authors,
@@ -143,7 +156,9 @@ class AdventureDocument
         bool $pregeneratedCharacters = null,
         bool $tacticalMaps = null,
         bool $handouts = null,
-        float $score = 0.0)
+        int $numPositiveReviews = 0,
+        int $numNegativeReviews = 0,
+        float $score = null)
     {
         $this->id = $id;
         $this->authors = $authors;
@@ -170,6 +185,8 @@ class AdventureDocument
         $this->pregeneratedCharacters = $pregeneratedCharacters;
         $this->tacticalMaps = $tacticalMaps;
         $this->handouts = $handouts;
+        $this->numPositiveReviews = $numPositiveReviews;
+        $this->numNegativeReviews = $numNegativeReviews;
     }
 
     /**
@@ -202,7 +219,9 @@ class AdventureDocument
             $adventure->isSoloable(),
             $adventure->hasPregeneratedCharacters(),
             $adventure->hasTacticalMaps(),
-            $adventure->hasHandouts()
+            $adventure->hasHandouts(),
+            $adventure->getNumberOfThumbsUp(),
+            $adventure->getNumberOfThumbsDown()
         );
     }
 
@@ -225,7 +244,7 @@ class AdventureDocument
     /**
      * @return float
      */
-    public function getScore(): float
+    public function getScore()
     {
         return $this->score;
     }
@@ -404,6 +423,22 @@ class AdventureDocument
     public function getPartOf()
     {
         return $this->partOf;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getNumPositiveReviews()
+    {
+        return $this->numPositiveReviews;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getNumNegativeReviews()
+    {
+        return $this->numNegativeReviews;
     }
 
     /**

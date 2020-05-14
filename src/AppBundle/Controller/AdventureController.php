@@ -39,11 +39,20 @@ class AdventureController extends Controller
      */
     public function indexAction(Request $request, AdventureSearch $adventureSearch, FieldProvider $fieldProvider)
     {
-        list($q, $filters, $page) = $adventureSearch->requestToSearchParams($request);
-        list($paginatedAdventureDocuments, $totalNumberOfResults, $hasMoreResults, $stats) = $adventureSearch->search($q, $filters, $page);
+        list($q, $filters, $page, $sortBy, $seed) = $adventureSearch->requestToSearchParams($request);
+        list($adventures, $totalNumberOfResults, $hasMoreResults, $stats) = $adventureSearch->search(
+            $q,
+            $filters,
+            $page,
+            // Sort randomly unless there is a search query or $sortBy is not set to 'Best match'
+            // Deliberately NOT alter the $sortBy variable as passed to the template below, since
+            // the user should still see 'Best match' as selected in the sort-by dropdown.
+            '' === $q && '' === $sortBy ? 'random' : $sortBy,
+            $seed
+        );
 
         return $this->render('adventures/index.html.twig', [
-            'adventures' => $paginatedAdventureDocuments,
+            'adventures' => $adventures,
             'totalNumberOfResults' => $totalNumberOfResults,
             'hasMoreResults' => $hasMoreResults,
             'page' => $page,
@@ -51,6 +60,8 @@ class AdventureController extends Controller
             'searchFilter' => $filters,
             'fields' => $fieldProvider->getFields(),
             'q' => $q,
+            'sortBy' => $sortBy,
+            'seed' => $seed
         ]);
     }
 
