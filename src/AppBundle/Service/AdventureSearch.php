@@ -12,7 +12,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class AdventureSearch
 {
-    const ADVENTURES_PER_PAGE = 50;
+    const ADVENTURES_PER_PAGE = 20;
 
     /**
      * @var \Elasticsearch\Client

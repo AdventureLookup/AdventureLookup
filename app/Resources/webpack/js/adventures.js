@@ -6,7 +6,6 @@ import LazyLoad from "vanilla-lazyload/dist/lazyload";
   }
 
   const myLazyLoad = new LazyLoad();
-  const $searchForm = $("#search-form");
 
   // Load more adventures
   let currentPage = 1;
@@ -15,6 +14,7 @@ import LazyLoad from "vanilla-lazyload/dist/lazyload";
     $loadMoreBtn.attr('disabled', true);
     $loadMoreBtn.find('.fa-spin').removeClass('d-none');
 
+    const $searchForm = $("#search-form");
     const data = $searchForm.serialize() + '&page=' + ++currentPage;
     $.ajax({
       method: 'POST',
