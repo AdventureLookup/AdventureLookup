@@ -20,13 +20,13 @@ export function Root({
   const [seed, setSeed] = React.useState(initialSeed);
   const formRef = React.useRef(null);
 
-  const onSubmit = () => {
+  const onSubmit = React.useCallback(() => {
     if (!formRef.current) {
       return;
     }
     setIsSubmitting(true);
     formRef.current.submit();
-  };
+  }, [formRef.current]);
 
   // Automatically submit the form whenever sortBy or the seed changes.
   React.useEffect(() => {

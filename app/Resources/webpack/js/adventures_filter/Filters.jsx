@@ -38,7 +38,7 @@ function areSetsEqual(a, b) {
   return true;
 }
 
-export function Filters({
+export const Filters = React.memo(function Filters({
   fields,
   showMoreFilters,
   initialFilterValues,
@@ -64,7 +64,7 @@ export function Filters({
       onSubmit={onSubmit}
     />
   ));
-}
+});
 
 function FieldFilter({
   field,

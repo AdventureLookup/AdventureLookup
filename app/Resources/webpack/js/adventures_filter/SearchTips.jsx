@@ -1,0 +1,22 @@
+import * as React from "react";
+
+export function SearchTips() {
+  return (
+    <div className="adl-card">
+      <div className="card-body">
+        <h5 className="card-title">Advanced search tips</h5>
+        <p className="card-text">
+          If you enter <strong>magic ghoul party</strong> above, only adventures
+          that contain all three terms will be found. If you want to search for
+          adventures with either <strong>magic</strong>, <strong>ghoul</strong>,
+          or <strong>party</strong>, try searching for{" "}
+          <strong>magic OR ghoul OR party</strong>. Do not use the search bar
+          for things that are available as filters in the sidebar, since using
+          the sidebar filters is more reliable. The search is slightly fuzzy,
+          i.e., searching for <strong>ghoul</strong> will also result in
+          adventures with <strong>ghouls</strong>.
+        </p>
+      </div>
+    </div>
+  );
+}

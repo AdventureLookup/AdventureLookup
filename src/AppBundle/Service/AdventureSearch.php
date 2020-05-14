@@ -397,24 +397,37 @@ class AdventureSearch
             })
             ->getValues();
 
-        $terms = explode(',', $q);
+        $clauses = explode(' OR ', $q);
         $qMatches = [];
-        foreach ($terms as $term) {
-            if (trim($term) == "") {
-                continue;
+        foreach ($clauses as $clause) {
+            $terms = explode(' ', $clause);
+            $termMatches = [];
+            foreach ($terms as $term) {
+                if (trim($term) == "") {
+                    continue;
+                }
+                $termMatches[] = [
+                    'multi_match' => [
+                        'query' => $term,
+                        'fields' => $fields,
+                        'type' => 'most_fields',
+                        'fuzziness' => 'AUTO',
+                    ]
+                ];
             }
-            $qMatches[] = [
-                'multi_match' => [
-                    'query' => $term,
-                    'fields' => $fields,
-                    'fuzziness' => 'AUTO'
-                ]
-            ];
+            if (!empty($termMatches)) {
+                $qMatches[] = [
+                    'bool' => [
+                        'must' => $termMatches
+                    ]
+                ];
+            }
         }
         if (!empty($qMatches)) {
             $matches[] = [
                 'bool' => [
-                    'must' => $qMatches
+                    'should' => $qMatches,
+                    'minimum_should_match' => 1,
                 ]
             ];
         }
