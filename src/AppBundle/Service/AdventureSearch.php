@@ -412,6 +412,7 @@ class AdventureSearch
                         'fields' => $fields,
                         'type' => 'most_fields',
                         'fuzziness' => 'AUTO',
+                        'prefix_length' => 2,
                     ]
                 ];
             }
