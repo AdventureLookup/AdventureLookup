@@ -76,7 +76,7 @@ class SerializerTest extends TestCase
         $adventure = new AdventureDocument(5, ["Matt"], "D&D", ["Arctic"], ["Wand of Fireball"], "Wizards",
             "Modern", ["Goblin"], ["Dragon"], "An Adventure", "A Description", "an-adventure", null, null,
             "low", 55, "Cool Magazine", "Library", "https://example.com", "https://example.com/img.png",
-            true, false, true, false, 10.0);
+            true, false, true, false, 2020, 10.0);
 
         $this->assertEquals([
             "id" => 5,
@@ -103,6 +103,7 @@ class SerializerTest extends TestCase
             "has_pregenerated_characters" => false,
             "has_tactical_maps" => true,
             "has_handouts" => false,
+            "publication_year" => 2020
         ], $this->serializer->serializeAdventureDocument($adventure));
     }
 

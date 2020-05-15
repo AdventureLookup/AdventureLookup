@@ -26,6 +26,7 @@ class NewAdventureTest extends BrowserTestCase
     const NUM_PAGES = '7777';
     const FOUND_IN = 'Dugeon Magazine';
     const PART_OF = 'Tales from another World';
+    const YEAR = '2020';
     const LINK = 'http://example.com';
     const THUMBNAIL_URL = 'http://localhost:8003/mstile-150x150.png';
 
@@ -108,6 +109,7 @@ class NewAdventureTest extends BrowserTestCase
         $this->fillField($session, 'numPages', self::NUM_PAGES);
         $this->fillSelectizedInput($session, 'foundIn', self::FOUND_IN, false);
         $this->fillSelectizedInput($session, 'partOf', self::PART_OF, false);
+        $this->fillField($session, 'year', self::YEAR);
         $this->fillField($session, 'link', self::LINK);
         $this->fillField($session, 'thumbnailUrl', self::THUMBNAIL_URL);
 
@@ -154,6 +156,7 @@ class NewAdventureTest extends BrowserTestCase
         }
         $this->assertContains(self::NUM_PAGES, $adventureContainer->getText());
         $this->assertContains(self::FOUND_IN, $adventureContainer->getText());
+        $this->assertContains(self::YEAR, $adventureContainer->getText());
         $this->assertContains(self::PART_OF, $adventureContainer->getText());
         $this->assertContains(self::LINK, $adventureContainer->getText());
         $this->assertTrue($adventureContainer->has('css', 'img[src="' . self::THUMBNAIL_URL . '"]'));
@@ -180,8 +183,8 @@ class NewAdventureTest extends BrowserTestCase
                     }
                 });
                 if (!found) {
-                    selectize.createItem('{$value}');  
-                } 
+                    selectize.createItem('{$value}');
+                }
             })()
         ");
         if ($isNewValue) {

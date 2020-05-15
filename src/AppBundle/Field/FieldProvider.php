@@ -201,6 +201,14 @@ class FieldProvider
                 'Part Of',
                 'The series of adventures that the module is a part of, if applicable.'
             ),
+            'year' => new Field(
+                'year',
+                'integer',
+                false,
+                false,
+                'Publication Year',
+                'The year this adventure was first published.'
+            ),
 
             'link' => new Field(
                 'link',

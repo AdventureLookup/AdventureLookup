@@ -100,7 +100,8 @@ class Serializer
             "soloable" => $adventure->isSoloable(),
             "has_pregenerated_characters" => $adventure->hasPregeneratedCharacters(),
             "has_tactical_maps" => $adventure->isTacticalMaps(),
-            "has_handouts" => $adventure->isHandouts()
+            "has_handouts" => $adventure->isHandouts(),
+            "publication_year" => $adventure->getYear(),
         ];
     }
 }
