@@ -27,11 +27,11 @@ export function SearchTips() {
           that contain all three terms will be found. If you want to search for
           adventures with either <strong>magic</strong>, <strong>ghoul</strong>,
           or <strong>party</strong>, try searching for{" "}
-          <strong>magic OR ghoul OR party</strong>. Do not use the search bar
+          <strong>magic OR ghoul OR party</strong>. Avoid using the search bar
           for things that are available as filters in the sidebar, since using
           the sidebar filters is more reliable. The search is slightly fuzzy,
-          i.e., searching for <strong>ghoul</strong> will also result in
-          adventures with <strong>ghouls</strong>.
+          e.g., searching for <strong>ghouls</strong> will also result in
+          adventures with <strong>ghoul</strong>.
         </p>
       </div>
     </div>
