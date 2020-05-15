@@ -117,6 +117,7 @@ class AppElasticsearchReindexCommand extends Command
             'pregeneratedCharacters' => self::FIELD_BOOLEAN,
             'tacticalMaps' => self::FIELD_BOOLEAN,
             'handouts' => self::FIELD_BOOLEAN,
+            'year' => self::FIELD_INTEGER,
 
             'createdAt' => self::FIELD_DATE,
             'numPositiveReviews' => self::FIELD_INTEGER,

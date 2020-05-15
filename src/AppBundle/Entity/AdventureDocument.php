@@ -124,6 +124,11 @@ class AdventureDocument
     /**
      * @var int
      */
+    private $year;
+
+    /**
+     * @var int
+     */
     private $numPositiveReviews;
 
     /**
@@ -156,6 +161,7 @@ class AdventureDocument
         bool $pregeneratedCharacters = null,
         bool $tacticalMaps = null,
         bool $handouts = null,
+        int $year = null,
         int $numPositiveReviews = 0,
         int $numNegativeReviews = 0,
         float $score = null)
@@ -185,6 +191,7 @@ class AdventureDocument
         $this->pregeneratedCharacters = $pregeneratedCharacters;
         $this->tacticalMaps = $tacticalMaps;
         $this->handouts = $handouts;
+        $this->year = $year;
         $this->numPositiveReviews = $numPositiveReviews;
         $this->numNegativeReviews = $numNegativeReviews;
     }
@@ -220,6 +227,7 @@ class AdventureDocument
             $adventure->hasPregeneratedCharacters(),
             $adventure->hasTacticalMaps(),
             $adventure->hasHandouts(),
+            $adventure->getYear(),
             $adventure->getNumberOfThumbsUp(),
             $adventure->getNumberOfThumbsDown()
         );
@@ -423,6 +431,14 @@ class AdventureDocument
     public function getPartOf()
     {
         return $this->partOf;
+    }
+
+    /**
+     * @return int
+     */
+    public function getYear()
+    {
+        return $this->year;
     }
 
     /**

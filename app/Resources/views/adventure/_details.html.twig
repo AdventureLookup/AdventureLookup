@@ -1,13 +1,13 @@
-{% macro search_icon(fieldName, content) %}
+{% macro search(fieldName, value, content, isInteger = false) %}
     {% apply spaceless %}
-        {% set path = path('adventure_index', {('f[' ~ fieldName ~ '][v]'): content}) %}
-        <a href="{{ path }}" title="Search for similar adventures"><i class="fa fa-search"></i></a>
-    {% endapply %}
-{% endmacro %}
-
-{% macro search(fieldName, value, content) %}
-    {% apply spaceless %}
-        {% set path = path('adventure_index', {('f[' ~ fieldName ~ '][v]'): value}) %}
+        {% if isInteger %}
+            {% set path = path('adventure_index', {
+                ('f[' ~ fieldName ~ '][v][min]'): value,
+                ('f[' ~ fieldName ~ '][v][max]'): value,
+            }) %}
+        {% else %}
+            {% set path = path('adventure_index', {('f[' ~ fieldName ~ '][v]'): value}) %}
+        {% endif %}
         <a href="{{ path }}" title="Search for similar adventures">{{ content ?: value }}</a>
     {% endapply %}
 {% endmacro %}
@@ -21,12 +21,9 @@
     </div>
     <h2 class="title">{{ adventure.title }}</h2>
     <div class="tags-container">
-        <div class="tag tag-edition">{{ adventure.edition.name|default('') }}</div>
-        {% set level = format_level(adventure) %}
-        {% if level %}
-            <div class="tag tag-level">{{ level }}</div>
-        {% endif %}
-        <div class="tag tag-length">{{ adventure.numPages }} pages</div>
+        <div class="tag tag-edition">{{ adventure.edition.name|default('Unknown Edition') }}</div>
+        <div class="tag tag-level">{{ format_level(adventure)|default('Unknown party level') }}</div>
+        <div class="tag tag-length">{{ adventure.numPages|default('?') }} pages</div>
     </div>
     <p class="description">{{ adventure.description|nl2br }}</p>
 
@@ -38,7 +35,7 @@
                     {{ macros.search('authors', author.name, author.name) }}{{ not loop.last ? ', ' : '' }}
                 {% endfor %}
             </div>
-            <div class="col-3">
+            <div class="col">
                 <div class="label">Published By</div>
                 {% if adventure.publisher %}
                     {{ macros.search('publisher', adventure.publisher.name) }}
@@ -46,7 +43,15 @@
                     Unknown
                 {% endif %}
             </div>
-            <div class="col-3">
+            <div class="col">
+                <div class="label">Publication Year</div>
+                {% if adventure.year %}
+                    {{ macros.search('year', adventure.year, null, true) }}
+                {% else %}
+                    Unknown
+                {% endif %}
+            </div>
+            <div class="col">
                 <div class="label">Setting</div>
                 {% if adventure.setting %}
                     {{ macros.search('setting', adventure.setting.name) }}
