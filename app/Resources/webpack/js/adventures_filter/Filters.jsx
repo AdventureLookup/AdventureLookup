@@ -18,6 +18,7 @@ const visibleFieldNames = [
   "tacticalMaps",
   "partOf",
   "foundIn",
+  "year"
 ];
 
 function isFilterValueEmpty(field, value) {

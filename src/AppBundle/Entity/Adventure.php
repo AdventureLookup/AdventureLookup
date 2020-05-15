@@ -193,6 +193,14 @@ class Adventure
     /**
      * @var string
      *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\Range(min=1900, max=2100)
+     */
+    private $year;
+
+    /**
+     * @var string
+     *
      * @Gedmo\Slug(fields={"title"}, updatable=false)
      * @ORM\Column(length=128, unique=true)
      */
@@ -841,6 +849,26 @@ class Adventure
     public function setPartOf($partOf)
     {
         $this->partOf = $partOf;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getYear()
+    {
+        return $this->year;
+    }
+
+    /**
+     * @param int $year
+     *
+     * @return Adventure
+     */
+    public function setYear($year)
+    {
+        $this->year = $year;
 
         return $this;
     }

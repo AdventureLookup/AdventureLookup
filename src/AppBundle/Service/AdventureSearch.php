@@ -197,6 +197,7 @@ class AdventureSearch
                 $hit['_source']['pregeneratedCharacters'],
                 $hit['_source']['tacticalMaps'],
                 $hit['_source']['handouts'],
+                $hit['_source']['year'],
                 $hit['_source']['positiveReviews'],
                 $hit['_source']['negativeReviews'],
                 $hit['_score']

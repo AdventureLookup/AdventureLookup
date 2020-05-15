@@ -23,7 +23,7 @@ class FieldProviderTest extends \PHPUnit_Framework_TestCase
     {
         $fields = $this->fieldProvider->getFields();
         $this->assertInstanceOf(Collection::class, $fields);
-        $this->assertCount(22, $fields);
+        $this->assertCount(23, $fields);
         foreach ($fields as $name => $field) {
             $this->assertSame($name, $field->getName());
         }
