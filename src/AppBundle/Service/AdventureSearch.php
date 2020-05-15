@@ -12,7 +12,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class AdventureSearch
 {
-    const ADVENTURES_PER_PAGE = 50;
+    const ADVENTURES_PER_PAGE = 20;
 
     /**
      * @var \Elasticsearch\Client
@@ -90,7 +90,7 @@ class AdventureSearch
         // This will only search string and text fields.
         $matches = $this->qMatches($q, $matches);
 
-        // Now apply filters from the left-hand filterbar.
+        // Now apply filters from the sidebar.
         $matches = $this->filterMatches($filters, $matches);
 
         // If we neither have a filter, nor any kind of free-text search, return all adventures.
@@ -388,6 +388,7 @@ class AdventureSearch
      */
     private function qMatches(string $q, $matches): array
     {
+        // Get a list of freetext searchable fields and their individual boost values.
         $fields = $this->fieldProvider
             ->getFields()
             ->filter(function (Field $field) {
@@ -398,27 +399,94 @@ class AdventureSearch
             })
             ->getValues();
 
-        $terms = explode(',', $q);
-        $qMatches = [];
-        foreach ($terms as $term) {
-            if (trim($term) == "") {
-                continue;
+        // Implicitly, everything the user types in the search bar is ANDed together.
+        // A search for 'galactic ghouls' should result in adventures that contain
+        // both terms. If the user really wants to search for 'galactic OR ghouls',
+        // the have to separate the terms by ' OR '.
+        // The order of terms is irrelevant: Searching for 'galactic ghouls' leads
+        // to the same results as searching for 'ghouls galactic'. We could look
+        // into supporting quoting terms ('"galactic ghouls"') later, which would
+        // NOT match adventures with 'ghouls galactic' or adventures with 'galactic'
+        // and 'ghouls' in different fields.
+        $clauses = explode(' OR ', $q);
+        $orMatches = [];
+        foreach ($clauses as $clause) {
+            $terms = explode(' ', $clause);
+            // All terms that are part of this clause have to be ANDed together.
+            // Given the search query 'galactic ghouls', we don't care if both
+            // 'galactic' and 'ghouls' appear in the same field (e.g., the title)
+            // or appear on their own in different fields (e.g., 'galactic' in
+            // the title and 'ghouls' in the description). That is why we can't
+            // simply use a single 'multi_match' query with the operator set to
+            // 'and' like this:
+            // ['multi_match' => [
+            //     'query' => 'galactic ghouls',
+            //     'fields' => $fields,
+            //     'type' => 'most_fields'
+            //     'fuzziness' => 'AUTO',
+            //     'prefix_length' => 2,
+            //      'operator' => 'and'
+            // ]]
+            // This query would only return results where both terms appear in
+            // the same field. We also can't use 'cross_fields' (instead of
+            // 'most_fields'): While that allows terms to be distributed across
+            // fields, it doesn't allow using fuzziness.
+            //
+            // That is why we create a multi_match query per term and AND them
+            // together using a 'bool => 'must' query.
+            $termMatches = [];
+            foreach ($terms as $term) {
+                if (trim($term) == "") {
+                    continue;
+                }
+                $termMatches[] = [
+                    'multi_match' => [
+                        'query' => $term,
+                        'fields' => $fields,
+                        // 'most_fields' combines the scores of all fields that
+                        // contain the search term: If the term appears in title,
+                        // description, and edition, the score of all of these
+                        // occurrences is combined. This is better than using
+                        // the default 'best_fields', which simply takes field
+                        // with the highest score, discarding all lower scores.
+                        'type' => 'most_fields',
+                        // Fuzziness is helpful for typos and finding plural
+                        // versions of the same word. We do not currently stem
+                        // the description and title, which is why using some
+                        // fuzziness is essential.
+                        // Setting prefix_length to 2 causes fuzziness to not
+                        // change the first 2 characters of search terms. As
+                        // an example, take the search for 'ghouls':
+                        // 'ghouls' only has an edit distanc of 2 to the term
+                        // 'should'. We don't want searches for 'ghouls' to
+                        // also match 'should', which is why we restrict the
+                        // fuzziness to start after the second character.
+                        'fuzziness' => 'AUTO',
+                        'prefix_length' => 2,
+                    ]
+                ];
             }
-            $qMatches[] = [
-                'multi_match' => [
-                    'query' => $term,
-                    'fields' => $fields,
-                    'fuzziness' => 'AUTO'
-                ]
-            ];
+            if (!empty($termMatches)) {
+                $orMatches[] = [
+                    'bool' => [
+                        'must' => $termMatches
+                    ]
+                ];
+            }
         }
-        if (!empty($qMatches)) {
+
+        if (!empty($orMatches)) {
+            // Combine the collected OR conditions.
+            // At least one of them must match for an adventure to be returned.
+            // The adventure will get a higher score if more than one matches.
             $matches[] = [
                 'bool' => [
-                    'must' => $qMatches
+                    'should' => $orMatches,
+                    'minimum_should_match' => 1,
                 ]
             ];
         }
+
         return $matches;
     }
 

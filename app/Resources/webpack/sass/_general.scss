@@ -32,3 +32,13 @@ a.no-underline:hover {
   color: #333333;
   text-transform: uppercase;
 }
+
+.adl-card {
+  @extend .card;
+  color: #000;
+  box-shadow: $adl-box-shadow;
+
+  .card-body {
+    padding: $adl-card-padding;
+  }
+}
