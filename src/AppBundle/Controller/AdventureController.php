@@ -11,6 +11,7 @@ use AppBundle\Form\Type\ReviewType;
 use AppBundle\Security\AdventureVoter;
 use AppBundle\Service\AdventureSearch;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -38,24 +39,29 @@ class AdventureController extends Controller
      */
     public function indexAction(Request $request, AdventureSearch $adventureSearch, FieldProvider $fieldProvider)
     {
-        $q = $request->get('q', '');
-        $page = (int)$request->get('page', 1);
-        $filters = $request->get('f', []);
-        if (!is_array($filters)) {
-            $filters = [];
-        }
-        $fields = $fieldProvider->getFields();
-        list($paginatedAdventureDocuments, $totalNumberOfResults, $hasMoreResults, $stats) = $adventureSearch->search($q, $filters, $page);
+        list($q, $filters, $page, $sortBy, $seed) = $adventureSearch->requestToSearchParams($request);
+        list($adventures, $totalNumberOfResults, $hasMoreResults, $stats) = $adventureSearch->search(
+            $q,
+            $filters,
+            $page,
+            // Sort randomly unless there is a search query or $sortBy is not set to 'Best match'
+            // Deliberately NOT alter the $sortBy variable as passed to the template below, since
+            // the user should still see 'Best match' as selected in the sort-by dropdown.
+            '' === $q && '' === $sortBy ? 'random' : $sortBy,
+            $seed
+        );
 
         return $this->render('adventures/index.html.twig', [
-            'adventures' => $paginatedAdventureDocuments,
+            'adventures' => $adventures,
             'totalNumberOfResults' => $totalNumberOfResults,
             'hasMoreResults' => $hasMoreResults,
             'page' => $page,
             'stats' => $stats,
             'searchFilter' => $filters,
-            'fields' => $fields,
+            'fields' => $fieldProvider->getFields(),
             'q' => $q,
+            'sortBy' => $sortBy,
+            'seed' => $seed
         ]);
     }
 
@@ -123,6 +129,40 @@ class AdventureController extends Controller
             'review_delete_form' => $reviewDeleteForm->createView(),
             'lists' => $adventureListRepository->myLists($user),
         ]);
+    }
+
+    /**
+     * Finds and displays a random adventure entity.
+     *
+     * @Route("/random-adventure", name="adventure_random")
+     * @Method("GET")
+     *
+     * @param EntityManagerInterface $em
+     * @return Response
+     */
+    public function randomAction(EntityManagerInterface $em)
+    {
+        $rsm = new ResultSetMapping();
+        $rsm->addEntityResult(Adventure::class, 'a');
+        $rsm->addFieldResult('a', 'id', 'id');
+        $rsm->addFieldResult('a', 'slug', 'slug');
+
+        $query = $em->createNativeQuery("
+            SELECT a.id, a.slug from adventure a ORDER by RAND() limit 1
+        ",$rsm);
+
+        $randomAdventure = $query->getResult();
+
+        $a = $randomAdventure[0];
+
+        if (!$a) {
+            throw $this->createNotFoundException(
+                'No adventure found'
+            );
+        }
+
+        return $this->redirectToRoute('adventure_show', ['slug' => $a->getSlug()]);
+
     }
 
     /**

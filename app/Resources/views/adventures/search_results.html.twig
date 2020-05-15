@@ -13,6 +13,10 @@
                         <div class="tag tag-level">{{ level }}</div>
                     {% endif %}
                     <div class="tag tag-length">{{ adventure.numPages }} pages</div>
+                    <div class="tag" title="Reviews">
+                        <i class="fa fa-thumbs-up"></i> {{ adventure.numPositiveReviews }}&nbsp;
+                        <i class="fa fa-thumbs-down"></i> {{ adventure.numNegativeReviews }}
+                    </div>
                 </div>
                 <p class="description">{{ adventure.description }}</p>
             </div>

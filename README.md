@@ -16,9 +16,21 @@ Repository of Adventure Lookup, proposed by [/u/mattcolville](https://www.reddit
 
 ## Setting up a development environment
 
-To get you up and running quickly, you should use [Vagrant](https://vagrantup.com) and either [VirtualBox](https://virtualbox.org) or [Docker](https://www.docker.com/) to start up a VM/container with all the dependencies preinstalled.
 
-Using VirtualBox is recommended if you have no experience with Docker or are using Windows without Hyper-V available/enabled. In all other cases, Docker is recommended.
+
+To get you up and running quickly, you have three options to set up your development environment:
+
+1. Gitpod online IDE
+2. Vagrant with VirtualBox
+3. Vagrant with Docker
+
+Using Gitpod is by far the simplest approach: All you have to do is click the following button and sign in with GitHub. A VSCode-based online IDE will spin up with all dependencies preinstalled. The rest of this section is only relevant when using Vagrant.
+
+[![Gitpod Open-Online-IDE](https://img.shields.io/badge/Gitpod-Open--Online--IDE-blue?logo=gitpod)](https://gitpod.io/#https://github.com/AdventureLookup/AdventureLookup)
+
+If you don't want to use an online IDE, but instead use your own editor, you should use [Vagrant](https://vagrantup.com) and either [VirtualBox](https://virtualbox.org) or [Docker](https://www.docker.com/) to start up a VM/container with all the dependencies preinstalled.
+
+Using VirtualBox is recommended if you have are using Windows without Hyper-V available/enabled. In all other cases, Docker is recommended and faster.
 
 After downloading and installing Vagrant and either VirtualBox or Docker:
 

@@ -7,6 +7,7 @@ use AppBundle\Entity\AdventureDocument;
 use AppBundle\Exception\FieldDoesNotExistException;
 use AppBundle\Field\Field;
 use AppBundle\Field\FieldProvider;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class AdventureSearch
@@ -33,21 +34,51 @@ class AdventureSearch
      */
     private $typeName;
 
-    public function __construct(FieldProvider $fieldProvider, ElasticSearch $elasticSearch)
+    /**
+     * @var TimeProvider
+     */
+    private $timeProvider;
+
+    public function __construct(FieldProvider $fieldProvider, ElasticSearch $elasticSearch, TimeProvider $timeProvider)
     {
         $this->fieldProvider = $fieldProvider;
         $this->client = $elasticSearch->getClient();
         $this->indexName = $elasticSearch->getIndexName();
         $this->typeName = $elasticSearch->getTypeName();
+        $this->timeProvider = $timeProvider;
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function requestToSearchParams(Request $request)
+    {
+        $q = $request->get('q', '');
+        $sortBy = $request->get('sortBy', '');
+        // Use a timestamp with millisecond precision as the seed when none is provided.
+        // We deliberately do not use time() for two reasons
+        // 1. We use Date.now() in JS, which also returns a timestamp in milliseconds
+        // 2. Simply using time() to get a timestamp in seconds sometimes leads to the same seed
+        //    when you refresh the browser too quickly.
+        $seed = (string)$request->get('seed', $this->timeProvider->millis());
+        $page = (int)$request->get('page', 1);
+        $filters = $request->get('f', []);
+        if (!is_array($filters)) {
+            $filters = [];
+        }
+        return [$q, $filters, $page, $sortBy, $seed];
     }
 
     /**
      * @param string $q
      * @param array $filters
      * @param int $page
+     * @param string $sortBy
+     * @param string $seed   Random seed used when adventures have to be sorted randomly.
      * @return array
      */
-    public function search(string $q, array $filters, int $page)
+    public function search(string $q, array $filters, int $page, string $sortBy, string $seed)
     {
         if ($page < 1 || $page * self::ADVENTURES_PER_PAGE > 5000) {
             throw new BadRequestHttpException();
@@ -67,21 +98,76 @@ class AdventureSearch
             $matches = ['match_all' => new \stdClass()];
         }
 
+        $query = [
+            // All matches must evaluate to true for a result to be returned.
+            'bool' => [
+                "must" => $matches
+            ]
+        ];
+
+        switch ($sortBy) {
+            case 'title':
+                $sort = 'title.keyword';
+            break;
+            case 'numPages-desc':
+                $sort = ['numPages' => 'desc'];
+            break;
+            case 'numPages-asc':
+                $sort = ['numPages' => 'asc'];
+            break;
+            case 'createdAt-asc':
+                $sort = ['createdAt' => 'asc'];
+            break;
+            case 'createdAt-desc':
+                $sort = ['createdAt' => 'desc'];
+            break;
+            case 'reviews':
+                // We use the Wilson Score instead of the average of positive and negative reviews
+                // https://www.elastic.co/de/blog/better-than-average-sort-by-best-rating-with-elasticsearch
+                $sort = [
+                    "_script" => [
+                        "order" => "desc",
+                        "type" => "number",
+                        "script" => [
+                            "inline" => "
+                                long p = doc['positiveReviews'].value;
+                                long n = doc['negativeReviews'].value;
+                                return p + n > 0 ? ((p + 1.9208) / (p + n) - 1.96 * Math.sqrt((p * n) / (p + n) + 0.9604) / (p + n)) / (1 + 3.8416 / (p + n)) : 0;
+                            "
+                        ]
+                    ]
+                ];
+            break;
+            default:
+                $sort = ['_score'];
+            break;
+        }
+
+        if ($sortBy === 'random') {
+            // Sorting in a random order cannot be done using the 'sort' parameter, but requires adjusting the query
+            // to use the random_score function for scoring.
+            // https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-function-score-query.html
+            $query = [
+                "function_score" => [
+                    "query" => $query,
+                    "random_score" => [
+                        "seed" => $seed
+                    ]
+                ]
+            ];
+        }
+
         $result = $this->client->search([
             'index' => $this->indexName,
             'type' => $this->typeName,
             'body' => [
-                'query' => [
-                    // All queries must evaluate to true for a result to be returned.
-                    'bool' => [
-                        "must" => $matches
-                    ]
-                ],
+                'query' => $query,
                 'from' => self::ADVENTURES_PER_PAGE * ($page - 1),
                 'size' => self::ADVENTURES_PER_PAGE,
                 // Also return aggregations for all fields, i.e. min/max for integer fields
                 // or the most common strings for string fields.
                 'aggs' => $this->fieldAggregations(),
+                'sort' => $sort
             ],
         ]);
 
@@ -111,6 +197,9 @@ class AdventureSearch
                 $hit['_source']['pregeneratedCharacters'],
                 $hit['_source']['tacticalMaps'],
                 $hit['_source']['handouts'],
+                $hit['_source']['year'],
+                $hit['_source']['positiveReviews'],
+                $hit['_source']['negativeReviews'],
                 $hit['_score']
             );
         }, $result['hits']['hits']);

@@ -5,6 +5,7 @@ namespace AppBundle\Listener;
 
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\RelatedEntityInterface;
+use AppBundle\Entity\Review;
 use AppBundle\Service\AdventureSerializer;
 use AppBundle\Service\ElasticSearch;
 use Doctrine\Common\EventSubscriber;
@@ -172,6 +173,9 @@ class SearchIndexUpdater implements EventSubscriber
         }
         if ($entity instanceof RelatedEntityInterface) {
             return $entity->getAdventures();
+        }
+        if ($entity instanceof Review) {
+            return [$entity->getAdventure()];
         }
 
         return [];

@@ -89,6 +89,7 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
                 ->setEnvironments(new ArrayCollection($faker->randomElements($environments, $faker->numberBetween(1, 2))))
                 ->setItems(new ArrayCollection($faker->randomElements($items, $faker->numberBetween(0, 5))))
                 ->setPublisher($faker->randomElement($publishers))
+                ->setYear($faker->numberBetween(1980, 2020))
                 ->setSetting($faker->randomElement($settings))
                 ->setMonsters(new ArrayCollection($faker->randomElements($monsters, $faker->numberBetween(0, 20))));
 
@@ -113,7 +114,7 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
             }
 
             if ($faker->boolean(80)) {
-                $n = $faker->numberBetween(1, 300);
+                $n = $faker->numberBetween(1, 20);
                 for ($j = 0; $j < $n; $j++) {
                     $review = new Review($adventure);
                     if ($faker->boolean) {

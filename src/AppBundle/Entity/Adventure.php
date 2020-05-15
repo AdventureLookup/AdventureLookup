@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -188,6 +189,14 @@ class Adventure
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $handouts;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\Range(min=1900, max=2100)
+     */
+    private $year;
 
     /**
      * @var string
@@ -845,11 +854,40 @@ class Adventure
     }
 
     /**
+     * @return int
+     */
+    public function getYear()
+    {
+        return $this->year;
+    }
+
+    /**
+     * @param int $year
+     *
+     * @return Adventure
+     */
+    public function setYear($year)
+    {
+        $this->year = $year;
+
+        return $this;
+    }
+
+    /**
      * @return ChangeRequest[]|Collection
      */
     public function getChangeRequests()
     {
         return $this->changeRequests;
+    }
+
+    /**
+     * @return ChangeRequest[]|Collection
+     */
+    public function getUnresolvedChangeRequests()
+    {
+        return $this->changeRequests
+            ->matching(Criteria::create()->where(Criteria::expr()->eq("resolved", false)));
     }
 
     /**

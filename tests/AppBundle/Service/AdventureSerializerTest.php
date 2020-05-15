@@ -22,6 +22,8 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
     const AUTHOR_1 = 'an author 1';
     const AUTHOR_2 = 'an author 2';
     const PUBLISHER = 'a publisher';
+    const NUM_POSITIVE_REVIEWS = 34;
+    const NUM_NEGATIVE_REVIEWS = 8;
 
     /**
      * @var AdventureSerializer
@@ -33,21 +35,30 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
      */
     private $fieldProvider;
 
+    private $CREATED_AT;
+
     public function setUp()
     {
         $this->fieldProvider = $this->createMock(FieldProvider::class);
         $this->serializer = new AdventureSerializer($this->fieldProvider);
+        $this->CREATED_AT = new \DateTime();
     }
 
-    public function testAlwaysSerializesSlug()
+    public function testAlwaysSerializesSlugCreatedAtAndNumberOfReviews()
     {
         $this->fieldProvider->method('getFields')->willReturn(new ArrayCollection([]));
         $adventure = $this->createMock(Adventure::class);
         $adventure->method('getSlug')->willReturn(self::SLUG);
+        $adventure->method('getCreatedAt')->willReturn($this->CREATED_AT);
+        $adventure->method('getNumberOfThumbsUp')->willReturn(self::NUM_POSITIVE_REVIEWS);
+        $adventure->method('getNumberOfThumbsDown')->willReturn(self::NUM_NEGATIVE_REVIEWS);
 
         $doc = $this->serializer->toElasticDocument($adventure);
         $this->assertSame([
             'slug' => self::SLUG,
+            'createdAt' => $this->CREATED_AT->format("c"),
+            'positiveReviews' => self::NUM_POSITIVE_REVIEWS,
+            'negativeReviews' => self::NUM_NEGATIVE_REVIEWS,
         ], $doc);
     }
 
@@ -64,6 +75,9 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
         $adventure = $this->createMock(Adventure::class);
         $adventure->method('getTitle')->willReturn(self::TITLE);
         $adventure->method('getSlug')->willReturn(self::SLUG);
+        $adventure->method('getCreatedAt')->willReturn($this->CREATED_AT);
+        $adventure->method('getNumberOfThumbsUp')->willReturn(self::NUM_POSITIVE_REVIEWS);
+        $adventure->method('getNumberOfThumbsDown')->willReturn(self::NUM_NEGATIVE_REVIEWS);
         $adventure->method('getMinStartingLevel')->willReturn(self::MIN_STARTING_LEVEL);
         $adventure->method('hasTacticalMaps')->willReturn(self::TACTICAL_MAPS);
         $adventure->method('getLink')->willReturn(self::LINK);
@@ -71,6 +85,9 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
         $doc = $this->serializer->toElasticDocument($adventure);
         $this->assertSame([
             'slug' => self::SLUG,
+            'createdAt' => $this->CREATED_AT->format("c"),
+            'positiveReviews' => self::NUM_POSITIVE_REVIEWS,
+            'negativeReviews' => self::NUM_NEGATIVE_REVIEWS,
             'title' => self::TITLE,
             'link' => self::LINK,
             'foundIn' => null,
@@ -97,6 +114,9 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
         $adventure = $this->createMock(Adventure::class);
         $adventure->method('getTitle')->willReturn(self::TITLE);
         $adventure->method('getSlug')->willReturn(self::SLUG);
+        $adventure->method('getCreatedAt')->willReturn($this->CREATED_AT);
+        $adventure->method('getNumberOfThumbsUp')->willReturn(self::NUM_POSITIVE_REVIEWS);
+        $adventure->method('getNumberOfThumbsDown')->willReturn(self::NUM_NEGATIVE_REVIEWS);
         $adventure->method('getAuthors')->willReturn(
             new ArrayCollection([$author1, $author2])
         );
@@ -108,6 +128,9 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
         $doc = $this->serializer->toElasticDocument($adventure);
         $this->assertSame([
             'slug' => self::SLUG,
+            'createdAt' => $this->CREATED_AT->format("c"),
+            'positiveReviews' => self::NUM_POSITIVE_REVIEWS,
+            'negativeReviews' => self::NUM_NEGATIVE_REVIEWS,
             'title' => self::TITLE,
             'authors' => [self::AUTHOR_1, self::AUTHOR_2],
             'publisher' => self::PUBLISHER,

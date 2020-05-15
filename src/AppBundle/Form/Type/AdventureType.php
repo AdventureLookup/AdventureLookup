@@ -97,6 +97,11 @@ class AdventureType extends AbstractType
                     'data-autocomplete' => true,
                 ],
             ])
+            ->add('year', NumberType::class, [
+                'required' => false,
+                'help' => 'The year this adventure was first published.',
+                'label' => 'Publication Year'
+            ])
             ->add('setting', EntityType::class, [
                 'help' => 'The narrative universe the module is set in.',
                 'required' => false,
@@ -222,7 +227,7 @@ class AdventureType extends AbstractType
             ])
         ;
     }
-    
+
     /**
      * {@inheritdoc}
      */
