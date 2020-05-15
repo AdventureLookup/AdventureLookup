@@ -411,7 +411,7 @@ class AdventureSearch
         $orMatches = [];
         foreach ($clauses as $clause) {
             $terms = explode(' ', $clause);
-            // Al terms that are part of this clause have to be ANDed together.
+            // All terms that are part of this clause have to be ANDed together.
             // Given the search query 'galactic ghouls', we don't care if both
             // 'galactic' and 'ghouls' appear in the same field (e.g., the title)
             // or appear on their own in different fields (e.g., 'galactic' in
