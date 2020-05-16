@@ -5,12 +5,18 @@ services:
         public: false
     AppBundle\:
         resource: '../../src/AppBundle/*'
-        exclude: '../../src/AppBundle/{Entity,Repository,DataFixtures}'
+        exclude: '../../src/AppBundle/{Entity,Repository,DataFixtures,Command}'
     AppBundle\Controller\:
         resource: '../../src/AppBundle/Controller'
         public: true
         tags: ['controller.service_arguments']
 
+    AppBundle\Command\:
+        resource: '../../src/AppBundle/Command/*'
+        tags: ['console.command']
+
+    Elasticsearch\ClientBuilder:
+        factory: ['Elasticsearch\ClientBuilder', 'create']
 
     AppBundle\Service\ElasticSearch:
         arguments:
@@ -32,9 +38,18 @@ services:
         tags:
             - { name: doctrine.event_subscriber, connection: default }
 
+    # TODO: Remove this service once we update to Symfony 4.1
+    # and set the $cache argument of the AppBundle\Twig\AppExtension
+    # to '@cache.app.simple'
+    #
+    # see https://github.com/symfony/symfony/pull/25710
+    Symfony\Component\Cache\Simple\Psr6Cache:
+        arguments: ['@cache.app']
+
     AppBundle\Twig\AppExtension:
         arguments:
             $affiliateMappings: '%affiliate_mappings%'
+            $cache: '@Symfony\Component\Cache\Simple\Psr6Cache'
 
     twig.extension.date:
         class: Twig_Extensions_Extension_Date

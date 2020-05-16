@@ -5,6 +5,7 @@ namespace AppBundle\Listener;
 
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\RelatedEntityInterface;
+use AppBundle\Entity\Review;
 use AppBundle\Service\AdventureSerializer;
 use AppBundle\Service\ElasticSearch;
 use Doctrine\Common\EventSubscriber;
@@ -51,9 +52,9 @@ class SearchIndexUpdater implements EventSubscriber
      */
     private $isTestEnvironment;
 
-    public function __construct(ElasticSearch $elasticSearch, $environment)
+    public function __construct(ElasticSearch $elasticSearch, AdventureSerializer $serializer, $environment)
     {
-        $this->serializer = new AdventureSerializer();
+        $this->serializer = $serializer;
         $this->client = $elasticSearch->getClient();
         $this->indexName = $elasticSearch->getIndexName();
         $this->typeName = $elasticSearch->getTypeName();
@@ -173,6 +174,9 @@ class SearchIndexUpdater implements EventSubscriber
         if ($entity instanceof RelatedEntityInterface) {
             return $entity->getAdventures();
         }
+        if ($entity instanceof Review) {
+            return [$entity->getAdventure()];
+        }
 
         return [];
     }
@@ -184,15 +188,39 @@ class SearchIndexUpdater implements EventSubscriber
      */
     public function updateSearchIndexForAdventure(Adventure $adventure)
     {
-        $id = $adventure->getId();
-        if (!is_numeric($id)) {
-            throw new \RuntimeException('Trying to index an adventure without an id set! This should not have happened.');
+        $this->updateSearchIndexForAdventures([$adventure]);
+    }
+
+    /**
+     * Updates the search index for the given adventures.
+     *
+     * @param Adventure[] $adventures
+     */
+    public function updateSearchIndexForAdventures($adventures)
+    {
+        if (empty($adventures)) {
+            return;
         }
-        $this->client->index([
+
+        $body = [];
+        foreach ($adventures as $adventure) {
+            $id = $adventure->getId();
+            if (!is_numeric($id)) {
+                throw new \RuntimeException('Trying to index an adventure without an id set! This should not have happened.');
+            }
+            $body[] = [
+                'index' => [
+                    '_index' => $this->indexName,
+                    '_type' => $this->typeName,
+                    '_id' => $id,
+                ]
+            ];
+            $body[] = $this->serializer->toElasticDocument($adventure);
+        }
+        $this->client->bulk([
             'index' => $this->indexName,
             'type' => $this->typeName,
-            'id' => $id,
-            'body' => $this->serializer->toElasticDocument($adventure),
+            'body' => $body,
             'refresh' => $this->isTestEnvironment,
         ]);
     }

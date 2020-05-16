@@ -1,0 +1,17 @@
+{# https://symfony.com/doc/current/controller/error_pages.html#overriding-the-default-error-templates #}
+{% extends 'base.html.twig' %}
+{% block title 'Error: ' ~ status_code  ~ ' ' ~ status_text %}
+{% block body %}
+    <div id="lrf-container">
+        <div id="lrf">
+            <div class="title">{% block error_title %}Oops! An Error Occurred{% endblock %}</div>
+            <h4>The server returned "{{ status_code }} {{ status_text }}".</h4>
+            <div class="alert alert-warning">
+                {% block error_description %}
+                    Something is broken. Please let us know what you were doing when this error occurred.
+                    We will fix it as soon as possible. Sorry for any inconvenience caused.
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

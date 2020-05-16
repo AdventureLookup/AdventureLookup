@@ -1,38 +1,24 @@
-@import './bootstrap.scss';
+@import 'mixins/breakpoint';
+@import '~bootstrap/scss/functions', '~bootstrap/scss/variables';
+
+// adl-* variables
+@import 'variables';
+
+//// Third party / Vendor styles.
+// These files include customized vendor variables and styles.
+@import 'vendor/bootstrap';
+@import 'vendor/selectize';
+@import 'vendor/fontawesome';
+// These files can be included as-is.
+@import '~toastr/toastr.scss';
+@import '~cookieconsent/build/cookieconsent.min';
+
 @import 'adventure';
-@import 'search';
-
-
-.selectize-control::before {
-  -moz-transition: opacity 0.2s;
-  -webkit-transition: opacity 0.2s;
-  transition: opacity 0.2s;
-  content: ' ';
-  z-index: 2;
-  position: absolute;
-  display: block;
-  top: 9px;
-  right: 34px;
-  width: 16px;
-  height: 16px;
-  background: url('~selectize/examples/images/spinner.gif');
-  background-size: 16px 16px;
-  opacity: 0;
-}
-.selectize-control.loading::before {
-  opacity: 0.7;
-}
-
-.pagination {
-  @extend .justify-content-center;
-}
-
-.footer {
-  background-color: $gray-lightest;
-  @extend .pt-3;
-  @extend .mt-3;
-
-  p, ul {
-    font-size: $small-font-size;
-  }
-}
+@import 'adventures';
+@import 'tags';
+@import 'filter';
+@import 'general';
+@import 'header';
+@import 'login_register_forgot';
+@import 'profile';
+@import 'sidebar';

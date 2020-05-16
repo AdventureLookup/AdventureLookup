@@ -1,0 +1,132 @@
+$element-margin-bottom: 10px;
+
+$thumbnail-offset: 1.5rem;
+$thumbnail-width: 85px;
+$thumbnail-height: 100px;
+
+.subheading {
+  @extend %secondaryFont;
+}
+
+#adventure-container {
+  @extend .content-container;
+
+  .thumbnail-container {
+    position: absolute;
+    top: $thumbnail-offset;
+    right: $thumbnail-offset;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 100px;
+
+    .thumbnail {
+      max-width: $thumbnail-width;
+      max-height: $thumbnail-height;
+      border: $adl-border-grey-lightest-big;
+    }
+
+    #adventure_list-bookmark-menu {
+      margin-top: 8px;
+    }
+  }
+
+  .description {
+    display: block;
+    display: -webkit-box;
+    margin: $adl-card-padding;
+
+    @include breakpoint($sm) {
+      margin-right: calc(#{$adl-card-padding-side} + #{$thumbnail-width} + #{$thumbnail-offset});
+    }
+  }
+
+  .detail-row {
+    @extend .row;
+
+    display: flex;
+
+    &:first-child {
+      border-top: 1px solid $adl-grey-lightest;
+    }
+
+    > div {
+      flex-grow: 1;
+      padding: $adl-card-padding-top $adl-card-padding-side/2;
+
+      border-bottom: 1px solid $adl-grey-lightest;
+
+      &:not(:last-child) {
+        border-right: 1px solid $adl-grey-lightest;
+      }
+
+      .label {
+        font-family: 'Roboto Condensed', sans-serif;
+        text-transform: uppercase;
+        color: $adl-grey-light;
+      }
+
+      ul {
+        padding-left: 30px;
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+#review-container {
+  @extend .content-container;
+
+  .review {
+    padding: $adl-card-padding;
+    border-top: 1px solid $adl-grey-lightest;
+
+    .review-icon {
+      color: $adl-offwhite;
+    }
+
+    blockquote {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+#create-review-container {
+  @extend .content-container;
+
+  #review-thumbs-row {
+    padding-left: $adl-card-padding-side;
+    padding-right: $adl-card-padding-side;
+    color: $adl-grey-dark;
+
+    #review-thumbs-message {
+      text-transform: uppercase;
+      border-right: 1px solid $adl-grey-lightest;
+      font-size: 1.5rem;
+      font-weight: 600;
+      padding-top: $adl-card-padding-top;
+      padding-bottom: $adl-card-padding-top;
+    }
+
+    #review-thumbs-up {
+      border-right: 1px solid $adl-grey-lightest;
+    }
+
+    #review-thumbs-up, #review-thumbs-down {
+      cursor: pointer;
+      i {
+        font-size: 1.5rem + $adl-card-padding-top;
+      }
+
+      &.active i {
+        color: $adl-coral;
+      }
+    }
+  }
+
+  #review_comment {
+    border: none;
+    border-top: 1px solid $adl-grey-lightest;
+    padding: $adl-card-padding-side;
+  }
+}

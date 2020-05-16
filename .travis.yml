@@ -1,35 +1,55 @@
 dist: trusty
-
+sudo: false
 language: php
-
 php:
   - '7.0.21'
 
 env:
   global:
     - SYMFONY_ENV=test
+    - SYMFONY_PHPUNIT_DIR=$HOME/.symfony-phpunit
     - PHPUNIT=vendor/symfony/phpunit-bridge/bin/simple-phpunit
   matrix:
     - TESTSUITE=unittests
     - TESTSUITE=functional
     - TESTSUITE=browser
+    - TESTSUITE=lint
 
 services:
   # ElasticSearch takes few seconds to start, but it also takes a while until
-  # we finally execute the tests, no need to wait!
+  # we start executing the tests, so there is no need to wait for it to be
+  # up and running.
   # https://docs.travis-ci.com/user/database-setup/#ElasticSearch
   - elasticsearch
+
+addons:
+  chrome: stable
 
 cache:
   directories:
     - $HOME/.composer/cache/files
+    - $HOME/.symfony-phpunit
     - node_modules
 
+stages:
+  - test
+  - name: deploy
+    if: branch = dev
+
+before_install:
+  - INI=~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - echo date.timezone = Europe/Berlin >> $INI
+  - echo memory_limit = -1 >> $INI
+  - |
+    if [ ${TESTSUITE} == "browser" ] || [ "$TESTSUITE" == "lint" ]; then
+      phpenv config-rm xdebug.ini || echo "xdebug not available";
+    fi;
+
 install:
-  - composer install -n
+  - composer install -n --no-suggest --no-progress --ansi
   - |
     if [ ${TESTSUITE} == "functional" ] || [ "$TESTSUITE" == "browser" ]; then
-      npm install npm@latest -g
+      npm install -g npm
       npm install;
       npm run prod;
     fi;
@@ -43,26 +63,17 @@ before_script:
 
 script:
   - set -e
-  # Check for Twig and Yaml syntax errors
-  - php bin/console lint:twig app
-  - php bin/console lint:yaml app
-  # Check for security issues in installed dependencies
-  #   Specifying the endpoint is a (temporary) fix for Travis, see:
-  #   https://github.com/travis-ci/travis-ci/issues/6339
-  #   https://github.com/sensiolabs/security-checker/pull/77#issuecomment-290733113
-  - php bin/console security:check --end-point=http://security.sensiolabs.org/check_lock
-  # Start server and PhantomJS if browser tests are executed
   - |
-    if [[ ${TESTSUITE} == "browser" ]]; then
-      bash scripts/start-phantomjs.sh
-    fi;
-  # Execute tests
-  # Only gather coverage on PHP 7.1, ignore browser tests for coverage.
-  - |
-    if [ "$TESTSUITE" == "browser" ]; then
-      $PHPUNIT --testsuite $TESTSUITE;
+    if [ ${TESTSUITE} == "browser" ]; then
+      bash scripts/prepare-browser-tests.sh
+      sleep 5
+      $PHPUNIT --testsuite $TESTSUITE
+    elif [ ${TESTSUITE} == "lint" ]; then
+      php bin/console lint:twig app
+      php bin/console lint:yaml app
+      php bin/console security:check --end-point=http://security.symfony.com/check_lock
     else
-      $PHPUNIT --testsuite $TESTSUITE --coverage-clover=coverage.xml;
+      $PHPUNIT --testsuite $TESTSUITE --coverage-clover=coverage.xml
       bash <(curl -s https://codecov.io/bash) -X gcov -X coveragepy
     fi;
 

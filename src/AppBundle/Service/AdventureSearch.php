@@ -7,11 +7,12 @@ use AppBundle\Entity\AdventureDocument;
 use AppBundle\Exception\FieldDoesNotExistException;
 use AppBundle\Field\Field;
 use AppBundle\Field\FieldProvider;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class AdventureSearch
 {
-    const ADVENTURES_PER_PAGE = 50;
+    const ADVENTURES_PER_PAGE = 20;
 
     /**
      * @var \Elasticsearch\Client
@@ -33,23 +34,53 @@ class AdventureSearch
      */
     private $typeName;
 
-    public function __construct(FieldProvider $fieldProvider, ElasticSearch $elasticSearch)
+    /**
+     * @var TimeProvider
+     */
+    private $timeProvider;
+
+    public function __construct(FieldProvider $fieldProvider, ElasticSearch $elasticSearch, TimeProvider $timeProvider)
     {
         $this->fieldProvider = $fieldProvider;
         $this->client = $elasticSearch->getClient();
         $this->indexName = $elasticSearch->getIndexName();
         $this->typeName = $elasticSearch->getTypeName();
+        $this->timeProvider = $timeProvider;
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function requestToSearchParams(Request $request)
+    {
+        $q = $request->get('q', '');
+        $sortBy = $request->get('sortBy', '');
+        // Use a timestamp with millisecond precision as the seed when none is provided.
+        // We deliberately do not use time() for two reasons
+        // 1. We use Date.now() in JS, which also returns a timestamp in milliseconds
+        // 2. Simply using time() to get a timestamp in seconds sometimes leads to the same seed
+        //    when you refresh the browser too quickly.
+        $seed = (string)$request->get('seed', $this->timeProvider->millis());
+        $page = (int)$request->get('page', 1);
+        $filters = $request->get('f', []);
+        if (!is_array($filters)) {
+            $filters = [];
+        }
+        return [$q, $filters, $page, $sortBy, $seed];
     }
 
     /**
      * @param string $q
      * @param array $filters
      * @param int $page
+     * @param string $sortBy
+     * @param string $seed   Random seed used when adventures have to be sorted randomly.
      * @return array
      */
-    public function search(string $q, array $filters, int $page)
+    public function search(string $q, array $filters, int $page, string $sortBy, string $seed)
     {
-        if ($page < 1 ||  $page * self::ADVENTURES_PER_PAGE > 5000) {
+        if ($page < 1 || $page * self::ADVENTURES_PER_PAGE > 5000) {
             throw new BadRequestHttpException();
         }
 
@@ -59,7 +90,7 @@ class AdventureSearch
         // This will only search string and text fields.
         $matches = $this->qMatches($q, $matches);
 
-        // Now apply filters from the left-hand filterbar.
+        // Now apply filters from the sidebar.
         $matches = $this->filterMatches($filters, $matches);
 
         // If we neither have a filter, nor any kind of free-text search, return all adventures.
@@ -67,28 +98,115 @@ class AdventureSearch
             $matches = ['match_all' => new \stdClass()];
         }
 
+        $query = [
+            // All matches must evaluate to true for a result to be returned.
+            'bool' => [
+                "must" => $matches
+            ]
+        ];
+
+        switch ($sortBy) {
+            case 'title':
+                $sort = 'title.keyword';
+            break;
+            case 'numPages-desc':
+                $sort = ['numPages' => 'desc'];
+            break;
+            case 'numPages-asc':
+                $sort = ['numPages' => 'asc'];
+            break;
+            case 'createdAt-asc':
+                $sort = ['createdAt' => 'asc'];
+            break;
+            case 'createdAt-desc':
+                $sort = ['createdAt' => 'desc'];
+            break;
+            case 'reviews':
+                // We use the Wilson Score instead of the average of positive and negative reviews
+                // https://www.elastic.co/de/blog/better-than-average-sort-by-best-rating-with-elasticsearch
+                $sort = [
+                    "_script" => [
+                        "order" => "desc",
+                        "type" => "number",
+                        "script" => [
+                            "inline" => "
+                                long p = doc['positiveReviews'].value;
+                                long n = doc['negativeReviews'].value;
+                                return p + n > 0 ? ((p + 1.9208) / (p + n) - 1.96 * Math.sqrt((p * n) / (p + n) + 0.9604) / (p + n)) / (1 + 3.8416 / (p + n)) : 0;
+                            "
+                        ]
+                    ]
+                ];
+            break;
+            default:
+                $sort = ['_score'];
+            break;
+        }
+
+        if ($sortBy === 'random') {
+            // Sorting in a random order cannot be done using the 'sort' parameter, but requires adjusting the query
+            // to use the random_score function for scoring.
+            // https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-function-score-query.html
+            $query = [
+                "function_score" => [
+                    "query" => $query,
+                    "random_score" => [
+                        "seed" => $seed
+                    ]
+                ]
+            ];
+        }
+
         $result = $this->client->search([
             'index' => $this->indexName,
             'type' => $this->typeName,
             'body' => [
-                'query' => [
-                    // All queries must evaluate to true for a result to be returned.
-                    'bool' => [
-                        "must" => $matches
-                    ]
-                ],
+                'query' => $query,
                 'from' => self::ADVENTURES_PER_PAGE * ($page - 1),
                 'size' => self::ADVENTURES_PER_PAGE,
                 // Also return aggregations for all fields, i.e. min/max for integer fields
                 // or the most common strings for string fields.
                 'aggs' => $this->fieldAggregations(),
+                'sort' => $sort
             ],
         ]);
 
-        $hits = $result['hits']['hits'];
-        $adventureDocuments = $this->searchResultsToAdventureDocuments($hits);
+        $adventureDocuments = array_map(function ($hit) {
+            return new AdventureDocument(
+                $hit['_id'],
+                $hit['_source']['authors'],
+                $hit['_source']['edition'],
+                $hit['_source']['environments'],
+                $hit['_source']['items'],
+                $hit['_source']['publisher'],
+                $hit['_source']['setting'],
+                $hit['_source']['commonMonsters'],
+                $hit['_source']['bossMonsters'],
+                $hit['_source']['title'],
+                $hit['_source']['description'],
+                $hit['_source']['slug'],
+                $hit['_source']['minStartingLevel'],
+                $hit['_source']['maxStartingLevel'],
+                $hit['_source']['startingLevelRange'],
+                $hit['_source']['numPages'],
+                $hit['_source']['foundIn'],
+                $hit['_source']['partOf'],
+                $hit['_source']['link'],
+                $hit['_source']['thumbnailUrl'],
+                $hit['_source']['soloable'],
+                $hit['_source']['pregeneratedCharacters'],
+                $hit['_source']['tacticalMaps'],
+                $hit['_source']['handouts'],
+                $hit['_source']['year'],
+                $hit['_source']['positiveReviews'],
+                $hit['_source']['negativeReviews'],
+                $hit['_score']
+            );
+        }, $result['hits']['hits']);
+        $totalResults = $result['hits']['total'];
+        $hasMoreResults = $totalResults > $page * self::ADVENTURES_PER_PAGE;
 
-        return [$adventureDocuments, $result['hits']['total'], $result['aggregations']];
+        return [$adventureDocuments, $totalResults, $hasMoreResults, $result['aggregations']];
     }
 
     public function similarTitles($title): array
@@ -106,6 +224,7 @@ class AdventureSearch
                         'title' => [
                             'query' => $title,
                             'operator' => 'and',
+                            'fuzziness' => 'AUTO'
                         ]
                     ]
                 ],
@@ -161,7 +280,7 @@ class AdventureSearch
         ]);
 
         $results = [];
-        foreach($response['hits']['hits'] as $hit) {
+        foreach ($response['hits']['hits'] as $hit) {
             if (!isset($hit['highlight'])) {
                 continue;
             }
@@ -217,43 +336,6 @@ class AdventureSearch
     }
 
     /**
-     * @param array $hits
-     * @return AdventureDocument[]
-     */
-    private function searchResultsToAdventureDocuments(array $hits): array
-    {
-        return array_map(function ($hit) {
-            return new AdventureDocument(
-                $hit['_id'],
-                $hit['_source']['authors'],
-                $hit['_source']['edition'],
-                $hit['_source']['environments'],
-                $hit['_source']['items'],
-                $hit['_source']['publisher'],
-                $hit['_source']['setting'],
-                $hit['_source']['commonMonsters'],
-                $hit['_source']['bossMonsters'],
-                $hit['_source']['title'],
-                $hit['_source']['description'],
-                $hit['_source']['slug'],
-                $hit['_source']['minStartingLevel'],
-                $hit['_source']['maxStartingLevel'],
-                $hit['_source']['startingLevelRange'],
-                $hit['_source']['numPages'],
-                $hit['_source']['foundIn'],
-                $hit['_source']['partOf'],
-                $hit['_source']['link'],
-                $hit['_source']['thumbnailUrl'],
-                $hit['_source']['soloable'],
-                $hit['_source']['pregeneratedCharacters'],
-                $hit['_source']['tacticalMaps'],
-                $hit['_source']['handouts'],
-                $hit['_score']
-            );
-        }, $hits);
-    }
-
-    /**
      * @return array
      */
     private function fieldAggregations(): array
@@ -306,33 +388,105 @@ class AdventureSearch
      */
     private function qMatches(string $q, $matches): array
     {
+        // Get a list of freetext searchable fields and their individual boost values.
         $fields = $this->fieldProvider
             ->getFields()
-            ->filter(function (Field $field) { return $field->isFreetextSearchable(); })
-            ->map(function (Field $field) { return $field->getName() . '^' . $field->getSearchBoost(); })
+            ->filter(function (Field $field) {
+                return $field->isFreetextSearchable();
+            })
+            ->map(function (Field $field) {
+                return $field->getName() . '^' . $field->getSearchBoost();
+            })
             ->getValues();
 
-        $terms = explode(',', $q);
-        $qMatches = [];
-        foreach ($terms as $term) {
-            if (trim($term) == "") {
-                continue;
+        // Implicitly, everything the user types in the search bar is ANDed together.
+        // A search for 'galactic ghouls' should result in adventures that contain
+        // both terms. If the user really wants to search for 'galactic OR ghouls',
+        // the have to separate the terms by ' OR '.
+        // The order of terms is irrelevant: Searching for 'galactic ghouls' leads
+        // to the same results as searching for 'ghouls galactic'. We could look
+        // into supporting quoting terms ('"galactic ghouls"') later, which would
+        // NOT match adventures with 'ghouls galactic' or adventures with 'galactic'
+        // and 'ghouls' in different fields.
+        $clauses = explode(' OR ', $q);
+        $orMatches = [];
+        foreach ($clauses as $clause) {
+            $terms = explode(' ', $clause);
+            // All terms that are part of this clause have to be ANDed together.
+            // Given the search query 'galactic ghouls', we don't care if both
+            // 'galactic' and 'ghouls' appear in the same field (e.g., the title)
+            // or appear on their own in different fields (e.g., 'galactic' in
+            // the title and 'ghouls' in the description). That is why we can't
+            // simply use a single 'multi_match' query with the operator set to
+            // 'and' like this:
+            // ['multi_match' => [
+            //     'query' => 'galactic ghouls',
+            //     'fields' => $fields,
+            //     'type' => 'most_fields'
+            //     'fuzziness' => 'AUTO',
+            //     'prefix_length' => 2,
+            //      'operator' => 'and'
+            // ]]
+            // This query would only return results where both terms appear in
+            // the same field. We also can't use 'cross_fields' (instead of
+            // 'most_fields'): While that allows terms to be distributed across
+            // fields, it doesn't allow using fuzziness.
+            //
+            // That is why we create a multi_match query per term and AND them
+            // together using a 'bool => 'must' query.
+            $termMatches = [];
+            foreach ($terms as $term) {
+                if (trim($term) == "") {
+                    continue;
+                }
+                $termMatches[] = [
+                    'multi_match' => [
+                        'query' => $term,
+                        'fields' => $fields,
+                        // 'most_fields' combines the scores of all fields that
+                        // contain the search term: If the term appears in title,
+                        // description, and edition, the score of all of these
+                        // occurrences is combined. This is better than using
+                        // the default 'best_fields', which simply takes field
+                        // with the highest score, discarding all lower scores.
+                        'type' => 'most_fields',
+                        // Fuzziness is helpful for typos and finding plural
+                        // versions of the same word. We do not currently stem
+                        // the description and title, which is why using some
+                        // fuzziness is essential.
+                        // Setting prefix_length to 2 causes fuzziness to not
+                        // change the first 2 characters of search terms. As
+                        // an example, take the search for 'ghouls':
+                        // 'ghouls' only has an edit distanc of 2 to the term
+                        // 'should'. We don't want searches for 'ghouls' to
+                        // also match 'should', which is why we restrict the
+                        // fuzziness to start after the second character.
+                        'fuzziness' => 'AUTO',
+                        'prefix_length' => 2,
+                    ]
+                ];
             }
-            $qMatches[] = [
-                'multi_match' => [
-                    'query' => $term,
-                    'fields' => $fields,
-                    'fuzziness' => 'AUTO'
-                ]
-            ];
+            if (!empty($termMatches)) {
+                $orMatches[] = [
+                    'bool' => [
+                        'must' => $termMatches
+                    ]
+                ];
+            }
         }
-        if (!empty($qMatches)) {
+
+        if (!empty($orMatches)) {
+            // Combine the collected OR conditions.
+            // At least one of them must match for an adventure to be returned.
+            // The adventure will get a higher score if more than one matches.
             $matches[] = [
                 'bool' => [
-                    'must' => $qMatches
+                    'should' => $orMatches,
+                    'minimum_should_match' => 1,
                 ]
             ];
         }
+
         return $matches;
     }
 

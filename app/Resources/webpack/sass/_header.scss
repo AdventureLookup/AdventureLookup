@@ -1,0 +1,33 @@
+#adl-header {
+  @extend .container;
+
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+  z-index: 100;
+
+  display: flex;
+  justify-content: flex-end;
+  height: 30px;
+
+  #adl-header-login-dropdown {
+    min-width: 125px;
+  }
+
+  .header-box-dark {
+    background-color: $adl-grey-darkest;
+    color: $adl-offwhite;
+
+    &:not(a) {
+      margin-left: 15px;
+    }
+  }
+
+  .btn {
+    border-radius: 0;
+    box-shadow: $adl-box-shadow;
+    font-family: 'Roboto Condensed', sans-serif;
+    text-transform: uppercase;
+  }
+}

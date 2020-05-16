@@ -53,7 +53,7 @@ class PasswordResetControllerTest extends WebTestCase
         $page->findButton('Login')->click();
 
         $session->visit('/profile');
-        $this->assertTrue($page->hasContent('Welcome, @' . self::USERNAME));
+        $this->assertTrue($page->hasContent('Your username is ' . self::USERNAME));
     }
 
     /**

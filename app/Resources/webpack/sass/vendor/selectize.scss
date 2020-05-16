@@ -1,0 +1,21 @@
+@import '~selectize/dist/css/selectize.bootstrap3';
+
+.selectize-control::before {
+  -moz-transition: opacity 0.2s;
+  -webkit-transition: opacity 0.2s;
+  transition: opacity 0.2s;
+  content: ' ';
+  z-index: 2;
+  position: absolute;
+  display: block;
+  top: 9px;
+  right: 34px;
+  width: 16px;
+  height: 16px;
+  background: url('~selectize/examples/images/spinner.gif');
+  background-size: 16px 16px;
+  opacity: 0;
+}
+.selectize-control.loading::before {
+  opacity: 0.7;
+}

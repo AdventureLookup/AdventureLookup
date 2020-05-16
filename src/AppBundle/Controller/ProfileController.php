@@ -49,11 +49,9 @@ class ProfileController extends Controller
 
         $changeRequests = $changeRequestRepository->findBy([
             'createdBy' => $user->getUsername(),
-            'resolved' => false,
-        ], ['createdAt' => 'DESC']);
+        ], ['createdAt' => 'DESC', 'resolved' => 'ASC']);
 
         return $this->render('profile/overview.html.twig', [
-            'user' => $user,
             'changeRequests' => $changeRequests,
             'adventures' => $adventures,
         ]);

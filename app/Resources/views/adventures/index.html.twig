@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% import _self as macros %}
+    <div class="container" id="page--search-adventures">
+        <div class="row">
+            <div class="col-xs-12 col-md-4 col-lg-3">
+                <div
+                    class="adl-sidebar mt-5 mt-md-0"
+                    id="sidebar-react-root"
+                    data-fields="{{ fields.toArray | json_encode | e("html_attr") }}"
+                    data-url="{{ url('adventure_index') | e("html_attr") }}"
+                    data-initial-filter-values="{{ searchFilter | json_encode | e("html_attr")}}"
+                    data-initial-query="{{ q | e("html_attr") }}"
+                    data-initial-sort-by="{{ sortBy | e("html_attr") }}"
+                    data-initial-seed="{{ seed | e("html_attr") }}"
+                    data-field-stats="{{ stats | json_encode | e("html_attr") }}"
+                ></div>
+                <div class="adl-sidebar">
+                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                        <a class="btn btn-primary" href="{{ path('adventure_new') }}">
+                            <i class="fa fa-plus-circle"></i>
+                            Add a new adventure
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="adl-sidebar">
+                    <a class="btn btn-outline-secondary" href="{{ path('adventure_random') }}">
+                        <i class="fa fa-random"></i>
+                        Random Adventure
+                    </a>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-8 col-lg-9">
+                {% include 'adventures/search_results_header.html.twig' %}
+                {% include 'adventures/search_results.html.twig' %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

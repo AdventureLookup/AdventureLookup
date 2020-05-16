@@ -3,16 +3,23 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Adventure;
+use AppBundle\Entity\AdventureList;
+use AppBundle\Entity\Review;
 use AppBundle\Field\FieldProvider;
 use AppBundle\Form\Type\AdventureType;
+use AppBundle\Form\Type\ReviewType;
 use AppBundle\Security\AdventureVoter;
 use AppBundle\Service\AdventureSearch;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Adventure controller.
@@ -32,20 +39,29 @@ class AdventureController extends Controller
      */
     public function indexAction(Request $request, AdventureSearch $adventureSearch, FieldProvider $fieldProvider)
     {
-        $q = $request->get('q', '');
-        $page = (int)$request->get('page', 1);
-        $filters = $request->get('f', []);
-        $fields = $fieldProvider->getFields();
-        list($paginatedAdventureDocuments, $totalNumberOfResults, $stats) = $adventureSearch->search($q, $filters, $page);
+        list($q, $filters, $page, $sortBy, $seed) = $adventureSearch->requestToSearchParams($request);
+        list($adventures, $totalNumberOfResults, $hasMoreResults, $stats) = $adventureSearch->search(
+            $q,
+            $filters,
+            $page,
+            // Sort randomly unless there is a search query or $sortBy is not set to 'Best match'
+            // Deliberately NOT alter the $sortBy variable as passed to the template below, since
+            // the user should still see 'Best match' as selected in the sort-by dropdown.
+            '' === $q && '' === $sortBy ? 'random' : $sortBy,
+            $seed
+        );
 
-        return $this->render('adventure/index.html.twig', [
-            'adventures' => $paginatedAdventureDocuments,
+        return $this->render('adventures/index.html.twig', [
+            'adventures' => $adventures,
             'totalNumberOfResults' => $totalNumberOfResults,
+            'hasMoreResults' => $hasMoreResults,
             'page' => $page,
             'stats' => $stats,
             'searchFilter' => $filters,
-            'fields' => $fields,
+            'fields' => $fieldProvider->getFields(),
             'q' => $q,
+            'sortBy' => $sortBy,
+            'seed' => $seed
         ]);
     }
 
@@ -92,18 +108,61 @@ class AdventureController extends Controller
      * @Method("GET")
      *
      * @param Adventure $adventure
+     * @param EntityManagerInterface $em
+     * @param UserInterface $user
      * @return Response
      */
-    public function showAction(Adventure $adventure)
+    public function showAction(Adventure $adventure, EntityManagerInterface $em,
+                               UserInterface $user = null)
     {
         $this->denyAccessUnlessGranted(AdventureVoter::VIEW, $adventure);
 
         $deleteForm = $this->createDeleteForm($adventure);
+        $reviewForm = $this->createReviewForm($adventure);
+        $reviewDeleteForm = $this->createdReviewDeleteFormTemplate();
+        $adventureListRepository = $em->getRepository(AdventureList::class);
 
-        return $this->render('adventure/show.html.twig', array(
+        return $this->render('adventure/index.html.twig', [
             'adventure' => $adventure,
             'delete_form' => $deleteForm->createView(),
-        ));
+            'review_form' => $reviewForm->createView(),
+            'review_delete_form' => $reviewDeleteForm->createView(),
+            'lists' => $adventureListRepository->myLists($user),
+        ]);
+    }
+
+    /**
+     * Finds and displays a random adventure entity.
+     *
+     * @Route("/random-adventure", name="adventure_random")
+     * @Method("GET")
+     *
+     * @param EntityManagerInterface $em
+     * @return Response
+     */
+    public function randomAction(EntityManagerInterface $em)
+    {
+        $rsm = new ResultSetMapping();
+        $rsm->addEntityResult(Adventure::class, 'a');
+        $rsm->addFieldResult('a', 'id', 'id');
+        $rsm->addFieldResult('a', 'slug', 'slug');
+
+        $query = $em->createNativeQuery("
+            SELECT a.id, a.slug from adventure a ORDER by RAND() limit 1
+        ",$rsm);
+
+        $randomAdventure = $query->getResult();
+
+        $a = $randomAdventure[0];
+
+        if (!$a) {
+            throw $this->createNotFoundException(
+                'No adventure found'
+            );
+        }
+
+        return $this->redirectToRoute('adventure_show', ['slug' => $a->getSlug()]);
+
     }
 
     /**
@@ -168,7 +227,7 @@ class AdventureController extends Controller
      *
      * @param Adventure $adventure The adventure entity
      *
-     * @return \Symfony\Component\Form\Form The form
+     * @return FormInterface
      */
     private function createDeleteForm(Adventure $adventure)
     {
@@ -177,5 +236,40 @@ class AdventureController extends Controller
             ->setMethod('DELETE')
             ->getForm()
         ;
+    }
+
+    /**
+     * Creates a form to create/edit a review for the specified adventure.
+     *
+     * @param Adventure $adventure
+     * @return FormInterface
+     */
+    private function createReviewForm(Adventure $adventure)
+    {
+        $review = $adventure->getReviewBy($this->getUser());
+        if ($review === null) {
+            $review = new Review($adventure);
+            $actionUrl = $this->generateUrl('review_new', ['id' => $adventure->getId()]);
+        } else {
+            $actionUrl = $this->generateUrl('review_edit', ['id' => $review->getId()]);
+        }
+
+        return $this->createForm(ReviewType::class, $review, [
+            'action' => $actionUrl
+        ]);
+    }
+
+    /**
+     * Creates a form template to delete a review.
+     * The action needs to be set manually inside the template:
+     * {{ form_start(form, {'action': path('review_delete', {id: <ID>})}) }}
+     *
+     * @return FormInterface
+     */
+    private function createdReviewDeleteFormTemplate()
+    {
+        return $this->createFormBuilder()
+            ->setMethod('DELETE')
+            ->getForm();
     }
 }

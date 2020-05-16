@@ -1,0 +1,34 @@
+$adl-grey-lightest: #ececed;
+$adl-grey-light: #808490;
+$adl-grey: $gray-600;
+$adl-grey-dark: #595f6f;
+$adl-grey-darkest: #333740;
+$adl-coral: #f56e4e;
+$adl-offwhite: #d5d6da;
+
+// Fonts
+$adl-line-height: $line-height-base;
+$adl-secondary-font-name: 'Arima Madurai';
+$adl-secondary-font-weight: 600;
+$adl-secondary-font-height: $adl-line-height * 1rem;
+
+// Borders
+$adl-border-grey-lightest-big: 2px solid $adl-grey-lightest;
+$adl-border-radius-big: 30px;
+
+// Padding & Margin
+$adl-body-padding: 15px;
+$adl-body-margin-top: 50px;
+
+$adl-card-padding-top: 1rem;
+$adl-card-padding-side: 1.8rem;
+$adl-card-padding: $adl-card-padding-top $adl-card-padding-side;
+
+// Misc
+$adl-box-shadow: 4px 2px 2px #aaaaaa;
+
+// Filter panel & Filters
+$adl-filter-min-height: 36px;
+$adl-filter-padding-top: 8px;
+$adl-filter-padding-side: 8px;
+$adl-filter-padding: $adl-filter-padding-top $adl-filter-padding-side;

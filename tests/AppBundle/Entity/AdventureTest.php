@@ -4,13 +4,15 @@
 namespace Tests\AppBundle\Entity;
 
 use AppBundle\Entity\Adventure;
+use AppBundle\Entity\ChangeRequest;
 use AppBundle\Entity\Edition;
 use AppBundle\Entity\Monster;
 use AppBundle\Entity\Publisher;
 use AppBundle\Entity\Setting;
 use Doctrine\Common\Collections\ArrayCollection;
+use PHPUnit\Framework\TestCase;
 
-class AdventureTest extends \PHPUnit_Framework_TestCase
+class AdventureTest extends TestCase
 {
     /**
      * @var Adventure
@@ -29,6 +31,25 @@ class AdventureTest extends \PHPUnit_Framework_TestCase
             $this->makeCommonMonster(),
             $this->makeBossMonster(),
         ]));
+
+        $changeRequests = new \ReflectionProperty($this->subject, 'changeRequests');
+        $changeRequests->setAccessible(true);
+        $changeRequests->setValue($this->subject, new ArrayCollection([
+            $this->makeChangeRequest(true),
+            $this->makeChangeRequest(false),
+        ]));
+    }
+
+    public function testGetChangeRequests()
+    {
+        $this->assertCount(2, $this->subject->getChangeRequests());
+    }
+
+    public function testGetUnresolvedChangeRequests()
+    {
+        $changeRequests = $this->subject->getUnresolvedChangeRequests();
+        $this->assertCount(1, $changeRequests);
+        $this->assertFalse($changeRequests->first()->isResolved());
     }
 
     public function testGetMonsters()
@@ -131,5 +152,12 @@ class AdventureTest extends \PHPUnit_Framework_TestCase
         $monster->setIsUnique(true);
 
         return $monster;
+    }
+
+    private function makeChangeRequest(bool $resolved): ChangeRequest
+    {
+        $changeRequest = new ChangeRequest();
+        $changeRequest->setResolved($resolved);
+        return $changeRequest;
     }
 }

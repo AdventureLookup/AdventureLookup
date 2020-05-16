@@ -1,0 +1,112 @@
+$element-margin-bottom: 10px;
+
+$thumbnail-offset: 2rem;
+$thumbnail-width: 85px;
+$thumbnail-height: 100px;
+
+#search-title {
+  display: flex;
+  justify-content: space-between;
+  margin: $adl-body-margin-top 0 $element-margin-bottom/2;
+  @extend %secondaryFont;
+}
+
+#search-tags {
+  margin: $element-margin-bottom 0;
+
+  > span.badge {
+    margin-right: 4px;
+    &::after {
+      content: '\f00d';
+      font: 1rem 'FontAwesome';
+    }
+    &:hover {
+      background-color: darken($adl-coral, 7.5%);
+      cursor: pointer;
+    }
+  }
+}
+
+#search-bar {
+  display: flex;
+  margin-bottom: $element-margin-bottom;
+
+  button, input {
+    font-size: 1.2rem;
+  }
+}
+
+#search-tips {
+  display: block;
+  margin-bottom: $element-margin-bottom;
+  margin-top: -$element-margin-bottom + 2px;
+  padding-left: 10px;
+
+  font-weight: $adl-secondary-font-weight;
+  font-family: $adl-secondary-font-name;
+  color: #333333;
+}
+
+#search-results {
+  // don't show underline for the entire adventure block
+  > a {
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  .adventure {
+    @extend .card;
+    margin-bottom: 1rem;
+    color: #000;
+    box-shadow: $adl-box-shadow;
+
+    .thumbnail {
+      position: absolute;
+      top: $thumbnail-offset;
+      right: $thumbnail-offset;
+      max-width: $thumbnail-width;
+      max-height: $thumbnail-height;
+      border: $adl-border-grey-lightest-big;
+    }
+
+    .title {
+      padding: $adl-card-padding;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .description {
+      display: block;
+      display: -webkit-box;
+      margin: $adl-card-padding;
+      max-height: 1rem * $adl-line-height * 3;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+
+    @include media-breakpoint-up(sm) {
+      .title, .description, .tags-container {
+        padding-right: calc(#{$thumbnail-width} + #{$thumbnail-offset});
+      }
+    }
+  }
+
+  %no-results {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @extend %secondaryFont;
+  }
+
+  .no-results {
+    @extend %no-results;
+    min-height: 300px;
+  }
+  .no-more-results {
+    @extend %no-results;
+    min-height: 150px;
+  }
+}

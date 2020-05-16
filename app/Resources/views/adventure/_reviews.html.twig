@@ -1,0 +1,69 @@
+{% if app.user %}
+    <div id="create-review-container" class="mt-0 mb-3 d-none" data-has-reviewed="{{ adventure.reviewBy(app.user) ? '1' : '0' }}">
+        <div class="row" id="review-thumbs-row">
+            <div class="col-auto d-flex align-items-center" id="review-thumbs-up">
+                <i class="fa fa-fw fa-thumbs-up fa-flip-horizontal"></i>
+            </div>
+            <div class="col" id="review-thumbs-message"></div>
+            <div class="col-auto d-flex align-items-center" id="review-thumbs-down">
+                <i class="fa fa-fw fa-thumbs-down"></i>
+            </div>
+        </div>
+        {{ form_start(review_form, {'attr': {'id': 'review_form'}}) }}
+        {{ form_widget(review_form.rating) }}
+        {{ form_widget(review_form.comment) }}
+        {{ form_end(review_form) }}
+    </div>
+{% endif %}
+
+<div id="review-container" class="mt-0">
+    <div class="row">
+        <div class="col">
+            <h3 class="title">Reviews</h3>
+        </div>
+        <div class="col-auto">
+            <div class="title">
+                <i class="fa fa-fw fa-thumbs-o-up"></i> {{ adventure.numberOfThumbsUp }}
+                <i class="fa fa-fw fa-thumbs-o-down"></i> {{ adventure.numberOfThumbsDown }}
+            </div>
+        </div>
+    </div>
+    {% if not app.user %}
+        <div class="alert alert-info">Please sign in to rate or leave a review.</div>
+    {% elseif adventure.reviewBy(app.user) %}
+        <div class="alert alert-success">You've already rated/reviewed this adventure.</div>
+    {% endif %}
+    {% for review in adventure.reviews|filter(review => review.comment is not empty) %}
+        <div class="review">
+            <p>
+                <strong>{{ review.createdBy }}</strong> has played this adventure and would {{ review.thumbsDown ? 'not' : '' }} recommend it.
+            </p>
+            <blockquote>
+                <div class="row">
+                    <div class="col col-auto d-none d-sm-flex">
+                        <i class="fa fa-quote-left fa-3x review-icon"></i>
+                    </div>
+                    <div class="col">
+                        {{ review.comment|nl2br }}
+                    </div>
+                </div>
+            </blockquote>
+            {% if is_granted('delete', review) %}
+                <small class="text-right d-block">
+                    {{ form_start(review_delete_form, {'action': path('review_delete', {id: review.id})}) }}
+                    {{ form_widget(review_delete_form) }}
+                    <button type="submit" class="text-danger btn btn-link"
+                            role="button"
+                            onclick="return confirm('Do you really want to delete this review?')">
+                        <i class="fa fa-trash"></i> Delete Review
+                    </button>
+                    {{ form_end(review_delete_form) }}
+                </small>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="review">
+            This adventure has not been reviewed yet.
+        </div>
+    {% endfor %}
+</div>

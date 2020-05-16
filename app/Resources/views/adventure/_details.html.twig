@@ -1,0 +1,148 @@
+{% macro search(fieldName, value, content, isInteger = false) %}
+    {% apply spaceless %}
+        {% if isInteger %}
+            {% set path = path('adventure_index', {
+                ('f[' ~ fieldName ~ '][v][min]'): value,
+                ('f[' ~ fieldName ~ '][v][max]'): value,
+            }) %}
+        {% else %}
+            {% set path = path('adventure_index', {('f[' ~ fieldName ~ '][v]'): value}) %}
+        {% endif %}
+        <a href="{{ path }}" title="Search for similar adventures">{{ content ?: value }}</a>
+    {% endapply %}
+{% endmacro %}
+
+{% import _self as macros %}
+<div id="adventure-container">
+    <div class="thumbnail-container">
+        {% if adventure.thumbnailUrl %}
+            <img alt="Cover of {{ adventure.title }}" src="{{ adventure.thumbnailUrl }}" class="thumbnail d-none d-sm-block" />
+        {% endif %}
+    </div>
+    <h2 class="title">{{ adventure.title }}</h2>
+    <div class="tags-container">
+        <div class="tag tag-edition">{{ adventure.edition.name|default('Unknown Edition') }}</div>
+        <div class="tag tag-level">{{ format_level(adventure)|default('Unknown party level') }}</div>
+        <div class="tag tag-length">{{ adventure.numPages|default('?') }} pages</div>
+    </div>
+    <p class="description">{{ adventure.description|nl2br }}</p>
+
+    <div class="container">
+        <div class="detail-row">
+            <div class="col">
+                <div class="label">Written By</div>
+                {% for author in adventure.authors %}
+                    {{ macros.search('authors', author.name, author.name) }}{{ not loop.last ? ', ' : '' }}
+                {% endfor %}
+            </div>
+            <div class="col">
+                <div class="label">Published By</div>
+                {% if adventure.publisher %}
+                    {{ macros.search('publisher', adventure.publisher.name) }}
+                {% else %}
+                    Unknown
+                {% endif %}
+            </div>
+            <div class="col">
+                <div class="label">Publication Year</div>
+                {% if adventure.year %}
+                    {{ macros.search('year', adventure.year, null, true) }}
+                {% else %}
+                    Unknown
+                {% endif %}
+            </div>
+            <div class="col">
+                <div class="label">Setting</div>
+                {% if adventure.setting %}
+                    {{ macros.search('setting', adventure.setting.name) }}
+                {% else %}
+                    Unknown
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="col">
+                <div class="label">Environments</div>
+                {% for environment in adventure.environments %}
+                    {{ macros.search('environments', environment.name) }}{{ not loop.last ? ', ' : '' }}
+                {% endfor %}
+            </div>
+            <div class="col-7">
+                <div class="label">Link</div>
+                <a href="{{ adventure.link|add_affiliate_code|e('html_attr') }}">{{ adventure.link|add_affiliate_code }}</a>
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="col-3">
+                <div class="label">Handouts?</div>
+                {{ macros.search('handouts', adventure.handouts, adventure.handouts|bool2str) }}
+            </div>
+            <div class="col-3">
+                <div class="label">Battle Mats?</div>
+                {{ macros.search('tacticalMaps', adventure.tacticalMaps, adventure.tacticalMaps|bool2str) }}
+            </div>
+            <div class="col-3">
+                <div class="label">Soloable?</div>
+                {{ macros.search('soloable', adventure.soloable, adventure.soloable|bool2str) }}
+            </div>
+            <div class="col-3">
+                <div class="label">Includes Characters?</div>
+                {{ macros.search('pregeneratedCharacters', adventure.pregeneratedCharacters, adventure.pregeneratedCharacters|bool2str) }}
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div>
+                <div class="label">Found In</div>
+                {{ macros.search('foundIn', adventure.foundIn) }}
+            </div>
+            <div>
+                <div class="label">Part Of</div>
+                {{ macros.search('partOf', adventure.partOf) }}
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="col-xs-12 col-sm-6 col-lg">
+                <div class="label">Boss Monsters and Villains</div>
+                <ul>
+                    {% for monster in adventure.bossMonsters %}
+                        <li>
+                            {{ macros.search('bossMonsters', monster.name) }}
+                            {% for type in monster.types %}
+                                <span class="badge badge-info">{{ type.name }}</span>
+                            {% endfor %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-lg">
+                <div class="label">Common Monsters</div>
+                <ul>
+                    {% for monster in adventure.commonMonsters %}
+                        <li>
+                            {{ macros.search('commonMonsters', monster.name) }}
+                            {% for type in monster.types %}
+                                <span class="badge badge-info">{{ type.name }}</span>
+                            {% endfor %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-lg">
+                <div class="label">Notable Items</div>
+                <ul>
+                    {% for item in adventure.items %}
+                        <li>{{ macros.search('items', item.name) }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="m-3" id="change-requests">
+        {{ render(controller('AppBundle:ChangeRequest:show', {adventure: adventure})) }}
+    </div>
+</div>

@@ -1,0 +1,9 @@
+#profile-container {
+  @extend .content-container;
+}
+
+#adl-sidebar > .content .sidebar-block {
+  .block-title.active {
+    background-color: $adl-grey-light;
+  }
+}

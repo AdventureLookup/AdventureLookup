@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-xl-3">
+                <div class="adl-sidebar">
+                    <div class="content text-left">
+                        <a class="no-underline" href="{{ path('adventure_index') }}">
+                            <div class="sidebar-title">Adventure Lookup</div>
+                        </a>
+                        <a href="{{ path('profile') }}" class="no-underline">
+                            <div class="sidebar-block">
+                                <div class="block-title {% if app.request.attributes.get('_route') == 'profile' %}active{% endif %}">
+                                    <i class="fa fa-user"></i> Profile Overview
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="{{ path('adventure_lists_index') }}" class="no-underline">
+                            <div class="sidebar-block">
+                                <div class="block-title {% if app.request.attributes.get('_route') == 'lists' %}active{% endif %}">
+                                    <i class="fa fa-bookmark"></i> Bookmarked adventures</div>
+                            </div>
+                        </a>
+
+                        <a href="{{ path('change_password') }}" class="no-underline">
+                            <div class="sidebar-block">
+                                <div class="block-title {% if app.request.attributes.get('_route') == 'change_password' %}active{% endif %}">
+                                    <i class="fa fa-key"></i> Change Password
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-8 col-xl-9">
+                <div id="profile-container">
+                    {% block profile_content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

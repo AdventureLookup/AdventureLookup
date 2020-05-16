@@ -3,13 +3,14 @@
 namespace AppBundle\Twig;
 
 use DataDog\AuditBundle\Entity\AuditLog;
+use Twig\Extension\AbstractExtension;
 
 /**
  * Adds new functions to use in the audit Twig templates.
  *
  * https://symfony.com/doc/current/templating/twig_extension.html
  */
-class AuditExtension extends \Twig_Extension
+class AuditExtension extends AbstractExtension
 {
     public function getFunctions()
     {

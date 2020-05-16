@@ -11,11 +11,13 @@ use AppBundle\Entity\Environment;
 use AppBundle\Entity\Item;
 use AppBundle\Entity\Monster;
 use AppBundle\Entity\Publisher;
+use AppBundle\Entity\Review;
 use AppBundle\Entity\Setting;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use ReflectionClass;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -63,6 +65,10 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
         $monsters = $doctrine->getRepository('AppBundle:Monster')->findAll();
 
         $faker = Faker\Factory::create();
+        $faker->addProvider(new \Mmo\Faker\PicsumProvider($faker));
+
+        $reviewCreatedByProperty = (new ReflectionClass(Review::class))->getProperty('createdBy');
+        $reviewCreatedByProperty->setAccessible(true);
 
         for ($i = 0; $i < 200; $i++) {
             $adventure = new Adventure();
@@ -73,7 +79,7 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
                 ->setFoundIn($faker->catchPhrase)
                 ->setPartOf($faker->boolean() ? $faker->catchPhrase : null)
                 ->setLink($faker->url)
-                ->setThumbnailUrl($faker->imageUrl(260, 300))
+                ->setThumbnailUrl($faker->picsumUrl(260, 300))
                 ->setSoloable($faker->boolean())
                 ->setPregeneratedCharacters($faker->boolean())
                 ->setTacticalMaps($faker->boolean())
@@ -83,11 +89,13 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
                 ->setEnvironments(new ArrayCollection($faker->randomElements($environments, $faker->numberBetween(1, 2))))
                 ->setItems(new ArrayCollection($faker->randomElements($items, $faker->numberBetween(0, 5))))
                 ->setPublisher($faker->randomElement($publishers))
+                ->setYear($faker->numberBetween(1980, 2020))
                 ->setSetting($faker->randomElement($settings))
                 ->setMonsters(new ArrayCollection($faker->randomElements($monsters, $faker->numberBetween(0, 20))));
 
             if ($faker->boolean(20)) {
-                for ($j = 0; $j < $faker->numberBetween(1, 5); $j++) {
+                $n = $faker->numberBetween(1, 5);
+                for ($j = 0; $j < $n; $j++) {
                     $changeRequest = new ChangeRequest();
                     $changeRequest
                         ->setComment($faker->realText($faker->numberBetween(20, 500)))
@@ -102,6 +110,25 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
                         $changeRequest->setCuratorRemarks($faker->realText($faker->numberBetween(20, 200)));
                     }
                     $em->persist($changeRequest);
+                }
+            }
+
+            if ($faker->boolean(80)) {
+                $n = $faker->numberBetween(1, 20);
+                for ($j = 0; $j < $n; $j++) {
+                    $review = new Review($adventure);
+                    if ($faker->boolean) {
+                        $review->setThumbsUp();
+                    } else {
+                        $review->setThumbsDown();
+                    }
+                    if ($faker->boolean(70)) {
+                        $review->setComment($faker->realText($faker->numberBetween(20, 500)));
+                    }
+
+                    $reviewCreatedByProperty->setValue($review, $j . "-" . $faker->userName);
+
+                    $em->persist($review);
                 }
             }
 

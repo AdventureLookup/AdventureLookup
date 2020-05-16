@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Tests\Twig;
 
 use AppBundle\Twig\AppExtension;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Cache\Simple\FilesystemCache;
 
-class AppExtensionTest extends \PHPUnit_Framework_TestCase
+class AppExtensionTest extends TestCase
 {
     /**
      * @var AppExtension
@@ -15,7 +17,7 @@ class AppExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->extension = new AppExtension([
+        $affiliateMappings = [
             [
                 'domains' => ['example.com', 'example.org'],
                 'param' => 'aff_id',
@@ -26,8 +28,18 @@ class AppExtensionTest extends \PHPUnit_Framework_TestCase
                 'param' => 'aff_id2',
                 'code' => 'aff_code2'
             ],
-        ]);
+        ];
+        $this->extension = new AppExtension($affiliateMappings, new FilesystemCache());
     }
+
+    /**
+     * @dataProvider bool2strDataProvider
+     */
+    public function testBool2Str($boolean, $expectedResult)
+    {
+        $this->assertSame($expectedResult, $this->extension->bool2str($boolean));
+    }
+
     /**
      * @dataProvider urlDataProvider
      */
@@ -47,6 +59,15 @@ class AppExtensionTest extends \PHPUnit_Framework_TestCase
             ['http://example.com/foo/bar/../baz/test 123?a=abc&b= aaa&id=1000#foo-bar&x=100', 'http://example.com/foo/bar/../baz/test 123?a=abc&b= aaa&id=1000&aff_id=aff_code#foo-bar&x=100'],
             ['http://example.org/?aff_id=test', 'http://example.org/?aff_id=aff_code'],
             ['http://www.foo.bar/?aff_id=test&aff_id2=test2', 'http://www.foo.bar/?aff_id=test&aff_id2=aff_code2'],
+        ];
+    }
+
+    public function bool2strDataProvider()
+    {
+        return [
+            [true, 'Yes'],
+            [false, 'No'],
+            [null, 'Unknown'],
         ];
     }
 }

@@ -30,7 +30,7 @@ class FieldProvider
                 true,
                 'Title',
                 'The title of the adventure.',
-                3
+                10
             ),
             'description' => new Field(
                 'description',
@@ -38,7 +38,8 @@ class FieldProvider
                 false,
                 true,
                 'Description',
-                'Description of the adventure.'
+                'Description of the adventure.',
+                5
             ),
             'authors' => new Field(
                 'authors',
@@ -67,7 +68,7 @@ class FieldProvider
                 true,
                 'Environments',
                 'The different types of environments the module will take place in.',
-                1,
+                2,
                 Environment::class
             ),
             'items' => new Field(
@@ -77,7 +78,7 @@ class FieldProvider
                 true,
                 'Notable Items',
                 "The notable magic or non-magic items that are obtained in the module. Only include named items, don't include a +1 sword.",
-                1,
+                2,
                 Item::class
             ),
             'publisher' => new Field(
@@ -107,7 +108,7 @@ class FieldProvider
                 true,
                 'Common Monsters',
                 'The common monsters featured in the module.',
-                1,
+                2,
                 Monster::class
             ),
             'bossMonsters' => new Field(
@@ -117,7 +118,7 @@ class FieldProvider
                 true,
                 'Boss Monsters',
                 'The boss monsters and villains featured in the module.',
-                1,
+                2,
                 Monster::class
             ),
 
@@ -200,6 +201,14 @@ class FieldProvider
                 true,
                 'Part Of',
                 'The series of adventures that the module is a part of, if applicable.'
+            ),
+            'year' => new Field(
+                'year',
+                'integer',
+                false,
+                false,
+                'Publication Year',
+                'The year this adventure was first published.'
             ),
 
             'link' => new Field(

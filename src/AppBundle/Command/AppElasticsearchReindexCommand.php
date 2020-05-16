@@ -68,6 +68,9 @@ class AppElasticsearchReindexCommand extends Command
     const FIELD_BOOLEAN = [
         'type' => 'boolean',
     ];
+    const FIELD_DATE = [
+        'type' => 'date'
+    ];
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -114,6 +117,11 @@ class AppElasticsearchReindexCommand extends Command
             'pregeneratedCharacters' => self::FIELD_BOOLEAN,
             'tacticalMaps' => self::FIELD_BOOLEAN,
             'handouts' => self::FIELD_BOOLEAN,
+            'year' => self::FIELD_INTEGER,
+
+            'createdAt' => self::FIELD_DATE,
+            'numPositiveReviews' => self::FIELD_INTEGER,
+            'numNegativeReviews' => self::FIELD_INTEGER,
         ];
 
         $client->indices()->putMapping([
@@ -129,16 +137,8 @@ class AppElasticsearchReindexCommand extends Command
         $output->writeln('Reindexing documents');
 
         $adventures = $this->em->getRepository(Adventure::class)->findAll();
-        $progress = new ProgressBar($output, count($adventures));
-        $progress->start();
+        $this->searchIndexUpdater->updateSearchIndexForAdventures($adventures);
 
-        foreach($adventures as $adventure) {
-            $this->searchIndexUpdater->updateSearchIndexForAdventure($adventure);
-            $progress->advance();
-        }
-
-        $progress->finish();
-        $output->writeln('');
         $output->writeln('Reindexed documents.');
     }
 }

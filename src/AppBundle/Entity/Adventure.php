@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -192,6 +193,14 @@ class Adventure
     /**
      * @var string
      *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\Range(min=1900, max=2100)
+     */
+    private $year;
+
+    /**
+     * @var string
+     *
      * @Gedmo\Slug(fields={"title"}, updatable=false)
      * @ORM\Column(length=128, unique=true)
      */
@@ -217,6 +226,14 @@ class Adventure
      * @ORM\OneToMany(targetEntity="ChangeRequest", mappedBy="adventure", orphanRemoval=true)
      */
     private $changeRequests;
+
+    /**
+     * @var Review[]|Collection
+     *
+     * @ORM\OneToMany(targetEntity="Review", mappedBy="adventure", orphanRemoval=true)
+     * @ORM\OrderBy({"createdAt" = "DESC"})
+     */
+    private $reviews;
 
     /**
      * @var string
@@ -251,6 +268,7 @@ class Adventure
         $this->items = new ArrayCollection();
         $this->monsters = new ArrayCollection();
         $this->changeRequests = new ArrayCollection();
+        $this->reviews = new ArrayCollection();
 
         $this->approved = false;
     }
@@ -299,9 +317,7 @@ class Adventure
      */
     public function addAuthor(Author $author)
     {
-        $author->addAdventure($this);
-        $this->authors->add($author);
-        return $this;
+        return $this->addRelatedEntity('authors', $author);
     }
 
     /**
@@ -330,11 +346,7 @@ class Adventure
      */
     public function setEdition(Edition $edition = null)
     {
-        if ($edition !== null) {
-            $edition->addAdventure($this);
-        }
-        $this->edition = $edition;
-        return $this;
+        return $this->setRelatedEntity('edition', $edition);
     }
 
     /**
@@ -352,9 +364,7 @@ class Adventure
      */
     public function addEnvironment(Environment $environment)
     {
-        $environment->addAdventure($this);
-        $this->environments->add($environment);
-        return $this;
+        return $this->addRelatedEntity('environments', $environment);
     }
 
     /**
@@ -383,9 +393,7 @@ class Adventure
      */
     public function addItem(Item $item)
     {
-        $item->addAdventure($this);
-        $this->items->add($item);
-        return $this;
+        return $this->addRelatedEntity('items', $item);
     }
 
     /**
@@ -414,11 +422,7 @@ class Adventure
      */
     public function setPublisher(Publisher $publisher = null)
     {
-        if ($publisher !== null) {
-            $publisher->addAdventure($this);
-        }
-        $this->publisher = $publisher;
-        return $this;
+        return $this->setRelatedEntity('publisher', $publisher);
     }
 
     /**
@@ -435,11 +439,7 @@ class Adventure
      */
     public function setSetting(Setting $setting = null)
     {
-        if ($setting !== null) {
-            $setting->addAdventure($this);
-        }
-        $this->setting = $setting;
-        return $this;
+        return $this->setRelatedEntity('setting', $setting);
     }
 
     /**
@@ -476,9 +476,7 @@ class Adventure
      */
     public function addMonster(Monster $monster)
     {
-        $monster->addAdventure($this);
-        $this->monsters->add($monster);
-        return $this;
+        return $this->addRelatedEntity('monsters', $monster);
     }
 
     /**
@@ -856,11 +854,86 @@ class Adventure
     }
 
     /**
+     * @return int
+     */
+    public function getYear()
+    {
+        return $this->year;
+    }
+
+    /**
+     * @param int $year
+     *
+     * @return Adventure
+     */
+    public function setYear($year)
+    {
+        $this->year = $year;
+
+        return $this;
+    }
+
+    /**
      * @return ChangeRequest[]|Collection
      */
     public function getChangeRequests()
     {
         return $this->changeRequests;
+    }
+
+    /**
+     * @return ChangeRequest[]|Collection
+     */
+    public function getUnresolvedChangeRequests()
+    {
+        return $this->changeRequests
+            ->matching(Criteria::create()->where(Criteria::expr()->eq("resolved", false)));
+    }
+
+    /**
+     * @return Review[]|Collection
+     */
+    public function getReviews()
+    {
+        return $this->reviews;
+    }
+
+    /**
+     * @return int
+     */
+    public function getNumberOfThumbsUp()
+    {
+        return $this->reviews->filter(function (Review $review) {
+            return $review->isThumbsUp();
+        })->count();
+    }
+
+    /**
+     * @return int
+     */
+    public function getNumberOfThumbsDown()
+    {
+        return $this->reviews->filter(function (Review $review) {
+            return $review->isThumbsDown();
+        })->count();
+    }
+
+    /**
+     * @param User|null $user
+     *
+     * @return Review|null
+     */
+    public function getReviewBy(User $user = null)
+    {
+        if ($user === null) {
+            return null;
+        }
+
+        $reviews = $this->reviews->filter(function (Review $review) use ($user) {
+            return $review->getCreatedBy() == $user->getUsername();
+        });
+
+        return $reviews->count() > 0 ? $reviews->first() : null;
     }
 
     /**
@@ -885,5 +958,36 @@ class Adventure
     public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
+    }
+
+    /**
+     * @param string $field
+     * @param RelatedEntityInterface|null $relatedEntity
+     * @return $this
+     */
+    private function setRelatedEntity(string $field, RelatedEntityInterface $relatedEntity = null): Adventure
+    {
+        if ($this->$field !== null) {
+            $this->$field->removeAdventure($this);
+        }
+        if ($relatedEntity !== null) {
+            $relatedEntity->addAdventure($this);
+        }
+        $this->$field = $relatedEntity;
+
+        return $this;
+    }
+
+    /**
+     * @param string $field
+     * @param RelatedEntityInterface|null $relatedEntity
+     * @return Adventure
+     */
+    private function addRelatedEntity(string $field, RelatedEntityInterface $relatedEntity = null): Adventure
+    {
+        $relatedEntity->addAdventure($this);
+        $this->$field->add($relatedEntity);
+
+        return $this;
     }
 }

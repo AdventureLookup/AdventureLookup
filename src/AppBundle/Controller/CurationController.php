@@ -27,6 +27,7 @@ class CurationController extends Controller
 
     /**
      * @Route("/", name="curation")
+     * @Method("GET")
      *
      * @return RedirectResponse
      */

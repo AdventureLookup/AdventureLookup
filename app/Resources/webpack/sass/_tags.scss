@@ -1,0 +1,31 @@
+.tags-container {
+  padding: .8rem $adl-card-padding-side;
+  border-top: $adl-border-grey-lightest-big;
+  border-bottom: $adl-border-grey-lightest-big;
+
+  .tag {
+    padding: 3px 12px;
+    margin-right: 6px;
+    margin-bottom: 6px;
+    background-color: $adl-grey-light;
+    border-radius: $adl-border-radius-big;
+    font-family: 'Roboto Condensed', sans-serif;
+    text-transform: uppercase;
+    color: #ffffff;
+    display: inline-block;
+
+    &::before {
+      font: 1rem 'FontAwesome';
+      padding-right: .25rem;
+    }
+
+    &.tag-edition::before { content: $fa-var-cog; }
+    &.tag-level::before { content: $fa-var-flag; }
+    &.tag-length::before { content: $fa-var-book; }
+    &.tag-featured {
+      background-color: $adl-coral;
+
+      &::before { content: $fa-var-diamond; }
+    }
+  }
+}

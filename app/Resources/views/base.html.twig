@@ -4,6 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>{% block title %}Adventure Lookup{% endblock %}</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed|Arima+Madurai:100">
         <link rel="stylesheet" href="{{ asset('assets/app.css') }}">
         {% block stylesheets %}{% endblock %}
         <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
@@ -14,54 +15,12 @@
         <meta name="theme-color" content="#ffffff">
     </head>
     <body>
-        <nav class="navbar navbar-toggleable-sm navbar-light bg-faded">
-            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" role="button">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <a class="navbar-brand" href="{{ path('homepage') }}">Adventure Lookup</a>
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item">
-                        <a class="nav-link{% if app.request.attributes.get('_route') == 'adventure_index' %} active{% endif %}" href="{{ path('adventure_index') }}">Adventures</a>
-                    </li>
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <li class="nav-item">
-                            <a class="nav-link{% if app.request.attributes.get('_route') == 'audit' %} active{% endif %}" href="{{ path('audit') }}">Recent Activity</a>
-                        </li>
-                    {% endif %}
-                    {% if is_granted('ROLE_CURATOR') %}
-                        <li class="nav-item">
-                            <a class="nav-link{% if app.request.attributes.get('_route') starts with 'curation' %} active{% endif %}" href="{{ path('curation') }}">Curation Panel <span class="badge badge-success">new</span></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link{% if app.request.attributes.get('_route') == 'easyadmin' %} active{% endif %}" href="{{ path('easyadmin') }}">Admin Panel</a>
-                        </li>
-                    {% endif %}
-                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                        <li class="nav-item">
-                            <a class="nav-link{% if app.request.attributes.get('_route') == 'profile' %} active{% endif %}" href="{{ path('profile') }}">Your Profile</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link{% if app.request.attributes.get('_route') == 'logout' %} active{% endif %}" href="{{ path('logout') }}">Logout</a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link{% if app.request.attributes.get('_route') == 'login' %} active{% endif %}" href="{{ path('login') }}">Login</a>
-                        </li>
-                    {% endif %}
-                </ul>
-                {#
-                <form class="form-inline" action="{{ url('adventure_index') }}#search-results" method="get">
-                    <input class="form-control mr-sm-2" type="text" name="q" placeholder="An adventure including..." value="{{ app.request.query.get('q', '') }}">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit" role="button">Search</button>
-                </form>
-                #}
-            </div>
-        </nav>
+        {% block header %}
+            {% include 'header.html.twig' %}
+        {% endblock %}
 
         {% if app.session.flashbag.peekAll is not empty %}
-            <div class="container mb-4 mt-3">
+            <div class="container mt-5">
                 <div class="row">
                     <div class="col">
                         {% for label, messages in app.session.flashbag.all %}
@@ -78,55 +37,9 @@
 
         {% block body %}{% endblock %}
 
-        <footer class="footer">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-5 col-md-8">
-                        <h6>Adventure Lookup</h6>
-                        <p>
-                            Adventure Lookup is a catalog of adventures for Dungeons and Dragons and its clones.
-                            We need your help to expand the catalog and ensure each entry is reasonably accurate.
-                            Simply create an account to start adding adventures or submit change requests!
-                            If you added a substantive amount, you may
-                            <a href="https://www.reddit.com/r/AdventureLookup/comments/6th0n4/apply_here_to_be_a_curator/">apply here</a>
-                            to be promoted to a curator.
-                        <br>
-                            <a href="twitter.com/mattcolville">Matt Colville</a> first talked about the idea in
-                            <a href="https://www.youtube.com/watch?v=PIyLvicSu78">a video of his</a>
-                            in 2016. It wasn't until August 2017 before
-                            <a href="https://www.youtube.com/watch?v=D3OllWSRhuI">the site went live</a>.
-                        </p>
-                    </div>
-                    <div class="col-lg-3 col-md-4">
-                        <h6>Questions?</h6>
-                        <p>
-                            Feel free to ask any questions in the official
-                            <a href="https://reddit.com/r/AdventureLookup">/r/AdventureLookup</a>
-                            subreddit. If you want to report a bug, typo or suggest a feature,
-                            you're welcome to create a new issue in our
-                            <a href="https://github.com/AdventureLookup/AdventureLookup">GitHub Repository</a>.
-                        </p>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <h6>Get Involved!</h6>
-                        <p>
-                            If you know how to code, checkout the
-                            <a href="https://github.com/AdventureLookup/AdventureLookup">GitHub Repository</a>
-                            and help implement new features or join our
-                            <a href="https://discord.gg/0111UjFmfsOzDqan7">Discord developer chat</a>.
-                            Contributions and questions are always welcome!
-                        </p>
-                        <p>
-                            Adventure Lookup is made possible by
-                            <a href="https://github.com/cmfcmf">@cmfcmf</a> and
-                            <a href="https://github.com/AdventureLookup/AdventureLookup/graphs/contributors">other fine people</a>.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </footer>
+        {% include 'footer.html.twig' %}
 
-        <script src="{{ asset('assets/manifest.js') }}"></script>
+        <script src="{{ asset('assets/runtime.js') }}"></script>
         <script src="{{ asset('assets/vendor.js') }}"></script>
         <script src="{{ asset('assets/app.js') }}"></script>
         {% block javascripts %}{% endblock %}

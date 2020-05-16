@@ -1,0 +1,48 @@
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1250px
+);
+
+$theme-colors: map-merge($theme-colors, ('primary': $adl-coral));
+$alert-margin-bottom: 0;
+$badge-font-weight: 400;
+$badge-font-size: .9rem;
+
+button.dropdown-toggle {
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+
+  &:after {
+    width: auto;
+    height: auto;
+    content: "\F0D7";
+    font: 1.4rem FontAwesome;
+    line-height: 1.2rem;
+    border: 0;
+  }
+}
+
+@import '~bootstrap/scss/bootstrap';
+
+// Override bootstrap behavior
+button.dropdown-item:not(.disabled):hover {
+  cursor: pointer;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: $adl-grey-lightest;
+  font-size: 12px;
+
+  > .container {
+    margin-bottom: 20px;
+  }
+}
+
+label {
+  margin-bottom: 0;
+}

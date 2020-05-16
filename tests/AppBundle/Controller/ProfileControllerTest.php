@@ -42,9 +42,9 @@ class ProfileControllerTest extends WebTestCase
         $session = $this->makeSession(true);
         $session->visit(self::PROFILE_URL);
         $page = $session->getPage();
-        $this->assertTrue($page->hasContent("Welcome, @{$user->getUsername()}"));
+        $this->assertTrue($page->hasContent("Your username is {$user->getUsername()}"));
         $this->assertTrue($page->hasContent($user->getEmail()));
-        $this->assertTrue($page->hasContent(implode(', ', $user->getRoles())));
+        $this->assertTrue($page->hasContent('You currently have the following roles: User'));
     }
 
     /**
@@ -86,9 +86,7 @@ class ProfileControllerTest extends WebTestCase
 
         /** @var ChangeRequest $changeRequest */
         $changeRequest = $referenceRepository->getReference($reference);
-        $linkToChangeRequest = $page->findLink(
-            "#{$changeRequest->getId()} ({$changeRequest->getAdventure()->getTitle()})"
-        );
+        $linkToChangeRequest = $page->findById("change-request-{$changeRequest->getId()}");
 
         if (!$shouldDisplay) {
             $this->assertNull($linkToChangeRequest);
@@ -126,12 +124,12 @@ class ProfileControllerTest extends WebTestCase
         $session = $this->makeSession(true);
         $page = $this->submitChangePasswordForm($session, $currentPassword, $newPassword1, $newPassword2);
 
-        $errorMessages = $page->findAll('css', '.form-control-feedback li');
+        $errorMessages = $page->findAll('css', '.form-error-message');
         $this->assertCount(array_sum($expectedErrors), $errorMessages);
 
         foreach ($expectedErrors as $expectedError => $count) {
             $this->assertCount($count,
-                $page->findAll('css', '.form-control-feedback li:contains("' . $expectedError . '")'));
+                $page->findAll('css', '.form-error-message:contains("' . $expectedError . '")'));
         }
     }
 
@@ -164,7 +162,7 @@ class ProfileControllerTest extends WebTestCase
         return [
             ['your-unresolved-change-request', false],
             ['my-unresolved-change-request', true],
-            ['my-resolved-change-request', false],
+            ['my-resolved-change-request', true],
         ];
     }
 

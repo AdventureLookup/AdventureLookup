@@ -1,41 +1,124 @@
 {% extends 'base.html.twig' %}
+{% block title %}{{ adventure.title }} - Adventure Lookup{% endblock %}
 
 {% block body %}
-    {% import _self as macros %}
-    <div class="container" id="page--search-adventures">
+    <div class="container">
         <div class="row">
-            <div class="col">
-                <h1 class="mt-5">Adventure search</h1>
-                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                    <a class="mb-3 float-sm-right btn btn-success" href="{{ path('adventure_new') }}">Add a new adventure</a>
-                {% endif %}
-                <p>Find adventures fitting your search term!</p>
-                <div class="clearfix"></div>
-                <form method="post" action="{{ url('adventure_index') }}" id="search-form">
-                    <div class="input-group input-group-lg">
-                        <input class="form-control" name="q" type="text" value="{{ q }}" placeholder="goblins, mountains, ..." />
-                        <span class="input-group-btn">
-                            <button type="submit" class="btn btn-primary" role="button" id="search-btn">Search</button>
-                        </span>
+            {# ADL sidebar #}
+            <div class="col-3 mt-5 col-sm-2 col-lg-1">
+                <div class="adl-sidebar">
+                    <div class="content">
+                        <a class="no-underline" href="{{ path('adventure_index') }}" title="AdventureLookup.com">
+                            <div class="sidebar-title-big">A</div>
+                        </a>
+
+                        <a class="no-underline" href="{{ path('adventure_index') }}" title="AdventureLookup.com">
+                            <div class="sidebar-title-big-secondary"><i class="fa fa-search"></i></div>
+                        </a>
+
+                        <a class="no-underline" href="{{ path('adventure_random') }}" title="Random Adventure">
+                            <div class="sidebar-title-big-offwhite"><i class="fa fa-random"></i></div>
+                        </a>
                     </div>
-                    <small class="form-text text-muted">Things you type in here will be split at <code>,</code> and then <code>AND</code>ed. Use the filters below for advanced searches (hit the 'Search' button again after filtering).</small>
-                    <div class="row my-3">
-                        <div class="col-md-3">
-                            <div class="alert alert-info d-md-none">
-                                Please scroll down to skip the filters and see your search results!
+                </div>
+            </div>
+            {# Content #}
+            <div class="col-12 order-last col-lg-9 order-lg-2">
+                {% include 'adventure/_details.html.twig' %}
+            </div>
+            {# Buttons #}
+            <div class="col-9 mt-5 col-sm-10 col-lg-2 order-lg-3 mt-lg-5">
+                <div class="adl-sidebar mt-0">
+                    {% if app.user %}
+                        <div class="row">
+                            <div class="col-sm-6 col-md-4 col-lg-12">
+                                <div class="dropdown" id="adventure_list-bookmark-menu">
+                                    <a href="#" class="btn btn-secondary dropdown-toggle" id="adventure_list-bookmark-menu-btn" data-toggle="dropdown"
+                                       aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-bookmark"></i> Bookmark
+                                    </a>
+
+                                    <div class="dropdown-menu" aria-labelledby="adventure_list-bookmark-menu-btn">
+                                        <h6 class="dropdown-header">Your Lists</h6>
+                                        {% for list in lists %}
+                                            <button class="dropdown-item" type="button"
+                                                    data-adventure-list-id="{{ list.id }}"
+                                                    data-toggle-url="{{ path('adventure_lists_toggle_contains_adventure', {
+                                                        list_id: list.id, adventure_id: adventure.id
+                                                    }) }}">
+                                                {% if list.containsAdventure(adventure) %}
+                                                    <i class="fa fa-fw fa-check"></i>
+                                                {% else %}
+                                                    <i class="fa fa-fw"></i>
+                                                {% endif %}
+                                                {{ list.name }}
+                                            </button>
+                                        {% else %}
+                                            <button class="dropdown-item disabled" type="button">Please create a list first, using the link below</button>
+                                        {% endfor %}
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="{{ path('adventure_lists_index') }}">
+                                            <i class="fa fa-fw fa-cog"></i>
+                                            Manage lists
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                            <a class="btn btn-sm btn-secondary btn-block mb-1" role="button" href="{{ path('adventure_index', {q: q}) }}">
-                                <i class="fa fa-times"></i>
-                                Clear all Filters
-                            </a>
-                            {% include 'adventure/search_filters.html.twig' %}
+                            <div class="col-sm-6 col-md-4 col-lg-12">
+                                {% if is_granted('edit', adventure) %}
+                                    <a href="{{ path('adventure_edit', { 'id': adventure.id }) }}"
+                                       class="btn btn-secondary" role="button">
+                                        <i class="fa fa-edit"></i>
+                                        Edit adventure
+                                    </a>
+                                {% elseif app.user %}
+                                    <a class="btn btn-secondary" role="button" href="{{ path('changerequest_new', {adventure_id: adventure.id}) }}">
+                                        <i class="fa fa-edit"></i>
+                                        Suggest Edits
+                                    </a>
+                                {% endif %}
+                            </div>
+                            {% if is_granted('delete', adventure) %}
+                                <div class="col-sm-6 col-md-4 col-lg-12">
+                                    {{ form_start(delete_form) }}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('Do you really want to delete this adventure?')">
+                                        <i class="fa fa-trash"></i> Delete
+                                    </button>
+                                    {{ form_end(delete_form) }}
+                                </div>
+                            {% endif %}
                         </div>
-                        <div class="col-md-9">
-                            {% include 'adventure/search_filter_tags.html.twig' %}
-                            {% include 'adventure/search_results.html.twig' %}
-                        </div>
-                    </div>
-                </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col offset-lg-1">
+                <h2 class="subheading mt-5">From the community</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 order-last col-md-9 order-md-1 offset-lg-1">
+                {% include 'adventure/_reviews.html.twig' %}
+            </div>
+            <div class="col-xs-12 col-md-3 order-md-2 col-lg-2 mb-5 mb-md-0">
+                <div class="adl-sidebar mt-0">
+                    {% if app.user %}
+                        <a href="javascript:void(0)" class="btn btn-secondary" role="button" id="add-review-btn">
+                            <i class="fa fa-star"></i>
+                            {{ adventure.reviewBy(app.user) ? 'Edit' : 'Add' }} Your Review
+                        </a>
+                        <a href="javascript:void(0)" class="btn btn-primary d-none" role="button" id="confirm-review-btn">
+                            <i class="fa fa-check"></i>
+                            Save Review
+                        </a>
+                        <a href="javascript:void(0)" class="btn btn-secondary d-none" role="button" id="cancel-review-btn">
+                            <i class="fa fa-times"></i>
+                            Cancel
+                        </a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
