@@ -148,18 +148,23 @@ function FieldFilter({
     </div>
   );
 }
-
+function filterBuckets(bucket,searchString) {
+  const stringToSearch = (bucket.key || '').toLowerCase();
+  return stringToSearch.includes(searchString.toLowerCase());
+}
 function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
   // Whether to show the full list of options or only first few.
   const showMoreAfter = 5;
+  const [filterString, setFilterString] = React.useState('');
   const [showAll, setShowAll] = React.useState(false);
 
   // ElasticSearch statistics on which options are available.
   const buckets = fieldValues["buckets"];
-
+  const bucketsWithFilterKey = filterString ? buckets.filter((b) => filterBuckets(b, filterString)) : buckets;
+  console.log(bucketsWithFilterKey);
   // Normalize the initial options into an array.
   const initialValues = React.useMemo(() => {
-    let initialValues = initialFilter.v ?? [];
+    let initialValues = initialFilter.v || [];
     if (!Array.isArray(initialValues)) {
       if (initialValues === "") {
         initialValues = [];
@@ -180,7 +185,8 @@ function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
   return (
     <>
       <div className="string-options">
-        {buckets.map((bucket, i) => {
+      <input type="text" onChange={(e) => setFilterString(e.target.value)} value={filterString}/>
+        {bucketsWithFilterKey.map((bucket, i) => {
           valuesUsed.add(bucket.key);
           return (
             <StringCheckbox
@@ -220,7 +226,7 @@ function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
             />
           ))}
       </div>
-      {buckets.length > showMoreAfter && (
+      {bucketsWithFilterKey.length > showMoreAfter && (
         <>
           {!showAll && (
             <div
@@ -242,7 +248,7 @@ function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
           )}
         </>
       )}
-      {buckets.length === 0 && (
+      {bucketsWithFilterKey.length === 0 && (
         <div className="option">
           <em>
             No options available. Remove some search filters to show more
