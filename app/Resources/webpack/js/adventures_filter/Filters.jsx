@@ -185,7 +185,13 @@ function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
     <>
       <div className="string-options">
       <div className="option">
-        <input className="filter-searchbar" type="text" placeholder="Find Option" onChange={(e) => setFilterString(e.target.value)} value={filterString}/>
+        <input 
+          className="filter-searchbar"
+          type="text"
+          placeholder="Find Option"
+          onChange={(e) => setFilterString(e.target.value)} value={filterString}
+          title="Find Option"
+        />
       </div>
         {bucketsWithFilterKey.map((bucket, i) => {
           valuesUsed.add(bucket.key);
