@@ -18,7 +18,7 @@ const visibleFieldNames = [
   "tacticalMaps",
   "partOf",
   "foundIn",
-  "year"
+  "year",
 ];
 
 function isFilterValueEmpty(field, value) {
@@ -148,16 +148,16 @@ function FieldFilter({
     </div>
   );
 }
-function filterBuckets(bucket,searchString,selectedValues=[]) {
-  const stringToSearch = (bucket.key || '').toLowerCase();
+function filterBuckets(bucket, searchString, selectedValues = []) {
+  const stringToSearch = (bucket.key || "").toLowerCase();
   const match = stringToSearch.includes(searchString.toLowerCase());
   const alreadySelected = selectedValues.includes(bucket.key);
-  return (match || alreadySelected)
+  return match || alreadySelected;
 }
 function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
   // Whether to show the full list of options or only first few.
   const showMoreAfter = 5;
-  const [filterString, setFilterString] = React.useState('');
+  const [filterString, setFilterString] = React.useState("");
   const [showAll, setShowAll] = React.useState(false);
 
   // ElasticSearch statistics on which options are available.
@@ -181,21 +181,24 @@ function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
     onIsDirty(!areSetsEqual(new Set(initialValues), new Set(selectedValues)));
   }, [selectedValues, initialValues]);
 
-  const bucketsToShow = filterString ? buckets.filter((b) => filterBuckets(b, filterString, selectedValues)) : buckets;
+  const bucketsToShow = filterString
+    ? buckets.filter((b) => filterBuckets(b, filterString, selectedValues))
+    : buckets;
 
   const valuesUsed = new Set();
   return (
     <>
       <div className="string-options">
-      <div className="option">
-        <input 
-          className="filter-searchbar"
-          type="text"
-          placeholder="Find Option"
-          onChange={(e) => setFilterString(e.target.value)} value={filterString}
-          title="Find Option"
-        />
-      </div>
+        <div className="option">
+          <input
+            className="filter-searchbar"
+            type="text"
+            placeholder="Find Option"
+            onChange={(e) => setFilterString(e.target.value)}
+            value={filterString}
+            title="Find Option"
+          />
+        </div>
         {bucketsToShow.map((bucket, i) => {
           valuesUsed.add(bucket.key);
           return (
