@@ -161,7 +161,6 @@ function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
   // ElasticSearch statistics on which options are available.
   const buckets = fieldValues["buckets"];
   const bucketsWithFilterKey = filterString ? buckets.filter((b) => filterBuckets(b, filterString)) : buckets;
-  console.log(bucketsWithFilterKey);
   // Normalize the initial options into an array.
   const initialValues = React.useMemo(() => {
     let initialValues = initialFilter.v || [];
@@ -185,7 +184,9 @@ function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
   return (
     <>
       <div className="string-options">
-      <input type="text" onChange={(e) => setFilterString(e.target.value)} value={filterString}/>
+      <div className="option">
+        <input className="filter-searchbar" type="text" placeholder="Find Option" onChange={(e) => setFilterString(e.target.value)} value={filterString}/>
+      </div>
         {bucketsWithFilterKey.map((bucket, i) => {
           valuesUsed.add(bucket.key);
           return (
