@@ -148,14 +148,14 @@ function FieldFilter({
     </div>
   );
 }
-function filterBuckets(bucket, searchString, selectedValues = []) {
 
+function filterBuckets(bucket, searchString, selectedValues = []) {
   const stringToSearch = (bucket.key || "").toLowerCase();
   const match = stringToSearch.includes(searchString.toLowerCase());
   const alreadySelected = selectedValues.includes(bucket.key);
-
   return match || alreadySelected;
 }
+
 function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
   // Whether to show the full list of options or only first few.
   const showMoreAfter = 5;
