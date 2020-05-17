@@ -149,9 +149,11 @@ function FieldFilter({
   );
 }
 function filterBuckets(bucket, searchString, selectedValues = []) {
+
   const stringToSearch = (bucket.key || "").toLowerCase();
   const match = stringToSearch.includes(searchString.toLowerCase());
   const alreadySelected = selectedValues.includes(bucket.key);
+
   return match || alreadySelected;
 }
 function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
