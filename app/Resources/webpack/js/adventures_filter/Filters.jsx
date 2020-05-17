@@ -148,9 +148,11 @@ function FieldFilter({
     </div>
   );
 }
-function filterBuckets(bucket,searchString) {
+function filterBuckets(bucket,searchString,selectedValues=[]) {
   const stringToSearch = (bucket.key || '').toLowerCase();
-  return stringToSearch.includes(searchString.toLowerCase());
+  const match = stringToSearch.includes(searchString.toLowerCase());
+  const alreadySelected = selectedValues.includes(bucket.key);
+  return (match || alreadySelected)
 }
 function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
   // Whether to show the full list of options or only first few.
@@ -160,7 +162,6 @@ function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
 
   // ElasticSearch statistics on which options are available.
   const buckets = fieldValues["buckets"];
-  const bucketsWithFilterKey = filterString ? buckets.filter((b) => filterBuckets(b, filterString)) : buckets;
   // Normalize the initial options into an array.
   const initialValues = React.useMemo(() => {
     let initialValues = initialFilter.v || [];
@@ -180,6 +181,8 @@ function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
     onIsDirty(!areSetsEqual(new Set(initialValues), new Set(selectedValues)));
   }, [selectedValues, initialValues]);
 
+  const bucketsToShow = filterString ? buckets.filter((b) => filterBuckets(b, filterString, selectedValues)) : buckets;
+
   const valuesUsed = new Set();
   return (
     <>
@@ -193,7 +196,7 @@ function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
           title="Find Option"
         />
       </div>
-        {bucketsWithFilterKey.map((bucket, i) => {
+        {bucketsToShow.map((bucket, i) => {
           valuesUsed.add(bucket.key);
           return (
             <StringCheckbox
@@ -233,7 +236,7 @@ function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
             />
           ))}
       </div>
-      {bucketsWithFilterKey.length > showMoreAfter && (
+      {bucketsToShow.length > showMoreAfter && (
         <>
           {!showAll && (
             <div
@@ -255,7 +258,7 @@ function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
           )}
         </>
       )}
-      {bucketsWithFilterKey.length === 0 && (
+      {bucketsToShow.length === 0 && (
         <div className="option">
           <em>
             No options available. Remove some search filters to show more
