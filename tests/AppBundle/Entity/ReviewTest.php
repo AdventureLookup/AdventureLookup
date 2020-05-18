@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\AppBundle\Entity;
 
 use AppBundle\Entity\Adventure;
@@ -12,7 +11,7 @@ class ReviewTest extends \PHPUnit_Framework_TestCase
     {
         $adventure = new Adventure();
         $review = new Review($adventure);
-        
+
         $this->assertSame($adventure, $review->getAdventure());
     }
 

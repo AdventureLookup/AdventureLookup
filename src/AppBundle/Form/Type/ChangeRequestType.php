@@ -28,7 +28,7 @@ class ChangeRequestType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $choices = [];
-        foreach($this->fieldProvider->getFields() as $field) {
+        foreach ($this->fieldProvider->getFields() as $field) {
             $choices[$field->getTitle()] = $field->getName();
         }
 
@@ -37,20 +37,20 @@ class ChangeRequestType extends AbstractType
                 'required' => false,
                 'placeholder' => 'No specific field',
                 'help' => 'If your change request is about a specific field, select it above.',
-                'choices' => $choices
+                'choices' => $choices,
             ])
             ->add('comment', TextareaType::class, [
                 'required' => true,
             ]);
     }
-    
+
     /**
      * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => ChangeRequest::class
+            'data_class' => ChangeRequest::class,
         ]);
     }
 }

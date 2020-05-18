@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\Fixtures;
 
 use AppBundle\Entity\Adventure;
@@ -30,16 +29,14 @@ class AdventureData extends AbstractFixture implements DependentFixtureInterface
 
     /**
      * Load data fixtures with the passed EntityManager
-     *
-     * @param ObjectManager $em
      */
     public function load(ObjectManager $em)
     {
         $blameListener = $this->container->get('stof_doctrine_extensions.event_listener.blame');
-        for ($i = 0; $i < self::NUM_ADVENTURES; $i++) {
+        for ($i = 0; $i < self::NUM_ADVENTURES; ++$i) {
             $adventureIndexByUser = $i % self::ADVENTURES_PER_USER;
-            if ($adventureIndexByUser == 0) {
-                $userReference = 'user-' . round($i / self::ADVENTURES_PER_USER);
+            if (0 == $adventureIndexByUser) {
+                $userReference = 'user-'.round($i / self::ADVENTURES_PER_USER);
                 $blameListener->setUserValue($this->getReference($userReference)->getUsername());
             }
             $adventure = new Adventure();

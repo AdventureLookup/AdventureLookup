@@ -19,19 +19,19 @@ class AdventureListType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'attr' => [
-                    'placeholder' => 'Name'
-                ]
+                    'placeholder' => 'Name',
+                ],
             ])
             ->add('submit', SubmitType::class);
     }
-    
+
     /**
      * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => AdventureList::class
+            'data_class' => AdventureList::class,
         ]);
     }
 }

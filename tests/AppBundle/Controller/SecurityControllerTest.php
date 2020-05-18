@@ -65,7 +65,7 @@ class SecurityControllerTest extends WebTestCase
             ['', ''],
             ['', '123'],
             ['cmfcmf', ''],
-            ['cmfcmf', '123123']
+            ['cmfcmf', '123123'],
         ];
     }
 }

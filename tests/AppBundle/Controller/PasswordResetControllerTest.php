@@ -53,11 +53,10 @@ class PasswordResetControllerTest extends WebTestCase
         $page->findButton('Login')->click();
 
         $session->visit('/profile');
-        $this->assertTrue($page->hasContent('Your username is ' . self::USERNAME));
+        $this->assertTrue($page->hasContent('Your username is '.self::USERNAME));
     }
 
     /**
-     * @param Client $client
      * @return string The password reset link extracted from the email
      */
     private function verifyPasswordResetEmailSent(Client $client): string
@@ -105,32 +104,32 @@ class PasswordResetControllerTest extends WebTestCase
         $em = $this->getContainer()->get('doctrine.orm.entity_manager');
 
         $user = new User();
-        $user->setUsername("User 1");
-        $user->setEmail("user1@example.com");
+        $user->setUsername('User 1');
+        $user->setEmail('user1@example.com');
         $user->setRoles(['ROLE_USER']);
-        $user->setPlainPassword("user1");
+        $user->setPlainPassword('user1');
         $user->setIsActive(true);
         $user->setPasswordResetToken(self::VALID_RESET_TOKEN);
         $em->persist($user);
         $em->flush();
 
-        $session->visit('/reset-password/reset/' . self::INVALID_RESET_TOKEN);
+        $session->visit('/reset-password/reset/'.self::INVALID_RESET_TOKEN);
         $this->assertPath($session, '/reset-password/request');
         $this->assertTrue($session->getPage()->hasContent('Invalid password reset token'));
 
-        $session->visit('/reset-password/reset/' . self::VALID_RESET_TOKEN);
+        $session->visit('/reset-password/reset/'.self::VALID_RESET_TOKEN);
         $this->assertPath($session, '/reset-password/request');
         $this->assertContains('try to request a new password reset link', $session->getPage()->getContent());
 
         $user->setPasswordResetRequestedAt(new \DateTime('61 minutes ago'));
         $em->flush();
-        $session->visit('/reset-password/reset/' . self::VALID_RESET_TOKEN);
+        $session->visit('/reset-password/reset/'.self::VALID_RESET_TOKEN);
         $this->assertPath($session, '/reset-password/request');
         $this->assertContains('reset link is no longer valid', $session->getPage()->getContent());
 
         $user->setPasswordResetRequestedAt(new \DateTime('55 minutes ago'));
         $em->flush();
-        $session->visit('/reset-password/reset/' . self::VALID_RESET_TOKEN);
+        $session->visit('/reset-password/reset/'.self::VALID_RESET_TOKEN);
         $this->assertContains('new account password', $session->getPage()->getContent());
     }
 }

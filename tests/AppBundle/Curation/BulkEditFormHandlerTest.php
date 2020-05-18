@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\AppBundle\Curation;
 
 use AppBundle\Curation\BulkEditFormHandler;

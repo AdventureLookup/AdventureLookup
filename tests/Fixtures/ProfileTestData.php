@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\Fixtures;
 
 use AppBundle\Entity\Adventure;
@@ -32,13 +31,10 @@ class ProfileTestData extends AbstractFixture implements DependentFixtureInterfa
 
     /**
      * Load data fixtures with the passed EntityManager
-     *
-     * @param ObjectManager $em
      */
     public function load(ObjectManager $em)
     {
         $blameListener = $this->container->get('stof_doctrine_extensions.event_listener.blame');
-
 
         $blameListener->setUserValue($this->getReference('user-1')->getUsername());
 

@@ -88,9 +88,6 @@ class AdventureList
         return $this->name;
     }
 
-    /**
-     * @return User
-     */
     public function getUser(): User
     {
         return $this->user;
@@ -120,10 +117,6 @@ class AdventureList
         }
     }
 
-    /**
-     * @param Adventure $adventure
-     * @return bool
-     */
     public function containsAdventure(Adventure $adventure): bool
     {
         foreach ($this->adventures as $listedAdventure) {
@@ -135,4 +128,3 @@ class AdventureList
         return false;
     }
 }
-

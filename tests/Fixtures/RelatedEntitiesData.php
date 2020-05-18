@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\Fixtures;
 
 use AppBundle\Entity\Author;
@@ -8,7 +7,6 @@ use AppBundle\Entity\Edition;
 use AppBundle\Entity\Environment;
 use AppBundle\Entity\Item;
 use AppBundle\Entity\Monster;
-use AppBundle\Entity\NPC;
 use AppBundle\Entity\Publisher;
 use AppBundle\Entity\Setting;
 use Doctrine\Common\DataFixtures\AbstractFixture;
@@ -18,8 +16,6 @@ class RelatedEntitiesData extends AbstractFixture
 {
     /**
      * Load data fixtures with the passed EntityManager
-     *
-     * @param ObjectManager $em
      */
     public function load(ObjectManager $em)
     {
@@ -35,8 +31,8 @@ class RelatedEntitiesData extends AbstractFixture
 
         foreach ($entityClasses as $entityClass) {
             $entityName = substr($entityClass, strrpos($entityClass, '\\') + 1);
-            for ($i = 1; $i <= 5; $i++) {
-                $entity = new $entityClass;
+            for ($i = 1; $i <= 5; ++$i) {
+                $entity = new $entityClass();
                 $entity->setName("{$entityName} {$i}");
                 if ($entity instanceof Edition) {
                     $entity->setPosition($i * 10);

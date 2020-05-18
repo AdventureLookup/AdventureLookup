@@ -1,6 +1,5 @@
 <?php
 
-
 namespace AppBundle\Security;
 
 use AppBundle\Entity\AdventureList;
@@ -21,14 +20,14 @@ class AdventureListVoter extends Voter
      */
     protected function supports($attribute, $subject)
     {
-        if ($attribute === self::LIST && $subject === 'adventure_list') {
+        if (self::LIST === $attribute && 'adventure_list' === $subject) {
             return true;
         }
         if ($subject instanceof AdventureList && in_array($attribute, [
                 self::CREATE,
                 self::SHOW,
                 self::EDIT,
-                self::DELETE
+                self::DELETE,
             ])) {
             return true;
         }
@@ -76,8 +75,6 @@ class AdventureListVoter extends Voter
     /**
      * Users can show, edit and delete their own lists.
      *
-     * @param AdventureList $list
-     * @param User $user
      * @return bool
      */
     private function canManage(AdventureList $list, User $user)

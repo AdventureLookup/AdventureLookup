@@ -18,12 +18,12 @@ class RequestPasswordResetType extends AbstractType
         $builder
             ->add('email', EmailType::class, [
                 'required' => true,
-                'help' => 'The email address you used to create your account.'
+                'help' => 'The email address you used to create your account.',
             ])
             ->add('captcha', EWZRecaptchaType::class, [
                 'constraints' => [
-                    new RecaptchaTrue()
-                ]
+                    new RecaptchaTrue(),
+                ],
             ]);
     }
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests;
 
 use Behat\Mink\Driver\BrowserKitDriver;
@@ -9,7 +8,7 @@ use Behat\Mink\Session;
 
 class WebTestCase extends \Liip\FunctionalTestBundle\Test\WebTestCase
 {
-    const HOST = "http://localhost";
+    const HOST = 'http://localhost';
 
     /**
      * Creates an instance of a Mink Session.
@@ -22,11 +21,10 @@ class WebTestCase extends \Liip\FunctionalTestBundle\Test\WebTestCase
      * Example: 'HTTP_X_REQUESTED_WITH' instead of 'X-Requested-With'
      *
      * @param bool|array $authentication
-     * @param array      $params
      *
      * @return Session
      */
-    protected function makeSession($authentication = false, array $params = array())
+    protected function makeSession($authentication = false, array $params = [])
     {
         $client = $this->makeClient($authentication, $params);
         $mink = new Mink([
@@ -38,7 +36,7 @@ class WebTestCase extends \Liip\FunctionalTestBundle\Test\WebTestCase
 
     protected function assertPath(Session $session, string $path)
     {
-        $this->assertSame(self::HOST . $path, $session->getCurrentUrl());
+        $this->assertSame(self::HOST.$path, $session->getCurrentUrl());
     }
 
     protected function loadFixtures(array $classNames, $omName = null, $registryName = 'doctrine', $purgeMode = null)

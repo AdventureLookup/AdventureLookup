@@ -1,6 +1,5 @@
 <?php
 
-
 namespace AppBundle\Curation;
 
 use AppBundle\Entity\Adventure;
@@ -31,7 +30,7 @@ class BulkEditFormHandler
 
         $oldValue = $form->get(BulkEditFormProvider::OLD_VALUE)->getData();
         $newValue = $form->get(BulkEditFormProvider::NEW_VALUE)->getData();
-        if (strlen($newValue) === 0) {
+        if (0 === strlen($newValue)) {
             $newValue = null;
         }
 

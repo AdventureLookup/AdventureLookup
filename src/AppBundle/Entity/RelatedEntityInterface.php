@@ -1,6 +1,5 @@
 <?php
 
-
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
@@ -17,19 +16,14 @@ interface RelatedEntityInterface
      */
     public function getName();
 
-    /**
-     * @return Collection
-     */
     public function getAdventures(): Collection;
 
     /**
-     * @param Adventure $adventure
      * @return static
      */
     public function addAdventure(Adventure $adventure);
 
     /**
-     * @param Adventure $adventure
      * @return static
      */
     public function removeAdventure(Adventure $adventure);

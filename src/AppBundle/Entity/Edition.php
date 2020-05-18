@@ -107,7 +107,7 @@ class Edition implements RelatedEntityInterface
     /**
      * Set position
      *
-     * @param integer $position
+     * @param int $position
      *
      * @return Edition
      */
@@ -137,7 +137,6 @@ class Edition implements RelatedEntityInterface
     }
 
     /**
-     * @param Adventure $adventure
      * @return static
      */
     public function addAdventure(Adventure $adventure)
@@ -148,7 +147,6 @@ class Edition implements RelatedEntityInterface
     }
 
     /**
-     * @param Adventure $adventure
      * @return static
      */
     public function removeAdventure(Adventure $adventure)
@@ -174,4 +172,3 @@ class Edition implements RelatedEntityInterface
         return $this->updatedBy;
     }
 }
-

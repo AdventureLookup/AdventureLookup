@@ -70,8 +70,6 @@ class MonsterType
     /**
      * Add a monster to this type
      *
-     * @param Monster $monster
-     *
      * @return MonsterType
      */
     public function addMonster(Monster $monster)
@@ -93,8 +91,6 @@ class MonsterType
 
     /**
      * Set name
-     *
-     * @param string $name
      *
      * @return MonsterType
      */
@@ -123,4 +119,3 @@ class MonsterType
         return $this->slug;
     }
 }
-
