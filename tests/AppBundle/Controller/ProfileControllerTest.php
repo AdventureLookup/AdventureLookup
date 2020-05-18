@@ -68,7 +68,7 @@ class ProfileControllerTest extends WebTestCase
             if ($numPendingChangeRequests > 0) {
                 $this->assertContains("{$numPendingChangeRequests} pending change request(s)", $linkToAdventure->getText());
             } else {
-                $this->assertNotContains("pending change request(s)", $linkToAdventure->getText());
+                $this->assertNotContains('pending change request(s)', $linkToAdventure->getText());
             }
             $linkToAdventure->click();
             $this->assertTrue($page->hasContent($adventure->getTitle()));
@@ -153,7 +153,7 @@ class ProfileControllerTest extends WebTestCase
 
         foreach ($expectedErrors as $expectedError => $count) {
             $this->assertCount($count,
-                $page->findAll('css', '.form-error-message:contains("' . $expectedError . '")'));
+                $page->findAll('css', '.form-error-message:contains("'.$expectedError.'")'));
         }
     }
 
@@ -177,7 +177,7 @@ class ProfileControllerTest extends WebTestCase
             ['your-adventure', false, -1],
             ['my-adventure-1', true, 1],
             ['my-adventure-2', true, 0],
-            ['my-adventure-3', true, 0]
+            ['my-adventure-3', true, 0],
         ];
     }
 

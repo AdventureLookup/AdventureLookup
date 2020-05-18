@@ -13,12 +13,12 @@ class ExceptionListener
     /**
      * @var TokenStorageInterface
      */
-    var $tokenStorage;
+    private $tokenStorage;
 
     /**
      * @var RouterInterface
      */
-    var $router;
+    private $router;
 
     public function __construct(TokenStorageInterface $tokenStorage, RouterInterface $router)
     {

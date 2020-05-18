@@ -18,10 +18,6 @@ class InternalApiController extends Controller
      * @Route("/autocomplete/field/{fieldName}", name="api_autocomplete_field")
      * @Method("GET")
      *
-     * @param Request $request
-     * @param FieldProvider $fieldProvider
-     * @param AdventureSearch $adventureSearch
-     * @param string $fieldName
      * @return JsonResponse
      */
     public function autocompleteFieldValueAction(Request $request, FieldProvider $fieldProvider, AdventureSearch $adventureSearch, string $fieldName)
@@ -42,14 +38,12 @@ class InternalApiController extends Controller
      * @Route("/autocomplete/similar-titles", name="similar_titles_search")
      * @Method("GET")
      *
-     * @param Request $request
-     * @param AdventureSearch $adventureSearch
      * @return JsonResponse
      */
     public function findSimilarTitlesAction(Request $request, AdventureSearch $adventureSearch)
     {
         $q = $request->query->get('q', false);
-        if ($q === false) {
+        if (false === $q) {
             throw new NotFoundHttpException();
         }
 

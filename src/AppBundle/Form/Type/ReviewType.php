@@ -19,11 +19,11 @@ class ReviewType extends AbstractType
         $builder
             ->add('rating', CheckboxType::class, [
                 'label_attr' => [
-                    'class' => 'd-none'
+                    'class' => 'd-none',
                 ],
                 'attr' => [
-                    'class' => 'd-none'
-                ]
+                    'class' => 'd-none',
+                ],
             ])
             ->add('comment', TextareaType::class, [
                 'required' => false,
@@ -41,7 +41,7 @@ class ReviewType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Review::class
+            'data_class' => Review::class,
         ]);
     }
 }

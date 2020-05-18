@@ -106,7 +106,6 @@ class Environment implements RelatedEntityInterface
     }
 
     /**
-     * @param Adventure $adventure
      * @return static
      */
     public function addAdventure(Adventure $adventure)
@@ -117,7 +116,6 @@ class Environment implements RelatedEntityInterface
     }
 
     /**
-     * @param Adventure $adventure
      * @return static
      */
     public function removeAdventure(Adventure $adventure)
@@ -143,4 +141,3 @@ class Environment implements RelatedEntityInterface
         return $this->updatedBy;
     }
 }
-

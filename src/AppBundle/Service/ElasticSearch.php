@@ -1,6 +1,5 @@
 <?php
 
-
 namespace AppBundle\Service;
 
 use Elasticsearch\Client;
@@ -31,25 +30,16 @@ class ElasticSearch
         $this->typeName = $config['type_name'];
     }
 
-    /**
-     * @return string
-     */
     public function getIndexName(): string
     {
         return $this->indexName;
     }
 
-    /**
-     * @return string
-     */
     public function getTypeName(): string
     {
         return $this->typeName;
     }
 
-    /**
-     * @return Client
-     */
     public function getClient(): Client
     {
         return $this->client;

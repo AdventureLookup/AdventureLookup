@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-
 class AdventureDocument
 {
     private $id;
@@ -57,32 +56,32 @@ class AdventureDocument
     private $bossMonsters;
 
     /**
-     * @var integer
+     * @var int
      */
     private $minStartingLevel;
 
     /**
-     * @var integer
+     * @var int
      */
     private $maxStartingLevel;
 
     /**
-     * @var integer
+     * @var int
      */
     private $startingLevelRange;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $soloable;
 
     /**
-     * @var integer
+     * @var int
      */
     private $numPages;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $pregeneratedCharacters;
 
@@ -102,12 +101,12 @@ class AdventureDocument
     private $description;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $tacticalMaps;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $handouts;
 
@@ -197,7 +196,6 @@ class AdventureDocument
     }
 
     /**
-     * @param Adventure $adventure
      * @return static
      */
     public static function fromAdventure(Adventure $adventure)
@@ -233,17 +231,11 @@ class AdventureDocument
         );
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return $this->title;
@@ -459,10 +451,11 @@ class AdventureDocument
 
     /**
      * @param $entity
-     * @return null|string
+     *
+     * @return string|null
      */
     private static function getNameOrNull($entity)
     {
-        return $entity === null ? null : $entity->getName();
+        return null === $entity ? null : $entity->getName();
     }
 }

@@ -8,8 +8,8 @@ use Tests\WebTestCase;
 
 class ReviewControllerTest extends WebTestCase
 {
-    const REVIEW_TEXT = "Hello World! This is my amazing review.";
-    const REVIEW_TEXT_2 = "This is another review text.";
+    const REVIEW_TEXT = 'Hello World! This is my amazing review.';
+    const REVIEW_TEXT_2 = 'This is another review text.';
 
     /**
      * @dataProvider newReviewDataProvider
@@ -35,7 +35,7 @@ class ReviewControllerTest extends WebTestCase
         $session->getPage()->findById('review_form')->submit();
 
         $this->assertPath($session, "/adventures/{$adventure->getSlug()}");
-        if ($comment !== null) {
+        if (null !== $comment) {
             $this->assertTrue($session->getPage()->hasContent($comment));
         }
 

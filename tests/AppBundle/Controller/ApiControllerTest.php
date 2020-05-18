@@ -13,8 +13,8 @@ class ApiControllerTest extends WebTestCase
         $this->loadFixtures([AdventureData::class]);
 
         $session = $this->makeSession();
-        $session->visit("/api/adventures");
-        $this->assertEquals('application/json', $session->getResponseHeader("Content-Type"));
+        $session->visit('/api/adventures');
+        $this->assertEquals('application/json', $session->getResponseHeader('Content-Type'));
         $json = json_decode($session->getPage()->getContent());
 
         $this->assertEquals(AdventureData::NUM_ADVENTURES, $json->total_count);
@@ -33,7 +33,7 @@ class ApiControllerTest extends WebTestCase
 
         $session = $this->makeSession();
         $session->visit("/api/adventures/{$adventure->getId()}");
-        $this->assertEquals('application/json', $session->getResponseHeader("Content-Type"));
+        $this->assertEquals('application/json', $session->getResponseHeader('Content-Type'));
         $json = json_decode($session->getPage()->getContent());
 
         $this->assertEquals('Adventure #1', $json->adventure->title);
@@ -45,7 +45,7 @@ class ApiControllerTest extends WebTestCase
     public function testDocsAction()
     {
         $session = $this->makeSession();
-        $session->visit("/api");
+        $session->visit('/api');
         $this->assertTrue($session->getPage()->hasContent('API Docs'));
     }
 }

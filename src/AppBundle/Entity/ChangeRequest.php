@@ -46,7 +46,7 @@ class ChangeRequest
     private $curatorRemarks;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="resolved", type="boolean", nullable=false)
      */
@@ -76,7 +76,7 @@ class ChangeRequest
     private $updatedBy;
 
     /**
-     * @var \DateTime $created
+     * @var \DateTime
      *
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
@@ -84,7 +84,7 @@ class ChangeRequest
     private $createdAt;
 
     /**
-     * @var \DateTime $updated
+     * @var \DateTime
      *
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime")
@@ -98,7 +98,7 @@ class ChangeRequest
 
     public function __toString(): string
     {
-        return '#' . $this->id;
+        return '#'.$this->id;
     }
 
     /**
@@ -175,12 +175,10 @@ class ChangeRequest
     public function setCuratorRemarks($curatorRemarks)
     {
         $this->curatorRemarks = $curatorRemarks;
+
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isResolved(): bool
     {
         return $this->resolved;
@@ -194,6 +192,7 @@ class ChangeRequest
     public function setResolved($resolved = true)
     {
         $this->resolved = $resolved;
+
         return $this;
     }
 
@@ -206,13 +205,12 @@ class ChangeRequest
     }
 
     /**
-     * @param Adventure $adventure
-     *
      * @return ChangeRequest
      */
     public function setAdventure(Adventure $adventure)
     {
         $this->adventure = $adventure;
+
         return $this;
     }
 
