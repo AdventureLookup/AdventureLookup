@@ -4,6 +4,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\Review;
+use AppBundle\Entity\ReviewVote;
+use AppBundle\Entity\User;
 use AppBundle\Form\Type\ReviewType;
 use AppBundle\Security\ReviewVoter;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -12,8 +14,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * @Route("/review")
@@ -105,6 +110,62 @@ class ReviewController extends Controller
     }
 
     /**
+     * @Route("/vote/{id}", name="review_vote", defaults={"_format": "json"})
+     * @Method("POST")
+     * @ParamConverter()
+     *
+     * @param Review $review
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function voteAction(Review $review, Request $request)
+    {
+        if (!$this->isGranted(ReviewVoter::VOTE, $review)) {
+            throw new HttpException(Response::HTTP_FORBIDDEN);
+        }
+        if (!$this->isCsrfTokenValid('review_voting', $request->request->get('_token'))) {
+            throw new HttpException(Response::HTTP_FORBIDDEN);
+        }
+
+        $vote = $request->request->getInt('vote');
+        if (!in_array($vote, [1, 0, -1], true)) {
+            throw new HttpException(Response::HTTP_BAD_REQUEST);
+        }
+
+        $doctrine = $this->getDoctrine();
+        $em = $doctrine->getManager();
+        /** @var User $user */
+        $user = $this->getUser();
+        $reviewVote = $doctrine
+            ->getRepository(ReviewVote::class)
+            ->findOneBy([
+                'user' => $user->getId(),
+                'review' => $review
+        ]);
+
+        if (null !== $reviewVote) {
+            if ($vote === 0) {
+                $em->remove($reviewVote);
+            } else {
+                $reviewVote->setVote($vote === 1);
+            }
+        } else {
+            if ($vote !== 0) {
+                $reviewVote = new ReviewVote($review, $user, $vote === 1);
+                $em->persist($reviewVote);
+            }
+        }
+        $em->flush();
+
+        $em->refresh($review);
+
+        return new JsonResponse([
+            'upvotes' => $review->countUpvotes(),
+            'downvotes' => $review->countDownvotes(),
+        ]);
+    }
+
+    /**
      * @param Review $review
      * @return RedirectResponse
      */
@@ -117,7 +178,7 @@ class ReviewController extends Controller
     /**
      * @param FormInterface $form
      */
-    private function showErrors(FormInterface $form): void
+    private function showErrors(FormInterface $form)
     {
         $this->addFlash('danger', 'There was an error with your review.');
         foreach ($form->getErrors(true) as $error) {

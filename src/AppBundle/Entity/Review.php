@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -49,6 +50,14 @@ class Review
      * @ORM\Column(type="text", nullable=true)
      */
     private $comment;
+
+    /**
+     * @var ReviewVote[]|Collection
+     *
+     * @ORM\OneToMany(targetEntity="ReviewVote", mappedBy="review", orphanRemoval=true, fetch="EAGER", indexBy="user_id")
+     * @ORM\OrderBy({"vote" = "ASC"})
+     */
+    private $votes;
 
     /**
      * @var string
@@ -180,6 +189,60 @@ class Review
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    /**
+     * @return int
+     */
+    public function countUpvotes(): int
+    {
+        return $this->getUpvotes()->count();
+    }
+
+    /**
+     * @return int
+     */
+    public function countDownvotes(): int
+    {
+        return $this->getDownvotes()->count();
+    }
+
+    /**
+     * @param User $user
+     * @return bool
+     */
+    public function hasUpvoteBy(User $user): bool
+    {
+        return $this->getUpvotes()->containsKey($user->getId());
+    }
+
+    /**
+     * @param User $user
+     * @return bool
+     */
+    public function hasDownvoteBy(User $user): bool
+    {
+        return $this->getDownvotes()->containsKey($user->getId());
+    }
+
+    /**
+     * @return Collection
+     */
+    private function getUpvotes(): Collection
+    {
+        return $this->votes->filter(function (ReviewVote $vote) {
+            return $vote->isUpvote();
+        });
+    }
+
+    /**
+     * @return Collection
+     */
+    private function getDownvotes(): Collection
+    {
+        return $this->votes->filter(function (ReviewVote $vote) {
+            return $vote->isDownvote();
+        });
     }
 }
 

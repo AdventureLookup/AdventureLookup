@@ -132,3 +132,12 @@ knp_paginator:
 ewz_recaptcha:
     public_key:  '%recaptcha_public_key%'
     private_key: '%recaptcha_private_key%'
+
+data_dog_audit:
+    unaudited_entities:
+        - AppBundle\Entity\AdventureList
+        - AppBundle\Entity\ChangeRequest
+        - AppBundle\Entity\Review
+        - AppBundle\Entity\ReviewVote
+        - AppBundle\Entity\User
+        - Gedmo\Loggable\Entity\LogEntry

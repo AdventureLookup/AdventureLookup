@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Adventure
@@ -321,7 +322,7 @@ class Adventure
     }
 
     /**
-     * @param Author[] $authors
+     * @param Author[]|Collection $authors
      *
      * @return Adventure
      */
@@ -368,7 +369,7 @@ class Adventure
     }
 
     /**
-     * @param Environment[] $environments
+     * @param Environment[]|Collection $environments
      *
      * @return Adventure
      */
@@ -397,7 +398,7 @@ class Adventure
     }
 
     /**
-     * @param Item[] $items
+     * @param Item[]|Collection $items
      *
      * @return Adventure
      */
@@ -896,6 +897,42 @@ class Adventure
     public function getReviews()
     {
         return $this->reviews;
+    }
+
+    /**
+     * @param UserInterface|null $user If provided, reviews by the given user will be first.
+     * @return Review[]|Collection
+     */
+    public function getSortedReviewsWithComments(UserInterface $user = null)
+    {
+        $reviews = $this->reviews->filter(function (Review $review) {
+            return !empty($review->getComment());
+        })->map(function (Review $review) use ($user) {
+            $positive = $review->countUpvotes();
+            $negative = $review->countDownvotes();
+
+            // Calculate score using lower bound of Wilson score confidence interval
+            // as described here: http://www.evanmiller.org/how-not-to-sort-by-average-rating.html
+            if ($user && $user->getUsername() === $review->getCreatedBy()) {
+                $score = PHP_INT_MAX;
+            } else if ($positive + $negative == 0) {
+                $score = 0;
+            } else {
+                $score = (($positive + 1.9208) / ($positive + $negative) - 1.96 * sqrt(($positive * $negative) / ($positive + $negative) + 0.9604) / ($positive + $negative)) / (1 + 3.8416 / ($positive + $negative));
+            }
+            return [
+                'review' => $review,
+                'score' => $score,
+            ];
+        })->toArray();
+
+        usort($reviews, function ($a, $b) {
+            return $b['score'] <=> $a['score'];
+        });
+
+        return (new ArrayCollection($reviews))->map(function ($r) {
+            return $r['review'];
+        });
     }
 
     /**
