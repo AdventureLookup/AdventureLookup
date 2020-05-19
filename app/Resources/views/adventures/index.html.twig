@@ -17,12 +17,10 @@
                     data-field-stats="{{ stats | json_encode | e("html_attr") }}"
                 ></div>
                 <div class="adl-sidebar">
-                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                        <a class="btn btn-primary" href="{{ path('adventure_new') }}">
-                            <i class="fa fa-plus-circle"></i>
-                            Add a new adventure
-                        </a>
-                    {% endif %}
+                    <a class="btn btn-primary" href="{{ path('adventure_new') }}">
+                        <i class="fa fa-plus-circle"></i>
+                        Add a new adventure
+                    </a>
                 </div>
                 <div class="adl-sidebar">
                     <a class="btn btn-outline-secondary" href="{{ path('adventure_random') }}">
