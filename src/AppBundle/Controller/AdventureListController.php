@@ -38,7 +38,7 @@ class AdventureListController extends Controller
      * @param UserInterface $user
      * @return array
      */
-    public function indexAction(EntityManagerInterface $em, UserInterface $user)
+    public function indexAction(EntityManagerInterface $em, UserInterface $user = null)
     {
         $this->denyAccessUnlessGranted(
             AdventureListVoter::LIST,
