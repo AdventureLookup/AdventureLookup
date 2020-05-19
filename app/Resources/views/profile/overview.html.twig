@@ -80,7 +80,11 @@
                             </h6>
                             <small>{{ review.createdAt|time_diff }}</small>
                         </div>
-                        <p class="mb-1">{{ review.comment|nl2br }}</p>
+                        {% if review.comment is empty %}
+                            <p class="mb-1"><em>Review contains no comment</em></p>
+                        {% else %}
+                            <p class="mb-1">{{ review.comment|nl2br }}</p>
+                        {% endif %}
                     </a>
                 {% else %}
                     <button disabled class="list-group-item">You haven't left any reviews</button>
