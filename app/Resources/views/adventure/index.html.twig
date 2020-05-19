@@ -32,13 +32,13 @@
                     {% if app.user %}
                         <div class="row">
                             <div class="col-sm-6 col-md-4 col-lg-12">
-                                <div class="dropdown" id="adventure_list-bookmark-menu">
+                                <div class="dropdown " id="adventure_list-bookmark-menu">
                                     <a href="#" class="btn btn-secondary dropdown-toggle" id="adventure_list-bookmark-menu-btn" data-toggle="dropdown"
-                                       aria-haspopup="true" aria-expanded="false">
+                                       aria-haspopup="true" aria-expanded="false" data-display="static">
                                         <i class="fa fa-bookmark"></i> Bookmark
                                     </a>
 
-                                    <div class="dropdown-menu" aria-labelledby="adventure_list-bookmark-menu-btn">
+                                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-sm-left dropdown-menu-lg-right" aria-labelledby="adventure_list-bookmark-menu-btn">
                                         <h6 class="dropdown-header">Your Lists</h6>
                                         {% for list in lists %}
                                             <button class="dropdown-item" type="button"
