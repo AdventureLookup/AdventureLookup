@@ -72,7 +72,7 @@
                         <div class="d-flex w-100 justify-content-between">
                             <h6 class="mb-1">
                                 {{ review.adventure.title }}
-                                {% if review.rating == 1 %}
+                                {% if review.isThumbsUp %}
                                     <i class="fa fa-fw fa-thumbs-o-up"></i>
                                 {% else %}
                                     <i class="fa fa-fw fa-thumbs-o-down"></i>
@@ -83,7 +83,7 @@
                         <p class="mb-1">{{ review.comment|nl2br }}</p>
                     </a>
                 {% else %}
-                    <button disabled class="list-group-item">You don't have left any reviews</button>
+                    <button disabled class="list-group-item">You haven't left any reviews</button>
                 {% endfor %}
             </div>
         </div>
