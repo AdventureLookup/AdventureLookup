@@ -49,6 +49,7 @@ twig:
         - 'form_layout.html.twig'
     globals:
         google_analytics_code: '%google_analytics_code%'
+        announcement: '%announcement%'
 
 # Doctrine Configuration
 doctrine:
