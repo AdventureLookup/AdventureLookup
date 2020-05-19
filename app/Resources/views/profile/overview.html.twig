@@ -66,7 +66,7 @@
             </div>
             <div class="list-group list-group-flush list-group-paginated">
                 {% for review in reviews %}
-                    <a href="{{ path('adventure_show', {slug: review.adventure.slug}) }}"
+                    <a href="{{ path('adventure_show', {slug: review.adventure.slug}) }}#review-container"
                        class="list-group-item list-group-item-action"
                        id="change-request-{{ review.id }}">
                         <div class="d-flex w-100 justify-content-between">
