@@ -6,8 +6,14 @@ use AppBundle\Entity\Adventure;
 use Tests\Fixtures\AdventureData;
 use Tests\WebTestCase;
 
+/**
+ * @group new
+ * Tests adventurelistcontroller
+ */
 class AdventureControllerTest extends WebTestCase
 {
+    const LOGIN_URL = '/login';
+
     public function testInvalidFilters()
     {
         $this->loadFixtures([AdventureData::class]);
@@ -37,5 +43,36 @@ class AdventureControllerTest extends WebTestCase
         $this->assertWorkingIndex($session);
         // Make sure adventure isn't part of the index any more
         $this->assertFalse($session->getPage()->hasContent($adventure->getTitle()));
+    }
+
+    public function testNonuserActions(){
+        $referenceRepository = $this->loadFixtures([AdventureData::class])->getReferenceRepository();
+        /** @var Adventure $adventure */
+        $adventure = $referenceRepository->getReference('user-1-adventure-1');
+
+        $session = $this->makeSession(false);
+
+        // Make sure non authenticated user is redirected to login when clicking new adventure button
+        $session->visit('/adventures/');
+        $session->getPage()->findLink('Add a new adventure')->click();
+
+        $this->assertPath($session, self::LOGIN_URL);
+
+        // When clicking make edits as a non user, you should be redirected to login
+        $session->visit("/adventures/{$adventure->getSlug()}");
+        $session->getPage()->findButton('Suggest Edits')->click();
+
+        $this->assertPath($session, self::LOGIN_URL);
+
+        // When clicking bookmark show no lists for a nonuser
+        $session->visit("/adventures/{$adventure->getSlug()}");
+        $session->getPage()->findLink('adventure_list-bookmark-menu-btn')->click();
+
+        $this->assertTrue($session->getPage()->hasContent('Please create a list first, using the link below'));
+
+        // Attempting to navigate to the lists will redirect to login
+        $session->visit("/profile/lists/");
+
+        $this->assertPath($session, self::LOGIN_URL);
     }
 }
