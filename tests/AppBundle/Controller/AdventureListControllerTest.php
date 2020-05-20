@@ -6,10 +6,6 @@ use AppBundle\Entity\Adventure;
 use Tests\Fixtures\AdventureData;
 use Tests\WebTestCase;
 
-/**
- * @group new
- * Tests adventurelistcontroller
- */
 class AdventureListControllerTest extends WebTestCase
 {
     public function testNewAdventureList()
