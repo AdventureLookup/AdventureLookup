@@ -132,3 +132,11 @@ knp_paginator:
 ewz_recaptcha:
     public_key:  '%recaptcha_public_key%'
     private_key: '%recaptcha_private_key%'
+
+data_dog_audit:
+    unaudited_entities:
+        # We only want to keep a change history of all adventure data related entities
+        - AppBundle\Entity\AdventureList
+        - AppBundle\Entity\ChangeRequest
+        - AppBundle\Entity\Review
+        - AppBundle\Entity\User
