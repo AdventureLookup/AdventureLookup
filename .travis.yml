@@ -41,7 +41,8 @@ before_install:
   - wget -q -P /tmp https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.6.2-linux-x86_64.tar.gz
   - tar -xzf /tmp/elasticsearch-7.6.2-linux-x86_64.tar.gz --directory /tmp
   - sed -i -e 's/1g/256m/g' /tmp/elasticsearch-7.6.2/config/jvm.options
-  - /tmp/elasticsearch-7.6.2/bin/elasticsearch & > /tmp/elasticsearch.log 2>&1
+  # Log stdout and stderr to log file and run in background
+  - /tmp/elasticsearch-7.6.2/bin/elasticsearch > /tmp/elasticsearch.log 2>&1 &
   # Wait for ElasticSearch to start
   - timeout 60 sh -c 'until nc -z $0 $1; do sleep 1; done' localhost 9200
 
@@ -80,7 +81,6 @@ script:
       $PHPUNIT --testsuite $TESTSUITE --coverage-clover=coverage.xml
       bash <(curl -s https://codecov.io/bash) -X gcov -X coveragepy
     fi;
-
 
 after_script:
   - cat /tmp/elasticsearch.log
