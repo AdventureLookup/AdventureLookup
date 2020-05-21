@@ -15,7 +15,8 @@ class FieldProviderTest extends TestCase
      */
     private $fieldProvider;
 
-    public function setUp(): void    {
+    public function setUp(): void
+    {
         $this->fieldProvider = new FieldProvider();
     }
 

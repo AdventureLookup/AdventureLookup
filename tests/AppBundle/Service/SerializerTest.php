@@ -17,7 +17,7 @@ class SerializerTest extends TestCase
      */
     private $serializer;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->serializer = new Serializer();
     }

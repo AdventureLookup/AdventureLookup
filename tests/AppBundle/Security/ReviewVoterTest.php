@@ -17,7 +17,8 @@ class ReviewVoterTest extends VoterTest
      */
     private $voter;
 
-    public function setUp(): void    {
+    public function setUp(): void
+    {
         $accessDecisionManager = $this->createAccessDecisionManagerMock();
         $this->voter = new ReviewVoter($accessDecisionManager);
     }

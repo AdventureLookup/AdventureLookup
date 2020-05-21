@@ -15,7 +15,8 @@ class AppExtensionTest extends TestCase
      */
     private $extension;
 
-    public function setUp(): void    {
+    public function setUp(): void
+    {
         $affiliateMappings = [
             [
                 'domains' => ['example.com', 'example.org'],

@@ -19,7 +19,8 @@ class AdventureTest extends TestCase
      */
     private $subject;
 
-    public function setUp(): void    {
+    public function setUp(): void
+    {
         $this->subject = new Adventure();
 
         $monsters = new \ReflectionProperty($this->subject, 'monsters');

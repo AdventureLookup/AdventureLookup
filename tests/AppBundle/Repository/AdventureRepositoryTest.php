@@ -30,7 +30,8 @@ class AdventureRepositoryTest extends WebTestCase
      */
     private $propertyAccessor;
 
-    public function setUp(): void    {
+    public function setUp(): void
+    {
         parent::setUp();
 
         $this->propertyAccessor = new PropertyAccessor();

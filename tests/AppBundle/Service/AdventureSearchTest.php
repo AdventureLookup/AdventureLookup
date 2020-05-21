@@ -33,7 +33,7 @@ class AdventureSearchTest extends TestCase
      */
     private $timeProvider;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->fieldProvider = $this->createMock(FieldProvider::class);
         $this->elasticSearch = $this->createMock(ElasticSearch::class);

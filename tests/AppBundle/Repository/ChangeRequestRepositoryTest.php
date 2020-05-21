@@ -18,7 +18,8 @@ class ChangeRequestRepositoryTest extends WebTestCase
      */
     private $repository;
 
-    public function setUp(): void    {
+    public function setUp(): void
+    {
         parent::setUp();
 
         $this->repository = $this->getContainer()

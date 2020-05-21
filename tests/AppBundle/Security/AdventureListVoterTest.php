@@ -19,7 +19,8 @@ class AdventureListVoterTest extends VoterTest
      */
     private $voter;
 
-    public function setUp(): void    {
+    public function setUp(): void
+    {
         $this->voter = new AdventureListVoter();
     }
 

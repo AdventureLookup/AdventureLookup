@@ -24,7 +24,8 @@ class ElasticSearchTest extends TestCase
      */
     private $client;
 
-    public function setUp(): void    {
+    public function setUp(): void
+    {
         $logger = $this->createMock(LoggerInterface::class);
         $this->client = $this->createMock(Client::class);
         $clientBuilder = $this->createMock(ClientBuilder::class);

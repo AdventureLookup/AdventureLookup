@@ -38,7 +38,8 @@ class BrowserTestCase extends TestCase
         return $session;
     }
 
-    protected function setUp(): void    {
+    protected function setUp(): void
+    {
         self::executeCommand('php bin/console doctrine:database:drop --force --env test');
         self::executeCommand('php bin/console doctrine:schema:create --env test');
         self::executeCommand('php bin/console app:elasticsearch:reindex --env test');
