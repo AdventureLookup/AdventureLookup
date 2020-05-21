@@ -44,6 +44,8 @@ before_install:
     if [ ${TESTSUITE} == "browser" ] || [ "$TESTSUITE" == "lint" ]; then
       phpenv config-rm xdebug.ini || echo "xdebug not available";
     fi;
+  # https://docs.travis-ci.com/user/database-setup/#installing-specific-versions-of-elasticsearch
+  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.6.2-amd64.deb && sudo dpkg -i --force-confnew elasticsearch-7.6.2-amd64.deb && sudo service elasticsearch restart
 
 install:
   - composer install -n --no-suggest --no-progress --ansi
