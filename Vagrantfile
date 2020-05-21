@@ -42,6 +42,8 @@ Vagrant.configure("2") do |config|
      set -ev
 
      apt_quiet update
+     # Install software-properties-common for add-apt-repository
+     apt_quiet install software-properties-common
 
      if is_docker; then
         echo Skipping swap creation for docker container
@@ -64,7 +66,8 @@ Vagrant.configure("2") do |config|
      mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS adl"
 
      # PHP
-     apt_quiet install php7.4 php7.4-curl php7.4-fpm php7.4-mysql php7.4-zip php7.4-cli php7.4-xml php7.4-mbstring php7.4-sqlite3 php7.4-intl php-xdebug
+     add-apt-repository -y ppa:ondrej/php
+     apt_quiet install php7.4 php7.4-curl php7.4-fpm php7.4-mysql php7.4-zip php7.4-cli php7.4-xml php7.4-mbstring php7.4-sqlite3 php7.4-intl php7.4-xdebug
 
      # Increase realpath cache size and ttl for better performance
      sed -i "s/^;realpath_cache_size =$/realpath_cache_size = 4096k/" /etc/php/7.4/cli/php.ini
