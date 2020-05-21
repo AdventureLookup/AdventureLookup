@@ -119,7 +119,7 @@ Vagrant.configure("2") do |config|
 
      ### Development Elasticsearch settings:
      # Decrease memory to 256MB
-     sed -i -e 's/2g/256m/g' /etc/elasticsearch/jvm.options
+     sed -i -e 's/1g/256m/g' /etc/elasticsearch/jvm.options
      # Listen on 0.0.0.0
      echo "http.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
   SHELL

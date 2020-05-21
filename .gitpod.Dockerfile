@@ -9,7 +9,7 @@ RUN wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7
 # restarting the workspace.
 RUN echo "path.data: /workspace/elasticsearch" >> elasticsearch-7.6.2/config/elasticsearch.yml
 # Decrease ElasticSearch memory usage
-RUN sed -i -e 's/2g/256m/g' elasticsearch-7.6.2/config/jvm.options
+RUN sed -i -e 's/1g/256m/g' elasticsearch-7.6.2/config/jvm.options
 
 # Install and use PHP 7.4
 RUN sudo apt-get update \
