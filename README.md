@@ -145,7 +145,7 @@ checkout the [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
 ## Tools used
 
-- Ubuntu 16.04 as the server
+- Ubuntu 18.04 as the server
 - MySQL 5.7 to store the adventures
 - Elasticsearch 7.6.2 to search the adventures
 - PHP7.4 to run the application

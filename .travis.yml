@@ -2,7 +2,7 @@ dist: bionic
 sudo: false
 language: php
 php:
-  - '7.4.1'
+  - '7.4'
 
 env:
   global:

@@ -11,7 +11,7 @@ Vagrant.configure("2") do |config|
   config.vm.network "private_network", type: "dhcp"
 
   config.vm.provider "virtualbox" do |vb, override|
-    override.vm.box = "ubuntu/focal64"
+    override.vm.box = "ubuntu/bionic64"
     vb.memory = "2048"
     vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
   end
