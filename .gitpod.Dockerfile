@@ -2,8 +2,8 @@ FROM gitpod/workspace-mysql
 
 USER gitpod
 
-RUN wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.6.2-amd64.deb \
-  && tar -xzf elasticsearch-7.6.2-amd64.deb
+RUN wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.6.2-linux-x86_64.tar.gz \
+  && tar -xzf elasticsearch-7.6.2-linux-x86_64.tar.gz
 
 # Save ElasticSearch data in a subfolder of the /workspace directory. Otherwise it is lost when
 # restarting the workspace.
