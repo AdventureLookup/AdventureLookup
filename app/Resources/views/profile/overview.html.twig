@@ -68,7 +68,7 @@
                 {% for review in reviews %}
                     <a href="{{ path('adventure_show', {slug: review.adventure.slug}) }}#review-container"
                        class="list-group-item list-group-item-action"
-                       id="change-request-{{ review.id }}">
+                       id="review-{{ review.id }}">
                         <div class="d-flex w-100 justify-content-between">
                             <h6 class="mb-1">
                                 {{ review.adventure.title }}

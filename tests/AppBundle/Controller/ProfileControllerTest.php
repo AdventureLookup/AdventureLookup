@@ -4,6 +4,7 @@ namespace Tests\AppBundle\Controller;
 
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\ChangeRequest;
+use AppBundle\Entity\Review;
 use AppBundle\Entity\User;
 use Behat\Mink\Element\DocumentElement;
 use Behat\Mink\Session;
@@ -97,6 +98,29 @@ class ProfileControllerTest extends WebTestCase
         }
     }
 
+    /**
+     * @dataProvider reviewDataProvider
+     */
+    public function testOverviewOnlyDisplaysOwnReviews(string $reference, bool $shouldDisplay)
+    {
+        $referenceRepository = $this->loadFixtures([ProfileTestData::class])->getReferenceRepository();
+        $session = $this->makeSession(true);
+        $session->visit(self::PROFILE_URL);
+        $page = $session->getPage();
+
+        /** @var Review $review */
+        $review = $referenceRepository->getReference($reference);
+        $linkToReview = $page->findById("review-{$review->getId()}");
+
+        if (!$shouldDisplay) {
+            $this->assertNull($linkToReview);
+        } else {
+            $linkToReview->click();
+            $this->assertTrue($page->hasContent($review->getAdventure()->getTitle()));
+            $this->assertTrue($page->hasContent($review->getComment()));
+        }
+    }
+
     public function testChangePasswordFormWithValidData()
     {
         $this->loadFixtures([ProfileTestData::class]);
@@ -163,6 +187,15 @@ class ProfileControllerTest extends WebTestCase
             ['your-unresolved-change-request', false],
             ['my-unresolved-change-request', true],
             ['my-resolved-change-request', true],
+        ];
+    }
+
+    public function reviewDataProvider()
+    {
+        return [
+            ['your-thumbs-down-review', false],
+            ['my-thumbs-up-review', true],
+            ['my-thumbs-down-review', true],
         ];
     }
 
