@@ -43,8 +43,8 @@ before_install:
   - sed -i -e 's/1g/256m/g' /tmp/elasticsearch-7.6.2/config/jvm.options
   # Log stdout and stderr to log file and run in background
   - /tmp/elasticsearch-7.6.2/bin/elasticsearch > /tmp/elasticsearch.log 2>&1 &
-  # Wait for ElasticSearch to start
-  - timeout 60 sh -c 'until nc -z $0 $1; do sleep 1; done' localhost 9200
+  - echo "Waiting for ElasticSearch to start"
+  - timeout 60 sh -c 'until nc -z $0 $1; do sleep 1; echo -n "."; done' localhost 9200
 
 install:
   - composer install -n --no-suggest --no-progress --ansi
