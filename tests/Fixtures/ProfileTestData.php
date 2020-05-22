@@ -59,20 +59,14 @@ class ProfileTestData extends AbstractFixture implements DependentFixtureInterfa
         $myThumbsUpReview->setThumbsUp();
         $myThumbsUpReview->setComment('My thumbs up review');
 
-        $myThumbsDownReview = new Review($myAdventure);
-        $myThumbsDownReview->setThumbsDown();
-        $myThumbsDownReview->setComment('My thumbs down review');
-
         $em->persist($myAdventure);
         $em->persist($myUnresolvedChangeRequest);
         $em->persist($myResolvedChangeRequest);
         $em->persist($myThumbsUpReview);
-        $em->persist($myThumbsDownReview);
         $this->addReference('my-adventure-1', $myAdventure);
         $this->addReference('my-unresolved-change-request', $myUnresolvedChangeRequest);
         $this->addReference('my-resolved-change-request', $myResolvedChangeRequest);
         $this->addReference('my-thumbs-up-review', $myThumbsUpReview);
-        $this->addReference('my-thumbs-down-review', $myThumbsDownReview);
 
         $myAdventure2 = new Adventure();
         $myAdventure2->setTitle('My Adventure 2');

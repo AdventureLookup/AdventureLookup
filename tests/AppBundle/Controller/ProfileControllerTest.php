@@ -195,7 +195,6 @@ class ProfileControllerTest extends WebTestCase
         return [
             ['your-thumbs-down-review', false],
             ['my-thumbs-up-review', true],
-            ['my-thumbs-down-review', true],
         ];
     }
 
