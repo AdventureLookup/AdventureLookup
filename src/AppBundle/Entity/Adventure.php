@@ -214,13 +214,6 @@ class Adventure
     private $approved;
 
     /**
-     * @var TagContent[]
-     *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\TagContent", fetch="EAGER", mappedBy="adventure", orphanRemoval=true)
-     */
-    private $info;
-
-    /**
      * @var ChangeRequest[]|Collection
      *
      * @ORM\OneToMany(targetEntity="ChangeRequest", mappedBy="adventure", orphanRemoval=true)
@@ -541,31 +534,6 @@ class Adventure
     public function getTitle()
     {
         return $this->title;
-    }
-
-    /**
-     * @return TagContent[]|Collection
-     */
-    public function getInfo()
-    {
-        return $this->info;
-    }
-
-    /**
-     * @param TagContent[] $info
-     *
-     * @return Adventure
-     */
-    public function setInfo($info)
-    {
-        $this->info = $info;
-
-        return $this;
-    }
-
-    public function addInfo(TagContent $info)
-    {
-        $this->info->add($info);
     }
 
     /**
