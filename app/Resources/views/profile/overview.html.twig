@@ -60,6 +60,37 @@
                 {% endfor %}
             </div>
         </div>
+        <div class="card mb-3">
+            <div class="card-header">
+                Your Reviews
+            </div>
+            <div class="list-group list-group-flush list-group-paginated">
+                {% for review in reviews %}
+                    <a href="{{ path('adventure_show', {slug: review.adventure.slug}) }}#review-container"
+                       class="list-group-item list-group-item-action"
+                       id="review-{{ review.id }}">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">
+                                {{ review.adventure.title }}
+                                {% if review.isThumbsUp %}
+                                    <i class="fa fa-fw fa-thumbs-o-up"></i>
+                                {% else %}
+                                    <i class="fa fa-fw fa-thumbs-o-down"></i>
+                                {% endif %}
+                            </h6>
+                            <small>{{ review.createdAt|time_diff }}</small>
+                        </div>
+                        {% if review.comment is empty %}
+                            <p class="mb-1"><em>Review contains no comment</em></p>
+                        {% else %}
+                            <p class="mb-1">{{ review.comment|nl2br }}</p>
+                        {% endif %}
+                    </a>
+                {% else %}
+                    <button disabled class="list-group-item">You haven't left any reviews</button>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 {% endblock %}
 
