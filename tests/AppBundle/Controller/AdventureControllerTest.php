@@ -6,10 +6,6 @@ use AppBundle\Entity\Adventure;
 use Tests\Fixtures\AdventureData;
 use Tests\WebTestCase;
 
-/**
- * @group new
- * Tests adventurelistcontroller
- */
 class AdventureControllerTest extends WebTestCase
 {
     const LOGIN_URL = '/login';
