@@ -29,10 +29,6 @@ class SecurityController extends Controller
             return $this->redirectToRoute('homepage');
         }
 
-        if ($request->cookies->get('sf_redirect')) {
-            $this->addFlash('warning', 'You must login to use this feature.');
-        }
-
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
 
