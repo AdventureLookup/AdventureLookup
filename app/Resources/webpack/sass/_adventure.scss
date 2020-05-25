@@ -81,6 +81,10 @@ $thumbnail-height: 100px;
     padding: $adl-card-padding;
     border-top: 1px solid $adl-grey-lightest;
 
+    .reviewer-row {
+        align-items: center;
+    }
+
     .review-icon {
       &.review-icon--positive {
           color: #bad272;
@@ -89,6 +93,11 @@ $thumbnail-height: 100px;
       &.review-icon--negative {
           color: #d27272;
       }
+    }
+
+    .review-icon-mobile-column {
+        padding-right: 0;
+        margin-bottom: 1rem;
     }
 
     blockquote {
