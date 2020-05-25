@@ -3,7 +3,6 @@ sudo: false
 language: php
 php:
   - '7.0.21'
-
 env:
   global:
     - SYMFONY_ENV=test
@@ -49,7 +48,11 @@ install:
   - composer install -n --no-suggest --no-progress --ansi
   - |
     if [ ${TESTSUITE} == "functional" ] || [ "$TESTSUITE" == "browser" ]; then
-      npm install -g npm
+      # Use Node.js 12
+      nvm install 12
+      # Use npm 6.x
+      npm install npm@^6 -g
+
       npm install;
       npm run prod;
     fi;

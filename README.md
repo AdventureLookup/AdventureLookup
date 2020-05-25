@@ -151,8 +151,8 @@ checkout the [CONTRIBUTING.md](CONTRIBUTING.md) file.
 - PHP7.0 to run the application
 - Symfony 3 as the web framework
 - Composer as PHP package manager
-- NPM 5 as Frontend package manager
-- Symfony Encore / Webpack for frontend assets
+- Node.js 12 and npm 6 for frontend package management
+- Symfony Encore / Webpack for bundling frontend assets
 
 ## Running the application in production
 

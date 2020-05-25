@@ -39,3 +39,4 @@ parameters:
     #       code:    '123abc'
 
     affiliate_mappings: []
+    announcement: ~

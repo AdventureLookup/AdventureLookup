@@ -99,6 +99,11 @@
       }
     }
   }
+  &-searchbar{
+    width: 100%;
+    padding: 0 4px;
+    border-radius: 0px;
+  }
 }
 
 // Don't suggest that the always-open filters can be collapsed
