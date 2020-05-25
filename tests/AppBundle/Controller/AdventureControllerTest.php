@@ -53,12 +53,14 @@ class AdventureControllerTest extends WebTestCase
         $session->getPage()->findLink('Add a new adventure')->click();
 
         $this->assertPath($session, self::LOGIN_URL);
+        $this->assertTrue($session->getPage()->hasContent('You must login to use this feature.'));
 
         // When clicking make edits as a non user, you should be redirected to login
         $session->visit("/adventures/{$adventure->getSlug()}");
         $session->getPage()->findButton('Suggest Edits')->click();
 
         $this->assertPath($session, self::LOGIN_URL);
+        $this->assertTrue($session->getPage()->hasContent('You must login to use this feature.'));
 
         // When clicking bookmark show no lists for a nonuser
         $session->visit("/adventures/{$adventure->getSlug()}");
@@ -70,5 +72,6 @@ class AdventureControllerTest extends WebTestCase
         $session->visit("/profile/lists/");
 
         $this->assertPath($session, self::LOGIN_URL);
+        $this->assertTrue($session->getPage()->hasContent('You must login to use this feature.'));
     }
 }
