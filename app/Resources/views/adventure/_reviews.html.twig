@@ -41,7 +41,7 @@
             <blockquote>
                 <div class="row">
                     <div class="col col-auto d-none d-sm-flex">
-                        <i class="fa fa-quote-left fa-3x review-icon"></i>
+                        <i class="fa fa-3x review-icon {{ review.thumbsDown ? 'fa-thumbs-o-down review-icon--negative' : 'fa-thumbs-o-up review-icon--positive' }}"></i>
                     </div>
                     <div class="col">
                         {{ review.comment|nl2br }}
