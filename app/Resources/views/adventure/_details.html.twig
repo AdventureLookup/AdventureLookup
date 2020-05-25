@@ -21,7 +21,9 @@
     </div>
     <h2 class="title">{{ adventure.title }}</h2>
     <div class="tags-container">
-        <div class="tag tag-edition">{{ adventure.edition.name|default('Unknown Edition') }}</div>
+        <div class="tag tag-edition">
+            {{ macros.search('edition', adventure.edition.name)|default('Unknown Edition') }}
+        </div>
         <div class="tag tag-level">{{ format_level(adventure)|default('Unknown party level') }}</div>
         <div class="tag tag-length">{{ adventure.numPages|default('?') }} pages</div>
     </div>
