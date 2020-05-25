@@ -77,11 +77,11 @@ Vagrant.configure("2") do |config|
      apt_quiet install openjdk-8-jre > /dev/null
 
      # Node (JavaScript runtime)
-     curl -sL https://deb.nodesource.com/setup_8.x | bash -
+     curl -sL https://deb.nodesource.com/setup_12.x | bash -
      apt_quiet install nodejs
 
-     # Install latest NPM 5.x
-     npm install npm@^5 -g --loglevel=warn
+     # Install latest NPM 6.x
+     npm install npm@^6 -g --loglevel=warn
 
      # Headless testing utilities
      apt_quiet install xvfb x11vnc fluxbox

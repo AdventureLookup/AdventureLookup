@@ -66,6 +66,10 @@ $thumbnail-height: 100px;
         color: $adl-grey-light;
       }
 
+      .level {
+          text-transform: capitalize;
+      }
+
       ul {
         padding-left: 30px;
         margin-bottom: 0;

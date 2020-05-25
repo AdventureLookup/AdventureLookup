@@ -18,7 +18,7 @@ const visibleFieldNames = [
   "tacticalMaps",
   "partOf",
   "foundIn",
-  "year"
+  "year",
 ];
 
 function isFilterValueEmpty(field, value) {
@@ -149,17 +149,24 @@ function FieldFilter({
   );
 }
 
+function filterBuckets(bucket, searchString, selectedValues = []) {
+  const stringToSearch = (bucket.key || "").toLowerCase();
+  const match = stringToSearch.includes(searchString.toLowerCase());
+  const alreadySelected = selectedValues.includes(bucket.key);
+  return match || alreadySelected;
+}
+
 function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
   // Whether to show the full list of options or only first few.
   const showMoreAfter = 5;
+  const [filterString, setFilterString] = React.useState("");
   const [showAll, setShowAll] = React.useState(false);
 
   // ElasticSearch statistics on which options are available.
   const buckets = fieldValues["buckets"];
-
   // Normalize the initial options into an array.
   const initialValues = React.useMemo(() => {
-    let initialValues = initialFilter.v ?? [];
+    let initialValues = initialFilter.v || [];
     if (!Array.isArray(initialValues)) {
       if (initialValues === "") {
         initialValues = [];
@@ -176,11 +183,25 @@ function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
     onIsDirty(!areSetsEqual(new Set(initialValues), new Set(selectedValues)));
   }, [selectedValues, initialValues]);
 
+  const bucketsToShow = filterString
+    ? buckets.filter((b) => filterBuckets(b, filterString, selectedValues))
+    : buckets;
+
   const valuesUsed = new Set();
   return (
     <>
       <div className="string-options">
-        {buckets.map((bucket, i) => {
+        <div className="option">
+          <input
+            className="filter-searchbar"
+            type="text"
+            placeholder="Find Option"
+            onChange={(e) => setFilterString(e.target.value)}
+            value={filterString}
+            title="Find Option"
+          />
+        </div>
+        {bucketsToShow.map((bucket, i) => {
           valuesUsed.add(bucket.key);
           return (
             <StringCheckbox
@@ -220,7 +241,7 @@ function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
             />
           ))}
       </div>
-      {buckets.length > showMoreAfter && (
+      {bucketsToShow.length > showMoreAfter && (
         <>
           {!showAll && (
             <div
@@ -242,7 +263,7 @@ function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
           )}
         </>
       )}
-      {buckets.length === 0 && (
+      {bucketsToShow.length === 0 && (
         <div className="option">
           <em>
             No options available. Remove some search filters to show more
