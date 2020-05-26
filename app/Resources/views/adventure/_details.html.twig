@@ -24,7 +24,9 @@
         <div class="tag tag-edition">
             {{ macros.search('edition', adventure.edition.name)|default('Unknown Edition') }}
         </div>
-        <div class="tag tag-level">{{ format_level(adventure)|default('Unknown party level') }}</div>
+        <div class="tag tag-level">
+            {{ macros.search('startingLevelRange', adventure.startingLevelRange, format_level(adventure))|default('Unknown party level') }}
+        </div>
         <div class="tag tag-length">{{ adventure.numPages|default('?') }} pages</div>
     </div>
     <p class="description">{{ adventure.description|nl2br }}</p>
