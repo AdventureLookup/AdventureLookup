@@ -23,59 +23,65 @@ const visibleFieldNames = [
 
 function isFilterValueEmpty(field, value) {
   switch (field.type) {
+    case "text":
+    case "url":
+      // Not supported
+      return true;
     case "string":
+      return value.length === 0;
     case "boolean":
-      return value === "" || value === undefined;
+      return value === "";
     case "integer":
-      return value === undefined || (value.min === "" && value.max === "");
+      return value.min === "" && value.max === "";
+    default:
+      throw new Error(`Unsupported field type ${field.type}.`);
   }
-}
-
-function areSetsEqual(a, b) {
-  if (a.size !== b.size) return false;
-  for (const entry of a) {
-    if (!b.has(entry)) return false;
-  }
-  return true;
 }
 
 export const Filters = React.memo(function Filters({
   fields,
   showMoreFilters,
-  initialFilterValues,
+  filterValues,
+  setFilterValues,
   fieldStats,
   onSubmit,
 }) {
   const showMoreAfter = 13;
-  return fields.map((field, i) => (
-    <FieldFilter
-      key={field.name}
-      field={field}
-      initialFilter={initialFilterValues[field.name] ?? {}}
-      fieldValues={fieldStats[`vals_${field.name}`]}
-      visibility={
-        !visibleFieldNames.includes(field.name)
-          ? "NEVER"
-          : i < showMoreAfter ||
-            showMoreFilters ||
-            !isFilterValueEmpty(field, initialFilterValues[field.name]?.v)
-          ? "YES"
-          : "SHOW_MORE"
-      }
-      onSubmit={onSubmit}
-    />
-  ));
+  return fields
+    .filter((field) => ["integer", "string", "boolean"].includes(field.type))
+    .map((field, i) => (
+      <FieldFilter
+        key={field.name}
+        field={field}
+        filter={filterValues[field.name]}
+        setFilter={(value) =>
+          setFilterValues({ ...filterValues, [field.name]: value })
+        }
+        fieldValues={fieldStats[`vals_${field.name}`]}
+        visibility={
+          !visibleFieldNames.includes(field.name)
+            ? "NEVER"
+            : i < showMoreAfter ||
+              showMoreFilters ||
+              !isFilterValueEmpty(field, filterValues[field.name].v)
+            ? "YES"
+            : "SHOW_MORE"
+        }
+        onSubmit={onSubmit}
+      />
+    ));
 });
 
 function FieldFilter({
   field,
   visibility,
-  initialFilter,
+  filter,
+  setFilter,
   fieldValues,
   onSubmit,
 }) {
   const alwaysOpen = field.type === "boolean" || field.type === "integer";
-  const filterSet = !isFilterValueEmpty(field, initialFilter?.v);
+  const filterSet = !isFilterValueEmpty(field, filter.v);
 
   const [isOpen, setOpen] = React.useState(filterSet);
   const [isDirty, setIsDirty] = React.useState(false);
@@ -85,7 +91,7 @@ function FieldFilter({
       <input
         type="hidden"
         name={`f[${field.name}][v]`}
-        value={initialFilter.v ?? ""}
+        value={filter.v ?? ""}
       />
     );
   }
@@ -119,7 +125,8 @@ function FieldFilter({
         {field.type === "string" && (
           <StringOptions
             field={field}
-            initialFilter={initialFilter}
+            filter={filter}
+            setFilter={setFilter}
             fieldValues={fieldValues}
             onIsDirty={setIsDirty}
           />
@@ -127,14 +134,16 @@ function FieldFilter({
         {field.type === "boolean" && (
           <BooleanOptions
             field={field}
-            initialFilter={initialFilter}
+            filter={filter}
+            setFilter={setFilter}
             onIsDirty={setIsDirty}
           />
         )}
         {field.type === "integer" && (
           <IntegerOptions
             field={field}
-            initialFilter={initialFilter}
+            filter={filter}
+            setFilter={setFilter}
             onSubmit={onSubmit}
             onIsDirty={setIsDirty}
           />
@@ -156,7 +165,9 @@ function filterBuckets(bucket, searchString, selectedValues = []) {
   return match || alreadySelected;
 }
 
-function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
+function StringOptions({ field, fieldValues, filter, setFilter, onIsDirty }) {
+  const values = filter.v;
+
   // Whether to show the full list of options or only first few.
   const showMoreAfter = 5;
   const [filterString, setFilterString] = React.useState("");
@@ -164,27 +175,9 @@ function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
 
   // ElasticSearch statistics on which options are available.
   const buckets = fieldValues["buckets"];
-  // Normalize the initial options into an array.
-  const initialValues = React.useMemo(() => {
-    let initialValues = initialFilter.v || [];
-    if (!Array.isArray(initialValues)) {
-      if (initialValues === "") {
-        initialValues = [];
-      } else {
-        initialValues = [initialValues];
-      }
-    }
-    return initialValues;
-  }, [initialFilter]);
-
-  const [selectedValues, setSelectedValues] = React.useState(initialValues);
-
-  React.useEffect(() => {
-    onIsDirty(!areSetsEqual(new Set(initialValues), new Set(selectedValues)));
-  }, [selectedValues, initialValues]);
 
   const bucketsToShow = filterString
-    ? buckets.filter((b) => filterBuckets(b, filterString, selectedValues))
+    ? buckets.filter((b) => filterBuckets(b, filterString, values))
     : buckets;
 
   const valuesUsed = new Set();
@@ -208,36 +201,38 @@ function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
               key={bucket.key}
               field={field}
               value={bucket.key}
-              checked={selectedValues.includes(bucket.key)}
+              checked={values.includes(bucket.key)}
               count={bucket.doc_count}
               hidden={!showAll && i >= showMoreAfter}
-              onChange={(selected) =>
-                selected
-                  ? setSelectedValues([...selectedValues, bucket.key])
-                  : setSelectedValues(
-                      selectedValues.filter((each) => each !== bucket.key)
-                    )
-              }
+              onChange={(selected) => {
+                setFilter({
+                  v: selected
+                    ? [...values, bucket.key]
+                    : values.filter((each) => each !== bucket.key),
+                });
+                onIsDirty(true);
+              }}
             />
           );
         })}
-        {initialValues
+        {values
           .filter((value) => value !== "" && !valuesUsed.has(value))
           .map((value) => (
             <StringCheckbox
               key={value}
               field={field}
               value={value}
-              checked={selectedValues.includes(value)}
+              checked={values.includes(value)}
               count={0}
               hidden={false}
-              onChange={(selected) =>
-                selected
-                  ? setSelectedValues([...selectedValues, value])
-                  : setSelectedValues(
-                      selectedValues.filter((each) => each !== value)
-                    )
-              }
+              onChange={(selected) => {
+                setFilter({
+                  v: selected
+                    ? [...values, value]
+                    : values.filter((each) => each !== value),
+                });
+                onIsDirty(true);
+              }}
             />
           ))}
       </div>
@@ -284,7 +279,6 @@ function StringCheckbox({ field, value, checked, count, hidden, onChange }) {
     >
       <input
         type="checkbox"
-        name={`f[${field.name}][v][]`}
         value={value}
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
@@ -296,23 +290,19 @@ function StringCheckbox({ field, value, checked, count, hidden, onChange }) {
   );
 }
 
-function BooleanOptions({ field, initialFilter, onIsDirty }) {
-  const initialValue = initialFilter.v ?? "";
-  const [value, setValue] = React.useState(initialValue);
-
+function BooleanOptions({ field, filter, setFilter, onIsDirty }) {
   return (
     <div className="option">
       <div className="form-check form-check-inline">
         <input
           className="form-check-input"
           type="radio"
-          name={`f[${field.name}][v]`}
           value=""
           id={`sidebar-filter-${field.name}-all`}
-          checked={value === ""}
+          checked={filter.v === ""}
           onChange={() => {
-            setValue("");
-            onIsDirty("" !== initialValue);
+            setFilter({ ...filter, v: "" });
+            onIsDirty(true);
           }}
         />
         <label
@@ -326,13 +316,12 @@ function BooleanOptions({ field, initialFilter, onIsDirty }) {
         <input
           className="form-check-input"
           type="radio"
-          name={`f[${field.name}][v]`}
           value="1"
           id={`sidebar-filter-${field.name}-yes`}
-          checked={value === "1"}
+          checked={filter.v === "1"}
           onChange={() => {
-            setValue("1");
-            onIsDirty("1" !== initialValue);
+            setFilter({ ...filter, v: "1" });
+            onIsDirty(true);
           }}
         />
         <label
@@ -346,13 +335,12 @@ function BooleanOptions({ field, initialFilter, onIsDirty }) {
         <input
           className="form-check-input"
           type="radio"
-          name={`f[${field.name}][v]`}
           value="0"
           id={`sidebar-filter-${field.name}-no`}
-          checked={value === "0"}
+          checked={filter.v === "0"}
           onChange={() => {
-            setValue("0");
-            onIsDirty("0" !== initialValue);
+            setFilter({ ...filter, v: "0" });
+            onIsDirty(true);
           }}
         />
         <label
@@ -366,36 +354,29 @@ function BooleanOptions({ field, initialFilter, onIsDirty }) {
   );
 }
 
-function IntegerOptions({ field, initialFilter, onSubmit, onIsDirty }) {
-  const initialMin = initialFilter.v?.min ?? "";
-  const initialMax = initialFilter.v?.max ?? "";
-  const [min, setMin] = React.useState(initialMin);
-  const [max, setMax] = React.useState(initialMax);
-
+function IntegerOptions({ field, filter, setFilter, onSubmit, onIsDirty }) {
   return (
     <div className="option range-option">
       <input
         type="number"
-        name={`f[${field.name}][v][min]`}
         placeholder="min (inc.)"
         className="form-control form-control-sm"
-        value={min}
+        value={filter.v.min}
         onChange={(e) => {
-          setMin(e.target.value);
-          onIsDirty(e.target.value !== initialMin);
+          setFilter({ v: { ...filter.v, min: e.target.value } });
+          onIsDirty(true);
         }}
         title="min (inc.)"
         onKeyPress={(key) => key.which === 13 && onSubmit()}
       />
       <input
         type="number"
-        name={`f[${field.name}][v][max]`}
         placeholder="max (inc.)"
         className="form-control form-control-sm"
-        value={max}
+        value={filter.v.max}
         onChange={(e) => {
-          setMax(e.target.value);
-          onIsDirty(e.target.value !== initialMax);
+          setFilter({ v: { ...filter.v, max: e.target.value } });
+          onIsDirty(true);
         }}
         title="max (inc.)"
         onKeyPress={(key) => key.which === 13 && onSubmit()}

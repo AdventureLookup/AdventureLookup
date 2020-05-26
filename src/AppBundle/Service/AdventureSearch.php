@@ -63,9 +63,44 @@ class AdventureSearch
         //    when you refresh the browser too quickly.
         $seed = (string)$request->get('seed', $this->timeProvider->millis());
         $page = (int)$request->get('page', 1);
-        $filters = $request->get('f', []);
-        if (!is_array($filters)) {
-            $filters = [];
+
+        $filters = [];
+        foreach ($this->fieldProvider->getFields() as $field) {
+            switch ($field->getType()) {
+                case "integer":
+                    $valueMin = $request->get($field->getName() . "-min", "");
+                    $valueMax = $request->get($field->getName() . "-max", "");
+                    $filters[$field->getName()] = [
+                        "v" => [
+                            "min" => $valueMin,
+                            "max" => $valueMax
+                        ]
+                    ];
+                    break;
+                case "string":
+                    $value = $request->get($field->getName(), "");
+                    // Split the string on all "~" that are neither preceded nor followed by another "~".
+                    $values = preg_split("#(?<!~)~(?!~)#", $value, -1, PREG_SPLIT_NO_EMPTY);
+                    $filters[$field->getName()] = [
+                        "v" => array_map(function (string $value) {
+                            return str_replace("~~", "~", $value);
+                        }, $values)
+                    ];
+                    break;
+                case "boolean":
+                    $value = $request->get($field->getName(), "");
+                    $filters[$field->getName()] = [
+                        "v" => $value
+                    ];
+                    break;
+                case "text":
+                case "url":
+                    // Not supported as filters
+                    break;
+                default:
+                    throw new \LogicException("Cannot handle field of type " . $field->getType());
+            }
+
         }
         return [$q, $filters, $page, $sortBy, $seed];
     }

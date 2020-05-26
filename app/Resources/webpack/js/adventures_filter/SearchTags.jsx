@@ -1,6 +1,11 @@
 import * as React from "react";
 
-export function SearchTags({ initialFilterValues, fields, onSubmit }) {
+export function SearchTags({
+  initialFilterValues,
+  setFilterValues,
+  fields,
+  onSubmit,
+}) {
   return (
     <div id="search-tags">
       {Object.entries(initialFilterValues).map(([fieldName, filter]) => {
@@ -15,21 +20,31 @@ export function SearchTags({ initialFilterValues, fields, onSubmit }) {
           .map(([key, value]) => {
             const remove = () => {
               if (field.type === "string") {
-                const $strInput = $(
-                  `input[name^="f[${field.name}][v]"][value="${value}"]`
-                );
-                if ($strInput.is(":hidden")) {
-                  $strInput.remove();
-                } else {
-                  $strInput.prop("checked", false);
-                }
+                setFilterValues({
+                  ...initialFilterValues,
+                  [field.name]: {
+                    v: initialFilterValues[field.name].v.filter(
+                      (each) => each !== value
+                    ),
+                  },
+                });
               } else if (field.type === "boolean") {
-                $(`input[name^="f[${field.name}][v]"][value=""]`).prop(
-                  "checked",
-                  true
-                );
+                setFilterValues({
+                  ...initialFilterValues,
+                  [field.name]: {
+                    v: "",
+                  },
+                });
               } else if (field.type === "integer") {
-                $(`input[name^="f[${field.name}][v][${key}]"]`).val("");
+                setFilterValues({
+                  ...initialFilterValues,
+                  [field.name]: {
+                    v: {
+                      ...initialFilterValues[field.name].v,
+                      [key]: "",
+                    },
+                  },
+                });
               }
               onSubmit();
             };

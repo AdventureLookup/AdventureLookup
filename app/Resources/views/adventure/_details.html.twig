@@ -2,11 +2,11 @@
     {% apply spaceless %}
         {% if isInteger %}
             {% set path = path('adventure_index', {
-                ('f[' ~ fieldName ~ '][v][min]'): value,
-                ('f[' ~ fieldName ~ '][v][max]'): value,
+                (fieldName ~ '-min'): value,
+                (fieldName ~ '-max'): value,
             }) %}
         {% else %}
-            {% set path = path('adventure_index', {('f[' ~ fieldName ~ '][v]'): value}) %}
+            {% set path = path('adventure_index', {(fieldName): value|replace({'~': '~~'})}) %}
         {% endif %}
         <a href="{{ path }}" title="Search for similar adventures">{{ content ?: value }}</a>
     {% endapply %}
