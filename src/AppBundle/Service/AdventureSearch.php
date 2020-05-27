@@ -70,6 +70,13 @@ class AdventureSearch
                 case "integer":
                     $valueMin = $request->get($field->getName() . "-min", "");
                     $valueMax = $request->get($field->getName() . "-max", "");
+                    if (!$this->isValidIntFilterValue($valueMin)) {
+                        $valueMin = "";
+                    }
+                    if (!$this->isValidIntFilterValue($valueMax)) {
+                        $valueMax = "";
+                    }
+
                     $filters[$field->getName()] = [
                         "v" => [
                             "min" => $valueMin,
@@ -79,16 +86,15 @@ class AdventureSearch
                     break;
                 case "string":
                     $value = $request->get($field->getName(), "");
-                    // Split the string on all "~" that are neither preceded nor followed by another "~".
-                    $values = preg_split("#(?<!~)~(?!~)#", $value, -1, PREG_SPLIT_NO_EMPTY);
                     $filters[$field->getName()] = [
-                        "v" => array_map(function (string $value) {
-                            return str_replace("~~", "~", $value);
-                        }, $values)
+                        "v" => $this->parseStringFilterValue($value)
                     ];
                     break;
                 case "boolean":
                     $value = $request->get($field->getName(), "");
+                    if (!in_array($value, ["", "0", "1"], true)) {
+                        $value = "";
+                    }
                     $filters[$field->getName()] = [
                         "v" => $value
                     ];
@@ -103,6 +109,35 @@ class AdventureSearch
 
         }
         return [$q, $filters, $page, $sortBy, $seed];
+    }
+
+    private function isValidIntFilterValue(string $value): bool
+    {
+        // ElasticSearch integer fields are signed 32 bit values.
+        // https://www.elastic.co/guide/en/elasticsearch/reference/5.5/number.html
+        // We deliberately set 2**30 as the upper bound, to make sure
+        // this code works correctly, even on 32 bit machines, without
+        // having to think about what happens when you go 1 over
+        // PHP_INT_MAX.
+        //
+        // We set 0 as the lower bound, since negative values make no
+        // sense for any of the integer fields we use so far.
+        return $value === "" || filter_var($value, FILTER_VALIDATE_INT, [
+            "options" => [
+                "min_range" => 0,
+                "max_range" => 2 ** 30
+            ]
+        ]) !== false;
+    }
+
+    private function parseStringFilterValue(string $value): array
+    {
+        // Split the string on all "~" that are neither preceded nor followed by another "~".
+        $values = preg_split("#(?<!~)~(?!~)#", $value, -1, PREG_SPLIT_NO_EMPTY);
+        return array_map(function (string $value): string {
+            // Revert escaping of all "~" within values by "~~"
+            return str_replace("~~", "~", $value);
+        }, $values);
     }
 
     /**
