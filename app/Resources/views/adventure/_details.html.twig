@@ -25,9 +25,24 @@
             {{ macros.search('edition', adventure.edition.name)|default('Unknown Edition') }}
         </div>
         <div class="tag tag-level">
-            {{ macros.search('startingLevelRange', adventure.startingLevelRange, format_level(adventure))|default('Unknown party level') }}
+            {% if adventure.minStartingLevel %}
+                {% if adventure.minStartingLevel is same as (adventure.maxStartingLevel) or adventure.maxStartingLevel is null %}
+                    {{ macros.search('minStartingLevel', adventure.minStartingLevel, format_level(adventure)) }}
+                {% else %}
+                    {{ macros.search('minStartingLevel', adventure.minStartingLevel, adventure.maxStartingLevel, format_level(adventure), true) }}
+                {% endif %}
+            {% elseif adventure.startingLevelRange %}
+                {{ macros.search('startingLevelRange', adventure.startingLevelRange, format_level(adventure)) }}
+            {% else %}
+                {{ 'Unknown party level' }}
+            {% endif %}
         </div>
-        <div class="tag tag-length">{{ adventure.numPages|default('?') }} pages</div>
+        <div class="tag tag-length">
+            <a href="{{ path('adventure_index', {
+                ('f[numPages][v][min]'): (adventure.numPages * 0.85)|round,
+                ('f[numPages][v][max]'): (adventure.numPages * 1.15)|round
+            }) }}">{{ adventure.numPages|default('?') }} pages</a>
+        </div>
     </div>
     <p class="description">{{ adventure.description|nl2br }}</p>
 
