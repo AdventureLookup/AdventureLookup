@@ -21,8 +21,19 @@ $thumbnail-height: 100px;
       font: 1rem 'FontAwesome';
     }
     &:hover {
-      background-color: darken($adl-coral, 7.5%);
       cursor: pointer;
+    }
+
+    &.badge-primary:hover {
+        background-color: darken($adl-coral, 7.5%);
+    }
+    &.badge-clear{
+        color: white;
+        background-color: $adl-grey-light;
+
+        &:hover {
+            background-color: darken($adl-grey-light, 7.5%);
+        } 
     }
   }
 }
