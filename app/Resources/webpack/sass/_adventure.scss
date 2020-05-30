@@ -78,6 +78,20 @@ $thumbnail-height: 100px;
   }
 }
 
+#change-requests-container {
+  @extend .content-container;
+
+  .list-group-item {
+      border: 0;
+      border-top: 1px solid $adl-grey-lightest;
+  }
+
+  .no-requests {
+    padding: $adl-card-padding;
+    border-top: 1px solid $adl-grey-lightest;
+  }
+}
+
 #review-container {
   @extend .content-container;
 
