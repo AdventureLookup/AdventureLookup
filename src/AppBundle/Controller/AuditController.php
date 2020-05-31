@@ -27,8 +27,6 @@ class AuditController extends Controller
      * @Route("/audit", name="audit")
      * @Method("GET")
      *
-     * @param Request $request
-     * @param PaginatorInterface $paginator
      * @return Response
      */
     public function indexAction(Request $request, PaginatorInterface $paginator)
@@ -48,7 +46,7 @@ class AuditController extends Controller
             $qb
                 ->andWhere($qb->expr()->eq('b.fk', ':blame'))
                 ->setParameter('blame', $filters['blamed']);
-        } else if (isset($filters['class']) && isset($filters['id'])) {
+        } elseif (isset($filters['class']) && isset($filters['id'])) {
             $qb
                 ->andWhere($qb->expr()->orX(
                     $qb->expr()->andX(
@@ -72,7 +70,7 @@ class AuditController extends Controller
         );
 
         return $this->render('audit/index.html.twig', [
-            'pagination' => $pagination
+            'pagination' => $pagination,
         ]);
     }
 
@@ -80,13 +78,12 @@ class AuditController extends Controller
      * @Route("/audit/diff/{id}")
      * @Method("GET")
      *
-     * @param AuditLog $log
      * @return Response
      */
     public function diffAction(AuditLog $log)
     {
         return $this->render('audit/diff.html.twig', [
-            'log' => $log
+            'log' => $log,
         ]);
     }
 }

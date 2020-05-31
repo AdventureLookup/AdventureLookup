@@ -1,6 +1,7 @@
 .idea/
 .vagrant/
 .web-server-pid
+.php_cs.cache
 app/config/parameters.yml
 build/
 node_modules/

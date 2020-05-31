@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\AppBundle\Security;
 
 use AppBundle\Entity\User;
@@ -28,25 +27,29 @@ abstract class VoterTest extends TestCase
                 TokenInterface $token,
                 array $attributes
             ) use ($that) {
-                if (count($attributes) !== 1) {
+                if (1 !== count($attributes)) {
                     $that->fail('Not implemented in mock');
                 }
                 /** @var User $user */
                 $user = $token->getUser();
+
                 return in_array($attributes[0], $user->getRoles());
             });
+
         return $accessDecisionManager;
     }
 
     /**
      * @param $userId
      * @param $roles
+     *
      * @return User|MockObject
      */
-    protected function createUser($userId, $roles) {
+    protected function createUser($userId, $roles)
+    {
         $myself = $this->createMock(User::class);
         $myself->method('getId')->willReturn($userId);
-        $myself->method('getUsername')->willReturn("user " . $userId);
+        $myself->method('getUsername')->willReturn('user '.$userId);
         $myself->method('getRoles')->willReturn($roles);
 
         return $myself;
@@ -59,9 +62,10 @@ abstract class VoterTest extends TestCase
 
     protected function createUserToken(User $user = null)
     {
-        if ($user === null) {
+        if (null === $user) {
             $user = new User();
         }
+
         return new UsernamePasswordToken($user, [], 'user_provider');
     }
 }

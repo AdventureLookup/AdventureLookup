@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\Fixtures;
 
 use AppBundle\Entity\User;
@@ -11,12 +10,10 @@ class UserData extends AbstractFixture
 {
     /**
      * Load data fixtures with the passed EntityManager
-     *
-     * @param ObjectManager $em
      */
     public function load(ObjectManager $em)
     {
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 5; ++$i) {
             $user = new User();
             $user->setUsername("User #{$i}");
             $user->setEmail("user{$i}@example.com");

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests;
 
 use Behat\Mink\Session;
@@ -11,7 +10,7 @@ class NewAdventureTest extends BrowserTestCase
 {
     const TITLE = 'My greatest Adventure';
     const SLUG = 'my-greatest-adventure';
-    const DESCRIPTION = "A description.";
+    const DESCRIPTION = 'A description.';
     const AUTHORS = ['Jonathan Schneider', 'Matt Colville'];
     const ENVIRONMENTS = ['Environment 4', 'Environment 5'];
     const ITEMS = ['Bag of Code', 'Stone of Programming'];
@@ -58,7 +57,7 @@ class NewAdventureTest extends BrowserTestCase
 
         $page = $session->getPage();
 
-        $this->assertPath($session, '/adventures/' . self::SLUG . '');
+        $this->assertPath($session, '/adventures/'.self::SLUG.'');
         $this->assertTrue($page->hasContent(self::TITLE));
 
         $this->assertWorkingIndex($session);
@@ -124,7 +123,7 @@ class NewAdventureTest extends BrowserTestCase
             $page->findButton('Save')->click();
         }
 
-        $this->assertPath($session, '/adventures/' . self::SLUG);
+        $this->assertPath($session, '/adventures/'.self::SLUG);
         $adventureContainer = $page->findById('adventure-container');
         $this->assertContains(self::TITLE, $adventureContainer->getText());
         $this->assertContains(self::DESCRIPTION, $adventureContainer->getText());
@@ -159,7 +158,7 @@ class NewAdventureTest extends BrowserTestCase
         $this->assertContains(self::YEAR, $adventureContainer->getText());
         $this->assertContains(self::PART_OF, $adventureContainer->getText());
         $this->assertContains(self::LINK, $adventureContainer->getText());
-        $this->assertTrue($adventureContainer->has('css', 'img[src="' . self::THUMBNAIL_URL . '"]'));
+        $this->assertTrue($adventureContainer->has('css', 'img[src="'.self::THUMBNAIL_URL.'"]'));
 
         $this->assertWorkingIndex($session);
     }
@@ -196,7 +195,7 @@ class NewAdventureTest extends BrowserTestCase
     {
         return [
             [false],
-            [true]
+            [true],
         ];
     }
 

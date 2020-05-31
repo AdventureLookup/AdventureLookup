@@ -1,6 +1,5 @@
 <?php
 
-
 namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\Item;
@@ -27,7 +26,7 @@ class ItemType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Item::class
+            'data_class' => Item::class,
         ]);
     }
 }
