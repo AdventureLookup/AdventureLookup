@@ -3,7 +3,6 @@ sudo: false
 language: php
 php:
   - '7.0.21'
-
 env:
   global:
     - SYMFONY_ENV=test
@@ -48,8 +47,12 @@ before_install:
 install:
   - composer install -n --no-suggest --no-progress --ansi
   - |
-    if [ ${TESTSUITE} == "functional" ] || [ "$TESTSUITE" == "browser" ]; then
-      npm install -g npm
+    if [ ${TESTSUITE} == "functional" ] || [ "$TESTSUITE" == "browser" ] || [ "$TESTSUITE" == "lint" ]; then
+      # Use Node.js 12
+      nvm install 12
+      # Use npm 6.x
+      npm install npm@^6 -g
+
       npm install;
       npm run prod;
     fi;
@@ -72,6 +75,7 @@ script:
       php bin/console lint:twig app
       php bin/console lint:yaml app
       php bin/console security:check --end-point=http://security.symfony.com/check_lock
+      npm run lint
     else
       $PHPUNIT --testsuite $TESTSUITE --coverage-clover=coverage.xml
       bash <(curl -s https://codecov.io/bash) -X gcov -X coveragepy

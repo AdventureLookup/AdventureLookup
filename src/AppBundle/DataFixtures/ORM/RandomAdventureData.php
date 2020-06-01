@@ -2,7 +2,6 @@
 
 namespace AppBundle\DataFixtures\ORM;
 
-
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\Author;
 use AppBundle\Entity\ChangeRequest;
@@ -36,13 +35,11 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
     public function getDependencies()
     {
         return [AuthorData::class, EditionData::class, EnvironmentData::class, ItemData::class, MonsterData::class,
-            PublisherData::class, SettingData::class];
+            PublisherData::class, SettingData::class, ];
     }
 
     /**
      * Load data fixtures with the passed EntityManager
-     *
-     * @param ObjectManager $em
      */
     public function load(ObjectManager $em)
     {
@@ -70,10 +67,10 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
         $reviewCreatedByProperty = (new ReflectionClass(Review::class))->getProperty('createdBy');
         $reviewCreatedByProperty->setAccessible(true);
 
-        for ($i = 0; $i < 200; $i++) {
+        for ($i = 0; $i < 200; ++$i) {
             $adventure = new Adventure();
             $adventure
-                ->setTitle($faker->catchPhrase)
+                ->setTitle($faker->unique->catchPhrase)
                 ->setDescription($faker->realText(2000))
                 ->setNumPages($faker->numberBetween(1, 200))
                 ->setFoundIn($faker->catchPhrase)
@@ -95,7 +92,7 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
 
             if ($faker->boolean(20)) {
                 $n = $faker->numberBetween(1, 5);
-                for ($j = 0; $j < $n; $j++) {
+                for ($j = 0; $j < $n; ++$j) {
                     $changeRequest = new ChangeRequest();
                     $changeRequest
                         ->setComment($faker->realText($faker->numberBetween(20, 500)))
@@ -103,7 +100,7 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
                         ->setAdventure($adventure);
                     if ($faker->boolean(50)) {
                         $changeRequest->setFieldName($faker->randomElement([
-                            'link', 'description', 'title', 'minStartingLevel'
+                            'link', 'description', 'title', 'minStartingLevel',
                         ]));
                     }
                     if ($faker->boolean(30)) {
@@ -115,7 +112,7 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
 
             if ($faker->boolean(80)) {
                 $n = $faker->numberBetween(1, 20);
-                for ($j = 0; $j < $n; $j++) {
+                for ($j = 0; $j < $n; ++$j) {
                     $review = new Review($adventure);
                     if ($faker->boolean) {
                         $review->setThumbsUp();
@@ -126,7 +123,7 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
                         $review->setComment($faker->realText($faker->numberBetween(20, 500)));
                     }
 
-                    $reviewCreatedByProperty->setValue($review, $j . "-" . $faker->userName);
+                    $reviewCreatedByProperty->setValue($review, $j.'-'.$faker->userName);
 
                     $em->persist($review);
                 }
@@ -134,7 +131,7 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
 
             if ($faker->boolean()) {
                 $adventure->setStartingLevelRange($faker->randomElement([
-                    'low', 'medium', 'high'
+                    'low', 'medium', 'high',
                 ]));
             } else {
                 $min = $faker->numberBetween(1, 10);

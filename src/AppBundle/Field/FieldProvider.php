@@ -1,6 +1,5 @@
 <?php
 
-
 namespace AppBundle\Field;
 
 use AppBundle\Entity\Author;
@@ -122,7 +121,6 @@ class FieldProvider
                 Monster::class
             ),
 
-
             'numPages' => new Field(
                 'numPages',
                 'integer',
@@ -155,7 +153,6 @@ class FieldProvider
                 'Starting Level Range',
                 'In case no min. / max. starting levels but rather low/medium/high are given.'
             ),
-
 
             'soloable' => new Field(
                 'soloable',
@@ -240,7 +237,6 @@ class FieldProvider
 
     /**
      * @param $name
-     * @return Field
      */
     public function getField($name): Field
     {

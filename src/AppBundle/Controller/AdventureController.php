@@ -32,9 +32,6 @@ class AdventureController extends Controller
      * @Route("/adventures/", name="adventure_index")
      * @Method({"GET", "POST"})
      *
-     * @param Request $request
-     * @param AdventureSearch $adventureSearch
-     * @param FieldProvider $fieldProvider
      * @return Response
      */
     public function indexAction(Request $request, AdventureSearch $adventureSearch, FieldProvider $fieldProvider)
@@ -61,7 +58,7 @@ class AdventureController extends Controller
             'fields' => $fieldProvider->getFields(),
             'q' => $q,
             'sortBy' => $sortBy,
-            'seed' => $seed
+            'seed' => $seed,
         ]);
     }
 
@@ -71,7 +68,6 @@ class AdventureController extends Controller
      * @Route("/adventure", name="adventure_new")
      * @Method({"GET", "POST"})
      *
-     * @param Request $request
      * @return RedirectResponse|Response
      */
     public function newAction(Request $request)
@@ -95,10 +91,10 @@ class AdventureController extends Controller
             return $this->redirectToRoute('adventure_show', ['slug' => $adventure->getSlug()]);
         }
 
-        return $this->render('adventure/new.html.twig', array(
+        return $this->render('adventure/new.html.twig', [
             'adventure' => $adventure,
             'form' => $form->createView(),
-        ));
+        ]);
     }
 
     /**
@@ -107,9 +103,8 @@ class AdventureController extends Controller
      * @Route("/adventures/{slug}", name="adventure_show")
      * @Method("GET")
      *
-     * @param Adventure $adventure
-     * @param EntityManagerInterface $em
      * @param UserInterface $user
+     *
      * @return Response
      */
     public function showAction(Adventure $adventure, EntityManagerInterface $em,
@@ -137,7 +132,6 @@ class AdventureController extends Controller
      * @Route("/random-adventure", name="adventure_random")
      * @Method("GET")
      *
-     * @param EntityManagerInterface $em
      * @return Response
      */
     public function randomAction(EntityManagerInterface $em)
@@ -147,22 +141,19 @@ class AdventureController extends Controller
         $rsm->addFieldResult('a', 'id', 'id');
         $rsm->addFieldResult('a', 'slug', 'slug');
 
-        $query = $em->createNativeQuery("
+        $query = $em->createNativeQuery('
             SELECT a.id, a.slug from adventure a ORDER by RAND() limit 1
-        ",$rsm);
+        ', $rsm);
 
         $randomAdventure = $query->getResult();
 
         $a = $randomAdventure[0];
 
         if (!$a) {
-            throw $this->createNotFoundException(
-                'No adventure found'
-            );
+            throw $this->createNotFoundException('No adventure found');
         }
 
         return $this->redirectToRoute('adventure_show', ['slug' => $a->getSlug()]);
-
     }
 
     /**
@@ -171,8 +162,6 @@ class AdventureController extends Controller
      * @Route("/adventures/{id}/edit", name="adventure_edit")
      * @Method({"GET", "POST"})
      *
-     * @param Request $request
-     * @param Adventure $adventure
      * @return RedirectResponse|Response
      */
     public function editAction(Request $request, Adventure $adventure)
@@ -189,11 +178,11 @@ class AdventureController extends Controller
             return $this->redirectToRoute('adventure_show', ['slug' => $adventure->getSlug()]);
         }
 
-        return $this->render('adventure/edit.html.twig', array(
+        return $this->render('adventure/edit.html.twig', [
             'adventure' => $adventure,
             'form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
-        ));
+        ]);
     }
 
     /**
@@ -202,8 +191,6 @@ class AdventureController extends Controller
      * @Route("/adventures/{id}", name="adventure_delete")
      * @Method("DELETE")
      *
-     * @param Request $request
-     * @param Adventure $adventure
      * @return RedirectResponse
      */
     public function deleteAction(Request $request, Adventure $adventure)
@@ -232,7 +219,7 @@ class AdventureController extends Controller
     private function createDeleteForm(Adventure $adventure)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('adventure_delete', array('id' => $adventure->getId())))
+            ->setAction($this->generateUrl('adventure_delete', ['id' => $adventure->getId()]))
             ->setMethod('DELETE')
             ->getForm()
         ;
@@ -241,13 +228,12 @@ class AdventureController extends Controller
     /**
      * Creates a form to create/edit a review for the specified adventure.
      *
-     * @param Adventure $adventure
      * @return FormInterface
      */
     private function createReviewForm(Adventure $adventure)
     {
         $review = $adventure->getReviewBy($this->getUser());
-        if ($review === null) {
+        if (null === $review) {
             $review = new Review($adventure);
             $actionUrl = $this->generateUrl('review_new', ['id' => $adventure->getId()]);
         } else {
@@ -255,7 +241,7 @@ class AdventureController extends Controller
         }
 
         return $this->createForm(ReviewType::class, $review, [
-            'action' => $actionUrl
+            'action' => $actionUrl,
         ]);
     }
 

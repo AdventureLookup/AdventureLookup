@@ -15,9 +15,18 @@
         <meta name="theme-color" content="#ffffff">
     </head>
     <body>
-        {% block header %}
-            {% include 'header.html.twig' %}
-        {% endblock %}
+        <div id="adl-announcement">
+            {% if announcement|default is not empty %}
+                <div class="announcement-bar">
+                    {{announcement}}
+                </div>
+            {% endif %}
+            <div class="header-container">
+                {% block header %}
+                    {% include 'header.html.twig' %}
+                {% endblock %}
+            </div>
+        </div>
 
         {% if app.session.flashbag.peekAll is not empty %}
             <div class="container mt-5">

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\AppBundle\Service;
 
 use AppBundle\Service\ElasticSearch;
@@ -12,7 +11,7 @@ class ElasticSearchTest extends \PHPUnit_Framework_TestCase
 {
     const INDEX_NAME = 'some_index';
     const TYPE_NAME = 'some_type';
-    
+
     /**
      * @var ElasticSearch
      */
@@ -38,7 +37,7 @@ class ElasticSearchTest extends \PHPUnit_Framework_TestCase
             'index_name' => self::INDEX_NAME,
             'type_name' => self::TYPE_NAME,
         ];
-        
+
         $this->elasticSearch = new ElasticSearch($clientBuilder, $logger, $config);
     }
 

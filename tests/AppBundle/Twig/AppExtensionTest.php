@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace Tests\Twig;
 
@@ -21,12 +21,12 @@ class AppExtensionTest extends TestCase
             [
                 'domains' => ['example.com', 'example.org'],
                 'param' => 'aff_id',
-                'code' => 'aff_code'
+                'code' => 'aff_code',
             ],
             [
                 'domains' => ['foo.bar'],
                 'param' => 'aff_id2',
-                'code' => 'aff_code2'
+                'code' => 'aff_code2',
             ],
         ];
         $this->extension = new AppExtension($affiliateMappings, new FilesystemCache());

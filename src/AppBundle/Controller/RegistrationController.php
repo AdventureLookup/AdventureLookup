@@ -21,16 +21,12 @@ class RegistrationController extends Controller
      * @Route("/register", name="user_registration")
      * @Method({"GET", "POST"})
      *
-     * @param Request $request
-     * @param SessionInterface $session
-     * @param TokenStorageInterface $tokenStorage
-     * @param UserInterface|null $user
      * @return RedirectResponse|Response
      */
     public function registerAction(Request $request, SessionInterface $session, TokenStorageInterface $tokenStorage, UserInterface $user = null)
     {
         if ($user) {
-            $this->addFlash('warning', "You are already logged in.");
+            $this->addFlash('warning', 'You are already logged in.');
 
             return $this->redirectToRoute('homepage');
         }
@@ -62,7 +58,7 @@ class RegistrationController extends Controller
 
         return $this->render(
             'shared/register.html.twig',
-            array('form' => $form->createView())
+            ['form' => $form->createView()]
         );
     }
 }

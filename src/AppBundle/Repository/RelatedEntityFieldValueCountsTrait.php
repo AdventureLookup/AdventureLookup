@@ -1,6 +1,5 @@
 <?php
 
-
 namespace AppBundle\Repository;
 
 use Doctrine\ORM\QueryBuilder;
@@ -10,9 +9,6 @@ trait RelatedEntityFieldValueCountsTrait
     /**
      * Get all distinct values and their usage counts for a certain field. Will ignore NULL values
      *
-     * @param string $field
-     * @param string|null $additionalWhereCondition
-     *
      * @return array Array of arrays containing the 'value' and 'count'
      */
     public function getFieldValueCounts(string $field, string $additionalWhereCondition = null): array
@@ -20,17 +16,17 @@ trait RelatedEntityFieldValueCountsTrait
         /** @var QueryBuilder $qb */
         $qb = $this->createQueryBuilder('tbl');
 
-        $field = 'tbl.' . $field;
+        $field = 'tbl.'.$field;
         $qb
             ->join('tbl.adventures', 'a')
             ->select($field)
             ->addSelect('tbl.id')
-            ->addSelect($qb->expr()->count('a.id') . ' AS _cnt')
+            ->addSelect($qb->expr()->count('a.id').' AS _cnt')
             ->where($qb->expr()->isNotNull($field))
             ->groupBy($field)
             ->addGroupBy('tbl.id')
             ->orderBy($qb->expr()->asc($field));
-        if ($additionalWhereCondition !== null) {
+        if (null !== $additionalWhereCondition) {
             $qb->andWhere($additionalWhereCondition);
         }
 
@@ -40,7 +36,7 @@ trait RelatedEntityFieldValueCountsTrait
             return [
                 'value' => current($result),
                 'id' => $result['id'],
-                'count' => (int)$result['_cnt'],
+                'count' => (int) $result['_cnt'],
             ];
         }, $results);
     }

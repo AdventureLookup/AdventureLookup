@@ -97,7 +97,7 @@ class Adventure
     private $description;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Assert\Range(min=0)
@@ -105,7 +105,7 @@ class Adventure
     private $minStartingLevel;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Assert\Range(min=0)
@@ -121,7 +121,7 @@ class Adventure
     private $startingLevelRange;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Assert\Range(min=1)
@@ -163,28 +163,28 @@ class Adventure
     private $thumbnailUrl;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $soloable;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $pregeneratedCharacters;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $tacticalMaps;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(type="boolean", nullable=true)
      */
@@ -207,18 +207,11 @@ class Adventure
     private $slug;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="approved", type="boolean")
      */
     private $approved;
-
-    /**
-     * @var TagContent[]
-     *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\TagContent", fetch="EAGER", mappedBy="adventure", orphanRemoval=true)
-     */
-    private $info;
 
     /**
      * @var ChangeRequest[]|Collection
@@ -281,7 +274,7 @@ class Adventure
     /**
      * Set id
      *
-     * @param integer $id
+     * @param int $id
      *
      * @return Adventure
      */
@@ -311,8 +304,6 @@ class Adventure
     }
 
     /**
-     * @param Author $author
-     *
      * @return Adventure
      */
     public function addAuthor(Author $author)
@@ -328,6 +319,7 @@ class Adventure
     public function setAuthors($authors)
     {
         $this->authors = $authors;
+
         return $this;
     }
 
@@ -358,8 +350,6 @@ class Adventure
     }
 
     /**
-     * @param Environment $environment
-     *
      * @return Adventure
      */
     public function addEnvironment(Environment $environment)
@@ -375,6 +365,7 @@ class Adventure
     public function setEnvironments($environments)
     {
         $this->environments = $environments;
+
         return $this;
     }
 
@@ -387,8 +378,6 @@ class Adventure
     }
 
     /**
-     * @param Item $item
-     *
      * @return Adventure
      */
     public function addItem(Item $item)
@@ -404,6 +393,7 @@ class Adventure
     public function setItems($items)
     {
         $this->items = $items;
+
         return $this;
     }
 
@@ -435,6 +425,7 @@ class Adventure
 
     /**
      * @param Setting $setting
+     *
      * @return Adventure
      */
     public function setSetting(Setting $setting = null)
@@ -471,7 +462,6 @@ class Adventure
     }
 
     /**
-     * @param Monster $monster
      * @return Adventure
      */
     public function addMonster(Monster $monster)
@@ -481,16 +471,19 @@ class Adventure
 
     /**
      * @param Monster[]|Collection $monsters
+     *
      * @return Adventure
      */
     public function setMonsters($monsters)
     {
         $this->monsters = $monsters;
+
         return $this;
     }
 
     /**
      * @param Monster[]|Collection $monsters
+     *
      * @return Adventure
      */
     public function setCommonMonsters($monsters)
@@ -501,11 +494,13 @@ class Adventure
         foreach ($monsters as $monster) {
             $this->monsters->add($monster);
         }
+
         return $this;
     }
 
     /**
      * @param Monster[]|Collection $monsters
+     *
      * @return Adventure
      */
     public function setBossMonsters($monsters)
@@ -516,6 +511,7 @@ class Adventure
         foreach ($monsters as $monster) {
             $this->monsters->add($monster);
         }
+
         return $this;
     }
 
@@ -543,44 +539,11 @@ class Adventure
         return $this->title;
     }
 
-    /**
-     * @return TagContent[]|Collection
-     */
-    public function getInfo()
-    {
-        return $this->info;
-    }
-
-    /**
-     * @param TagContent[] $info
-     *
-     * @return Adventure
-     */
-    public function setInfo($info)
-    {
-        $this->info = $info;
-
-        return $this;
-    }
-
-    public function addInfo(TagContent $info)
-    {
-        $this->info->add($info);
-    }
-
-    /**
-     * @return bool
-     */
     public function isApproved(): bool
     {
         return $this->approved;
     }
 
-    /**
-     * @param bool $approved
-     *
-     * @return Adventure
-     */
     public function setApproved(bool $approved): Adventure
     {
         $this->approved = $approved;
@@ -588,17 +551,11 @@ class Adventure
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getSlug(): string
     {
         return $this->slug;
     }
 
-    /**
-     * @return int
-     */
     public function getVersion(): int
     {
         return $this->version;
@@ -620,6 +577,7 @@ class Adventure
     public function setMinStartingLevel($minStartingLevel)
     {
         $this->minStartingLevel = $minStartingLevel;
+
         return $this;
     }
 
@@ -639,6 +597,7 @@ class Adventure
     public function setMaxStartingLevel($maxStartingLevel)
     {
         $this->maxStartingLevel = $maxStartingLevel;
+
         return $this;
     }
 
@@ -658,6 +617,7 @@ class Adventure
     public function setStartingLevelRange($startingLevelRange)
     {
         $this->startingLevelRange = $startingLevelRange;
+
         return $this;
     }
 
@@ -677,6 +637,7 @@ class Adventure
     public function setNumPages($numPages)
     {
         $this->numPages = $numPages;
+
         return $this;
     }
 
@@ -696,6 +657,7 @@ class Adventure
     public function setLink($link)
     {
         $this->link = $link;
+
         return $this;
     }
 
@@ -715,6 +677,7 @@ class Adventure
     public function setThumbnailUrl($thumbnailUrl)
     {
         $this->thumbnailUrl = $thumbnailUrl;
+
         return $this;
     }
 
@@ -734,6 +697,7 @@ class Adventure
     public function setSoloable($soloable)
     {
         $this->soloable = $soloable;
+
         return $this;
     }
 
@@ -753,6 +717,7 @@ class Adventure
     public function setPregeneratedCharacters($pregeneratedCharacters)
     {
         $this->pregeneratedCharacters = $pregeneratedCharacters;
+
         return $this;
     }
 
@@ -772,6 +737,7 @@ class Adventure
     public function setTacticalMaps($tacticalMaps)
     {
         $this->tacticalMaps = $tacticalMaps;
+
         return $this;
     }
 
@@ -791,6 +757,7 @@ class Adventure
     public function setHandouts($handouts)
     {
         $this->handouts = $handouts;
+
         return $this;
     }
 
@@ -844,6 +811,7 @@ class Adventure
 
     /**
      * @param string $partOf
+     *
      * @return Adventure
      */
     public function setPartOf($partOf)
@@ -887,7 +855,7 @@ class Adventure
     public function getUnresolvedChangeRequests()
     {
         return $this->changeRequests
-            ->matching(Criteria::create()->where(Criteria::expr()->eq("resolved", false)));
+            ->matching(Criteria::create()->where(Criteria::expr()->eq('resolved', false)));
     }
 
     /**
@@ -919,13 +887,11 @@ class Adventure
     }
 
     /**
-     * @param User|null $user
-     *
      * @return Review|null
      */
     public function getReviewBy(User $user = null)
     {
-        if ($user === null) {
+        if (null === $user) {
             return null;
         }
 
@@ -952,17 +918,12 @@ class Adventure
         return $this->updatedBy;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }
 
     /**
-     * @param string $field
-     * @param RelatedEntityInterface|null $relatedEntity
      * @return $this
      */
     private function setRelatedEntity(string $field, RelatedEntityInterface $relatedEntity = null): Adventure
@@ -970,7 +931,7 @@ class Adventure
         if ($this->$field !== null) {
             $this->$field->removeAdventure($this);
         }
-        if ($relatedEntity !== null) {
+        if (null !== $relatedEntity) {
             $relatedEntity->addAdventure($this);
         }
         $this->$field = $relatedEntity;
@@ -978,11 +939,6 @@ class Adventure
         return $this;
     }
 
-    /**
-     * @param string $field
-     * @param RelatedEntityInterface|null $relatedEntity
-     * @return Adventure
-     */
     private function addRelatedEntity(string $field, RelatedEntityInterface $relatedEntity = null): Adventure
     {
         $relatedEntity->addAdventure($this);

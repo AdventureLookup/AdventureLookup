@@ -2,7 +2,6 @@
 
 namespace AppBundle\DataFixtures\ORM;
 
-
 use AppBundle\Entity\User;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -11,8 +10,6 @@ class TestUserData implements FixtureInterface
 {
     /**
      * Load a list of test users for development purposes
-     *
-     * @param ObjectManager $em
      */
     public function load(ObjectManager $em)
     {

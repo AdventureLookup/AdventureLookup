@@ -1,6 +1,5 @@
 <?php
 
-
 namespace AppBundle\Field;
 
 class Field implements \JsonSerializable
@@ -57,49 +56,31 @@ class Field implements \JsonSerializable
         $this->relatedEntityClass = $relatedEntityClass;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return bool
-     */
     public function isMultiple(): bool
     {
         return $this->multiple;
     }
 
-    /**
-     * @return bool
-     */
     public function isFreetextSearchable(): bool
     {
         return $this->freetextSearchable;
     }
 
-    /**
-     * @return int
-     */
     public function getSearchBoost(): int
     {
         return $this->searchBoost;
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return $this->title;
@@ -113,9 +94,6 @@ class Field implements \JsonSerializable
         return $this->description;
     }
 
-    /**
-     * @return string
-     */
     public function getFieldNameForAggregation(): string
     {
         $field = $this->getName();
@@ -126,12 +104,9 @@ class Field implements \JsonSerializable
         return $field;
     }
 
-    /**
-     * @return bool
-     */
     public function isRelatedEntity(): bool
     {
-        return $this->relatedEntityClass !== null;
+        return null !== $this->relatedEntityClass;
     }
 
     /**
@@ -145,11 +120,11 @@ class Field implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            "name" => $this->name,
-            "type" => $this->type,
-            "multiple" => $this->multiple,
-            "title" => $this->title,
-            "description" => $this->description,
+            'name' => $this->name,
+            'type' => $this->type,
+            'multiple' => $this->multiple,
+            'title' => $this->title,
+            'description' => $this->description,
         ];
     }
 }

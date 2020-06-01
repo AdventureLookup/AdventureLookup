@@ -4,6 +4,7 @@ namespace Tests\AppBundle\Controller;
 
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\ChangeRequest;
+use AppBundle\Entity\Review;
 use AppBundle\Entity\User;
 use Behat\Mink\Element\DocumentElement;
 use Behat\Mink\Session;
@@ -67,7 +68,7 @@ class ProfileControllerTest extends WebTestCase
             if ($numPendingChangeRequests > 0) {
                 $this->assertContains("{$numPendingChangeRequests} pending change request(s)", $linkToAdventure->getText());
             } else {
-                $this->assertNotContains("pending change request(s)", $linkToAdventure->getText());
+                $this->assertNotContains('pending change request(s)', $linkToAdventure->getText());
             }
             $linkToAdventure->click();
             $this->assertTrue($page->hasContent($adventure->getTitle()));
@@ -94,6 +95,29 @@ class ProfileControllerTest extends WebTestCase
             $linkToChangeRequest->click();
             $this->assertTrue($page->hasContent($changeRequest->getAdventure()->getTitle()));
             $this->assertTrue($page->hasContent($changeRequest->getComment()));
+        }
+    }
+
+    /**
+     * @dataProvider reviewDataProvider
+     */
+    public function testOverviewOnlyDisplaysOwnReviews(string $reference, bool $shouldDisplay)
+    {
+        $referenceRepository = $this->loadFixtures([ProfileTestData::class])->getReferenceRepository();
+        $session = $this->makeSession(true);
+        $session->visit(self::PROFILE_URL);
+        $page = $session->getPage();
+
+        /** @var Review $review */
+        $review = $referenceRepository->getReference($reference);
+        $linkToReview = $page->findById("review-{$review->getId()}");
+
+        if (!$shouldDisplay) {
+            $this->assertNull($linkToReview);
+        } else {
+            $linkToReview->click();
+            $this->assertTrue($page->hasContent($review->getAdventure()->getTitle()));
+            $this->assertTrue($page->hasContent($review->getComment()));
         }
     }
 
@@ -129,7 +153,7 @@ class ProfileControllerTest extends WebTestCase
 
         foreach ($expectedErrors as $expectedError => $count) {
             $this->assertCount($count,
-                $page->findAll('css', '.form-error-message:contains("' . $expectedError . '")'));
+                $page->findAll('css', '.form-error-message:contains("'.$expectedError.'")'));
         }
     }
 
@@ -153,7 +177,7 @@ class ProfileControllerTest extends WebTestCase
             ['your-adventure', false, -1],
             ['my-adventure-1', true, 1],
             ['my-adventure-2', true, 0],
-            ['my-adventure-3', true, 0]
+            ['my-adventure-3', true, 0],
         ];
     }
 
@@ -163,6 +187,14 @@ class ProfileControllerTest extends WebTestCase
             ['your-unresolved-change-request', false],
             ['my-unresolved-change-request', true],
             ['my-resolved-change-request', true],
+        ];
+    }
+
+    public function reviewDataProvider()
+    {
+        return [
+            ['your-thumbs-down-review', false],
+            ['my-thumbs-up-review', true],
         ];
     }
 
