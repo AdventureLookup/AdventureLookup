@@ -36,7 +36,7 @@ class RegistrationControllerTest extends WebTestCase
 
         foreach ($expectedErrors as $expectedError => $count) {
             $this->assertCount($count,
-                $page->findAll('css', '.form-error-message:contains("' . $expectedError . '")'));
+                $page->findAll('css', '.form-error-message:contains("'.$expectedError.'")'));
         }
     }
 
@@ -76,7 +76,7 @@ class RegistrationControllerTest extends WebTestCase
         $password = '12345678';
         $tooLongPassword = str_repeat('a', 73);
         $tooLongUsername = str_repeat('a', 26);
-        $tooLongEmail = str_repeat('a', 49) . '@example.com';
+        $tooLongEmail = str_repeat('a', 49).'@example.com';
 
         return [
             // Empty fields

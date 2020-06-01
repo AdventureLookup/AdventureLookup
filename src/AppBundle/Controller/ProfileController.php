@@ -26,7 +26,6 @@ class ProfileController extends Controller
      * @Route("/", name="profile")
      * @Method("GET")
      *
-     * @param UserInterface $user
      * @return Response
      */
     public function overviewAction(UserInterface $user)
@@ -68,7 +67,6 @@ class ProfileController extends Controller
      * @Route("/change-password", name="change_password")
      * @Method({"GET", "POST"})
      *
-     * @param Request $request
      * @return Response
      */
     public function changePasswordAction(Request $request)
@@ -92,7 +90,7 @@ class ProfileController extends Controller
         }
 
         return $this->render('profile/change_password.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\User;
@@ -26,16 +25,16 @@ class ChangePasswordType extends AbstractType
                 'constraints' => [
                     new NotBlank(),
                     new UserPassword(['message' => 'Wrong value for your current password.']),
-                ]
+                ],
             ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
-                'first_options'  => ['label' => 'New Password'],
+                'first_options' => ['label' => 'New Password'],
                 'second_options' => ['label' => 'Repeat new Password'],
                 'constraints' => [
                     new NotBlank(),
                 ],
-                'invalid_message' => "The two new password fields don't match."
+                'invalid_message' => "The two new password fields don't match.",
             ]);
     }
 
@@ -45,7 +44,7 @@ class ChangePasswordType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => User::class
+            'data_class' => User::class,
         ]);
     }
 }

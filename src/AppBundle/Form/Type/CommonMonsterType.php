@@ -29,14 +29,14 @@ class CommonMonsterType extends AbstractType
                 'multiple' => true,
             ]);
     }
-    
+
     /**
      * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Monster::class
+            'data_class' => Monster::class,
         ]);
     }
 }

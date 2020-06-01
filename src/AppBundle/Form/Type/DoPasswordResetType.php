@@ -19,16 +19,16 @@ class DoPasswordResetType extends AbstractType
     {
         $builder->add('plainPassword', RepeatedType::class, [
             'type' => PasswordType::class,
-            'first_options'  => ['label' => 'New Password'],
+            'first_options' => ['label' => 'New Password'],
             'second_options' => ['label' => 'Repeat New Password'],
-            'constraints' => new NotBlank()
+            'constraints' => new NotBlank(),
         ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => User::class
+            'data_class' => User::class,
         ]);
     }
 }

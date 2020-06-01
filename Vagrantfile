@@ -71,7 +71,12 @@ Vagrant.configure("2") do |config|
      sed -i "s/^;realpath_cache_ttl =$/realpath_cache_ttl = 7200/"    /etc/php/7.0/cli/php.ini
 
      # Utilities
-     apt_quiet install htop git nano vim unzip curl wget
+     apt_quiet install htop nano vim unzip curl wget software-properties-common
+
+     # Install a more recent git version. This is needed for husky and lint-staged to work.
+     add-apt-repository -y ppa:git-core/ppa
+     apt_quiet update
+     apt_quiet install git
 
      # OpenJDK 8
      apt_quiet install openjdk-8-jre > /dev/null

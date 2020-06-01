@@ -41,7 +41,8 @@ class AdventureControllerTest extends WebTestCase
         $this->assertFalse($session->getPage()->hasContent($adventure->getTitle()));
     }
 
-    public function testNonuserActions(){
+    public function testNonuserActions()
+    {
         $referenceRepository = $this->loadFixtures([AdventureData::class])->getReferenceRepository();
         /** @var Adventure $adventure */
         $adventure = $referenceRepository->getReference('user-1-adventure-1');
@@ -69,7 +70,7 @@ class AdventureControllerTest extends WebTestCase
         $this->assertTrue($session->getPage()->hasContent('Please create a list first, using the link below'));
 
         // Attempting to navigate to the lists will redirect to login
-        $session->visit("/profile/lists/");
+        $session->visit('/profile/lists/');
 
         $this->assertPath($session, self::LOGIN_URL);
         $this->assertTrue($session->getPage()->hasContent('You must login to use this feature.'));

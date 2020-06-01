@@ -25,8 +25,6 @@ class ReviewController extends Controller
      * @Method("POST")
      * @ParamConverter()
      *
-     * @param Request $request
-     * @param Adventure $adventure
      * @return RedirectResponse
      */
     public function newAction(Request $request, Adventure $adventure)
@@ -47,7 +45,6 @@ class ReviewController extends Controller
             } catch (UniqueConstraintViolationException $e) {
                 $this->addFlash('danger', 'It looks like you already created a review for this adventure. Your review has not been saved.');
             }
-
         } else {
             $this->showErrors($form);
         }
@@ -60,8 +57,6 @@ class ReviewController extends Controller
      * @Method("POST")
      * @ParamConverter()
      *
-     * @param Request $request
-     * @param Review $review
      * @return RedirectResponse
      */
     public function editAction(Request $request, Review $review)
@@ -88,7 +83,6 @@ class ReviewController extends Controller
      * @Method("DELETE")
      * @ParamConverter()
      *
-     * @param Review $review
      * @return RedirectResponse
      */
     public function deleteAction(Review $review)
@@ -104,25 +98,18 @@ class ReviewController extends Controller
         return $this->redirectToAdventureForReview($review);
     }
 
-    /**
-     * @param Review $review
-     * @return RedirectResponse
-     */
     private function redirectToAdventureForReview(Review $review): RedirectResponse
     {
         return $this->redirectToRoute('adventure_show',
             ['slug' => $review->getAdventure()->getSlug()]);
     }
 
-    /**
-     * @param FormInterface $form
-     */
     private function showErrors(FormInterface $form): void
     {
         $this->addFlash('danger', 'There was an error with your review.');
         foreach ($form->getErrors(true) as $error) {
             $this->addFlash('danger', sprintf(
-                "%s: %s",
+                '%s: %s',
                 $error->getOrigin()->getName(),
                 $error->getMessage()));
         }
