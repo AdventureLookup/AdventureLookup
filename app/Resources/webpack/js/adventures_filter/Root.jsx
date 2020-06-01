@@ -23,61 +23,58 @@ export function Root({
 
   const doSubmit = () => {
     let newUrl = `${url}`;
-      const addParam = (key, value) => {
-        if (value === "" || value === undefined) {
-          return;
-        }
-        if (newUrl.indexOf("?") === -1) {
-          newUrl += "?";
-        } else {
-          newUrl += "&";
-        }
-        newUrl += `${key}=${encodeURIComponent(value)}`;
-      };
-
-      addParam("q", query);
-      fields.forEach((field) => {
-        const filter = filterValues[field.name];
-        switch (field.type) {
-          case "integer":
-            addParam(`${field.name}-min`, filter.v.min);
-            addParam(`${field.name}-max`, filter.v.max);
-            break;
-          case "string": {
-            if (filter.v.length > 0) {
-              addParam(
-                field.name,
-                filter.v.map((value) => value.replace(/~/g, "~~")).join("~")
-              );
-            }
-            break;
-          }
-          case "boolean":
-            addParam(field.name, filter.v);
-            break;
-          case "text":
-          case "url":
-            // Not supported
-            break;
-          default:
-            throw new Error(`Unknown field type ${field.type}`);
-        }
-      });
-      addParam("sortBy", sortBy);
-      addParam("seed", seed);
-
-      document.location.href = newUrl;
-  }
-
-  React.useEffect(
-    () => {
-      if (!isSubmitting) {
+    const addParam = (key, value) => {
+      if (value === "" || value === undefined) {
         return;
       }
-      doSubmit();
-    },
-    [isSubmitting, doSubmit]
-  );
+      if (newUrl.indexOf("?") === -1) {
+        newUrl += "?";
+      } else {
+        newUrl += "&";
+      }
+      newUrl += `${key}=${encodeURIComponent(value)}`;
+    };
+
+    addParam("q", query);
+    fields.forEach((field) => {
+      const filter = filterValues[field.name];
+      switch (field.type) {
+        case "integer":
+          addParam(`${field.name}-min`, filter.v.min);
+          addParam(`${field.name}-max`, filter.v.max);
+          break;
+        case "string": {
+          if (filter.v.length > 0) {
+            addParam(
+              field.name,
+              filter.v.map((value) => value.replace(/~/g, "~~")).join("~")
+            );
+          }
+          break;
+        }
+        case "boolean":
+          addParam(field.name, filter.v);
+          break;
+        case "text":
+        case "url":
+          // Not supported
+          break;
+        default:
+          throw new Error(`Unknown field type ${field.type}`);
+      }
+    });
+    addParam("sortBy", sortBy);
+    addParam("seed", seed);
+
+    document.location.href = newUrl;
+  };
+
+  React.useEffect(() => {
+    if (!isSubmitting) {
+      return;
+    }
+    doSubmit();
+  }, [isSubmitting, doSubmit]);
 
   // Automatically submit the form whenever sortBy or the seed changes.
   React.useEffect(() => {
