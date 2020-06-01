@@ -22,7 +22,11 @@
     <h2 class="title">{{ adventure.title }}</h2>
     <div class="tags-container">
         <div class="tag tag-edition">
-            {{ macros.search('edition', adventure.edition.name)|default('Unknown Edition') }}
+            {% if adventure.edition %}
+                {{ macros.search('edition', adventure.edition.name) }}
+            {% else %}
+                Unknown Edition
+            {% endif %}
         </div>
         <div class="tag tag-level">
             {% if adventure.minStartingLevel %}
@@ -51,7 +55,13 @@
             {% endif %}
         </div>
     </div>
-    <p class="description">{{ adventure.description|nl2br }}</p>
+    <p class="description">
+        {% if adventure.description %}
+            {{ adventure.description|nl2br }}
+        {% else %}
+            <em>No description available.</em>
+        {% endif %}
+    </p>
 
     <div class="container">
         <div class="detail-row">
@@ -59,6 +69,8 @@
                 <div class="label">Written By</div>
                 {% for author in adventure.authors %}
                     {{ macros.search('authors', author.name, author.name) }}{{ not loop.last ? ', ' : '' }}
+                {% else %}
+                    Unknown
                 {% endfor %}
             </div>
             <div class="col-4">
@@ -91,6 +103,8 @@
                 <div class="label">Environments</div>
                 {% for environment in adventure.environments %}
                     {{ macros.search('environments', environment.name) }}{{ not loop.last ? ', ' : '' }}
+                {% else %}
+                    Unknown
                 {% endfor %}
             </div>
             <div class="col-12">
