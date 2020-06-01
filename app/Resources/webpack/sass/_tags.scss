@@ -27,5 +27,14 @@
 
       &::before { content: $fa-var-diamond; }
     }
+
+    a {
+      color: #ffffff;
+    }
+
+    a:hover {
+      color: lightgrey;
+      text-decoration: none;
+    }
   }
 }
