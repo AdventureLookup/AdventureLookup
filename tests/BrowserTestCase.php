@@ -94,7 +94,12 @@ class BrowserTestCase extends TestCase
         ]);
         $this->mink->setDefaultSessionName('chrome');
 
-        return $this->mink->getSession();
+        $session = $this->mink->getSession();
+        // Always start the session
+        // https://gitlab.com/DMore/chrome-mink-driver/-/issues/94
+        $session->start();
+
+        return $session;
     }
 
     protected function authenticateSession($authentication, Session $session)
