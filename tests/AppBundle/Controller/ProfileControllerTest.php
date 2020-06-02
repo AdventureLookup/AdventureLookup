@@ -60,7 +60,7 @@ class ProfileControllerTest extends WebTestCase
 
         /** @var Adventure $adventure */
         $adventure = $referenceRepository->getReference($reference);
-        $linkToAdventure = $page->findLink($adventure->getTitle());
+        $linkToAdventure = $page->find('css', 'a[href="/adventures/'.$adventure->getSlug().'"]');
 
         if (!$shouldDisplay) {
             $this->assertNull($linkToAdventure);
