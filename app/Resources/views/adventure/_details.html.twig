@@ -4,9 +4,13 @@
             {% set path = path('adventure_index', {
                 (fieldName ~ '-min'): value.min,
                 (fieldName ~ '-max'): value.max,
+                seed: 'now'|date('U') * 1000
             }) %}
         {% else %}
-            {% set path = path('adventure_index', {(fieldName): value|replace({'~': '~~'})}) %}
+            {% set path = path('adventure_index', {
+                (fieldName): value|replace({'~': '~~'}),
+                seed: 'now'|date('U') * 1000
+            }) %}
         {% endif %}
         <a href="{{ path }}" title="Search for similar adventures">{{ content ?: value }}</a>
     {% endapply %}
@@ -35,7 +39,8 @@
                 {% else %}
                     <a href="{{ path('adventure_index', {
                         ('minStartingLevel-min'): adventure.minStartingLevel,
-                        ('maxStartingLevel-max'): adventure.maxStartingLevel
+                        ('maxStartingLevel-max'): adventure.maxStartingLevel,
+                        seed: 'now'|date('U') * 1000
                     }) }}">{{ format_level(adventure) }}</a>
                 {% endif %}
             {% elseif adventure.startingLevelRange %}
