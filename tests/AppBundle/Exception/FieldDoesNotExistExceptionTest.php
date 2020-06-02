@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\AppBundle\Exception;
 
 use AppBundle\Exception\FieldDoesNotExistException;

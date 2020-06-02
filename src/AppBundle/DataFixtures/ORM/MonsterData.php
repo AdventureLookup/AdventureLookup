@@ -7,7 +7,6 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-
 class MonsterData extends AbstractFixture implements DependentFixtureInterface
 {
     /**
@@ -23,8 +22,6 @@ class MonsterData extends AbstractFixture implements DependentFixtureInterface
 
     /**
      * Load a standard list of monsters
-     *
-     * @param ObjectManager $em
      */
     public function load(ObjectManager $em)
     {

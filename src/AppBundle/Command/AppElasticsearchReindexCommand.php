@@ -45,7 +45,7 @@ class AppElasticsearchReindexCommand extends Command
     }
 
     private const FIELD_NON_SEARCHABLE = [
-        'enabled' => false
+        'enabled' => false,
     ];
     private const FIELD_STRING = [
         'type' => 'text',
@@ -53,8 +53,8 @@ class AppElasticsearchReindexCommand extends Command
             'keyword' => [
                 'type' => 'keyword',
                 'ignore_above' => 256,
-            ]
-        ]
+            ],
+        ],
     ];
     private const FIELD_TEXT = [
         'type' => 'text',
@@ -66,7 +66,7 @@ class AppElasticsearchReindexCommand extends Command
         'type' => 'boolean',
     ];
     const FIELD_DATE = [
-        'type' => 'date'
+        'type' => 'date',
     ];
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -74,7 +74,7 @@ class AppElasticsearchReindexCommand extends Command
         $client = $this->elasticSearch->getClient();
         $indexName = $this->elasticSearch->getIndexName();
 
-        if ($client->indices()->exists([ 'index' => $indexName ])) {
+        if ($client->indices()->exists(['index' => $indexName])) {
             $client->indices()->delete([
                 'index' => $indexName,
             ]);
@@ -120,8 +120,8 @@ class AppElasticsearchReindexCommand extends Command
         $client->indices()->putMapping([
             'index' => $indexName,
             'body' => [
-                'properties' => $mappings
-            ]
+                'properties' => $mappings,
+            ],
         ]);
         $output->writeln('Created mappings');
         $output->writeln('Reindexing documents');

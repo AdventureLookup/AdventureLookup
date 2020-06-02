@@ -2,7 +2,6 @@
 
 namespace AppBundle\DataFixtures\ORM;
 
-
 use AppBundle\Entity\Publisher;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -11,8 +10,6 @@ class PublisherData implements FixtureInterface
 {
     /**
      * Load a standard list of environments
-     *
-     * @param ObjectManager $manager
      */
     public function load(ObjectManager $manager)
     {

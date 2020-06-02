@@ -27,13 +27,11 @@ class AdventureRepository extends EntityRepository
     /**
      * Get all distinct values and their usage counts for a certain field. Will ignore NULL values
      *
-     * @param string $field
-     *
      * @return array Array of arrays containing the 'value' and 'count'
      */
     public function getFieldValueCounts(string $field): array
     {
-        $field = 'tbl.' . $field;
+        $field = 'tbl.'.$field;
 
         $qb = $this->createQueryBuilder('tbl');
         $results = $qb
@@ -48,7 +46,7 @@ class AdventureRepository extends EntityRepository
         return array_map(function ($result) {
             return [
                 'value' => current($result),
-                'count' => (int)$result[1],
+                'count' => (int) $result[1],
             ];
         }, $results);
     }
@@ -73,9 +71,6 @@ class AdventureRepository extends EntityRepository
     /**
      * Updates $field of all adventures where $field = $oldValue to $newValue
      *
-     * @param Field $field
-     * @param string $oldValue
-     * @param string|null $newValue
      * @return int The number of affected adventures
      */
     public function updateField(Field $field, string $oldValue, string $newValue = null): int
@@ -92,10 +87,7 @@ class AdventureRepository extends EntityRepository
     }
 
     /**
-     * @param Field $field
-     * @param string $oldValue
      * @param string $newValue
-     * @return array
      */
     private function updateSimpleField(Field $field, string $oldValue, string $newValue = null): array
     {
@@ -108,10 +100,7 @@ class AdventureRepository extends EntityRepository
     }
 
     /**
-     * @param Field $field
-     * @param string $oldValue
      * @param string $newValue
-     * @return array
      */
     private function updateRelatedField(Field $field, string $oldValue, string $newValue = null): array
     {
@@ -124,33 +113,33 @@ class AdventureRepository extends EntityRepository
             $relationName = 'monsters';
         }
         $qb
-            ->join('a.' . $relationName, 'r')
+            ->join('a.'.$relationName, 'r')
             ->where($qb->expr()->eq('r.id', ':oldValue'))
             ->setParameter('oldValue', $oldValue);
-        if ($fieldName === 'commonMonsters') {
+        if ('commonMonsters' === $fieldName) {
             $qb->andWhere('r.isUnique = FALSE');
-        } else if ($fieldName === 'bossMonsters') {
+        } elseif ('bossMonsters' === $fieldName) {
             $qb->andWhere('r.isUnique = TRUE');
         }
         $adventures = $qb->getQuery()->execute();
         foreach ($adventures as $adventure) {
             if (!$field->isMultiple()) {
-                if ($newValue === null) {
+                if (null === $newValue) {
                     $newRelatedEntity = null;
                 } else {
-                    $newRelatedEntity = $em->getReference($field->getRelatedEntityClass(), (int)$newValue);
+                    $newRelatedEntity = $em->getReference($field->getRelatedEntityClass(), (int) $newValue);
                 }
                 $this->propertyAccessor->setValue($adventure, $fieldName, $newRelatedEntity);
             } else {
                 /** @var ArrayCollection|RelatedEntityInterface[]|RelatedEntityInterface $currentRelatedEntities */
                 $currentRelatedEntities = $this->propertyAccessor->getValue($adventure, $fieldName);
 
-                if ($newValue === null) {
+                if (null === $newValue) {
                     $newRelatedEntities = $currentRelatedEntities->filter(function (RelatedEntityInterface $relatedEntity) use ($oldValue) {
                         return $relatedEntity->getId() !== $oldValue;
                     });
                 } else {
-                    $newRelatedEntity = $em->getReference($field->getRelatedEntityClass(), (int)$newValue);
+                    $newRelatedEntity = $em->getReference($field->getRelatedEntityClass(), (int) $newValue);
                     /** @var ArrayCollection|RelatedEntityInterface[] $newRelatedDuplicatedEntities */
                     $newRelatedDuplicatedEntities = $currentRelatedEntities->map(function (RelatedEntityInterface $relatedEntity) use ($oldValue, $newRelatedEntity) {
                         if ($relatedEntity->getId() !== $oldValue) {

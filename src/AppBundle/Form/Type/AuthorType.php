@@ -19,14 +19,14 @@ class AuthorType extends AbstractType
             'required' => true,
         ]);
     }
-    
+
     /**
      * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Author::class
+            'data_class' => Author::class,
         ]);
     }
 }

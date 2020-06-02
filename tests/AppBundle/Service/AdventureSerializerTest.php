@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\AppBundle\Service;
 
 use AppBundle\Entity\Adventure;
@@ -57,7 +56,7 @@ class AdventureSerializerTest extends TestCase
         $doc = $this->serializer->toElasticDocument($adventure);
         $this->assertSame([
             'slug' => self::SLUG,
-            'createdAt' => $this->CREATED_AT->format("c"),
+            'createdAt' => $this->CREATED_AT->format('c'),
             'positiveReviews' => self::NUM_POSITIVE_REVIEWS,
             'negativeReviews' => self::NUM_NEGATIVE_REVIEWS,
         ], $doc);
@@ -86,7 +85,7 @@ class AdventureSerializerTest extends TestCase
         $doc = $this->serializer->toElasticDocument($adventure);
         $this->assertSame([
             'slug' => self::SLUG,
-            'createdAt' => $this->CREATED_AT->format("c"),
+            'createdAt' => $this->CREATED_AT->format('c'),
             'positiveReviews' => self::NUM_POSITIVE_REVIEWS,
             'negativeReviews' => self::NUM_NEGATIVE_REVIEWS,
             'title' => self::TITLE,
@@ -129,13 +128,13 @@ class AdventureSerializerTest extends TestCase
         $doc = $this->serializer->toElasticDocument($adventure);
         $this->assertSame([
             'slug' => self::SLUG,
-            'createdAt' => $this->CREATED_AT->format("c"),
+            'createdAt' => $this->CREATED_AT->format('c'),
             'positiveReviews' => self::NUM_POSITIVE_REVIEWS,
             'negativeReviews' => self::NUM_NEGATIVE_REVIEWS,
             'title' => self::TITLE,
             'authors' => [self::AUTHOR_1, self::AUTHOR_2],
             'publisher' => self::PUBLISHER,
-            'edition' => null
+            'edition' => null,
         ], $doc);
     }
 }

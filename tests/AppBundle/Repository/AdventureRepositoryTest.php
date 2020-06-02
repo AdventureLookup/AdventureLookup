@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\AppBundle\Repository;
 
 use AppBundle\Entity\Adventure;
@@ -40,7 +39,7 @@ class AdventureRepositoryTest extends WebTestCase
             ->get('doctrine.orm.entity_manager')
             ->getRepository(Adventure::class);
 
-        $fixture = new class extends AbstractFixture {
+        $fixture = new class() extends AbstractFixture {
             public function load(ObjectManager $em)
             {
                 $author1 = new Author();
@@ -147,11 +146,11 @@ class AdventureRepositoryTest extends WebTestCase
         $this->assertSame([
             [
                 'value' => 'link1',
-                'count' => 2
+                'count' => 2,
             ],
             [
                 'value' => 'link2',
-                'count' => 1
+                'count' => 1,
             ],
         ], $results);
     }
@@ -183,13 +182,13 @@ class AdventureRepositoryTest extends WebTestCase
 
         return [
             [$linkField, 'link1', 'link2', 2, [
-                'link2', 'link2', 'link2', null
+                'link2', 'link2', 'link2', null,
             ]],
             [$linkField, 'link1', null, 2, [
-                null, 'link2', null, null
+                null, 'link2', null, null,
             ]],
             [$linkField, 'link42', 'link2', 0, [
-                'link1', 'link2', 'link1', null
+                'link1', 'link2', 'link1', null,
             ]],
         ];
     }
@@ -205,7 +204,7 @@ class AdventureRepositoryTest extends WebTestCase
         foreach ($adventures as $i => $adventure) {
             /** @var RelatedEntityInterface|null $value */
             $value = $this->propertyAccessor->getValue($adventure, $field->getName());
-            if ($value !== null) {
+            if (null !== $value) {
                 $value = $value->getId();
             }
             $this->assertSame($expectedValues[$i], $value);
@@ -247,24 +246,25 @@ class AdventureRepositoryTest extends WebTestCase
         $authorField = $this->relatedField('authors', Author::class, true);
         $commonMonstersField = $this->relatedField('commonMonsters', Monster::class, true);
         $bossMonstersField = $this->relatedField('bossMonsters', Monster::class, true);
+
         return [
             [$authorField, 1, 2, 2, [
-                [2], [2], [2], []
+                [2], [2], [2], [],
             ]],
             [$authorField, 1, null, 2, [
-                [], [2], [2], []
+                [], [2], [2], [],
             ]],
             [$authorField, 3, 6, 0, [
-                [1], [2], [1, 2], []
+                [1], [2], [1, 2], [],
             ]],
             [$commonMonstersField, 1, 2, 1, [
-                [2], [], [], []
+                [2], [], [], [],
             ]],
             [$bossMonstersField, 1, 2, 0, [
-                [3, 4], [], [], []
+                [3, 4], [], [], [],
             ]],
             [$bossMonstersField, 3, 4, 1, [
-                [4], [], [], []
+                [4], [], [], [],
             ]],
         ];
     }
@@ -302,10 +302,8 @@ class AdventureRepositoryTest extends WebTestCase
     }
 
     /**
-     * @param Field $field
-     * @param string $oldValue
      * @param string $newValue
-     * @param int $expectedAffected
+     *
      * @return Adventure[]
      */
     private function doTestUpdateRelatedField(Field $field, string $oldValue, string $newValue = null, int $expectedAffected): array

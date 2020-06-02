@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\AppBundle\Repository;
 
 use AppBundle\Entity\Adventure;
@@ -35,7 +34,7 @@ class RelatedEntityFieldValueCountsTraitTest extends WebTestCase
         string $condition = null,
         array $expectedResult
     ) {
-        $fixture = new class extends AbstractFixture {
+        $fixture = new class() extends AbstractFixture {
             public function load(ObjectManager $em)
             {
                 $author1 = new Author();
@@ -74,31 +73,31 @@ class RelatedEntityFieldValueCountsTraitTest extends WebTestCase
                 [
                     'value' => 'author1',
                     'id' => 1,
-                    'count' => 2
+                    'count' => 2,
                 ],
                 [
                     'value' => 'author2',
                     'id' => 2,
-                    'count' => 1
+                    'count' => 1,
                 ],
             ]],
             ['id', null, [
                 [
                     'value' => 1,
                     'id' => 1,
-                    'count' => 2
+                    'count' => 2,
                 ],
                 [
                     'value' => 2,
                     'id' => 2,
-                    'count' => 1
+                    'count' => 1,
                 ],
             ]],
             ['name', "tbl.name <> 'author1'", [
                 [
                     'value' => 'author2',
                     'id' => 2,
-                    'count' => 1
+                    'count' => 1,
                 ],
             ]],
         ];

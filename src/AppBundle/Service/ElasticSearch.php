@@ -1,6 +1,5 @@
 <?php
 
-
 namespace AppBundle\Service;
 
 use Elasticsearch\Client;
@@ -25,17 +24,11 @@ class ElasticSearch
         $this->indexName = $config['index_name'];
     }
 
-    /**
-     * @return string
-     */
     public function getIndexName(): string
     {
         return $this->indexName;
     }
 
-    /**
-     * @return Client
-     */
     public function getClient(): Client
     {
         return $this->client;

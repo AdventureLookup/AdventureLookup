@@ -17,7 +17,7 @@ class AuditExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('audit', [$this, 'audit'],  [
+            new TwigFunction('audit', [$this, 'audit'], [
                 'is_safe' => ['html'],
                 'needs_environment' => true,
             ]),
@@ -43,12 +43,12 @@ class AuditExtension extends AbstractExtension
 
     public function assoc(Environment $twig, $assoc)
     {
-        return $twig->render("audit/assoc.html.twig", ['assoc' => $assoc]);
+        return $twig->render('audit/assoc.html.twig', ['assoc' => $assoc]);
     }
 
     public function blame(Environment $twig, $blame)
     {
-        return $twig->render("audit/blame.html.twig", ['blame' => $blame]);
+        return $twig->render('audit/blame.html.twig', ['blame' => $blame]);
     }
 
     public function value(Environment $twig, $val)
@@ -61,7 +61,7 @@ class AuditExtension extends AbstractExtension
             case is_array($val):
                 return json_encode($val);
             case is_string($val):
-                return strlen($val) > 60 ? substr($val, 0, 60) . '...' : $val;
+                return strlen($val) > 60 ? substr($val, 0, 60).'...' : $val;
             case is_null($val):
                 return 'NULL';
             default:

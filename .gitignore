@@ -2,6 +2,7 @@
 .vagrant/
 .web-server-pid
 .phpunit.result.cache
+.php_cs.cache
 app/config/parameters.yml
 build/
 node_modules/

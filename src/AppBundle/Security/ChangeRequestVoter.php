@@ -1,6 +1,5 @@
 <?php
 
-
 namespace AppBundle\Security;
 
 use AppBundle\Entity\ChangeRequest;
@@ -29,7 +28,7 @@ class ChangeRequestVoter extends Voter
      * Determines if the attribute and subject are supported by this voter.
      *
      * @param string $attribute An attribute
-     * @param mixed $subject The subject to secure, e.g. an object the user wants to access or any other PHP type
+     * @param mixed  $subject   The subject to secure, e.g. an object the user wants to access or any other PHP type
      *
      * @return bool True if the attribute and subject are supported, false otherwise
      */
@@ -50,8 +49,7 @@ class ChangeRequestVoter extends Voter
      * It is safe to assume that $attribute and $subject already passed the "supports()" method check.
      *
      * @param string $attribute
-     * @param mixed $subject
-     * @param TokenInterface $token
+     * @param mixed  $subject
      *
      * @return bool
      */
@@ -71,8 +69,6 @@ class ChangeRequestVoter extends Voter
     /**
      * Every user can create new change requests.
      *
-     * @param ChangeRequest $changeRequest
-     * @param TokenInterface $token
      * @return bool
      */
     private function canCreate(ChangeRequest $changeRequest, TokenInterface $token)
@@ -89,8 +85,6 @@ class ChangeRequestVoter extends Voter
     /**
      * Only curators and the adventure's author can toggle the resolved status or edit the curator remarks of a change request.
      *
-     * @param ChangeRequest $changeRequest
-     * @param TokenInterface $token
      * @return bool
      */
     private function canToggleResolvedAndEditCuratorRemarks(ChangeRequest $changeRequest, TokenInterface $token)
@@ -114,9 +108,6 @@ class ChangeRequestVoter extends Voter
 
     /**
      * Checks if the user authenticated by the given token is a curator.
-     *
-     * @param TokenInterface $token
-     * @return bool
      */
     private function isCurator(TokenInterface $token): bool
     {

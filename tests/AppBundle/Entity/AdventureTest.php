@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\AppBundle\Entity;
 
 use AppBundle\Entity\Adventure;
@@ -158,6 +157,7 @@ class AdventureTest extends TestCase
     {
         $changeRequest = new ChangeRequest();
         $changeRequest->setResolved($resolved);
+
         return $changeRequest;
     }
 }

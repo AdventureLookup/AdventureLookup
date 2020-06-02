@@ -13,6 +13,16 @@
         {{ form_widget(review_form.rating) }}
         {{ form_widget(review_form.comment) }}
         {{ form_end(review_form) }}
+        <div>
+            <a href="javascript:void(0)" class="btn btn-primary d-none" role="button" id="confirm-review-btn">
+                <i class="fa fa-check"></i>
+                Save Review
+            </a>
+            <a href="javascript:void(0)" class="btn btn-secondary d-none pull-right" role="button" id="cancel-review-btn">
+                <i class="fa fa-times"></i>
+                Cancel
+            </a>
+        </div>
     </div>
 {% endif %}
 
@@ -35,13 +45,20 @@
     {% endif %}
     {% for review in adventure.reviews|filter(review => review.comment is not empty) %}
         <div class="review">
-            <p>
-                <strong>{{ review.createdBy }}</strong> has played this adventure and would {{ review.thumbsDown ? 'not' : '' }} recommend it.
-            </p>
+            <div class="row reviewer-row">
+                <div class="col col-auto d-flex d-sm-none review-icon-mobile-column">
+                        <i class="fa fa-3x review-icon {{ review.thumbsDown ? 'fa-thumbs-o-down review-icon--negative' : 'fa-thumbs-o-up review-icon--positive' }}"></i>
+                </div>
+                <div class="col d-flex">
+                    <p>
+                        <strong>{{ review.createdBy }}</strong> has played this adventure and would {{ review.thumbsDown ? 'not' : '' }} recommend it.
+                    </p>
+                </div>
+            </div>
             <blockquote>
                 <div class="row">
                     <div class="col col-auto d-none d-sm-flex">
-                        <i class="fa fa-quote-left fa-3x review-icon"></i>
+                        <i class="fa fa-3x review-icon {{ review.thumbsDown ? 'fa-thumbs-o-down review-icon--negative' : 'fa-thumbs-o-up review-icon--positive' }}"></i>
                     </div>
                     <div class="col">
                         {{ review.comment|nl2br }}

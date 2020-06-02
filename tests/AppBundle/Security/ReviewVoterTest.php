@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\AppBundle\Security;
 
 use AppBundle\Entity\Review;
@@ -117,20 +116,21 @@ class ReviewVoterTest extends VoterTest
                 $otherUserReview,
                 VoterInterface::ACCESS_GRANTED,
                 ['delete'],
-            ]
+            ],
         ];
     }
 
     /**
      * @param int $userId
+     *
      * @return Review|\PHPUnit_Framework_MockObject_MockObject
      */
     private function createReview(int $userId = null)
     {
         $review = $this->createMock(Review::class);
 
-        if ($userId !== null) {
-            $review->method('getCreatedBy')->willReturn("user " . $userId);
+        if (null !== $userId) {
+            $review->method('getCreatedBy')->willReturn('user '.$userId);
         }
 
         return $review;

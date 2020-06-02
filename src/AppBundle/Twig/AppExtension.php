@@ -39,7 +39,7 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFilter('bool2str', [$this, 'bool2str']),
-            new TwigFilter('add_affiliate_code', [$this, 'addAffiliateCode'])
+            new TwigFilter('add_affiliate_code', [$this, 'addAffiliateCode']),
         ];
     }
 
@@ -53,18 +53,19 @@ class AppExtension extends AbstractExtension
 
     /**
      * @param Adventure|AdventureDocument $adventure
-     * @return null|string
+     *
+     * @return string|null
      */
     public function formatLevel($adventure)
     {
-        if ($adventure->getMinStartingLevel() !== null) {
-            if ($adventure->getMinStartingLevel() === $adventure->getMaxStartingLevel() || $adventure->getMaxStartingLevel() === null) {
-                return "Level " . $adventure->getMinStartingLevel();
+        if (null !== $adventure->getMinStartingLevel()) {
+            if ($adventure->getMinStartingLevel() === $adventure->getMaxStartingLevel() || null === $adventure->getMaxStartingLevel()) {
+                return 'Level '.$adventure->getMinStartingLevel();
             } else {
-                return sprintf("Levels %s–%s", $adventure->getMinStartingLevel(), $adventure->getMaxStartingLevel());
+                return sprintf('Levels %s–%s', $adventure->getMinStartingLevel(), $adventure->getMaxStartingLevel());
             }
-        } else if ($adventure->getStartingLevelRange() !== null) {
-            return $adventure->getStartingLevelRange() . " Level";
+        } elseif (null !== $adventure->getStartingLevelRange()) {
+            return $adventure->getStartingLevelRange().' Level';
         }
 
         return null;
@@ -78,15 +79,16 @@ class AppExtension extends AbstractExtension
                 'ROLE_CURATOR' => 'Curator',
                 'ROLE_ADMIN' => 'Admin',
             ];
+
             return isset($roleMap[$role]) ? $roleMap[$role] : $role;
         }, $user->getRoles());
 
-        return implode(", ", $roles);
+        return implode(', ', $roles);
     }
 
     public function bool2str($boolean)
     {
-        if ($boolean === null) {
+        if (null === $boolean) {
             return 'Unknown';
         }
 
@@ -94,12 +96,11 @@ class AppExtension extends AbstractExtension
     }
 
     /**
-     * @param string|null $url
      * @return null
      */
     public function addAffiliateCode(string $url = null)
     {
-        if ($url === null) {
+        if (null === $url) {
             return null;
         }
 

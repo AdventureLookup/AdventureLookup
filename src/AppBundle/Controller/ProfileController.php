@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\ChangeRequest;
+use AppBundle\Entity\Review;
 use AppBundle\Entity\User;
 use AppBundle\Form\Type\ChangePasswordType;
 use Doctrine\ORM\Query\Expr;
@@ -25,7 +26,6 @@ class ProfileController extends Controller
      * @Route("/", name="profile")
      * @Method("GET")
      *
-     * @param UserInterface $user
      * @return Response
      */
     public function overviewAction(UserInterface $user)
@@ -33,6 +33,7 @@ class ProfileController extends Controller
         $em = $this->getDoctrine()->getManager();
         $adventureRepository = $em->getRepository(Adventure::class);
         $changeRequestRepository = $em->getRepository(ChangeRequest::class);
+        $reviewRepository = $em->getRepository(Review::class);
 
         $qb = $adventureRepository->createQueryBuilder('a');
         // Get all adventures created by the current user as well as corresponding pending change requests.
@@ -51,9 +52,14 @@ class ProfileController extends Controller
             'createdBy' => $user->getUsername(),
         ], ['createdAt' => 'DESC', 'resolved' => 'ASC']);
 
+        $reviews = $reviewRepository->findBy([
+            'createdBy' => $user->getUsername(),
+        ], ['createdAt' => 'DESC']);
+
         return $this->render('profile/overview.html.twig', [
             'changeRequests' => $changeRequests,
             'adventures' => $adventures,
+            'reviews' => $reviews,
         ]);
     }
 
@@ -61,7 +67,6 @@ class ProfileController extends Controller
      * @Route("/change-password", name="change_password")
      * @Method({"GET", "POST"})
      *
-     * @param Request $request
      * @return Response
      */
     public function changePasswordAction(Request $request)
@@ -85,7 +90,7 @@ class ProfileController extends Controller
         }
 
         return $this->render('profile/change_password.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 }

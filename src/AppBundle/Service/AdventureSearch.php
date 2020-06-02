@@ -2,7 +2,6 @@
 
 namespace AppBundle\Service;
 
-
 use AppBundle\Entity\AdventureDocument;
 use AppBundle\Exception\FieldDoesNotExistException;
 use AppBundle\Field\Field;
@@ -43,7 +42,6 @@ class AdventureSearch
     }
 
     /**
-     * @param Request $request
      * @return array
      */
     public function requestToSearchParams(Request $request)
@@ -55,21 +53,19 @@ class AdventureSearch
         // 1. We use Date.now() in JS, which also returns a timestamp in milliseconds
         // 2. Simply using time() to get a timestamp in seconds sometimes leads to the same seed
         //    when you refresh the browser too quickly.
-        $seed = (string)$request->get('seed', $this->timeProvider->millis());
-        $page = (int)$request->get('page', 1);
+        $seed = (string) $request->get('seed', $this->timeProvider->millis());
+        $page = (int) $request->get('page', 1);
         $filters = $request->get('f', []);
         if (!is_array($filters)) {
             $filters = [];
         }
+
         return [$q, $filters, $page, $sortBy, $seed];
     }
 
     /**
-     * @param string $q
-     * @param array $filters
-     * @param int $page
-     * @param string $sortBy
-     * @param string $seed   Random seed used when adventures have to be sorted randomly.
+     * @param string $seed random seed used when adventures have to be sorted randomly
+     *
      * @return array
      */
     public function search(string $q, array $filters, int $page, string $sortBy, string $seed)
@@ -95,8 +91,8 @@ class AdventureSearch
         $query = [
             // All matches must evaluate to true for a result to be returned.
             'bool' => [
-                "must" => $matches
-            ]
+                'must' => $matches,
+            ],
         ];
 
         switch ($sortBy) {
@@ -119,17 +115,17 @@ class AdventureSearch
                 // We use the Wilson Score instead of the average of positive and negative reviews
                 // https://www.elastic.co/de/blog/better-than-average-sort-by-best-rating-with-elasticsearch
                 $sort = [
-                    "_script" => [
-                        "order" => "desc",
-                        "type" => "number",
-                        "script" => [
-                            "inline" => "
+                    '_script' => [
+                        'order' => 'desc',
+                        'type' => 'number',
+                        'script' => [
+                            'inline' => "
                                 long p = doc['positiveReviews'].value;
                                 long n = doc['negativeReviews'].value;
                                 return p + n > 0 ? ((p + 1.9208) / (p + n) - 1.96 * Math.sqrt((p * n) / (p + n) + 0.9604) / (p + n)) / (1 + 3.8416 / (p + n)) : 0;
-                            "
-                        ]
-                    ]
+                            ",
+                        ],
+                    ],
                 ];
             break;
             default:
@@ -137,17 +133,17 @@ class AdventureSearch
             break;
         }
 
-        if ($sortBy === 'random') {
+        if ('random' === $sortBy) {
             // Sorting in a random order cannot be done using the 'sort' parameter, but requires adjusting the query
             // to use the random_score function for scoring.
             // https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-function-score-query.html
             $query = [
-                "function_score" => [
-                    "query" => $query,
-                    "random_score" => [
-                        "seed" => $seed
-                    ]
-                ]
+                'function_score' => [
+                    'query' => $query,
+                    'random_score' => [
+                        'seed' => $seed,
+                    ],
+                ],
             ];
         }
 
@@ -160,7 +156,7 @@ class AdventureSearch
                 // Also return aggregations for all fields, i.e. min/max for integer fields
                 // or the most common strings for string fields.
                 'aggs' => $this->fieldAggregations(),
-                'sort' => $sort
+                'sort' => $sort,
             ],
         ]);
 
@@ -204,7 +200,7 @@ class AdventureSearch
 
     public function similarTitles($title): array
     {
-        if ($title === '') {
+        if ('' === $title) {
             return [];
         }
 
@@ -216,13 +212,13 @@ class AdventureSearch
                         'title' => [
                             'query' => $title,
                             'operator' => 'and',
-                            'fuzziness' => 'AUTO'
-                        ]
-                    ]
+                            'fuzziness' => 'AUTO',
+                        ],
+                    ],
                 ],
                 '_source' => [
                     'title',
-                    'slug'
+                    'slug',
                 ],
                 'size' => 10,
             ],
@@ -237,15 +233,11 @@ class AdventureSearch
      * Given a field and an input query, return a list of values
      * which could possibly be what the user wants to insert.
      * If the query is empty, return the most common values.
-     *
-     * @param Field $field
-     * @param string $q
-     * @return array
      */
     public function autocompleteFieldContent(Field $field, string $q): array
     {
         $size = 20;
-        if ($q === '') {
+        if ('' === $q) {
             return current($this->aggregateMostCommonValues([$field], $size));
         }
 
@@ -255,19 +247,19 @@ class AdventureSearch
             'body' => [
                 'query' => [
                     'match_phrase_prefix' => [
-                        $fieldName => $q
-                    ]
+                        $fieldName => $q,
+                    ],
                 ],
                 'size' => $size,
                 '_source' => false,
-                "highlight" => [
+                'highlight' => [
                     'pre_tags' => [''],
                     'post_tags' => [''],
                     'fields' => [
-                        $fieldName => new \stdClass()
-                    ]
+                        $fieldName => new \stdClass(),
+                    ],
                 ],
-            ]
+            ],
         ]);
 
         $results = [];
@@ -288,8 +280,6 @@ class AdventureSearch
 
     /**
      * @param Field[] $fields
-     * @param int $size
-     * @return array
      */
     private function aggregateMostCommonValues(array $fields, int $size): array
     {
@@ -303,8 +293,8 @@ class AdventureSearch
             $aggregations[$elasticField] = [
                 'terms' => [
                     'field' => $elasticField,
-                    'size' => $size
-                ]
+                    'size' => $size,
+                ],
             ];
         }
 
@@ -312,7 +302,7 @@ class AdventureSearch
             'index' => $this->indexName,
             'body' => [
                 'size' => 0,
-                'aggregations' => $aggregations
+                'aggregations' => $aggregations,
             ],
             'request_cache' => true,
         ]);
@@ -325,9 +315,6 @@ class AdventureSearch
         return $results;
     }
 
-    /**
-     * @return array
-     */
     private function fieldAggregations(): array
     {
         $aggregations = [];
@@ -336,45 +323,44 @@ class AdventureSearch
             $fieldName = $field->getFieldNameForAggregation();
             switch ($field->getType()) {
                 case 'integer':
-                    $aggregations['max_' . $field->getName()] = [
+                    $aggregations['max_'.$field->getName()] = [
                         'max' => [
-                            'field' => $fieldName
+                            'field' => $fieldName,
                         ],
                     ];
-                    $aggregations['min_' . $field->getName()] = [
+                    $aggregations['min_'.$field->getName()] = [
                         'min' => [
-                            'field' => $fieldName
+                            'field' => $fieldName,
                         ],
                     ];
                     break;
                 case 'boolean':
-                    $aggregations['vals_' . $field->getName()] = [
+                    $aggregations['vals_'.$field->getName()] = [
                         'terms' => [
-                            'field' => $fieldName
-                        ]
+                            'field' => $fieldName,
+                        ],
                     ];
                     break;
                 case 'string':
-                    $aggregations['vals_' . $field->getName()] = [
+                    $aggregations['vals_'.$field->getName()] = [
                         'terms' => [
                             'field' => $fieldName,
                             // Return up to 1000 different values.
-                            'size' => 1000
-                        ]
+                            'size' => 1000,
+                        ],
                     ];
                     break;
                 // Other field types are not supported
             }
         }
+
         return $aggregations;
     }
 
     /**
      * Find adventures matching the free-text search query
      *
-     * @param string $q
      * @param $matches
-     * @return array
      */
     private function qMatches(string $q, $matches): array
     {
@@ -385,7 +371,7 @@ class AdventureSearch
                 return $field->isFreetextSearchable();
             })
             ->map(function (Field $field) {
-                return $field->getName() . '^' . $field->getSearchBoost();
+                return $field->getName().'^'.$field->getSearchBoost();
             })
             ->getValues();
 
@@ -426,7 +412,7 @@ class AdventureSearch
             // together using a 'bool => 'must' query.
             $termMatches = [];
             foreach ($terms as $term) {
-                if (trim($term) == "") {
+                if ('' == trim($term)) {
                     continue;
                 }
                 $termMatches[] = [
@@ -453,14 +439,14 @@ class AdventureSearch
                         // fuzziness to start after the second character.
                         'fuzziness' => 'AUTO',
                         'prefix_length' => 2,
-                    ]
+                    ],
                 ];
             }
             if (!empty($termMatches)) {
                 $orMatches[] = [
                     'bool' => [
-                        'must' => $termMatches
-                    ]
+                        'must' => $termMatches,
+                    ],
                 ];
             }
         }
@@ -473,18 +459,13 @@ class AdventureSearch
                 'bool' => [
                     'should' => $orMatches,
                     'minimum_should_match' => 1,
-                ]
+                ],
             ];
         }
 
         return $matches;
     }
 
-    /**
-     * @param array $filters
-     * @param array $matches
-     * @return array
-     */
     private function filterMatches(array $filters, array $matches): array
     {
         // Iterate all user-provided filters
@@ -496,51 +477,52 @@ class AdventureSearch
                 continue;
             }
 
-            $values = isset($filter['v']) ? (array)$filter['v'] : [];
-            if (count($values) == 0) {
+            $values = isset($filter['v']) ? (array) $filter['v'] : [];
+            if (0 == count($values)) {
                 // Apparently no filter value provided
                 continue;
             }
 
             $filterMatches = [];
             foreach ($values as $key => $value) {
-                if ($value === '') {
+                if ('' === $value) {
                     continue;
                 }
 
-                if ($field->getType() === 'integer' && in_array($key, ['min', 'max'], true) && is_numeric($value)) {
+                if ('integer' === $field->getType() && in_array($key, ['min', 'max'], true) && is_numeric($value)) {
                     $filterMatches[] = [
                         'range' => [
                             $field->getName() => [
-                                $key == 'min' ? 'gte' : 'lte' => $value,
-                            ]
-                        ]
+                                'min' == $key ? 'gte' : 'lte' => $value,
+                            ],
+                        ],
                     ];
-                } else if ($field->getType() === 'string') {
-                    $filterMatches[] = ['term' => [$fieldName . '.keyword' => $value]];
-                } else if ($field->getType() === 'boolean') {
-                    $filterMatches[] = ['term' => [$fieldName => $value === "1"]];
+                } elseif ('string' === $field->getType()) {
+                    $filterMatches[] = ['term' => [$fieldName.'.keyword' => $value]];
+                } elseif ('boolean' === $field->getType()) {
+                    $filterMatches[] = ['term' => [$fieldName => '1' === $value]];
                 }
             }
 
             if (count($filterMatches) > 0) {
-                if ($field->getType() === 'integer') {
+                if ('integer' === $field->getType()) {
                     // Integer fields must use AND, because you want e.g. the page count to be between min AND max.
                     $matches[] = [
                         'bool' => [
-                            'must' => $filterMatches
-                        ]
+                            'must' => $filterMatches,
+                        ],
                     ];
                 } else {
                     $matches[] = [
                         'bool' => [
                             'should' => $filterMatches,
                             'minimum_should_match' => 1,
-                        ]
+                        ],
                     ];
                 }
             }
         }
+
         return $matches;
     }
 }

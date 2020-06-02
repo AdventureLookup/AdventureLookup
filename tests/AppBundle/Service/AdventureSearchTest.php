@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\AppBundle\Service;
 
 use AppBundle\Field\FieldProvider;
@@ -44,29 +43,29 @@ class AdventureSearchTest extends TestCase
 
     public function testRequestToSearchParams()
     {
-        $request = Request::create("");
-        $this->assertEquals(["", [], 1, "", "123"], $this->search->requestToSearchParams($request));
+        $request = Request::create('');
+        $this->assertEquals(['', [], 1, '', '123'], $this->search->requestToSearchParams($request));
 
-        $request = Request::create("/?page=10");
-        $this->assertEquals(["", [], 10, "", "123"], $this->search->requestToSearchParams($request));
+        $request = Request::create('/?page=10');
+        $this->assertEquals(['', [], 10, '', '123'], $this->search->requestToSearchParams($request));
 
-        $request = Request::create("/?q=foo");
-        $this->assertEquals(["foo", [], 1, "", "123"], $this->search->requestToSearchParams($request));
+        $request = Request::create('/?q=foo');
+        $this->assertEquals(['foo', [], 1, '', '123'], $this->search->requestToSearchParams($request));
 
-        $request = Request::create("/?f[edition][v]=DND&f[numPages][min]=2");
-        $this->assertEquals(["", [
-            "edition" => ["v" => "DND"],
-            "numPages" => ["min" => "2"]
-        ], 1, "", "123"], $this->search->requestToSearchParams($request));
+        $request = Request::create('/?f[edition][v]=DND&f[numPages][min]=2');
+        $this->assertEquals(['', [
+            'edition' => ['v' => 'DND'],
+            'numPages' => ['min' => '2'],
+        ], 1, '', '123'], $this->search->requestToSearchParams($request));
 
         // Invalid filter should not break anything
-        $request = Request::create("/?f=2");
-        $this->assertEquals(["", [], 1, "", "123"], $this->search->requestToSearchParams($request));
+        $request = Request::create('/?f=2');
+        $this->assertEquals(['', [], 1, '', '123'], $this->search->requestToSearchParams($request));
 
-        $request = Request::create("/?sortBy=title");
-        $this->assertEquals(["", [], 1, "title", "123"], $this->search->requestToSearchParams($request));
+        $request = Request::create('/?sortBy=title');
+        $this->assertEquals(['', [], 1, 'title', '123'], $this->search->requestToSearchParams($request));
 
-        $request = Request::create("/?seed=foo");
-        $this->assertEquals(["", [], 1, "", "foo"], $this->search->requestToSearchParams($request));
+        $request = Request::create('/?seed=foo');
+        $this->assertEquals(['', [], 1, '', 'foo'], $this->search->requestToSearchParams($request));
     }
 }

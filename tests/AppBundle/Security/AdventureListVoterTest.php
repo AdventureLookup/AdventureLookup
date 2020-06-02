@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\AppBundle\Security;
 
 use AppBundle\Entity\AdventureList;

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\AppBundle\Service;
 
 use AppBundle\Service\ElasticSearch;

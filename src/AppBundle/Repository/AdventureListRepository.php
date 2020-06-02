@@ -1,6 +1,7 @@
 <?php
 
 namespace AppBundle\Repository;
+
 use AppBundle\Entity\AdventureList;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -14,12 +15,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class AdventureListRepository extends EntityRepository
 {
     /**
-     * @param UserInterface|null $user
      * @return AdventureList[]
      */
     public function myLists(UserInterface $user = null)
     {
-        if ($user === null) {
+        if (null === $user) {
             return [];
         }
 
