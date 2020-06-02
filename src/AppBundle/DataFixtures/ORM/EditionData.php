@@ -2,7 +2,6 @@
 
 namespace AppBundle\DataFixtures\ORM;
 
-
 use AppBundle\Entity\Edition;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -13,8 +12,6 @@ class EditionData implements FixtureInterface
 
     /**
      * Load a standard list of editions
-     *
-     * @param ObjectManager $manager
      */
     public function load(ObjectManager $manager)
     {
@@ -29,7 +26,7 @@ class EditionData implements FixtureInterface
             '4th Essentials',
             '5th Edition',
             'OSR',
-            'DCC'
+            'DCC',
         ];
 
         $i = self::SORT_GAP;

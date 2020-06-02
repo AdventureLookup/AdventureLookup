@@ -36,11 +36,12 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "scripts/lint-staged.sh"
     }
   },
   "lint-staged": {
-    "app/Resources/**/*.{js,jsx}": "prettier --write"
+    "app/Resources/**/*.{js,jsx}": "prettier --write",
+    "{src,tests}/**/*.php": "composer run format --"
   },
   "browserslist": [
     "> 1%",

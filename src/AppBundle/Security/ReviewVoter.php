@@ -1,6 +1,5 @@
 <?php
 
-
 namespace AppBundle\Security;
 
 use AppBundle\Entity\Review;
@@ -29,13 +28,13 @@ class ReviewVoter extends Voter
      * Determines if the attribute and subject are supported by this voter.
      *
      * @param string $attribute An attribute
-     * @param mixed $subject The subject to secure, e.g. an object the user wants to access or any other PHP type
+     * @param mixed  $subject   The subject to secure, e.g. an object the user wants to access or any other PHP type
      *
      * @return bool True if the attribute and subject are supported, false otherwise
      */
     protected function supports($attribute, $subject)
     {
-        if ($subject === 'review' && $attribute === self::CREATE) {
+        if ('review' === $subject && self::CREATE === $attribute) {
             return true;
         }
         if ($subject instanceof Review && in_array($attribute, [self::EDIT, self::DELETE])) {
@@ -50,8 +49,7 @@ class ReviewVoter extends Voter
      * It is safe to assume that $attribute and $subject already passed the "supports()" method check.
      *
      * @param string $attribute
-     * @param mixed $subject
-     * @param TokenInterface $token
+     * @param mixed  $subject
      *
      * @return bool
      */
@@ -72,7 +70,6 @@ class ReviewVoter extends Voter
     /**
      * Every user can create new reviews.
      *
-     * @param TokenInterface $token
      * @return bool
      */
     private function canCreate(TokenInterface $token)
@@ -83,8 +80,6 @@ class ReviewVoter extends Voter
     /**
      * Every user can edit their own reviews.
      *
-     * @param Review $review
-     * @param TokenInterface $token
      * @return bool
      */
     private function canEdit(Review $review, TokenInterface $token)
@@ -95,8 +90,6 @@ class ReviewVoter extends Voter
     /**
      * Only curators and the review's author can delete a review.
      *
-     * @param Review $review
-     * @param TokenInterface $token
      * @return bool
      */
     private function canDelete(Review $review, TokenInterface $token)
@@ -107,20 +100,12 @@ class ReviewVoter extends Voter
 
     /**
      * Checks if the user authenticated by the given token is a logged in.
-     *
-     * @param TokenInterface $token
-     * @return bool
      */
     private function isLoggedIn(TokenInterface $token): bool
     {
         return $token->getUser() instanceof User;
     }
 
-    /**
-     * @param Review $review
-     * @param TokenInterface $token
-     * @return bool
-     */
     private function isCreatedBy(Review $review, TokenInterface $token): bool
     {
         if (!$this->isLoggedIn($token)) {
@@ -133,9 +118,6 @@ class ReviewVoter extends Voter
 
     /**
      * Checks if the user authenticated by the given token is a curator.
-     *
-     * @param TokenInterface $token
-     * @return bool
      */
     private function isCurator(TokenInterface $token): bool
     {

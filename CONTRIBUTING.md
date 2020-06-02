@@ -25,7 +25,19 @@ is always live at https://dev.adventurelookup.com.
 We'll merge the `dev` branch into `master` from time to time, which is deployed to
 https://adventurelookup.com.
 
-You're welcome to open your pull request early, even if you are still working on the 
-fix or feature. This way we can give you early feedback on your changes and the 
-direction you are going. If you open your pull request early, please open it as a 
+You're welcome to open your pull request early, even if you are still working on the
+fix or feature. This way we can give you early feedback on your changes and the
+direction you are going. If you open your pull request early, please open it as a
 "Draft Pull Request" like shown in [this blogpost](https://github.blog/2019-02-14-introducing-draft-pull-requests/).
+
+### Formatting your code
+
+We use [prettier](https://prettier.io/) to format all JavaScript and JSX code.
+You can run prettier by executing `npm run format`, which automatically adjusts
+the code formatting for you. This is also automatically run whenever you make a
+commit.
+
+We use [php-cs-fixer](https://cs.symfony.com/) to format all PHP code according
+to PSR-1 and PSR-2 and some additional rules. You can run the formatter by
+executing `composer run format`, which automatically adjusts the code formatting
+for you. This is also automatically run whenever you make a commit.

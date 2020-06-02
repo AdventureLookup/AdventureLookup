@@ -1,6 +1,5 @@
 <?php
 
-
 namespace AppBundle\Security;
 
 use AppBundle\Entity\Adventure;
@@ -30,7 +29,7 @@ class AdventureVoter extends Voter
      * Determines if the attribute and subject are supported by this voter.
      *
      * @param string $attribute An attribute
-     * @param mixed $subject The subject to secure, e.g. an object the user wants to access or any other PHP type
+     * @param mixed  $subject   The subject to secure, e.g. an object the user wants to access or any other PHP type
      *
      * @return bool True if the attribute and subject are supported, false otherwise
      */
@@ -51,15 +50,14 @@ class AdventureVoter extends Voter
      * It is safe to assume that $attribute and $subject already passed the "supports()" method check.
      *
      * @param string $attribute
-     * @param mixed $subject
-     * @param TokenInterface $token
+     * @param mixed  $subject
      *
      * @return bool
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         // Everyone can view all adventures
-        if ($attribute === self::VIEW) {
+        if (self::VIEW === $attribute) {
             return true;
         }
 
@@ -83,9 +81,6 @@ class AdventureVoter extends Voter
     /**
      * Every user can create new adventures.
      *
-     * @param Adventure $adventure
-     * @param TokenInterface $token
-     * @param User $user
      * @return bool
      */
     private function canCreate(Adventure $adventure, TokenInterface $token, User $user)
@@ -97,9 +92,6 @@ class AdventureVoter extends Voter
      * Curators can edit and delete all adventures.
      * Normal users can only edit and delete own adventures.
      *
-     * @param Adventure $adventure
-     * @param TokenInterface $token
-     * @param User $user
      * @return bool
      */
     private function canEditAndDelete(Adventure $adventure, TokenInterface $token, User $user)

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\AppBundle\Field;
 
 use AppBundle\Field\Field;
@@ -55,11 +54,11 @@ class FieldTest extends \PHPUnit_Framework_TestCase
         self::DESCRIPTION, self::SEARCH_BOOST, self::RELATED_ENTITY_CLASS);
 
         $this->assertEquals([
-            "name" => self::NAME,
-            "type" => self::TYPE,
-            "multiple" => self::MULTIPLE,
-            "title" => self::TITLE,
-            "description" => self::DESCRIPTION,
+            'name' => self::NAME,
+            'type' => self::TYPE,
+            'multiple' => self::MULTIPLE,
+            'title' => self::TITLE,
+            'description' => self::DESCRIPTION,
         ], json_decode(json_encode($field), true));
     }
 
@@ -77,8 +76,8 @@ class FieldTest extends \PHPUnit_Framework_TestCase
     public function aggregationFieldNameDataProvider()
     {
         return [
-            ['string', self::NAME . '.keyword'],
-            ['url', self::NAME . '.keyword'],
+            ['string', self::NAME.'.keyword'],
+            ['url', self::NAME.'.keyword'],
             ['text', self::NAME],
             ['something-else', self::NAME],
         ];

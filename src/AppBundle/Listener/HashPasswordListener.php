@@ -23,7 +23,6 @@ class HashPasswordListener implements EventSubscriber
 
     /**
      * Before inserts
-     * @param LifecycleEventArgs $args
      */
     public function prePersist(LifecycleEventArgs $args)
     {
@@ -37,7 +36,6 @@ class HashPasswordListener implements EventSubscriber
 
     /**
      * Before updates
-     * @param LifecycleEventArgs $args
      */
     public function preUpdate(LifecycleEventArgs $args)
     {
@@ -53,9 +51,6 @@ class HashPasswordListener implements EventSubscriber
         $em->getUnitOfWork()->recomputeSingleEntityChangeSet($meta, $entity);
     }
 
-    /**
-     * @param User $user
-     */
     private function encodePassword(User $user)
     {
         if (!$user->getPlainPassword()) {

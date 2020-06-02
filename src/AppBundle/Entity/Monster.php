@@ -93,7 +93,6 @@ class Monster implements RelatedEntityInterface
     /**
      * Add a monster type
      *
-     * @param MonsterType $type
      * @return $this
      */
     public function addType(MonsterType $type)
@@ -107,7 +106,6 @@ class Monster implements RelatedEntityInterface
     /**
      * Set the monster types
      *
-     * @param Collection $types
      * @return $this
      */
     public function setTypes(Collection $types)
@@ -115,6 +113,7 @@ class Monster implements RelatedEntityInterface
         foreach ($types as $type) {
             $this->addType($type);
         }
+
         return $this;
     }
 
@@ -155,7 +154,7 @@ class Monster implements RelatedEntityInterface
     /**
      * Set isUnique
      *
-     * @param boolean $isUnique
+     * @param bool $isUnique
      *
      * @return Monster
      */
@@ -185,7 +184,6 @@ class Monster implements RelatedEntityInterface
     }
 
     /**
-     * @param Adventure $adventure
      * @return static
      */
     public function addAdventure(Adventure $adventure)
@@ -196,7 +194,6 @@ class Monster implements RelatedEntityInterface
     }
 
     /**
-     * @param Adventure $adventure
      * @return static
      */
     public function removeAdventure(Adventure $adventure)
@@ -222,4 +219,3 @@ class Monster implements RelatedEntityInterface
         return $this->updatedBy;
     }
 }
-

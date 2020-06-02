@@ -17,7 +17,7 @@ class AdventureListControllerTest extends WebTestCase
         $session = $this->makeSession(true);
 
         // Make sure lists page is accessible
-        $session->visit("/profile/lists");
+        $session->visit('/profile/lists');
 
         $this->assertPath($session, '/profile/lists/');
         $this->assertTrue($session->getPage()->hasContent('You haven\'t created any lists yet.'));

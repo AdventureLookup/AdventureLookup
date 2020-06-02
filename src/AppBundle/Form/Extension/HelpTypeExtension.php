@@ -2,7 +2,6 @@
 
 namespace AppBundle\Form\Extension;
 
-
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormInterface;
@@ -23,8 +22,6 @@ class HelpTypeExtension extends AbstractTypeExtension
 
     /**
      * Add the image_path option
-     *
-     * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)
     {

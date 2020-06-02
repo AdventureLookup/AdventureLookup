@@ -21,11 +21,47 @@
     </div>
     <h2 class="title">{{ adventure.title }}</h2>
     <div class="tags-container">
-        <div class="tag tag-edition">{{ adventure.edition.name|default('Unknown Edition') }}</div>
-        <div class="tag tag-level">{{ format_level(adventure)|default('Unknown party level') }}</div>
-        <div class="tag tag-length">{{ adventure.numPages|default('?') }} pages</div>
+        <div class="tag tag-edition">
+            {% if adventure.edition %}
+                {{ macros.search('edition', adventure.edition.name) }}
+            {% else %}
+                Unknown Edition
+            {% endif %}
+        </div>
+        <div class="tag tag-level">
+            {% if adventure.minStartingLevel %}
+                {% if adventure.minStartingLevel is same as (adventure.maxStartingLevel) or adventure.maxStartingLevel is null %}
+                    {{ macros.search('minStartingLevel', adventure.minStartingLevel, format_level(adventure)) }}
+                {% else %}
+                    <a href="{{ path('adventure_index', {
+                        ('f[minStartingLevel][v][min]'): adventure.minStartingLevel,
+                        ('f[maxStartingLevel][v][max]'): adventure.maxStartingLevel
+                    }) }}">{{ format_level(adventure) }}</a>
+                {% endif %}
+            {% elseif adventure.startingLevelRange %}
+                {{ macros.search('startingLevelRange', adventure.startingLevelRange, format_level(adventure)) }}
+            {% else %}
+                Unknown party level
+            {% endif %}
+        </div>
+        <div class="tag tag-length">
+            {% if adventure.numPages %}
+                <a href="{{ path('adventure_index', {
+                    ('f[numPages][v][min]'): (adventure.numPages * 0.85)|round,
+                    ('f[numPages][v][max]'): (adventure.numPages * 1.15)|round
+                }) }}">{{ adventure.numPages }} pages</a>
+            {% else %}
+                ? pages
+            {% endif %}
+        </div>
     </div>
-    <p class="description">{{ adventure.description|nl2br }}</p>
+    <p class="description">
+        {% if adventure.description %}
+            {{ adventure.description|nl2br }}
+        {% else %}
+            <em>No description available.</em>
+        {% endif %}
+    </p>
 
     <div class="container">
         <div class="detail-row">
@@ -33,6 +69,8 @@
                 <div class="label">Written By</div>
                 {% for author in adventure.authors %}
                     {{ macros.search('authors', author.name, author.name) }}{{ not loop.last ? ', ' : '' }}
+                {% else %}
+                    Unknown
                 {% endfor %}
             </div>
             <div class="col-4">
@@ -65,6 +103,8 @@
                 <div class="label">Environments</div>
                 {% for environment in adventure.environments %}
                     {{ macros.search('environments', environment.name) }}{{ not loop.last ? ', ' : '' }}
+                {% else %}
+                    Unknown
                 {% endfor %}
             </div>
             <div class="col-12">

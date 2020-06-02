@@ -7,7 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-
 /**
  * @ORM\Table(name="review", uniqueConstraints={
  *      @ORM\UniqueConstraint(name="adventure_and_createdBy", columns={"adventure_id", "created_by"})
@@ -108,8 +107,6 @@ class Review
     }
 
     /**
-     * @param bool $rating
-     *
      * @return Review
      */
     public function setRating(bool $rating)
@@ -124,7 +121,7 @@ class Review
      */
     public function isThumbsUp()
     {
-        return $this->rating == true;
+        return true == $this->rating;
     }
 
     /**
@@ -132,7 +129,7 @@ class Review
      */
     public function isThumbsDown()
     {
-        return $this->rating == false;
+        return false == $this->rating;
     }
 
     /**
@@ -150,7 +147,7 @@ class Review
      */
     public function setComment($comment)
     {
-        if ($comment === '') {
+        if ('' === $comment) {
             $comment = null;
         }
         $this->comment = $comment;
@@ -182,4 +179,3 @@ class Review
         return $this->createdAt;
     }
 }
-

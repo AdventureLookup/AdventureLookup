@@ -8,7 +8,6 @@ use AppBundle\Service\ElasticSearch;
 use Doctrine\ORM\EntityManagerInterface;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -48,7 +47,7 @@ class AppElasticsearchReindexCommand extends Command
 
     // TODO: Add when using PHP 7.1
     /* private */ const FIELD_NON_SEARCHABLE = [
-        'enabled' => false
+        'enabled' => false,
     ];
     const FIELD_STRING = [
         'type' => 'text',
@@ -56,8 +55,8 @@ class AppElasticsearchReindexCommand extends Command
             'keyword' => [
                 'type' => 'keyword',
                 'ignore_above' => 256,
-            ]
-        ]
+            ],
+        ],
     ];
     const FIELD_TEXT = [
         'type' => 'text',
@@ -69,7 +68,7 @@ class AppElasticsearchReindexCommand extends Command
         'type' => 'boolean',
     ];
     const FIELD_DATE = [
-        'type' => 'date'
+        'type' => 'date',
     ];
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -84,7 +83,6 @@ class AppElasticsearchReindexCommand extends Command
             ]);
             $output->writeln('Deleted index.');
         } catch (Missing404Exception $e) {
-
         }
 
         $client->indices()->create([
@@ -129,9 +127,9 @@ class AppElasticsearchReindexCommand extends Command
             'type' => $typeName,
             'body' => [
                 SearchIndexUpdater::TYPE => [
-                    'properties' => $mappings
-                ]
-            ]
+                    'properties' => $mappings,
+                ],
+            ],
         ]);
         $output->writeln('Created mappings');
         $output->writeln('Reindexing documents');

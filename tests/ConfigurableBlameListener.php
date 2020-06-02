@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests;
 
 use Gedmo\Blameable\BlameableListener;

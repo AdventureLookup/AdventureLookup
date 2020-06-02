@@ -2,7 +2,6 @@
 
 namespace AppBundle\Service;
 
-
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\RelatedEntityInterface;
 use AppBundle\Field\FieldProvider;
@@ -29,13 +28,10 @@ class AdventureSerializer
 
     /**
      * Converts an adventure entity into an indexable array.
-     *
-     * @param Adventure $adventure
-     * @return array
      */
     public function toElasticDocument(Adventure $adventure): array
     {
-        $doc= [];
+        $doc = [];
         $doc['slug'] = $adventure->getSlug();
         $doc['createdAt'] = $adventure->getCreatedAt()->format('c');
         $doc['positiveReviews'] = $adventure->getNumberOfThumbsUp();
@@ -48,26 +44,29 @@ class AdventureSerializer
             );
             if ($value instanceof RelatedEntityInterface) {
                 $value = $this->relatedEntityToName($value);
-            } else if ($value instanceof Collection) {
+            } elseif ($value instanceof Collection) {
                 $value = $this->relatedEntitiesToNames($value);
             }
 
             $doc[$field->getName()] = $value;
         }
+
         return $doc;
     }
 
     /**
      * @param RelatedEntityInterface $entity
-     * @return null|string
+     *
+     * @return string|null
      */
     private function relatedEntityToName(RelatedEntityInterface $entity = null)
     {
-        return $entity === null ? null : $entity->getName();
+        return null === $entity ? null : $entity->getName();
     }
 
     /**
      * @param Collection|RelatedEntityInterface[] $relatedEntities
+     *
      * @return string[]
      */
     private function relatedEntitiesToNames(Collection $relatedEntities): array

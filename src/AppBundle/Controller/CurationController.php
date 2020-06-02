@@ -40,7 +40,6 @@ class CurationController extends Controller
      * @Route("/adventures/edit", name="curation_bulk_edit_adventures")
      * @Method("GET")
      *
-     * @param BulkEditFormProvider $formProvider
      * @return Response
      */
     public function bulkEditAdventuresAction(BulkEditFormProvider $formProvider)
@@ -54,9 +53,6 @@ class CurationController extends Controller
      * @Route("/adventures/edit", name="curation_do_bulk_edit_adventures")
      * @Method("POST")
      *
-     * @param BulkEditFormProvider $formProvider
-     * @param BulkEditFormHandler $formHandler
-     * @param Request $request
      * @return Response
      */
     public function doBulkEditAdventuresAction(BulkEditFormProvider $formProvider, BulkEditFormHandler $formHandler, Request $request)
@@ -78,9 +74,6 @@ class CurationController extends Controller
      * @Route("/adventures/change-requests", name="curation_adventures_with_change_requests")
      * @Method("GET")
      *
-     * @param EntityManagerInterface $em
-     * @param PaginatorInterface $paginator
-     * @param Request $request
      * @return Response
      */
     public function adventuresWithChangeRequestsAction(EntityManagerInterface $em, PaginatorInterface $paginator, Request $request)
@@ -103,9 +96,6 @@ class CurationController extends Controller
      * @Route("/change-requests", name="curation_pending_change_requests")
      * @Method("GET")
      *
-     * @param EntityManagerInterface $em
-     * @param PaginatorInterface $paginator
-     * @param Request $request
      * @return Response
      */
     public function pendingChangeRequestsAction(EntityManagerInterface $em, PaginatorInterface $paginator, Request $request)
@@ -128,8 +118,6 @@ class CurationController extends Controller
      * @Route("/change-requests", name="curation_bulk_resolve_change_requests")
      * @Method("POST")
      *
-     * @param Request $request
-     * @param EntityManagerInterface $em
      * @return RedirectResponse
      */
     public function bulkResolveChangeRequestsAction(Request $request, EntityManagerInterface $em)
