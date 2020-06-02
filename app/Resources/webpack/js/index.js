@@ -10,7 +10,6 @@ import "./adventures";
 import "./adventure";
 import "./reviews";
 import "./adventure_list";
-import "./paginated_list_group";
 import "./adventures_filter";
 
 window.cookieconsent.initialise({
