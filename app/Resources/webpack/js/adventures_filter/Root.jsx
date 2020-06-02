@@ -35,33 +35,33 @@ export function Root({
     };
 
     addParam("q", query);
-    fields.forEach((field) => {
-      const filter = filterValues[field.name];
-      switch (field.type) {
-        case "integer":
-          addParam(`${field.name}-min`, filter.v.min);
-          addParam(`${field.name}-max`, filter.v.max);
-          break;
-        case "string": {
-          if (filter.v.length > 0) {
-            addParam(
-              field.name,
-              filter.v.map((value) => value.replace(/~/g, "~~")).join("~")
-            );
+    fields
+      .filter((field) => field.availableAsFilter)
+      .forEach((field) => {
+        const filter = filterValues[field.name];
+        switch (field.type) {
+          case "integer":
+            addParam(`${field.name}-min`, filter.v.min);
+            addParam(`${field.name}-max`, filter.v.max);
+            break;
+          case "string": {
+            if (filter.v.length > 0) {
+              addParam(
+                field.name,
+                filter.v.map((value) => value.replace(/~/g, "~~")).join("~")
+              );
+            }
+            break;
           }
-          break;
+          case "boolean":
+            addParam(field.name, filter.v);
+            break;
+          case "text":
+          case "url":
+          default:
+            throw new Error(`Unknown field type ${field.type}`);
         }
-        case "boolean":
-          addParam(field.name, filter.v);
-          break;
-        case "text":
-        case "url":
-          // Not supported
-          break;
-        default:
-          throw new Error(`Unknown field type ${field.type}`);
-      }
-    });
+      });
     addParam("sortBy", sortBy);
     addParam("seed", seed);
 

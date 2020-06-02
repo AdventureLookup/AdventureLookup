@@ -63,7 +63,7 @@ class AdventureSearch
         $page = (int) $request->get('page', 1);
 
         $filters = [];
-        foreach ($this->fieldProvider->getFields() as $field) {
+        foreach ($this->fieldProvider->getFieldsAvailableAsFilter() as $field) {
             switch ($field->getType()) {
                 case 'integer':
                     $valueMin = $request->get($field->getName().'-min', '');

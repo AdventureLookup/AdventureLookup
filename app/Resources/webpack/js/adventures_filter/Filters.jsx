@@ -1,5 +1,5 @@
 import * as React from "react";
-import { isFilterValueEmpty, visibleFieldNames } from "./field-util";
+import { isFilterValueEmpty } from "./field-util";
 
 export const Filters = React.memo(function Filters({
   fields,
@@ -14,9 +14,7 @@ export const Filters = React.memo(function Filters({
   return (
     <>
       {fields
-        .filter((field) =>
-          ["integer", "string", "boolean"].includes(field.type)
-        )
+        .filter((field) => field.availableAsFilter)
         .map((field, i) => {
           // We can useCallback even though we are inside a loop, because
           // fields is a constant. This prevents all filters from
@@ -38,11 +36,9 @@ export const Filters = React.memo(function Filters({
               setFilter={setFilter}
               fieldValues={fieldStats[`vals_${field.name}`]}
               visibility={
-                !visibleFieldNames.includes(field.name)
-                  ? "NEVER"
-                  : i < showMoreAfter ||
-                    showMoreFilters ||
-                    !isFilterValueEmpty(field, filterValues[field.name].v)
+                i < showMoreAfter ||
+                showMoreFilters ||
+                !isFilterValueEmpty(field, filterValues[field.name].v)
                   ? "YES"
                   : "SHOW_MORE"
               }
@@ -75,16 +71,6 @@ const FieldFilter = React.memo(function FieldFilter({
 
   const [isOpen, setOpen] = React.useState(filterSet);
   const [isDirty, setIsDirty] = React.useState(false);
-
-  if (visibility === "NEVER") {
-    return (
-      <input
-        type="hidden"
-        name={`f[${field.name}][v]`}
-        value={filter.v ?? ""}
-      />
-    );
-  }
 
   const classes = [];
   if (visibility !== "YES") {

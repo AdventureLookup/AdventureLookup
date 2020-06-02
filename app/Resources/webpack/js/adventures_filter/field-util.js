@@ -1,36 +1,13 @@
-export const visibleFieldNames = [
-  "publisher",
-  "setting",
-  "edition",
-  "environments",
-  "items",
-  "bossMonsters",
-  "commonMonsters",
-  "numPages",
-  "minStartingLevel",
-  "maxStartingLevel",
-  "startingLevelRange",
-  "soloable",
-  "pregeneratedCharacters",
-  "handouts",
-  "tacticalMaps",
-  "partOf",
-  "foundIn",
-  "year",
-];
-
 export function isFilterValueEmpty(field, value) {
   switch (field.type) {
-    case "text":
-    case "url":
-      // Not supported
-      return true;
     case "string":
       return value.length === 0;
     case "boolean":
       return value === "";
     case "integer":
       return value.min === "" && value.max === "";
+    case "text":
+    case "url":
     default:
       throw new Error(`Unsupported field type ${field.type}.`);
   }
@@ -55,7 +32,7 @@ export function getEmptyFilter(field) {
       };
     case "text":
     case "url":
-      // Not supported
+    default:
       throw new Error(`Unsupported field type ${field.type}.`);
   }
 }
@@ -101,7 +78,7 @@ export function getTagValuesFromFilter(field, filter) {
       return tags;
     case "text":
     case "url":
-      // Not supported
+    default:
       throw new Error(`Unsupported field type ${field.type}.`);
   }
 }
