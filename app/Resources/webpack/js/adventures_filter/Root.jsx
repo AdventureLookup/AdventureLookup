@@ -13,13 +13,12 @@ export function Root({
   initialSeed,
   fieldStats,
 }) {
-  const [showMoreFilters, setShowMoreFilters] = React.useState(false);
   const [query, setQuery] = React.useState(initialQuery);
   const [sortBy, setSortBy] = React.useState(initialSortBy);
   const [seed, setSeed] = React.useState(initialSeed);
   const [filterValues, setFilterValues] = React.useState(initialFilterValues);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const onSubmit = () => setIsSubmitting(true);
+  const onSubmit = React.useCallback(() => setIsSubmitting(true), []);
 
   const doSubmit = () => {
     let newUrl = `${url}`;
@@ -91,19 +90,11 @@ export function Root({
         </a>
         <Filters
           fields={fields}
-          showMoreFilters={showMoreFilters}
           filterValues={filterValues}
           setFilterValues={setFilterValues}
           fieldStats={fieldStats}
           onSubmit={onSubmit}
         />
-        {!showMoreFilters && (
-          <div
-            id="filter-more"
-            title="show more filters"
-            onClick={() => setShowMoreFilters(true)}
-          ></div>
-        )}
       </div>
       {createPortal(
         <>
@@ -124,7 +115,6 @@ export function Root({
             fields={fields}
             onSubmit={onSubmit}
           />
-          {JSON.stringify({ ...filterValues, query, sortBy, seed })}
         </>,
         document.getElementById("search-results-header-react-root")
       )}

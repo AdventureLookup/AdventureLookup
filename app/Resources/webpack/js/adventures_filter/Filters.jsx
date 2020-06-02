@@ -1,78 +1,68 @@
 import * as React from "react";
-
-const visibleFieldNames = [
-  "publisher",
-  "setting",
-  "edition",
-  "environments",
-  "items",
-  "bossMonsters",
-  "commonMonsters",
-  "numPages",
-  "minStartingLevel",
-  "maxStartingLevel",
-  "startingLevelRange",
-  "soloable",
-  "pregeneratedCharacters",
-  "handouts",
-  "tacticalMaps",
-  "partOf",
-  "foundIn",
-  "year",
-];
-
-function isFilterValueEmpty(field, value) {
-  switch (field.type) {
-    case "text":
-    case "url":
-      // Not supported
-      return true;
-    case "string":
-      return value.length === 0;
-    case "boolean":
-      return value === "";
-    case "integer":
-      return value.min === "" && value.max === "";
-    default:
-      throw new Error(`Unsupported field type ${field.type}.`);
-  }
-}
+import { isFilterValueEmpty, visibleFieldNames } from "./field-util";
 
 export const Filters = React.memo(function Filters({
   fields,
-  showMoreFilters,
   filterValues,
   setFilterValues,
   fieldStats,
   onSubmit,
 }) {
+  const [showMoreFilters, setShowMoreFilters] = React.useState(false);
   const showMoreAfter = 13;
-  return fields
-    .filter((field) => ["integer", "string", "boolean"].includes(field.type))
-    .map((field, i) => (
-      <FieldFilter
-        key={field.name}
-        field={field}
-        filter={filterValues[field.name]}
-        setFilter={(value) =>
-          setFilterValues({ ...filterValues, [field.name]: value })
-        }
-        fieldValues={fieldStats[`vals_${field.name}`]}
-        visibility={
-          !visibleFieldNames.includes(field.name)
-            ? "NEVER"
-            : i < showMoreAfter ||
-              showMoreFilters ||
-              !isFilterValueEmpty(field, filterValues[field.name].v)
-            ? "YES"
-            : "SHOW_MORE"
-        }
-        onSubmit={onSubmit}
-      />
-    ));
+
+  return (
+    <>
+      {fields
+        .filter((field) =>
+          ["integer", "string", "boolean"].includes(field.type)
+        )
+        .map((field, i) => {
+          // We can useCallback even though we are inside a loop, because
+          // fields is a constant. This prevents all filters from
+          // re-rendering when a single filter changes.
+          const setFilter = React.useCallback(
+            (value) => {
+              setFilterValues((filterValues) => ({
+                ...filterValues,
+                [field.name]: value,
+              }));
+            },
+            [field]
+          );
+          return (
+            <FieldFilter
+              key={field.name}
+              field={field}
+              filter={filterValues[field.name]}
+              setFilter={setFilter}
+              fieldValues={fieldStats[`vals_${field.name}`]}
+              visibility={
+                !visibleFieldNames.includes(field.name)
+                  ? "NEVER"
+                  : i < showMoreAfter ||
+                    showMoreFilters ||
+                    !isFilterValueEmpty(field, filterValues[field.name].v)
+                  ? "YES"
+                  : "SHOW_MORE"
+              }
+              onSubmit={onSubmit}
+            />
+          );
+        })}
+
+      {!showMoreFilters && (
+        <div
+          id="filter-more"
+          title="show more filters"
+          onClick={() => setShowMoreFilters(true)}
+        ></div>
+      )}
+    </>
+  );
 });
 
-function FieldFilter({
+const FieldFilter = React.memo(function FieldFilter({
   field,
   visibility,
   filter,
@@ -156,7 +146,7 @@ function FieldFilter({
       </div>
     </div>
   );
-}
+});
 
 function filterBuckets(bucket, searchString, selectedValues = []) {
   const stringToSearch = (bucket.key || "").toLowerCase();
