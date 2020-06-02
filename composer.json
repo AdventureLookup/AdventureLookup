@@ -22,6 +22,7 @@
     },
     "require": {
         "php": "7.4.x",
+        "cweagans/composer-patches": "^1.6",
         "data-dog/audit-bundle": "^v0.1.5",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/doctrine-cache-bundle": "^1.2",
@@ -89,6 +90,12 @@
         "incenteev-parameters": {
             "file": "app/config/parameters.yml"
         },
-        "branch-alias": null
+        "branch-alias": null,
+        "patches": {
+            "easycorp/easyadmin-bundle": {
+                "Fix PHP 7.4 compatibility": "scripts/easyadmin.patch"
+            }
+        },
+        "composer-exit-on-patch-failure": true
     }
 }
