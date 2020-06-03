@@ -16,8 +16,12 @@
     padding: 0 $adl-card-padding-side;
   }
 
-  & > .alert {
+  .alert {
     border-radius: 0;
+    border-left: none;
+    border-right: none;
+    padding-left: $adl-card-padding-side;
+    padding-right: $adl-card-padding-side;
   }
 }
 

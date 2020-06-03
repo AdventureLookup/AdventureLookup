@@ -10,6 +10,7 @@ $thumbnail-height: 100px;
 
 #adventure-container {
   @extend .content-container;
+  padding-bottom: 0 !important;
 
   .thumbnail-container {
     position: absolute;
@@ -110,7 +111,7 @@ $thumbnail-height: 100px;
         font-size: 2rem;
         padding: 1rem 1.8rem;
 
-        &:before {   
+        &:before {
           content: "\f106";
         }
     }
@@ -191,13 +192,13 @@ $thumbnail-height: 100px;
     border-top: 1px solid $adl-grey-lightest;
     padding: $adl-card-padding-side;
   }
-  
+
   .btn {
     width: 35%;
     padding: 8px 10px;
     border-radius: 0;
     font: 1.2rem 'Roboto Condensed';
-    text-transform: uppercase; 
+    text-transform: uppercase;
     margin: 0 1.8rem;
   }
 }
