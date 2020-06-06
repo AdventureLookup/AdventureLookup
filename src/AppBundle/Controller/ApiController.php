@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\AdventureDocument;
+use AppBundle\Field\FieldProvider;
 use AppBundle\Security\AdventureVoter;
 use AppBundle\Service\AdventureSearch;
 use AppBundle\Service\Serializer;
@@ -58,8 +59,12 @@ class ApiController extends Controller
      *
      * @return Response
      */
-    public function docsAction()
+    public function docsAction(FieldProvider $fieldProvider)
     {
-        return $this->render('api/docs.html.twig');
+        $fields = $fieldProvider->getFields();
+
+        return $this->render('api/docs.html.twig', [
+            'fields' => $fields,
+        ]);
     }
 }

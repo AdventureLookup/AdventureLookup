@@ -28,6 +28,13 @@ class FieldProviderTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    public function testGetFieldsAvailbleAsFilter()
+    {
+        $fields = $this->fieldProvider->getFieldsAvailableAsFilter();
+        $this->assertInstanceOf(Collection::class, $fields);
+        $this->assertCount(19, $fields);
+    }
+
     public function testGetInvalidField()
     {
         $this->expectException(FieldDoesNotExistException::class);

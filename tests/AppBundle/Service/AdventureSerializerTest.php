@@ -64,11 +64,11 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
     public function testSerializeSimpleFields()
     {
         $this->fieldProvider->method('getFields')->willReturn(new ArrayCollection([
-            new Field('title', 'string', false, false, 'title'),
-            new Field('link', 'url', false, false, 'link'),
-            new Field('foundIn', 'url', false, false, 'foundIn'),
-            new Field('minStartingLevel', 'integer', false, false, 'minStartingLevel'),
-            new Field('tacticalMaps', 'boolean', false, false, 'tacticalMaps'),
+            new Field('title', 'string', false, false, false, 'title'),
+            new Field('link', 'url', false, false, false, 'link'),
+            new Field('foundIn', 'url', false, false, true, 'foundIn'),
+            new Field('minStartingLevel', 'integer', false, false, true, 'minStartingLevel'),
+            new Field('tacticalMaps', 'boolean', false, false, true, 'tacticalMaps'),
         ]));
 
         $adventure = $this->createMock(Adventure::class);
@@ -98,10 +98,10 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
     public function testSerializeRelatedEntities()
     {
         $this->fieldProvider->method('getFields')->willReturn(new ArrayCollection([
-            new Field('title', 'string', false, false, 'title'),
-            new Field('authors', 'string', true, false, 'authors', null, 1, Author::class),
-            new Field('publisher', 'string', false, false, 'publisher', null, 1, Publisher::class),
-            new Field('edition', 'string', false, false, 'edition', null, 1, Edition::class),
+            new Field('title', 'string', false, false, false, 'title'),
+            new Field('authors', 'string', true, false, true, 'authors', null, 1, Author::class),
+            new Field('publisher', 'string', false, false, true, 'publisher', null, 1, Publisher::class),
+            new Field('edition', 'string', false, false, true, 'edition', null, 1, Edition::class),
         ]));
 
         $author1 = new Author();
