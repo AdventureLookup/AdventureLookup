@@ -15,7 +15,7 @@ class AdventureControllerTest extends WebTestCase
         $this->loadFixtures([AdventureData::class]);
 
         $session = $this->makeSession();
-        $session->visit('/adventures/?filters=not-an-array');
+        $session->visit('/adventures?filters=not-an-array');
         $this->assertTrue($session->getPage()->hasContent('A community for lazy dungeon masters'));
     }
 
@@ -28,12 +28,12 @@ class AdventureControllerTest extends WebTestCase
         $session = $this->makeSession(true);
 
         // Make sure adventure is part of the index
-        $session->visit('/adventures/');
+        $session->visit('/adventures');
         $this->assertTrue($session->getPage()->hasContent($adventure->getTitle()));
 
         $session->visit("/adventures/{$adventure->getSlug()}");
         $session->getPage()->findButton('Delete')->click();
-        $this->assertPath($session, '/adventures/');
+        $this->assertPath($session, '/adventures');
 
         // Verify index still working
         $this->assertWorkingIndex($session);
@@ -50,7 +50,7 @@ class AdventureControllerTest extends WebTestCase
         $session = $this->makeSession(false);
 
         // Make sure non authenticated user is redirected to login when clicking new adventure button
-        $session->visit('/adventures/');
+        $session->visit('/adventures');
         $session->getPage()->findLink('Add a new adventure')->click();
 
         $this->assertPath($session, self::LOGIN_URL);
