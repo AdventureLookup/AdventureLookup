@@ -78,6 +78,49 @@ $thumbnail-height: 100px;
   }
 }
 
+#change-requests-container {
+  @extend .content-container;
+
+  padding-bottom: 0!important;
+
+  #change-request-content.collapse {
+      padding-bottom: 0;
+
+      &.show {
+          padding-bottom: 15px;
+      }
+  }
+
+  .no-requests {
+    padding: $adl-card-padding;
+    border-top: 1px solid $adl-grey-lightest;
+  }
+
+  [data-toggle="collapse"] {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor:pointer;
+
+    &:hover {
+        background-color: darken(white, 2.5%);
+    }
+
+    & .fa {
+        font-size: 2rem;
+        padding: 1rem 1.8rem;
+
+        &:before {   
+          content: "\f106";
+        }
+    }
+
+    &.collapsed .fa:before {
+      content: "\f107";
+    }
+  }
+}
+
 #review-container {
   @extend .content-container;
 

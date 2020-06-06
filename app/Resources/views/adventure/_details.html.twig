@@ -2,11 +2,15 @@
     {% apply spaceless %}
         {% if isInteger %}
             {% set path = path('adventure_index', {
-                ('f[' ~ fieldName ~ '][v][min]'): value,
-                ('f[' ~ fieldName ~ '][v][max]'): value,
+                (fieldName ~ '-min'): value.min,
+                (fieldName ~ '-max'): value.max,
+                seed: 'now'|date('U') * 1000
             }) %}
         {% else %}
-            {% set path = path('adventure_index', {('f[' ~ fieldName ~ '][v]'): value}) %}
+            {% set path = path('adventure_index', {
+                (fieldName): value|replace({'~': '~~'}),
+                seed: 'now'|date('U') * 1000
+            }) %}
         {% endif %}
         <a href="{{ path }}" title="Search for similar adventures">{{ content ?: value }}</a>
     {% endapply %}
@@ -34,8 +38,9 @@
                     {{ macros.search('minStartingLevel', adventure.minStartingLevel, format_level(adventure)) }}
                 {% else %}
                     <a href="{{ path('adventure_index', {
-                        ('f[minStartingLevel][v][min]'): adventure.minStartingLevel,
-                        ('f[maxStartingLevel][v][max]'): adventure.maxStartingLevel
+                        ('minStartingLevel-min'): adventure.minStartingLevel,
+                        ('maxStartingLevel-max'): adventure.maxStartingLevel,
+                        seed: 'now'|date('U') * 1000
                     }) }}">{{ format_level(adventure) }}</a>
                 {% endif %}
             {% elseif adventure.startingLevelRange %}
@@ -46,10 +51,10 @@
         </div>
         <div class="tag tag-length">
             {% if adventure.numPages %}
-                <a href="{{ path('adventure_index', {
-                    ('f[numPages][v][min]'): (adventure.numPages * 0.85)|round,
-                    ('f[numPages][v][max]'): (adventure.numPages * 1.15)|round
-                }) }}">{{ adventure.numPages }} pages</a>
+                {{ macros.search('numPages', {
+                    min: (adventure.numPages * 0.85)|round,
+                    max: (adventure.numPages * 1.15)|round
+                 }, adventure.numPages ~ ' pages', true) }}
             {% else %}
                 ? pages
             {% endif %}
@@ -84,7 +89,7 @@
             <div class="col-4">
                 <div class="label">Publication Year</div>
                 {% if adventure.year %}
-                    {{ macros.search('year', adventure.year, null, true) }}
+                    {{ macros.search('year', {min: adventure.year, max: adventure.year}, adventure.year, true) }}
                 {% else %}
                     Unknown
                 {% endif %}
@@ -183,9 +188,5 @@
                 </ul>
             </div>
         </div>
-    </div>
-
-    <div class="m-3" id="change-requests">
-        {{ render(controller('AppBundle:ChangeRequest:show', {adventure: adventure})) }}
     </div>
 </div>

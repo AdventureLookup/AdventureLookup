@@ -96,6 +96,13 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-xs-12 order-last col-lg-9 order-lg-1 offset-lg-1 mb-5" id="change-requests">
+                <div id="change-requests-container" class="mt-0">
+                    {{ render(controller('AppBundle:ChangeRequest:show', {adventure: adventure})) }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-xs-12 order-last col-md-9 order-md-1 offset-lg-1">
                 {% include 'adventure/_reviews.html.twig' %}
             </div>
