@@ -41,16 +41,26 @@ export function Root({
         const filter = filterValues[field.name];
         switch (field.type) {
           case "integer":
-            addParam(`${field.name}-min`, filter.v.min);
-            addParam(`${field.name}-max`, filter.v.max);
+            const args = [];
+            if (filter.v.min !== "") {
+              args.push(`≥${filter.v.min}`);
+            }
+            if (filter.v.max !== "") {
+              args.push(`≤${filter.v.max}`);
+            }
+            if (filter.includeUnknown === true) {
+              args.push("?");
+            }
+            addParam(field.name, args.join("~"));
             break;
           case "string": {
-            if (filter.v.length > 0) {
-              addParam(
-                field.name,
-                filter.v.map((value) => value.replace(/~/g, "~~")).join("~")
-              );
+            const args = filter.v.map((value) =>
+              value.replace(/~/g, "~~").replace(/\?/g, "??")
+            );
+            if (filter.includeUnknown) {
+              args.push("?");
             }
+            addParam(field.name, args.join("~"));
             break;
           }
           case "boolean":

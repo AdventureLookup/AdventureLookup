@@ -24,7 +24,10 @@ export const Filters = React.memo(function Filters({
             (value) => {
               setFilterValues((filterValues) => ({
                 ...filterValues,
-                [field.name]: value,
+                [field.name]:
+                  typeof value === "function"
+                    ? value(filterValues[field.name])
+                    : value,
               }));
             },
             [field]
@@ -40,7 +43,7 @@ export const Filters = React.memo(function Filters({
               visibility={
                 i < showMoreAfter ||
                 showMoreFilters ||
-                !isFilterValueEmpty(field, initialFilterValues[field.name].v)
+                !isFilterValueEmpty(field, initialFilterValues[field.name])
                   ? "YES"
                   : "SHOW_MORE"
               }
@@ -70,7 +73,7 @@ const FieldFilter = React.memo(function FieldFilter({
   onSubmit,
 }) {
   const alwaysOpen = field.type === "boolean" || field.type === "integer";
-  const filterSet = !isFilterValueEmpty(field, filter.v);
+  const filterSet = !isFilterValueEmpty(field, filter);
 
   const [isOpen, setOpen] = React.useState(filterSet);
   const [isDirty, setIsDirty] = React.useState(false);
@@ -104,6 +107,7 @@ const FieldFilter = React.memo(function FieldFilter({
         {field.type === "string" && (
           <StringOptions
             field={field}
+            initialFilter={initialFilter}
             filter={filter}
             setFilter={setFilter}
             fieldValues={fieldValues}
@@ -123,8 +127,10 @@ const FieldFilter = React.memo(function FieldFilter({
         {field.type === "integer" && (
           <IntegerOptions
             field={field}
+            initialFilter={initialFilter}
             filter={filter}
             setFilter={setFilter}
+            fieldValues={fieldValues}
             onSubmit={onSubmit}
             onIsDirty={setIsDirty}
           />
@@ -146,7 +152,14 @@ function filterBuckets(bucket, searchString, selectedValues = []) {
   return match || alreadySelected;
 }
 
-function StringOptions({ field, fieldValues, filter, setFilter, onIsDirty }) {
+function StringOptions({
+  field,
+  fieldValues,
+  initialFilter,
+  filter,
+  setFilter,
+  onIsDirty,
+}) {
   const values = filter.v;
 
   // Whether to show the full list of options or only first few.
@@ -155,63 +168,89 @@ function StringOptions({ field, fieldValues, filter, setFilter, onIsDirty }) {
   const [showAll, setShowAll] = React.useState(false);
 
   // ElasticSearch statistics on which options are available.
-  const buckets = fieldValues["buckets"];
+  const buckets = fieldValues.buckets;
 
   const bucketsToShow = filterString
     ? buckets.filter((b) => filterBuckets(b, filterString, values))
     : buckets;
 
+  const showUnknownOption =
+    (initialFilter.includeUnknown || fieldValues.countUnknown > 0) &&
+    filterString === "";
+  const noOptionsAvailable =
+    buckets.length === 0 && !showUnknownOption && values.length === 0;
+
   const valuesUsed = new Set();
   return (
     <>
       <div className="string-options">
-        <div className="option">
-          <input
-            className="filter-searchbar"
-            type="text"
-            placeholder="Find Option"
-            onChange={(e) => setFilterString(e.target.value)}
-            value={filterString}
-            title="Find Option"
+        {!noOptionsAvailable && (
+          <div className="option">
+            <input
+              className="filter-searchbar"
+              type="text"
+              placeholder="Find Option"
+              onChange={(e) => setFilterString(e.target.value)}
+              value={filterString}
+              title="Find Option"
+            />
+          </div>
+        )}
+        {showUnknownOption && (
+          <StringCheckbox
+            field={field}
+            label={<em>{field.multiple ? "none" : "unknown"}</em>}
+            checked={filter.includeUnknown}
+            count={fieldValues.countUnknown}
+            hidden={false}
+            onChange={(selected) => {
+              setFilter((filter) => ({
+                ...filter,
+                includeUnknown: selected,
+              }));
+              onIsDirty(true);
+            }}
           />
-        </div>
+        )}
         {bucketsToShow.map((bucket, i) => {
           valuesUsed.add(bucket.key);
           return (
             <StringCheckbox
               key={bucket.key}
               field={field}
-              value={bucket.key}
+              label={bucket.key}
               checked={values.includes(bucket.key)}
               count={bucket.doc_count}
               hidden={!showAll && i >= showMoreAfter}
               onChange={(selected) => {
-                setFilter({
+                setFilter((filter) => ({
+                  ...filter,
                   v: selected
-                    ? [...values, bucket.key]
-                    : values.filter((each) => each !== bucket.key),
-                });
+                    ? [...filter.v, bucket.key]
+                    : filter.v.filter((each) => each !== bucket.key),
+                }));
                 onIsDirty(true);
               }}
             />
           );
         })}
         {values
-          .filter((value) => value !== "" && !valuesUsed.has(value))
+          .filter((value) => !valuesUsed.has(value))
           .map((value) => (
             <StringCheckbox
               key={value}
               field={field}
-              value={value}
-              checked={values.includes(value)}
+              label={value}
+              checked={true}
               count={0}
               hidden={false}
               onChange={(selected) => {
-                setFilter({
+                setFilter((filter) => ({
+                  ...filter,
                   v: selected
-                    ? [...values, value]
-                    : values.filter((each) => each !== value),
-                });
+                    ? [...filter.v, value]
+                    : filter.v.filter((each) => each !== value),
+                }));
                 onIsDirty(true);
               }}
             />
@@ -239,7 +278,7 @@ function StringOptions({ field, fieldValues, filter, setFilter, onIsDirty }) {
           )}
         </>
       )}
-      {bucketsToShow.length === 0 && (
+      {noOptionsAvailable && (
         <div className="option">
           <em>
             No options available. Remove some search filters to show more
@@ -251,7 +290,7 @@ function StringOptions({ field, fieldValues, filter, setFilter, onIsDirty }) {
   );
 }
 
-function StringCheckbox({ field, value, checked, count, hidden, onChange }) {
+function StringCheckbox({ field, label, checked, count, hidden, onChange }) {
   return (
     <label
       className={`option${hidden ? " d-none" : ""}${
@@ -260,11 +299,10 @@ function StringCheckbox({ field, value, checked, count, hidden, onChange }) {
     >
       <input
         type="checkbox"
-        value={value}
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
       />
-      {value}
+      {label}
       <div className="spacer" />
       <span className="badge-pill badge badge-info">{count}</span>
     </label>
@@ -288,7 +326,7 @@ function BooleanOptions({
   const allCount = initialFilter.v === "" ? fieldValues.countAll : undefined;
 
   return (
-    <div className="option">
+    <div className="option option-boolean">
       <div className="form-check form-check-inline">
         <input
           className="form-check-input"
@@ -359,33 +397,78 @@ function BooleanOptions({
   );
 }
 
-function IntegerOptions({ field, filter, setFilter, onSubmit, onIsDirty }) {
+function IntegerOptions({
+  field,
+  fieldValues,
+  initialFilter,
+  filter,
+  setFilter,
+  onSubmit,
+  onIsDirty,
+}) {
   return (
-    <div className="option range-option">
-      <input
-        type="number"
-        placeholder="min (inc.)"
-        className="form-control form-control-sm"
-        value={filter.v.min}
-        onChange={(e) => {
-          setFilter({ v: { ...filter.v, min: e.target.value } });
-          onIsDirty(true);
-        }}
-        title="min (inc.)"
-        onKeyPress={(key) => key.which === 13 && onSubmit()}
-      />
-      <input
-        type="number"
-        placeholder="max (inc.)"
-        className="form-control form-control-sm"
-        value={filter.v.max}
-        onChange={(e) => {
-          setFilter({ v: { ...filter.v, max: e.target.value } });
-          onIsDirty(true);
-        }}
-        title="max (inc.)"
-        onKeyPress={(key) => key.which === 13 && onSubmit()}
-      />
-    </div>
+    <>
+      <div className="option option-integer">
+        <input
+          type="number"
+          placeholder="min (inc.)"
+          className="form-control form-control-sm"
+          value={filter.v.min}
+          onChange={(e) => {
+            const value = e.target.value;
+            setFilter((filter) => ({
+              ...filter,
+              v: { ...filter.v, min: value },
+            }));
+            onIsDirty(true);
+          }}
+          title="min (inc.)"
+          onKeyPress={(key) => key.which === 13 && onSubmit()}
+        />
+        <input
+          type="number"
+          placeholder="max (inc.)"
+          className="form-control form-control-sm"
+          value={filter.v.max}
+          onChange={(e) => {
+            const value = e.target.value;
+            setFilter((filter) => ({
+              ...filter,
+              v: { ...filter.v, max: value },
+            }));
+            onIsDirty(true);
+          }}
+          title="max (inc.)"
+          onKeyPress={(key) => key.which === 13 && onSubmit()}
+        />
+      </div>
+      {!isFilterValueEmpty(field, filter) && (
+        <label
+          className="option"
+          title="Include adventures where this field is unknown, regardless of the filter set above."
+        >
+          <input
+            type="checkbox"
+            onChange={(e) => {
+              const value = e.target.checked;
+              setFilter((filter) => ({
+                ...filter,
+                includeUnknown: value,
+              }));
+              onIsDirty(true);
+            }}
+            checked={filter.includeUnknown}
+          />
+          Include when unknown
+          <div className="spacer" />
+          {(initialFilter.includeUnknown ||
+            (initialFilter.v.min === "" && initialFilter.v.max === "")) && (
+            <span className="badge-pill badge badge-info">
+              {fieldValues.countUnknown}
+            </span>
+          )}
+        </label>
+      )}
+    </>
   );
 }
