@@ -3,6 +3,7 @@ import { isFilterValueEmpty } from "./field-util";
 
 export const Filters = React.memo(function Filters({
   fields,
+  initialFilterValues,
   filterValues,
   setFilterValues,
   fieldStats,
@@ -38,7 +39,7 @@ export const Filters = React.memo(function Filters({
               visibility={
                 i < showMoreAfter ||
                 showMoreFilters ||
-                !isFilterValueEmpty(field, filterValues[field.name].v)
+                !isFilterValueEmpty(field, initialFilterValues[field.name].v)
                   ? "YES"
                   : "SHOW_MORE"
               }

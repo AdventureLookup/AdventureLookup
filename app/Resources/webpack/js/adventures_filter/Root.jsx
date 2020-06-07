@@ -90,6 +90,7 @@ export function Root({
         </a>
         <Filters
           fields={fields}
+          initialFilterValues={initialFilterValues}
           filterValues={filterValues}
           setFilterValues={setFilterValues}
           fieldStats={fieldStats}
