@@ -21,6 +21,7 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Faker;
+use Faker\Generator;
 
 class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, DependentFixtureInterface
 {
@@ -73,14 +74,14 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
                 ->setTitle($faker->unique->catchPhrase)
                 ->setDescription($faker->realText(2000))
                 ->setNumPages($faker->numberBetween(1, 200))
-                ->setFoundIn($faker->catchPhrase)
-                ->setPartOf($faker->boolean() ? $faker->catchPhrase : null)
+                ->setFoundIn($faker->boolean(20) ? $faker->catchPhrase : null)
+                ->setPartOf($faker->boolean(20) ? $faker->catchPhrase : null)
                 ->setLink($faker->url)
                 ->setThumbnailUrl($faker->picsumUrl(260, 300))
-                ->setSoloable($faker->boolean())
-                ->setPregeneratedCharacters($faker->boolean())
-                ->setTacticalMaps($faker->boolean())
-                ->setHandouts($faker->boolean())
+                ->setSoloable($this->boolOrNull($faker))
+                ->setPregeneratedCharacters($this->boolOrNull($faker))
+                ->setTacticalMaps($this->boolOrNull($faker))
+                ->setHandouts($this->boolOrNull($faker))
                 ->setAuthors(new ArrayCollection($faker->randomElements($authors, $faker->numberBetween(1, 3))))
                 ->setEdition($faker->randomElement($editions))
                 ->setEnvironments(new ArrayCollection($faker->randomElements($environments, $faker->numberBetween(1, 2))))
@@ -145,5 +146,14 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
             $em->persist($adventure);
         }
         $em->flush();
+    }
+
+    private function boolOrNull(Generator $faker)
+    {
+        switch ($faker->numberBetween(-1, 1)) {
+            case 1: return true;
+            case 0: return null;
+            case -1: return false;
+        }
     }
 }

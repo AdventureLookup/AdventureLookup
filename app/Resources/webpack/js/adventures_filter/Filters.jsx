@@ -33,9 +33,10 @@ export const Filters = React.memo(function Filters({
             <FieldFilter
               key={field.name}
               field={field}
+              initialFilter={initialFilterValues[field.name]}
               filter={filterValues[field.name]}
               setFilter={setFilter}
-              fieldValues={fieldStats[`vals_${field.name}`]}
+              fieldValues={fieldStats[field.name]}
               visibility={
                 i < showMoreAfter ||
                 showMoreFilters ||
@@ -62,6 +63,7 @@ export const Filters = React.memo(function Filters({
 const FieldFilter = React.memo(function FieldFilter({
   field,
   visibility,
+  initialFilter,
   filter,
   setFilter,
   fieldValues,
@@ -111,8 +113,10 @@ const FieldFilter = React.memo(function FieldFilter({
         {field.type === "boolean" && (
           <BooleanOptions
             field={field}
+            initialFilter={initialFilter}
             filter={filter}
             setFilter={setFilter}
+            fieldValues={fieldValues}
             onIsDirty={setIsDirty}
           />
         )}
@@ -267,7 +271,22 @@ function StringCheckbox({ field, value, checked, count, hidden, onChange }) {
   );
 }
 
-function BooleanOptions({ field, filter, setFilter, onIsDirty }) {
+function BooleanOptions({
+  field,
+  fieldValues,
+  initialFilter,
+  filter,
+  setFilter,
+  onIsDirty,
+}) {
+  // Only display number of adventures that selected "no"/"yes" if the user
+  // doesn't filter by this field. If the user filters by all adventures that
+  // selected "no", the "yes" bucket is always empty and displaying a 0 for
+  // "yes" could be confusing.
+  const noCount = initialFilter.v === "" ? fieldValues.countNo : undefined;
+  const yesCount = initialFilter.v === "" ? fieldValues.countYes : undefined;
+  const allCount = initialFilter.v === "" ? fieldValues.countAll : undefined;
+
   return (
     <div className="option">
       <div className="form-check form-check-inline">
@@ -286,7 +305,10 @@ function BooleanOptions({ field, filter, setFilter, onIsDirty }) {
           className="form-check-label"
           htmlFor={`sidebar-filter-${field.name}-all`}
         >
-          All
+          All{" "}
+          {allCount !== undefined && (
+            <span className="badge-pill badge badge-info">{allCount}</span>
+          )}
         </label>
       </div>
       <div className="form-check form-check-inline">
@@ -305,7 +327,10 @@ function BooleanOptions({ field, filter, setFilter, onIsDirty }) {
           className="form-check-label"
           htmlFor={`sidebar-filter-${field.name}-yes`}
         >
-          Yes
+          Yes{" "}
+          {yesCount !== undefined && (
+            <span className="badge-pill badge badge-info">{yesCount}</span>
+          )}
         </label>
       </div>
       <div className="form-check form-check-inline">
@@ -324,7 +349,10 @@ function BooleanOptions({ field, filter, setFilter, onIsDirty }) {
           className="form-check-label"
           htmlFor={`sidebar-filter-${field.name}-no`}
         >
-          No
+          No{" "}
+          {noCount !== undefined && (
+            <span className="badge-pill badge badge-info">{noCount}</span>
+          )}
         </label>
       </div>
     </div>

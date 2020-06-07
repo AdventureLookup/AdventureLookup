@@ -272,7 +272,9 @@ class AdventureSearch
         $totalResults = $result['hits']['total'];
         $hasMoreResults = $totalResults > $page * self::ADVENTURES_PER_PAGE;
 
-        return [$adventureDocuments, $totalResults, $hasMoreResults, $result['aggregations']];
+        $stats = $this->formatAggregations($result['aggregations']);
+
+        return [$adventureDocuments, $totalResults, $hasMoreResults, $stats];
     }
 
     public function similarTitles($title): array
@@ -398,31 +400,39 @@ class AdventureSearch
     private function fieldAggregations(): array
     {
         $aggregations = [];
-        $fields = $this->fieldProvider->getFields();
+        $fields = $this->fieldProvider->getFieldsAvailableAsFilter();
         foreach ($fields as $field) {
             $fieldName = $field->getFieldNameForAggregation();
+            $aggregations[$field->getName().'_missing'] = [
+                'missing' => [
+                    'field' => $fieldName,
+                ],
+            ];
             switch ($field->getType()) {
                 case 'integer':
-                    $aggregations['max_'.$field->getName()] = [
+                    $aggregations[$field->getName().'_max'] = [
                         'max' => [
                             'field' => $fieldName,
                         ],
                     ];
-                    $aggregations['min_'.$field->getName()] = [
+                    $aggregations[$field->getName().'_min'] = [
                         'min' => [
                             'field' => $fieldName,
                         ],
                     ];
-                    break;
+                break;
+
+                // We use a Terms Aggregation
+                // https://www.elastic.co/guide/en/elasticsearch/reference/5.5/search-aggregations-bucket-terms-aggregation.html
                 case 'boolean':
-                    $aggregations['vals_'.$field->getName()] = [
+                    $aggregations[$field->getName().'_terms'] = [
                         'terms' => [
                             'field' => $fieldName,
                         ],
                     ];
                     break;
                 case 'string':
-                    $aggregations['vals_'.$field->getName()] = [
+                    $aggregations[$field->getName().'_terms'] = [
                         'terms' => [
                             'field' => $fieldName,
                             // Return up to 1000 different values.
@@ -430,11 +440,57 @@ class AdventureSearch
                         ],
                     ];
                     break;
-                // Other field types are not supported
+                default:
+                    throw new \LogicException('Field '.$field->getName().' has unsupported type for aggregation: '.$field->getType());
             }
         }
 
         return $aggregations;
+    }
+
+    private function formatAggregations(array $aggregations): array
+    {
+        $stats = [];
+        $fields = $this->fieldProvider->getFieldsAvailableAsFilter();
+        foreach ($fields as $field) {
+            switch ($field->getType()) {
+                case 'integer':
+                    $stats[$field->getName()] = [
+                        'min' => (int) $aggregations[$field->getName().'_min']['value'],
+                        'max' => (int) $aggregations[$field->getName().'_max']['value'],
+                        'countUnknown' => $aggregations[$field->getName().'_missing']['doc_count'],
+                    ];
+                break;
+                case 'boolean':
+                    $countUnknown = $aggregations[$field->getName().'_missing']['doc_count'];
+                    $countYes = 0;
+                    $countNo = 0;
+                    foreach ($aggregations[$field->getName().'_terms']['buckets'] as $bucket) {
+                        if (0 === $bucket['key']) {
+                            $countNo = $bucket['doc_count'];
+                        } elseif (1 === $bucket['key']) {
+                            $countYes = $bucket['doc_count'];
+                        }
+                    }
+                    $stats[$field->getName()] = [
+                        'countAll' => $countUnknown + $countNo + $countYes,
+                        'countUnknown' => $countUnknown,
+                        'countNo' => $countNo,
+                        'countYes' => $countYes,
+                    ];
+                break;
+                case 'string':
+                    $stats[$field->getName()] = [
+                        'countUnknown' => $aggregations[$field->getName().'_missing']['doc_count'],
+                        'buckets' => $aggregations[$field->getName().'_terms']['buckets'],
+                    ];
+                break;
+                default:
+                    throw new \LogicException('Field '.$field->getName().' has unsupported type for aggregation: '.$field->getType());
+            }
+        }
+
+        return $stats;
     }
 
     /**
