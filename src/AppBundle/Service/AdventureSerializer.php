@@ -32,6 +32,7 @@ class AdventureSerializer
     public function toElasticDocument(Adventure $adventure): array
     {
         $doc = [];
+        $doc['id'] = $adventure->getId();
         $doc['slug'] = $adventure->getSlug();
         $doc['createdAt'] = $adventure->getCreatedAt()->format('c');
         $doc['positiveReviews'] = $adventure->getNumberOfThumbsUp();

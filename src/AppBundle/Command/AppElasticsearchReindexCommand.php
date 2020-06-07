@@ -86,6 +86,7 @@ class AppElasticsearchReindexCommand extends Command
         $output->writeln('Recreated index.');
 
         $mappings = [
+            'id' => self::FIELD_INTEGER,
             'authors' => self::FIELD_STRING,
             'edition' => self::FIELD_STRING,
             'environments' => self::FIELD_STRING,

@@ -335,25 +335,44 @@ class AdventureSearch
         return [$adventureDocuments, $totalResults, $hasMoreResults, $stats];
     }
 
-    public function similarTitles($title): array
+    public function similarTitles(string $title, int $ignoreId): array
     {
         if ('' === $title) {
             return [];
         }
 
-        $result = $this->client->search([
-            'index' => $this->indexName,
-            'body' => [
-                'query' => [
-                    'match' => [
-                        'title' => [
-                            'query' => $title,
-                            'operator' => 'and',
-                            'fuzziness' => 'AUTO',
+        $query = [
+            'match' => [
+                'title' => [
+                    'query' => $title,
+                    'operator' => 'and',
+                    'fuzziness' => 'AUTO',
+                ],
+            ],
+        ];
+        if ($ignoreId >= 0) {
+            $query = [
+                'bool' => [
+                    'must' => [
+                        $query,
+                    ],
+                    'must_not' => [
+                        'term' => [
+                            'id' => [
+                                'value' => $ignoreId,
+                            ],
                         ],
                     ],
                 ],
+            ];
+        }
+
+        $result = $this->client->search([
+            'index' => $this->indexName,
+            'body' => [
+                'query' => $query,
                 '_source' => [
+                    'id',
                     'title',
                     'slug',
                 ],
