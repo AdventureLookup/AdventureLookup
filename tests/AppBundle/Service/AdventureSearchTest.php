@@ -34,7 +34,7 @@ class AdventureSearchTest extends TestCase
      */
     private $timeProvider;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->fieldProvider = new FieldProvider();
 

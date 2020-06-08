@@ -18,7 +18,7 @@ class AdventureTest extends TestCase
      */
     private $subject;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->subject = new Adventure();
 

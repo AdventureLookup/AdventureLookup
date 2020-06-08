@@ -117,9 +117,9 @@ class AdventureRepository extends EntityRepository
             ->where($qb->expr()->eq('r.id', ':oldValue'))
             ->setParameter('oldValue', $oldValue);
         if ('commonMonsters' === $fieldName) {
-            $qb->andWhere('r.isUnique = 0');
+            $qb->andWhere('r.isUnique = FALSE');
         } elseif ('bossMonsters' === $fieldName) {
-            $qb->andWhere('r.isUnique = 1');
+            $qb->andWhere('r.isUnique = TRUE');
         }
         $adventures = $qb->getQuery()->execute();
         foreach ($adventures as $adventure) {
