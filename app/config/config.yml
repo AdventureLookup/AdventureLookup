@@ -10,7 +10,6 @@ parameters:
     locale: en
     elasticsearch:
         index_name: 'adventure'
-        type_name: 'all'
     container.dumper.inline_class_loader: true
     container.autowiring.strict_mode: true
 
@@ -67,7 +66,7 @@ doctrine:
 
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
-        naming_strategy: doctrine.orm.naming_strategy.underscore
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         auto_mapping: true
         mappings:
             gedmo_translatable:

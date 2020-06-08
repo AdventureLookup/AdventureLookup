@@ -11,7 +11,7 @@ Vagrant.configure("2") do |config|
   config.vm.network "private_network", type: "dhcp"
 
   config.vm.provider "virtualbox" do |vb, override|
-    override.vm.box = "ubuntu/xenial64"
+    override.vm.box = "ubuntu/bionic64"
     vb.memory = "2048"
     vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
   end
@@ -42,6 +42,8 @@ Vagrant.configure("2") do |config|
      set -ev
 
      apt_quiet update
+     # Install software-properties-common for add-apt-repository
+     apt_quiet install software-properties-common
 
      if is_docker; then
         echo Skipping swap creation for docker container
@@ -64,11 +66,12 @@ Vagrant.configure("2") do |config|
      mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS adl"
 
      # PHP
-     apt_quiet install php7.0 php7.0-curl php7.0-fpm php7.0-mysql php7.0-zip php7.0-cli php7.0-xml php7.0-mbstring php7.0-sqlite3 php7.0-intl php-xdebug
+     add-apt-repository -y ppa:ondrej/php
+     apt_quiet install php7.4 php7.4-curl php7.4-fpm php7.4-mysql php7.4-zip php7.4-cli php7.4-xml php7.4-mbstring php7.4-sqlite3 php7.4-intl php7.4-xdebug
 
      # Increase realpath cache size and ttl for better performance
-     sed -i "s/^;realpath_cache_size =$/realpath_cache_size = 4096k/" /etc/php/7.0/cli/php.ini
-     sed -i "s/^;realpath_cache_ttl =$/realpath_cache_ttl = 7200/"    /etc/php/7.0/cli/php.ini
+     sed -i "s/^;realpath_cache_size =$/realpath_cache_size = 4096k/" /etc/php/7.4/cli/php.ini
+     sed -i "s/^;realpath_cache_ttl =$/realpath_cache_ttl = 7200/"    /etc/php/7.4/cli/php.ini
 
      # Utilities
      apt_quiet install htop nano vim unzip curl wget software-properties-common
@@ -113,15 +116,15 @@ Vagrant.configure("2") do |config|
      fi
 
      # Elasticsearch
-     wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.5.3.deb
-     dpkg -i elasticsearch-5.5.3.deb
+     wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.6.2-amd64.deb
+     dpkg -i elasticsearch-7.6.2-amd64.deb
      systemctl enable elasticsearch.service
-     rm elasticsearch-5.5.3.deb
+     rm elasticsearch-7.6.2-amd64.deb
      service elasticsearch start
 
      ### Development Elasticsearch settings:
      # Decrease memory to 256MB
-     sed -i -e 's/2g/256m/g' /etc/elasticsearch/jvm.options
+     sed -i -e 's/1g/256m/g' /etc/elasticsearch/jvm.options
      # Listen on 0.0.0.0
      echo "http.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
   SHELL

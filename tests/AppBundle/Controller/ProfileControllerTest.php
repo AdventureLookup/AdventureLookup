@@ -66,9 +66,9 @@ class ProfileControllerTest extends WebTestCase
             $this->assertNull($linkToAdventure);
         } else {
             if ($numPendingChangeRequests > 0) {
-                $this->assertContains("{$numPendingChangeRequests} pending change request(s)", $linkToAdventure->getText());
+                $this->assertStringContainsString("{$numPendingChangeRequests} pending change request(s)", $linkToAdventure->getText());
             } else {
-                $this->assertNotContains('pending change request(s)', $linkToAdventure->getText());
+                $this->assertStringNotContainsString('pending change request(s)', $linkToAdventure->getText());
             }
             $linkToAdventure->click();
             $this->assertTrue($page->hasContent($adventure->getTitle()));
