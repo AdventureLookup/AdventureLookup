@@ -10,13 +10,11 @@ class AdventureControllerTest extends WebTestCase
 {
     const LOGIN_URL = '/login';
 
-    public function testInvalidFilters()
+    public function testRedirect()
     {
-        $this->loadFixtures([AdventureData::class]);
-
         $session = $this->makeSession();
-        $session->visit('/adventures?filters=not-an-array');
-        $this->assertTrue($session->getPage()->hasContent('A community for lazy dungeon masters'));
+        $session->visit('/adventures/?foo=bar');
+        $this->assertPath($session, '/adventures?foo=bar');
     }
 
     public function testDelete()
