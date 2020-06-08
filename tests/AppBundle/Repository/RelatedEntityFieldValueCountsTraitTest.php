@@ -17,7 +17,7 @@ class RelatedEntityFieldValueCountsTraitTest extends WebTestCase
      */
     private $repository;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

@@ -121,8 +121,9 @@ class AdventureType extends AbstractType
             'Common Monsters',
             'The common monsters featured in the module.',
             function (EntityRepository $er) {
-                return $er->createQueryBuilder('e')
-                    ->where('e.isUnique = 0');
+                $qb = $er->createQueryBuilder('e');
+
+                return $qb->where('e.isUnique = FALSE');
             }
         );
         $this->createAppendableEntityCollection(
@@ -134,8 +135,9 @@ class AdventureType extends AbstractType
             'Boss Monsters',
             'The boss monsters and villains featured in the module.',
             function (EntityRepository $er) {
-                return $er->createQueryBuilder('e')
-                    ->where('e.isUnique = 1');
+                $qb = $er->createQueryBuilder('e');
+
+                return $qb->where('e.isUnique = TRUE');
             }
         );
         $builder
