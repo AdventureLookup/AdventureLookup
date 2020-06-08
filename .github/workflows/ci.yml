@@ -135,10 +135,7 @@ jobs:
           sleep 5
           $PHPUNIT --testsuite browser
 
-      # Deploy to dev.adventurelookup.com
-      # This step should be above the security steps below.
-      # Deploying a new version should not fail if a vendor library
-      # has a security issue.
+      # Deploy
 
       - name: Deploy to dev.adventurelookup.com
         if: github.ref == 'refs/heads/dev' && github.event_name == 'push' && success()
@@ -153,12 +150,33 @@ jobs:
             cd /var/www/dev.adventurelookup.com/html
             bash ./scripts/update.sh origin/dev
 
-      # Security
+  audit:
+    name: Security Audit
+    runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        php-version:
+          - "7.4"
+        node-version:
+          - "12.x"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Use PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: symfony
 
       - name: Check PHP dependencies for security issues
         if: always()
-        run: php bin/console security:check --end-point=http://security.symfony.com/check_lock
-
+        run: symfony security:check
       - name: Check Node.js dependencies for security issues
         if: always()
         run: npm audit
