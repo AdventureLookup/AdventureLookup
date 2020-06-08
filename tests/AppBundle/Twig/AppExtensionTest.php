@@ -15,7 +15,7 @@ class AppExtensionTest extends TestCase
      */
     private $extension;
 
-    public function setUp()
+    public function setUp(): void
     {
         $affiliateMappings = [
             [

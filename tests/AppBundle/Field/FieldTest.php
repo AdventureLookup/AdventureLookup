@@ -3,8 +3,9 @@
 namespace Tests\AppBundle\Field;
 
 use AppBundle\Field\Field;
+use PHPUnit\Framework\TestCase;
 
-class FieldTest extends \PHPUnit_Framework_TestCase
+class FieldTest extends TestCase
 {
     const NAME = 'field name';
     const TYPE = 'field type';

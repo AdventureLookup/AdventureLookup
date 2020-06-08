@@ -10,8 +10,9 @@ use AppBundle\Field\Field;
 use AppBundle\Field\FieldProvider;
 use AppBundle\Service\AdventureSerializer;
 use Doctrine\Common\Collections\ArrayCollection;
+use PHPUnit\Framework\TestCase;
 
-class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
+class AdventureSerializerTest extends TestCase
 {
     const TITLE = 'a title';
     const SLUG = 'a-title';
@@ -36,7 +37,7 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
 
     private $CREATED_AT;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->fieldProvider = $this->createMock(FieldProvider::class);
         $this->serializer = new AdventureSerializer($this->fieldProvider);
