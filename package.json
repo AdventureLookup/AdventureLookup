@@ -5,6 +5,8 @@
     "dev-server-guest": "encore dev-server --hot --host 0.0.0.0 --port 8001",
     "dev-server-host": "encore dev-server --hot --port 8002",
     "dev-server-gitpod": "encore dev-server --hot --port 8002 --public $(gp url 8002) --disable-host-check",
+    "format": "prettier --write app/Resources/**/*.{js,jsx}",
+    "lint": "prettier --check app/Resources/**/*.{js,jsx}",
     "prod": "encore production"
   },
   "dependencies": {
@@ -12,7 +14,7 @@
     "bootstrap": "^4.4.1",
     "cookieconsent": "^3.1.1",
     "font-awesome": "^4.7.0",
-    "jquery": "^3.5.0",
+    "jquery": "^3.5.1",
     "popper.js": "^1.16.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -24,10 +26,22 @@
     "@babel/preset-react": "^7.9.4",
     "@symfony/webpack-encore": "^0.28.2",
     "autoprefixer": "^9.7.4",
+    "husky": "^4.2.5",
     "less": "^3.10.3",
+    "lint-staged": "^10.2.2",
     "node-sass": "^4.13.1",
     "postcss-loader": "^3.0.0",
+    "prettier": "^2.0.5",
     "sass-loader": "^7.3.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "scripts/lint-staged.sh"
+    }
+  },
+  "lint-staged": {
+    "app/Resources/**/*.{js,jsx}": "prettier --write",
+    "{src,tests}/**/*.php": "composer run format --"
   },
   "browserslist": [
     "> 1%",

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests;
 
 use Behat\Mink\Session;
@@ -11,7 +10,7 @@ class NewAdventureTest extends BrowserTestCase
 {
     const TITLE = 'My greatest Adventure';
     const SLUG = 'my-greatest-adventure';
-    const DESCRIPTION = "A description.";
+    const DESCRIPTION = 'A description.';
     const AUTHORS = ['Jonathan Schneider', 'Matt Colville'];
     const ENVIRONMENTS = ['Environment 4', 'Environment 5'];
     const ITEMS = ['Bag of Code', 'Stone of Programming'];
@@ -58,7 +57,7 @@ class NewAdventureTest extends BrowserTestCase
 
         $page = $session->getPage();
 
-        $this->assertPath($session, '/adventures/' . self::SLUG . '');
+        $this->assertPath($session, '/adventures/'.self::SLUG.'');
         $this->assertTrue($page->hasContent(self::TITLE));
 
         $this->assertWorkingIndex($session);
@@ -124,42 +123,42 @@ class NewAdventureTest extends BrowserTestCase
             $page->findButton('Save')->click();
         }
 
-        $this->assertPath($session, '/adventures/' . self::SLUG);
+        $this->assertPath($session, '/adventures/'.self::SLUG);
         $adventureContainer = $page->findById('adventure-container');
-        $this->assertContains(self::TITLE, $adventureContainer->getText());
-        $this->assertContains(self::DESCRIPTION, $adventureContainer->getText());
+        $this->assertStringContainsString(self::TITLE, $adventureContainer->getText());
+        $this->assertStringContainsString(self::DESCRIPTION, $adventureContainer->getText());
 
         foreach (self::AUTHORS as $author) {
-            $this->assertContains($author, $adventureContainer->getText());
+            $this->assertStringContainsString($author, $adventureContainer->getText());
         }
-        $this->assertContains(self::EDITION, $adventureContainer->getText(), '', true);
+        $this->assertStringContainsStringIgnoringCase(self::EDITION, $adventureContainer->getText());
         foreach (self::ENVIRONMENTS as $environment) {
-            $this->assertContains($environment, $adventureContainer->getText());
+            $this->assertStringContainsString($environment, $adventureContainer->getText());
         }
         foreach (self::ITEMS as $item) {
-            $this->assertContains($item, $adventureContainer->getText());
+            $this->assertStringContainsString($item, $adventureContainer->getText());
         }
-        $this->assertContains(self::PUBLISHER, $adventureContainer->getText());
-        $this->assertContains(self::SETTING, $adventureContainer->getText());
+        $this->assertStringContainsString(self::PUBLISHER, $adventureContainer->getText());
+        $this->assertStringContainsString(self::SETTING, $adventureContainer->getText());
         foreach (self::COMMON_MONSTERS as $monster) {
-            $this->assertContains($monster, $adventureContainer->getText());
+            $this->assertStringContainsString($monster, $adventureContainer->getText());
         }
         foreach (self::BOSS_MONSTERS as $monster) {
-            $this->assertContains($monster, $adventureContainer->getText());
+            $this->assertStringContainsString($monster, $adventureContainer->getText());
         }
 
         if ($useStartingLevelRange) {
-            $this->assertContains(self::STARTING_LEVEL_RANGE, $adventureContainer->getText(), '', true);
+            $this->assertStringContainsStringIgnoringCase(self::STARTING_LEVEL_RANGE, $adventureContainer->getText());
         } else {
-            $this->assertContains(self::MIN_STARTING_LEVEL, $adventureContainer->getText());
-            $this->assertContains(self::MAX_STARTING_LEVEL, $adventureContainer->getText());
+            $this->assertStringContainsString(self::MIN_STARTING_LEVEL, $adventureContainer->getText());
+            $this->assertStringContainsString(self::MAX_STARTING_LEVEL, $adventureContainer->getText());
         }
-        $this->assertContains(self::NUM_PAGES, $adventureContainer->getText());
-        $this->assertContains(self::FOUND_IN, $adventureContainer->getText());
-        $this->assertContains(self::YEAR, $adventureContainer->getText());
-        $this->assertContains(self::PART_OF, $adventureContainer->getText());
-        $this->assertContains(self::LINK, $adventureContainer->getText());
-        $this->assertTrue($adventureContainer->has('css', 'img[src="' . self::THUMBNAIL_URL . '"]'));
+        $this->assertStringContainsString(self::NUM_PAGES, $adventureContainer->getText());
+        $this->assertStringContainsString(self::FOUND_IN, $adventureContainer->getText());
+        $this->assertStringContainsString(self::YEAR, $adventureContainer->getText());
+        $this->assertStringContainsString(self::PART_OF, $adventureContainer->getText());
+        $this->assertStringContainsString(self::LINK, $adventureContainer->getText());
+        $this->assertTrue($adventureContainer->has('css', 'img[src="'.self::THUMBNAIL_URL.'"]'));
 
         $this->assertWorkingIndex($session);
     }
@@ -196,7 +195,7 @@ class NewAdventureTest extends BrowserTestCase
     {
         return [
             [false],
-            [true]
+            [true],
         ];
     }
 

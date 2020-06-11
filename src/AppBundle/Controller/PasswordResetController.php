@@ -1,6 +1,5 @@
 <?php
 
-
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
@@ -29,8 +28,6 @@ class PasswordResetController extends Controller
      * @Route("/request", name="request_password_reset")
      * @Method({"GET", "POST"})
      *
-     * @param Request $request
-     * @param UserInterface|null $user
      * @return RedirectResponse|Response
      */
     public function requestPasswordResetAction(Request $request, UserInterface $user = null)
@@ -55,7 +52,7 @@ class PasswordResetController extends Controller
                 $this->sendPasswordResetMail($user);
             }
 
-            $this->addFlash('success', "If the provided email address is associated with a user account, an email with a password reset link was sent to it.");
+            $this->addFlash('success', 'If the provided email address is associated with a user account, an email with a password reset link was sent to it.');
 
             return $this->redirectToRoute('login');
         }
@@ -69,9 +66,8 @@ class PasswordResetController extends Controller
      * @Route("/reset/{token}", name="do_password_reset")
      * @Method({"GET", "POST"})
      *
-     * @param Request $request
-     * @param string $token
      * @param UserInterface $user
+     *
      * @return RedirectResponse|Response
      */
     public function doPasswordResetAction(Request $request, string $token, UserInterface $user = null)
@@ -90,13 +86,13 @@ class PasswordResetController extends Controller
 
         $passwordResetRequestedAt = $user->getPasswordResetRequestedAt();
         if (!$passwordResetRequestedAt instanceof \DateTimeInterface) {
-            $this->addFlash('danger', "Something went wrong. Please try to request a new password reset link.");
+            $this->addFlash('danger', 'Something went wrong. Please try to request a new password reset link.');
 
             return $this->redirectToRoute('request_password_reset');
         }
 
         if (time() > $passwordResetRequestedAt->getTimestamp() + self::PASSWORD_RESET_LINK_TTL * 60) {
-            $this->addFlash('danger', "This password reset link is no longer valid. Please generate a new one if you still need to reset your password.");
+            $this->addFlash('danger', 'This password reset link is no longer valid. Please generate a new one if you still need to reset your password.');
 
             return $this->redirectToRoute('request_password_reset');
         }
@@ -112,7 +108,7 @@ class PasswordResetController extends Controller
                 ->setPasswordResetToken(null);
             $em->flush();
 
-            $this->addFlash('success', "Your password was changed. You can now login using your username and password");
+            $this->addFlash('success', 'Your password was changed. You can now login using your username and password');
 
             return $this->redirectToRoute('login');
         }
@@ -122,9 +118,6 @@ class PasswordResetController extends Controller
         ]);
     }
 
-    /**
-     * @param User $user
-     */
     private function sendPasswordResetMail(User $user)
     {
         $mailer = $this->get('mailer');

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\AppBundle\Security;
 
 use AppBundle\Entity\AdventureList;
@@ -19,7 +18,7 @@ class AdventureListVoterTest extends VoterTest
      */
     private $voter;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->voter = new AdventureListVoter();
     }

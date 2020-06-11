@@ -10,7 +10,6 @@ parameters:
     locale: en
     elasticsearch:
         index_name: 'adventure'
-        type_name: 'all'
     container.dumper.inline_class_loader: true
     container.autowiring.strict_mode: true
 
@@ -49,6 +48,7 @@ twig:
         - 'form_layout.html.twig'
     globals:
         google_analytics_code: '%google_analytics_code%'
+        announcement: '%announcement%'
 
 # Doctrine Configuration
 doctrine:
@@ -66,7 +66,7 @@ doctrine:
 
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
-        naming_strategy: doctrine.orm.naming_strategy.underscore
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         auto_mapping: true
         mappings:
             gedmo_translatable:
@@ -131,3 +131,11 @@ knp_paginator:
 ewz_recaptcha:
     public_key:  '%recaptcha_public_key%'
     private_key: '%recaptcha_private_key%'
+
+data_dog_audit:
+    unaudited_entities:
+        # We only want to keep a change history of all adventure data related entities
+        - AppBundle\Entity\AdventureList
+        - AppBundle\Entity\ChangeRequest
+        - AppBundle\Entity\Review
+        - AppBundle\Entity\User

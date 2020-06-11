@@ -1,6 +1,5 @@
 <?php
 
-
 namespace AppBundle\Curation;
 
 use AppBundle\Entity\Adventure;
@@ -68,7 +67,7 @@ class BulkEditFormProvider
     {
         $formsAndFields = $this->fieldProvider->getFields()
             ->filter(function (Field $field) {
-                return $field->getType() === 'string' && $field->getName() !== 'title';
+                return 'string' === $field->getType() && 'title' !== $field->getName();
             })
             ->map(function (Field $field) {
                 if ($field->isRelatedEntity()) {
@@ -94,7 +93,7 @@ class BulkEditFormProvider
 
     private function formForSimpleStringField(Field $field): FormInterface
     {
-        if (!$field->getType() === 'string') {
+        if ('string' === !$field->getType()) {
             // @codeCoverageIgnoreStart
             throw new \InvalidArgumentException('Field type must be string');
             // @codeCoverageIgnoreEnd
@@ -108,8 +107,8 @@ class BulkEditFormProvider
                 'choices' => $formChoices,
                 'label' => sprintf('Select all adventures where %s matches', $title),
                 'constraints' => [
-                    new NotBlank()
-                ]
+                    new NotBlank(),
+                ],
             ])
             ->add(self::NEW_VALUE, TextType::class, [
                 'label' => sprintf('Replace selected %s value with', $title),
@@ -121,7 +120,7 @@ class BulkEditFormProvider
                 'attr' => [
                     'class' => 'btn btn-warning',
                     'onclick' => self::JS_RETURN_CONFIRMATION,
-                ]
+                ],
             ])
             ->getForm();
     }
@@ -131,11 +130,11 @@ class BulkEditFormProvider
         /** @var EntityRepository|RelatedEntityFieldValueCountsTrait $repository */
         $repository = $this->em->getRepository($field->getRelatedEntityClass());
 
-        if ($field->getRelatedEntityClass() === Monster::class) {
-            if ($field->getName() === 'commonMonsters') {
-                $formChoices = $this->getFieldChoicesForRelatedField($repository, 'name', 'tbl.isUnique = 0');
-            } else if ($field->getName() === 'bossMonsters') {
-                $formChoices = $this->getFieldChoicesForRelatedField($repository, 'name', 'tbl.isUnique = 1');
+        if (Monster::class === $field->getRelatedEntityClass()) {
+            if ('commonMonsters' === $field->getName()) {
+                $formChoices = $this->getFieldChoicesForRelatedField($repository, 'name', 'tbl.isUnique = FALSE');
+            } elseif ('bossMonsters' === $field->getName()) {
+                $formChoices = $this->getFieldChoicesForRelatedField($repository, 'name', 'tbl.isUnique = TRUE');
             } else {
                 throw new \LogicException(sprintf('Unknown monster field %s', $field->getName()));
             }
@@ -149,8 +148,8 @@ class BulkEditFormProvider
                 'label' => sprintf('Select all adventures where %s matches', $title),
                 'choices' => $formChoices,
                 'constraints' => [
-                    new NotBlank()
-                ]
+                    new NotBlank(),
+                ],
             ])
             ->add(self::NEW_VALUE, ChoiceType::class, [
                 'label' => sprintf('Replace selected %s value with', $title),
@@ -164,15 +163,11 @@ class BulkEditFormProvider
                 'attr' => [
                     'class' => 'btn btn-warning',
                     'onclick' => self::JS_RETURN_CONFIRMATION,
-                ]
+                ],
             ])
             ->getForm();
     }
 
-    /**
-     * @param string $fieldName
-     * @return array
-     */
     private function getFieldChoicesForSimpleField(string $fieldName): array
     {
         $valuesAndCounts = $this->adventureRepository->getFieldValueCounts($fieldName);
@@ -190,9 +185,6 @@ class BulkEditFormProvider
 
     /**
      * @param EntityRepository|RelatedEntityFieldValueCountsTrait $repository
-     * @param string $fieldName
-     * @param string|null $additionalWhereCondition
-     * @return array
      */
     private function getFieldChoicesForRelatedField(EntityRepository $repository, string $fieldName, string $additionalWhereCondition = null): array
     {
@@ -209,10 +201,6 @@ class BulkEditFormProvider
         return $formChoices;
     }
 
-    /**
-     * @param Field $field
-     * @return FormBuilderInterface
-     */
     private function getFormBuilderFor(Field $field): FormBuilderInterface
     {
         return $this->formFactory->createNamedBuilder($field->getName())

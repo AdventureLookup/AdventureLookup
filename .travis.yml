@@ -1,8 +1,8 @@
-dist: trusty
+dist: bionic
 sudo: false
 language: php
 php:
-  - '7.0.21'
+  - '7.4'
 
 env:
   global:
@@ -14,13 +14,6 @@ env:
     - TESTSUITE=functional
     - TESTSUITE=browser
     - TESTSUITE=lint
-
-services:
-  # ElasticSearch takes few seconds to start, but it also takes a while until
-  # we start executing the tests, so there is no need to wait for it to be
-  # up and running.
-  # https://docs.travis-ci.com/user/database-setup/#ElasticSearch
-  - elasticsearch
 
 addons:
   chrome: stable
@@ -44,12 +37,24 @@ before_install:
     if [ ${TESTSUITE} == "browser" ] || [ "$TESTSUITE" == "lint" ]; then
       phpenv config-rm xdebug.ini || echo "xdebug not available";
     fi;
+  # Setup ElasticSearch 7.6.2
+  - wget -q -P /tmp https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.6.2-linux-x86_64.tar.gz
+  - tar -xzf /tmp/elasticsearch-7.6.2-linux-x86_64.tar.gz --directory /tmp
+  - sed -i -e 's/1g/256m/g' /tmp/elasticsearch-7.6.2/config/jvm.options
+  # Log stdout and stderr to log file and run in background
+  - /tmp/elasticsearch-7.6.2/bin/elasticsearch > /tmp/elasticsearch.log 2>&1 &
+  - echo "Waiting for ElasticSearch to start"
+  - timeout 60 sh -c 'until nc -z $0 $1; do sleep 1; echo -n "."; done' localhost 9200
 
 install:
   - composer install -n --no-suggest --no-progress --ansi
   - |
-    if [ ${TESTSUITE} == "functional" ] || [ "$TESTSUITE" == "browser" ]; then
-      npm install -g npm
+    if [ ${TESTSUITE} == "functional" ] || [ "$TESTSUITE" == "browser" ] || [ "$TESTSUITE" == "lint" ]; then
+      # Use Node.js 12
+      nvm install 12
+      # Use npm 6.x
+      npm install npm@^6 -g
+
       npm install;
       npm run prod;
     fi;
@@ -72,10 +77,14 @@ script:
       php bin/console lint:twig app
       php bin/console lint:yaml app
       php bin/console security:check --end-point=http://security.symfony.com/check_lock
+      npm run lint
     else
       $PHPUNIT --testsuite $TESTSUITE --coverage-clover=coverage.xml
       bash <(curl -s https://codecov.io/bash) -X gcov -X coveragepy
     fi;
+
+after_script:
+  - cat /tmp/elasticsearch.log
 
 jobs:
   include:

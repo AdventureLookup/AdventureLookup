@@ -1,8 +1,8 @@
 tasks:
-  - command: /home/gitpod/elasticsearch-5.5.3/bin/elasticsearch
+  - command: /home/gitpod/elasticsearch-7.6.2/bin/elasticsearch
     # Run ElasticSearch when prebuilding the workspace, so that adventures can be indexed.
     # It has to run in the background so that the prebuild does not wait for it to exit.
-    prebuild: /home/gitpod/elasticsearch-5.5.3/bin/elasticsearch &
+    prebuild: /home/gitpod/elasticsearch-7.6.2/bin/elasticsearch &
   - before: gp await-port 9200
     init: |
       mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';"

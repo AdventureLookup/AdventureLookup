@@ -66,10 +66,57 @@ $thumbnail-height: 100px;
         color: $adl-grey-light;
       }
 
+      .level {
+          text-transform: capitalize;
+      }
+
       ul {
         padding-left: 30px;
         margin-bottom: 0;
       }
+    }
+  }
+}
+
+#change-requests-container {
+  @extend .content-container;
+
+  padding-bottom: 0!important;
+
+  #change-request-content.collapse {
+      padding-bottom: 0;
+
+      &.show {
+          padding-bottom: 15px;
+      }
+  }
+
+  .no-requests {
+    padding: $adl-card-padding;
+    border-top: 1px solid $adl-grey-lightest;
+  }
+
+  [data-toggle="collapse"] {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor:pointer;
+
+    &:hover {
+        background-color: darken(white, 2.5%);
+    }
+
+    & .fa {
+        font-size: 2rem;
+        padding: 1rem 1.8rem;
+
+        &:before {   
+          content: "\f106";
+        }
+    }
+
+    &.collapsed .fa:before {
+      content: "\f107";
     }
   }
 }
@@ -81,8 +128,23 @@ $thumbnail-height: 100px;
     padding: $adl-card-padding;
     border-top: 1px solid $adl-grey-lightest;
 
+    .reviewer-row {
+        align-items: center;
+    }
+
     .review-icon {
-      color: $adl-offwhite;
+      &.review-icon--positive {
+          color: #bad272;
+      }
+
+      &.review-icon--negative {
+          color: #d27272;
+      }
+    }
+
+    .review-icon-mobile-column {
+        padding-right: 0;
+        margin-bottom: 1rem;
     }
 
     blockquote {
@@ -128,5 +190,14 @@ $thumbnail-height: 100px;
     border: none;
     border-top: 1px solid $adl-grey-lightest;
     padding: $adl-card-padding-side;
+  }
+  
+  .btn {
+    width: 35%;
+    padding: 8px 10px;
+    border-radius: 0;
+    font: 1.2rem 'Roboto Condensed';
+    text-transform: uppercase; 
+    margin: 0 1.8rem;
   }
 }

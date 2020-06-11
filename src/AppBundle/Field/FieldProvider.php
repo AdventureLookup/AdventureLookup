@@ -1,6 +1,5 @@
 <?php
 
-
 namespace AppBundle\Field;
 
 use AppBundle\Entity\Author;
@@ -28,6 +27,7 @@ class FieldProvider
                 'string',
                 false,
                 true,
+                false,
                 'Title',
                 'The title of the adventure.',
                 10
@@ -37,6 +37,7 @@ class FieldProvider
                 'text',
                 false,
                 true,
+                false,
                 'Description',
                 'Description of the adventure.',
                 5
@@ -44,6 +45,7 @@ class FieldProvider
             'authors' => new Field(
                 'authors',
                 'string',
+                true,
                 true,
                 true,
                 'Authors',
@@ -56,6 +58,7 @@ class FieldProvider
                 'string',
                 false,
                 true,
+                true,
                 'System / Edition',
                 'The system the game was designed for and the edition of that system if there is one.',
                 1,
@@ -64,6 +67,7 @@ class FieldProvider
             'environments' => new Field(
                 'environments',
                 'string',
+                true,
                 true,
                 true,
                 'Environments',
@@ -76,6 +80,7 @@ class FieldProvider
                 'string',
                 true,
                 true,
+                true,
                 'Notable Items',
                 "The notable magic or non-magic items that are obtained in the module. Only include named items, don't include a +1 sword.",
                 2,
@@ -85,6 +90,7 @@ class FieldProvider
                 'publisher',
                 'string',
                 false,
+                true,
                 true,
                 'Publisher',
                 'Publisher of the adventure.',
@@ -96,6 +102,7 @@ class FieldProvider
                 'string',
                 false,
                 true,
+                true,
                 'Setting',
                 'The narrative universe the module is set in.',
                 1,
@@ -104,6 +111,7 @@ class FieldProvider
             'commonMonsters' => new Field(
                 'commonMonsters',
                 'string',
+                true,
                 true,
                 true,
                 'Common Monsters',
@@ -116,18 +124,19 @@ class FieldProvider
                 'string',
                 true,
                 true,
+                true,
                 'Boss Monsters',
                 'The boss monsters and villains featured in the module.',
                 2,
                 Monster::class
             ),
 
-
             'numPages' => new Field(
                 'numPages',
                 'integer',
                 false,
                 false,
+                true,
                 'Length (# of Pages)',
                 'Total page count of all written material in the module or at least primary string.'
             ),
@@ -136,6 +145,7 @@ class FieldProvider
                 'integer',
                 false,
                 false,
+                true,
                 'Min. Starting Level',
                 'The minimum level characters are expected to be when taking part in the module.'
             ),
@@ -144,6 +154,7 @@ class FieldProvider
                 'integer',
                 false,
                 false,
+                true,
                 'Max. Starting Level',
                 'The maximum level characters are expected to be when taking part in the module.'
             ),
@@ -152,16 +163,17 @@ class FieldProvider
                 'string',
                 false,
                 false,
+                true,
                 'Starting Level Range',
                 'In case no min. / max. starting levels but rather low/medium/high are given.'
             ),
-
 
             'soloable' => new Field(
                 'soloable',
                 'boolean',
                 false,
                 false,
+                true,
                 'Suitable for Solo Play'
             ),
             'pregeneratedCharacters' => new Field(
@@ -169,6 +181,7 @@ class FieldProvider
                 'boolean',
                 false,
                 false,
+                true,
                 'Includes Pregenerated Characters'
             ),
             'handouts' => new Field(
@@ -176,6 +189,7 @@ class FieldProvider
                 'boolean',
                 false,
                 false,
+                true,
                 'Handouts'
             ),
             'tacticalMaps' => new Field(
@@ -183,6 +197,7 @@ class FieldProvider
                 'boolean',
                 false,
                 false,
+                true,
                 'Battle Mats'
             ),
 
@@ -190,6 +205,7 @@ class FieldProvider
                 'foundIn',
                 'string',
                 false,
+                true,
                 true,
                 'Found In',
                 'If the adventure is part of a larger product, like a magazine or anthology, list it here.'
@@ -199,6 +215,7 @@ class FieldProvider
                 'string',
                 false,
                 true,
+                true,
                 'Part Of',
                 'The series of adventures that the module is a part of, if applicable.'
             ),
@@ -207,6 +224,7 @@ class FieldProvider
                 'integer',
                 false,
                 false,
+                true,
                 'Publication Year',
                 'The year this adventure was first published.'
             ),
@@ -216,12 +234,14 @@ class FieldProvider
                 'url',
                 false,
                 false,
+                false,
                 'Link',
                 'Links to legitimate sites where the module can be procured.'
             ),
             'thumbnailUrl' => new Field(
                 'thumbnailUrl',
                 'url',
+                false,
                 false,
                 false,
                 'Thumbnail URL',
@@ -239,8 +259,17 @@ class FieldProvider
     }
 
     /**
+     * @return Field[]|ArrayCollection
+     */
+    public function getFieldsAvailableAsFilter(): ArrayCollection
+    {
+        return $this->fields->filter(function (Field $field) {
+            return $field->isAvailableAsFilter();
+        });
+    }
+
+    /**
      * @param $name
-     * @return Field
      */
     public function getField($name): Field
     {

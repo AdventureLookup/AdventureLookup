@@ -22,7 +22,6 @@ class ChangeRequestController extends Controller
     /**
      * Show all change requests for the given adventure
      *
-     * @param Adventure $adventure
      * @return Response
      */
     public function showAction(Adventure $adventure)
@@ -59,7 +58,7 @@ class ChangeRequestController extends Controller
         return $this->render('change_request/show.html.twig', [
             'changeRequests' => $changeRequests,
             'adventure' => $adventure,
-            'newChangeRequest' => $this->createChangeRequestForAdventure($adventure)
+            'newChangeRequest' => $this->createChangeRequestForAdventure($adventure),
         ]);
     }
 
@@ -68,8 +67,6 @@ class ChangeRequestController extends Controller
      * @Method({"GET", "POST"})
      * @ParamConverter("adventure", options={"id" = "adventure_id"})
      *
-     * @param Request $request
-     * @param Adventure $adventure
      * @return Response
      */
     public function newAction(Request $request, Adventure $adventure)
@@ -90,18 +87,16 @@ class ChangeRequestController extends Controller
             return $this->redirectToRoute('adventure_show', ['slug' => $adventure->getSlug()]);
         }
 
-        return $this->render('change_request/new.html.twig', array(
+        return $this->render('change_request/new.html.twig', [
             'form' => $form->createView(),
             'adventure' => $adventure,
-        ));
+        ]);
     }
 
     /**
      * @Route("/resolve/{id}", name="changerequest_resolve")
      * @Method("POST")
      *
-     * @param Request $request
-     * @param ChangeRequest $changeRequest
      * @return Response
      */
     public function resolveAction(Request $request, ChangeRequest $changeRequest)
@@ -126,8 +121,6 @@ class ChangeRequestController extends Controller
      * @Route("/curator-comment/{id}", name="changerequest_curator_remarks")
      * @Method("POST")
      *
-     * @param Request $request
-     * @param ChangeRequest $changeRequest
      * @return Response
      */
     public function editCuratorRemarksAction(Request $request, ChangeRequest $changeRequest)
@@ -151,7 +144,6 @@ class ChangeRequestController extends Controller
     /**
      * Creates a new change request for the given adventure.
      *
-     * @param Adventure $adventure
      * @return ChangeRequest
      */
     private function createChangeRequestForAdventure(Adventure $adventure)
@@ -161,5 +153,4 @@ class ChangeRequestController extends Controller
 
         return $changeRequest;
     }
-
 }

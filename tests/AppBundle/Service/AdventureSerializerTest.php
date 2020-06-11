@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\AppBundle\Service;
 
 use AppBundle\Entity\Adventure;
@@ -11,8 +10,9 @@ use AppBundle\Field\Field;
 use AppBundle\Field\FieldProvider;
 use AppBundle\Service\AdventureSerializer;
 use Doctrine\Common\Collections\ArrayCollection;
+use PHPUnit\Framework\TestCase;
 
-class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
+class AdventureSerializerTest extends TestCase
 {
     const TITLE = 'a title';
     const SLUG = 'a-title';
@@ -37,7 +37,7 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
 
     private $CREATED_AT;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->fieldProvider = $this->createMock(FieldProvider::class);
         $this->serializer = new AdventureSerializer($this->fieldProvider);
@@ -56,7 +56,7 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
         $doc = $this->serializer->toElasticDocument($adventure);
         $this->assertSame([
             'slug' => self::SLUG,
-            'createdAt' => $this->CREATED_AT->format("c"),
+            'createdAt' => $this->CREATED_AT->format('c'),
             'positiveReviews' => self::NUM_POSITIVE_REVIEWS,
             'negativeReviews' => self::NUM_NEGATIVE_REVIEWS,
         ], $doc);
@@ -65,11 +65,11 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
     public function testSerializeSimpleFields()
     {
         $this->fieldProvider->method('getFields')->willReturn(new ArrayCollection([
-            new Field('title', 'string', false, false, 'title'),
-            new Field('link', 'url', false, false, 'link'),
-            new Field('foundIn', 'url', false, false, 'foundIn'),
-            new Field('minStartingLevel', 'integer', false, false, 'minStartingLevel'),
-            new Field('tacticalMaps', 'boolean', false, false, 'tacticalMaps'),
+            new Field('title', 'string', false, false, false, 'title'),
+            new Field('link', 'url', false, false, false, 'link'),
+            new Field('foundIn', 'url', false, false, true, 'foundIn'),
+            new Field('minStartingLevel', 'integer', false, false, true, 'minStartingLevel'),
+            new Field('tacticalMaps', 'boolean', false, false, true, 'tacticalMaps'),
         ]));
 
         $adventure = $this->createMock(Adventure::class);
@@ -85,7 +85,7 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
         $doc = $this->serializer->toElasticDocument($adventure);
         $this->assertSame([
             'slug' => self::SLUG,
-            'createdAt' => $this->CREATED_AT->format("c"),
+            'createdAt' => $this->CREATED_AT->format('c'),
             'positiveReviews' => self::NUM_POSITIVE_REVIEWS,
             'negativeReviews' => self::NUM_NEGATIVE_REVIEWS,
             'title' => self::TITLE,
@@ -99,10 +99,10 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
     public function testSerializeRelatedEntities()
     {
         $this->fieldProvider->method('getFields')->willReturn(new ArrayCollection([
-            new Field('title', 'string', false, false, 'title'),
-            new Field('authors', 'string', true, false, 'authors', null, 1, Author::class),
-            new Field('publisher', 'string', false, false, 'publisher', null, 1, Publisher::class),
-            new Field('edition', 'string', false, false, 'edition', null, 1, Edition::class),
+            new Field('title', 'string', false, false, false, 'title'),
+            new Field('authors', 'string', true, false, true, 'authors', null, 1, Author::class),
+            new Field('publisher', 'string', false, false, true, 'publisher', null, 1, Publisher::class),
+            new Field('edition', 'string', false, false, true, 'edition', null, 1, Edition::class),
         ]));
 
         $author1 = new Author();
@@ -128,13 +128,13 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
         $doc = $this->serializer->toElasticDocument($adventure);
         $this->assertSame([
             'slug' => self::SLUG,
-            'createdAt' => $this->CREATED_AT->format("c"),
+            'createdAt' => $this->CREATED_AT->format('c'),
             'positiveReviews' => self::NUM_POSITIVE_REVIEWS,
             'negativeReviews' => self::NUM_NEGATIVE_REVIEWS,
             'title' => self::TITLE,
             'authors' => [self::AUTHOR_1, self::AUTHOR_2],
             'publisher' => self::PUBLISHER,
-            'edition' => null
+            'edition' => null,
         ], $doc);
     }
 }

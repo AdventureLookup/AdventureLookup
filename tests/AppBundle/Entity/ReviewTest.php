@@ -1,18 +1,18 @@
 <?php
 
-
 namespace Tests\AppBundle\Entity;
 
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\Review;
+use PHPUnit\Framework\TestCase;
 
-class ReviewTest extends \PHPUnit_Framework_TestCase
+class ReviewTest extends TestCase
 {
     public function testGetAdventure()
     {
         $adventure = new Adventure();
         $review = new Review($adventure);
-        
+
         $this->assertSame($adventure, $review->getAdventure());
     }
 

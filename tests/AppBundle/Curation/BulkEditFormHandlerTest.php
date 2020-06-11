@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\AppBundle\Curation;
 
 use AppBundle\Curation\BulkEditFormHandler;
@@ -41,7 +40,7 @@ class BulkEditFormHandlerTest extends TestCase
      */
     private $form;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->repository = $this->createMock(AdventureRepository::class);
         $em = $this->createMock(EntityManagerInterface::class);

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\AppBundle\DataFixtures;
 
 use AppBundle\DataFixtures\ORM\RandomAdventureData;

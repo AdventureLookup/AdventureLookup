@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\AppBundle\Repository;
 
 use AppBundle\Entity\Adventure;
@@ -18,7 +17,7 @@ class ChangeRequestRepositoryTest extends WebTestCase
      */
     private $repository;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -26,7 +25,7 @@ class ChangeRequestRepositoryTest extends WebTestCase
             ->get('doctrine.orm.entity_manager')
             ->getRepository(ChangeRequest::class);
 
-        $fixture = new class extends AbstractFixture {
+        $fixture = new class() extends AbstractFixture {
             public function load(ObjectManager $em)
             {
                 $adventure = new Adventure();

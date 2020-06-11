@@ -1,6 +1,5 @@
 <?php
 
-
 namespace AppBundle\Listener;
 
 use AppBundle\Entity\Monster;
@@ -34,7 +33,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
     {
         return [
             EasyAdminEvents::POST_INITIALIZE => ['denyAccessToUsersForCurators'],
-            EasyAdminEvents::PRE_PERSIST => ['makeSureBossMonstersAreUnique']
+            EasyAdminEvents::PRE_PERSIST => ['makeSureBossMonstersAreUnique'],
         ];
     }
 
@@ -54,7 +53,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         /** @var Request $request */
         $request = $event->getArgument('request');
         $easyAdminRequestAttributes = $request->attributes->get('easyadmin');
-        if ($easyAdminRequestAttributes['entity']['name'] === 'BossMonster') {
+        if ('BossMonster' === $easyAdminRequestAttributes['entity']['name']) {
             $entity->setIsUnique(true);
             $event->setArgument('entity', $entity);
         }
@@ -62,7 +61,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
 
     public function denyAccessToUsersForCurators(GenericEvent $event)
     {
-        if ($event->getSubject()['class'] !== User::class) {
+        if (User::class !== $event->getSubject()['class']) {
             return;
         }
 

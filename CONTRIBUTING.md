@@ -8,17 +8,15 @@ a new issue.
 ## Working on an Issue
 
 If you see an open issue you'd like to work on, please leave a comment on the issue.
-This way, everyone knows you're currently working on it. Please note: We can't 
-assign you to the issue through GitHub's web UI, because GitHub doesn't allow us to 
-assign non-collaborators to issues. Don't worry though, an issue you claim with a 
-comment will still be yours to work on.
+This way, everyone knows you're currently working on it. We will then assign you to
+the issue so everyone knows that you're working on it.
 
 Please push your changes to a new branch in your fork and create a pull request
 from there. We use forks to keep the main repository free from unnecessary branches.
 
 If you haven't already, make sure to setup your development environment using
-Vagrant like described in the README. Please open an issue if you run into issues 
-with setting up your development environment.
+Gitpod or Vagrant like described in the README. Please open an issue if you run into
+issues with setting up your development environment.
 
 ## Creating Pull Requests
 
@@ -27,7 +25,19 @@ is always live at https://dev.adventurelookup.com.
 We'll merge the `dev` branch into `master` from time to time, which is deployed to
 https://adventurelookup.com.
 
-You're welcome to open your pull request early, even if you are still working on the 
-fix or feature. This way we can give you early feedback on your changes and the 
-direction you are going. If you open your pull request early, please indicate so by 
-prepending "WIP: " ("Work In Progress") to your pull request's title.
+You're welcome to open your pull request early, even if you are still working on the
+fix or feature. This way we can give you early feedback on your changes and the
+direction you are going. If you open your pull request early, please open it as a
+"Draft Pull Request" like shown in [this blogpost](https://github.blog/2019-02-14-introducing-draft-pull-requests/).
+
+### Formatting your code
+
+We use [prettier](https://prettier.io/) to format all JavaScript and JSX code.
+You can run prettier by executing `npm run format`, which automatically adjusts
+the code formatting for you. This is also automatically run whenever you make a
+commit.
+
+We use [php-cs-fixer](https://cs.symfony.com/) to format all PHP code according
+to PSR-1 and PSR-2 and some additional rules. You can run the formatter by
+executing `composer run format`, which automatically adjusts the code formatting
+for you. This is also automatically run whenever you make a commit.

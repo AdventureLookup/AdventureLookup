@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\AdventureDocument;
+use AppBundle\Field\FieldProvider;
 use AppBundle\Security\AdventureVoter;
 use AppBundle\Service\AdventureSearch;
 use AppBundle\Service\Serializer;
@@ -24,9 +25,6 @@ class ApiController extends Controller
      * @Route("/adventures/", name="api_adventures")
      * @Method({"GET"})
      *
-     * @param Request $request
-     * @param AdventureSearch $adventureSearch
-     * @param Serializer $serializer
      * @return JsonResponse
      */
     public function indexAction(Request $request, AdventureSearch $adventureSearch, Serializer $serializer)
@@ -35,10 +33,10 @@ class ApiController extends Controller
         list($adventures, $totalNumberOfResults) = $adventureSearch->search($q, $filters, $page, $sortBy, $seed);
 
         return new JsonResponse([
-            "total_count" => $totalNumberOfResults,
-            "adventures" => array_map(function (AdventureDocument $adventure) use ($serializer) {
+            'total_count' => $totalNumberOfResults,
+            'adventures' => array_map(function (AdventureDocument $adventure) use ($serializer) {
                 return $serializer->serializeAdventureDocument($adventure);
-            }, $adventures)
+            }, $adventures),
         ]);
     }
 
@@ -46,16 +44,14 @@ class ApiController extends Controller
      * @Route("/adventures/{id}", name="api_adventure")
      * @Method("GET")
      *
-     * @param Adventure $adventure
-     * @param Serializer $serializer
      * @return JsonResponse
      */
     public function showAction(Adventure $adventure, Serializer $serializer)
     {
         $this->denyAccessUnlessGranted(AdventureVoter::VIEW, $adventure);
+
         return new JsonResponse($serializer->serializeAdventureWithReviewsAndUnresolvedChangeRequests($adventure));
     }
-
 
     /**
      * @Route("", name="api_docs")
@@ -63,8 +59,12 @@ class ApiController extends Controller
      *
      * @return Response
      */
-    public function docsAction() {
+    public function docsAction(FieldProvider $fieldProvider)
+    {
+        $fields = $fieldProvider->getFields();
 
-        return $this->render("api/docs.html.twig");
+        return $this->render('api/docs.html.twig', [
+            'fields' => $fields,
+        ]);
     }
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\AppBundle\Curation;
 
 use AppBundle\Curation\BulkEditFormProvider;
@@ -60,7 +59,7 @@ class BulkEditFormProviderTest extends TestCase
      */
     private $formBuilder;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->repository = $this->createMock(AdventureRepository::class);
         $this->em = $this->createMock(EntityManagerInterface::class);
@@ -112,12 +111,12 @@ class BulkEditFormProviderTest extends TestCase
             ->willReturn([
                 [
                     'value' => 'field value 1',
-                    'count' => 42
+                    'count' => 42,
                 ],
                 [
                     'value' => 'field value 2',
-                    'count' => 96
-                ]
+                    'count' => 96,
+                ],
             ]);
         $this->formBuilder->expects($this->exactly(3))
             ->method('add')
@@ -130,7 +129,7 @@ class BulkEditFormProviderTest extends TestCase
                             'field value 1 (used 42 times)' => 'field value 1',
                             'field value 2 (used 96 times)' => 'field value 2',
                         ];
-                    })
+                    }),
                 ],
                 [BulkEditFormProvider::NEW_VALUE, TextType::class, $this->anything()],
                 [$this->anything(), SubmitType::class, $this->anything()]
@@ -160,7 +159,7 @@ class BulkEditFormProviderTest extends TestCase
                     'value' => 'field value 2',
                     'count' => 96,
                     'id' => 77,
-                ]
+                ],
             ]);
         $expectedChoices = [
             'field value 1 (used 42 times)' => 5,
@@ -174,14 +173,14 @@ class BulkEditFormProviderTest extends TestCase
                     ChoiceType::class,
                     $this->callback(function ($options) use ($expectedChoices) {
                         return $options['choices'] === $expectedChoices;
-                    })
+                    }),
                 ],
                 [
                     BulkEditFormProvider::NEW_VALUE,
                     ChoiceType::class,
                     $this->callback(function ($options) use ($expectedChoices) {
                         return $options['choices'] === $expectedChoices;
-                    })
+                    }),
                 ],
                 [$this->anything(), SubmitType::class, $this->anything()]
             );
@@ -225,8 +224,8 @@ class BulkEditFormProviderTest extends TestCase
     {
         return [
             ['field1', null, self::RELATED_ENTITY_CLASS],
-            ['commonMonsters', 'tbl.isUnique = 0', Monster::class],
-            ['bossMonsters', 'tbl.isUnique = 1', Monster::class],
+            ['commonMonsters', 'tbl.isUnique = FALSE', Monster::class],
+            ['bossMonsters', 'tbl.isUnique = TRUE', Monster::class],
         ];
     }
 
@@ -236,7 +235,7 @@ class BulkEditFormProviderTest extends TestCase
         $field->method('getType')->willReturn($type);
         $field->method('getName')->willReturn($name);
         $field->method('getTitle')->willReturn($name);
-        $field->method('isRelatedEntity')->willReturn($relatedClass !== null);
+        $field->method('isRelatedEntity')->willReturn(null !== $relatedClass);
         $field->method('getRelatedEntityClass')->willReturn($relatedClass);
 
         return $field;

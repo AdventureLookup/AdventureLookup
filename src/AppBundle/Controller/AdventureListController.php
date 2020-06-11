@@ -34,11 +34,9 @@ class AdventureListController extends Controller
      * @Method("GET")
      * @Template("profile/adventure_list.html.twig")
      *
-     * @param EntityManagerInterface $em
-     * @param UserInterface $user
      * @return array
      */
-    public function indexAction(EntityManagerInterface $em, UserInterface $user)
+    public function indexAction(EntityManagerInterface $em, UserInterface $user = null)
     {
         $this->denyAccessUnlessGranted(
             AdventureListVoter::LIST,
@@ -51,7 +49,7 @@ class AdventureListController extends Controller
 
         return [
             'lists' => $lists,
-            'form' => $form
+            'form' => $form,
         ];
     }
 
@@ -59,8 +57,6 @@ class AdventureListController extends Controller
      * @Route("/", name="adventure_lists_new")
      * @Method("POST")
      *
-     * @param Request $request
-     * @param EntityManagerInterface $em
      * @return RedirectResponse
      */
     public function newAction(Request $request, EntityManagerInterface $em)
@@ -78,7 +74,7 @@ class AdventureListController extends Controller
             $errors = $form->getErrors(true);
             foreach ($errors as $error) {
                 $message = sprintf(
-                    "%s: %s",
+                    '%s: %s',
                     $error->getOrigin()->getName(),
                     $error->getMessage()
                 );
@@ -94,7 +90,6 @@ class AdventureListController extends Controller
      * @Method("GET")
      * @Template("profile/adventure_show.html.twig")
      *
-     * @param AdventureList $list
      * @return array
      */
     public function showAction(AdventureList $list)
@@ -115,9 +110,6 @@ class AdventureListController extends Controller
      * @Route("/{id}", name="adventure_lists_edit", requirements={"id"="\d+"})
      * @Method("POST")
      *
-     * @param AdventureList $list
-     * @param Request $request
-     * @param EntityManagerInterface $em
      * @return RedirectResponse
      */
     public function editAction(
@@ -138,7 +130,7 @@ class AdventureListController extends Controller
         }
 
         return $this->redirectToRoute('adventure_lists_show', [
-            'id' => $list->getId()
+            'id' => $list->getId(),
         ]);
     }
 
@@ -152,9 +144,6 @@ class AdventureListController extends Controller
      * @ParamConverter("adventure", options={"id" = "adventure_id"})
      * @ParamConverter("list", options={"id" = "list_id"})
      *
-     * @param Adventure $adventure
-     * @param AdventureList $list
-     * @param EntityManagerInterface $em
      * @return JsonResponse
      */
     public function toggleContainsAdventureAction(
@@ -180,9 +169,6 @@ class AdventureListController extends Controller
      * @Route("/{id}", name="adventure_lists_delete", requirements={"id"="\d+"})
      * @Method("DELETE")
      *
-     * @param AdventureList $list
-     * @param Request $request
-     * @param EntityManagerInterface $em
      * @return RedirectResponse
      */
     public function deleteAction(
@@ -209,35 +195,31 @@ class AdventureListController extends Controller
     }
 
     /**
-     * @param AdventureList $list
      * @return Form
      */
     private function createDeleteForm(AdventureList $list)
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('adventure_lists_delete', [
-                'id' => $list->getId()
+                'id' => $list->getId(),
             ]))
             ->setMethod('DELETE')
             ->add('submit', SubmitType::class, [
                 'label' => 'Delete list forever',
                 'attr' => [
                     'class' => 'btn-outline-danger',
-                    'onclick' => BulkEditFormProvider::JS_RETURN_CONFIRMATION
-                ]
+                    'onclick' => BulkEditFormProvider::JS_RETURN_CONFIRMATION,
+                ],
             ])
             ->getForm();
     }
 
-    /**
-     * @param Form $form
-     */
     private function addFormErrorsAsFlashes(Form $form)
     {
         $errors = $form->getErrors(true);
         foreach ($errors as $error) {
             $message = sprintf(
-                "%s: %s",
+                '%s: %s',
                 $error->getOrigin()->getName(),
                 $error->getMessage()
             );

@@ -1,54 +1,67 @@
 import * as React from "react";
+import {
+  isFilterValueEmpty,
+  getEmptyFilter,
+  getTagValuesFromFilter,
+} from "./field-util";
 
-export function SearchTags({ initialFilterValues, fields, onSubmit }) {
+export function SearchTags({
+  initialFilterValues,
+  setFilterValues,
+  fields,
+  onSubmit,
+}) {
+  const fieldsByName = React.useMemo(() => {
+    const result = {};
+    fields.forEach((field) => (result[field.name] = field));
+    return result;
+  }, [fields]);
+
+  const activeFilters = Object.entries(initialFilterValues)
+    .map(([fieldName, filter]) => [fieldsByName[fieldName], filter])
+    .filter(([field, filter]) => !isFilterValueEmpty(field, filter.v));
+
+  const removeAll = () => {
+    activeFilters.forEach(([field]) => {
+      setFilterValues((filters) => ({
+        ...filters,
+        [field.name]: getEmptyFilter(field),
+      }));
+    });
+    onSubmit();
+  };
+
   return (
     <div id="search-tags">
-      {Object.entries(initialFilterValues).map(([fieldName, filter]) => {
-        let values = filter.v ?? [];
-        if (!Array.isArray(values) && typeof values !== "object") {
-          values = [values];
-        }
-
-        const field = fields.find((field) => field.name === fieldName);
-        return Object.entries(values)
-          .filter(([key, value]) => value !== "")
-          .map(([key, value]) => {
-            const remove = () => {
-              if (field.type === "string") {
-                const $strInput = $(
-                  `input[name^="f[${field.name}][v]"][value="${value}"]`
-                );
-                if ($strInput.is(":hidden")) {
-                  $strInput.remove();
-                } else {
-                  $strInput.prop("checked", false);
-                }
-              } else if (field.type === "boolean") {
-                $(`input[name^="f[${field.name}][v]"][value=""]`).prop(
-                  "checked",
-                  true
-                );
-              } else if (field.type === "integer") {
-                $(`input[name^="f[${field.name}][v][${key}]"]`).val("");
-              }
-              onSubmit();
-            };
-
-            return (
-              <span
-                key={key}
-                className="badge badge-primary filter-tag"
-                onClick={() => remove()}
-                title="remove filter"
-              >
-                {field.title}:{" "}
-                {field.type === "boolean" && (value === "1" ? "yes" : "no")}
-                {field.type === "integer" && (key == "min" ? "≥" : "≤") + value}
-                {field.type === "string" && value}{" "}
-              </span>
-            );
-          });
+      {activeFilters.map(([field, filter]) => {
+        return getTagValuesFromFilter(field, filter).map((tag, i) => {
+          return (
+            <span
+              key={i}
+              className="badge badge-primary filter-tag"
+              onClick={() => {
+                setFilterValues({
+                  ...initialFilterValues,
+                  [field.name]: tag.without(),
+                });
+                onSubmit();
+              }}
+              title="Clear Filter"
+            >
+              {field.title}: {tag.label}{" "}
+            </span>
+          );
+        });
       })}
+      {activeFilters.length > 0 && (
+        <span
+          className="badge badge-clear"
+          onClick={() => removeAll()}
+          title="Clear All Filters"
+        >
+          Clear All Filters{" "}
+        </span>
+      )}
     </div>
   );
 }

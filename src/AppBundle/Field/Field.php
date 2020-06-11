@@ -1,6 +1,5 @@
 <?php
 
-
 namespace AppBundle\Field;
 
 class Field implements \JsonSerializable
@@ -26,6 +25,11 @@ class Field implements \JsonSerializable
     private $freetextSearchable;
 
     /**
+     * @var bool
+     */
+    private $availableAsFilter;
+
+    /**
      * @var int
      */
     private $searchBoost;
@@ -45,7 +49,7 @@ class Field implements \JsonSerializable
      */
     private $relatedEntityClass;
 
-    public function __construct(string $name, string $type, bool $multiple, bool $freetextSearchable, string $title, string $description = null, int $searchBoost = 1, string $relatedEntityClass = null)
+    public function __construct(string $name, string $type, bool $multiple, bool $freetextSearchable, bool $availableAsFilter, string $title, string $description = null, int $searchBoost = 1, string $relatedEntityClass = null)
     {
         $this->name = $name;
         $this->type = $type;
@@ -53,53 +57,41 @@ class Field implements \JsonSerializable
         $this->title = $title;
         $this->description = $description;
         $this->freetextSearchable = $freetextSearchable;
+        $this->availableAsFilter = $availableAsFilter;
         $this->searchBoost = $searchBoost;
         $this->relatedEntityClass = $relatedEntityClass;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return bool
-     */
     public function isMultiple(): bool
     {
         return $this->multiple;
     }
 
-    /**
-     * @return bool
-     */
     public function isFreetextSearchable(): bool
     {
         return $this->freetextSearchable;
     }
 
-    /**
-     * @return int
-     */
+    public function isAvailableAsFilter(): bool
+    {
+        return $this->availableAsFilter;
+    }
+
     public function getSearchBoost(): int
     {
         return $this->searchBoost;
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return $this->title;
@@ -113,9 +105,6 @@ class Field implements \JsonSerializable
         return $this->description;
     }
 
-    /**
-     * @return string
-     */
     public function getFieldNameForAggregation(): string
     {
         $field = $this->getName();
@@ -126,12 +115,9 @@ class Field implements \JsonSerializable
         return $field;
     }
 
-    /**
-     * @return bool
-     */
     public function isRelatedEntity(): bool
     {
-        return $this->relatedEntityClass !== null;
+        return null !== $this->relatedEntityClass;
     }
 
     /**
@@ -145,11 +131,12 @@ class Field implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            "name" => $this->name,
-            "type" => $this->type,
-            "multiple" => $this->multiple,
-            "title" => $this->title,
-            "description" => $this->description,
+            'name' => $this->name,
+            'type' => $this->type,
+            'multiple' => $this->multiple,
+            'title' => $this->title,
+            'description' => $this->description,
+            'availableAsFilter' => $this->availableAsFilter,
         ];
     }
 }

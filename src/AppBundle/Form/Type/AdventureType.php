@@ -44,7 +44,7 @@ class AdventureType extends AbstractType
                 'required' => false,
                 'attr' => [
                     'rows' => 10,
-                ]
+                ],
             ]);
         $this->createAppendableEntityCollection(
             $builder,
@@ -100,7 +100,7 @@ class AdventureType extends AbstractType
             ->add('year', NumberType::class, [
                 'required' => false,
                 'help' => 'The year this adventure was first published.',
-                'label' => 'Publication Year'
+                'label' => 'Publication Year',
             ])
             ->add('setting', EntityType::class, [
                 'help' => 'The narrative universe the module is set in.',
@@ -121,8 +121,9 @@ class AdventureType extends AbstractType
             'Common Monsters',
             'The common monsters featured in the module.',
             function (EntityRepository $er) {
-                return $er->createQueryBuilder('e')
-                    ->where('e.isUnique = 0');
+                $qb = $er->createQueryBuilder('e');
+
+                return $qb->where('e.isUnique = FALSE');
             }
         );
         $this->createAppendableEntityCollection(
@@ -134,8 +135,9 @@ class AdventureType extends AbstractType
             'Boss Monsters',
             'The boss monsters and villains featured in the module.',
             function (EntityRepository $er) {
-                return $er->createQueryBuilder('e')
-                    ->where('e.isUnique = 1');
+                $qb = $er->createQueryBuilder('e');
+
+                return $qb->where('e.isUnique = TRUE');
             }
         );
         $builder
@@ -157,7 +159,7 @@ class AdventureType extends AbstractType
             ->add('numPages', NumberType::class, [
                 'required' => false,
                 'help' => 'Total page count of all written material in the module or at least primary string.',
-                'label' => 'Length (# of Pages)'
+                'label' => 'Length (# of Pages)',
             ])
             ->add('foundIn', TextType::class, [
                 'required' => false,
@@ -175,11 +177,11 @@ class AdventureType extends AbstractType
             ])
             ->add('link', UrlType::class, [
                 'required' => false,
-                'help' => 'Links to legitimate sites where the module can be procured.'
+                'help' => 'Links to legitimate sites where the module can be procured.',
             ])
             ->add('thumbnailUrl', UrlType::class, [
                 'required' => false,
-                'help' => 'URL of the thumbnail image.'
+                'help' => 'URL of the thumbnail image.',
             ])
             ->add('soloable', ChoiceType::class, [
                 'help' => 'Whether or not this is suited to be played solo.',
@@ -234,7 +236,7 @@ class AdventureType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Adventure::class
+            'data_class' => Adventure::class,
         ]);
     }
 
@@ -248,7 +250,7 @@ class AdventureType extends AbstractType
 
     private function createAppendableEntityCollection(FormBuilderInterface $builder, string $fieldName, string $entity, string $form, string $method, string $title, string $help, callable $queryBuilder = null)
     {
-        if ($queryBuilder === null) {
+        if (null === $queryBuilder) {
             $queryBuilder = function (EntityRepository $er) {
                 return $er->createQueryBuilder('e');
             };
@@ -263,7 +265,7 @@ class AdventureType extends AbstractType
                 'choice_label' => 'name',
                 'label' => $title,
                 'attr' => [
-                    'data-allow-add' => true
+                    'data-allow-add' => true,
                 ],
                 'query_builder' => $queryBuilder,
             ])
@@ -273,29 +275,29 @@ class AdventureType extends AbstractType
             // Existing entities will always have numeric ids and therefore not be dropped.
             ->addViewTransformer(new CallbackTransformer(function ($data) { return $data; }, function ($choices) {
                 return array_filter($choices, function ($choice) {
-                    return $choice[0] !== 'n';
+                    return 'n' !== $choice[0];
                 });
             }));
         $builder
             // Add an empty collection of entities.
             // This will hold all newly created entities.
-            ->add($fieldName . '-new', CollectionType::class, [
+            ->add($fieldName.'-new', CollectionType::class, [
                 'entry_type' => $form,
                 'allow_add' => true,
                 'mapped' => false,
                 'required' => false,
                 'attr' => [
-                    'style' => 'background: #cdcdcd'
+                    'style' => 'background: #cdcdcd',
                 ],
-                'label' => 'New ' . $title . ' (added to list above)',
+                'label' => 'New '.$title.' (added to list above)',
                 'entry_options' => [
                     'label_attr' => [
                         'class' => 'd-none',
-                    ]
+                    ],
                 ],
                 'constraints' => [
-                    new Valid()
-                ]
+                    new Valid(),
+                ],
             ])
             // Once the form is submitted and validation has passed, associate the new entities
             // with the adventure. They will be persisted once the changes to the adventure are
@@ -304,9 +306,9 @@ class AdventureType extends AbstractType
                 /** @var Adventure $adventure */
                 $adventure = $formEvent->getData();
                 /** @var Monster[]|Collection $newEntities */
-                $newEntities = $formEvent->getForm()->get($fieldName . '-new')->getData();
+                $newEntities = $formEvent->getForm()->get($fieldName.'-new')->getData();
                 foreach ($newEntities as $entity) {
-                    if ($entity !== null) {
+                    if (null !== $entity) {
                         $adventure->$method($entity);
                     }
                 }

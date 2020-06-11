@@ -14,6 +14,8 @@ use League\Uri\PublicSuffix\ICANNSectionManager;
 use League\Uri\QueryParser;
 use Psr\SimpleCache\CacheInterface;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension
 {
@@ -36,33 +38,34 @@ class AppExtension extends AbstractExtension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter('bool2str', [$this, 'bool2str']),
-            new \Twig_SimpleFilter('add_affiliate_code', [$this, 'addAffiliateCode'])
+            new TwigFilter('bool2str', [$this, 'bool2str']),
+            new TwigFilter('add_affiliate_code', [$this, 'addAffiliateCode']),
         ];
     }
 
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('format_level', [$this, 'formatLevel']),
-            new \Twig_SimpleFunction('format_roles', [$this, 'formatRoles']),
+            new TwigFunction('format_level', [$this, 'formatLevel']),
+            new TwigFunction('format_roles', [$this, 'formatRoles']),
         ];
     }
 
     /**
      * @param Adventure|AdventureDocument $adventure
-     * @return null|string
+     *
+     * @return string|null
      */
     public function formatLevel($adventure)
     {
-        if ($adventure->getMinStartingLevel() !== null) {
-            if ($adventure->getMinStartingLevel() === $adventure->getMaxStartingLevel() || $adventure->getMaxStartingLevel() === null) {
-                return "Level " . $adventure->getMinStartingLevel();
+        if (null !== $adventure->getMinStartingLevel()) {
+            if ($adventure->getMinStartingLevel() === $adventure->getMaxStartingLevel() || null === $adventure->getMaxStartingLevel()) {
+                return 'Level '.$adventure->getMinStartingLevel();
             } else {
-                return sprintf("Levels %s–%s", $adventure->getMinStartingLevel(), $adventure->getMaxStartingLevel());
+                return sprintf('Levels %s–%s', $adventure->getMinStartingLevel(), $adventure->getMaxStartingLevel());
             }
-        } else if ($adventure->getStartingLevelRange() !== null) {
-            return $adventure->getStartingLevelRange() . " Level";
+        } elseif (null !== $adventure->getStartingLevelRange()) {
+            return $adventure->getStartingLevelRange().' Level';
         }
 
         return null;
@@ -76,15 +79,16 @@ class AppExtension extends AbstractExtension
                 'ROLE_CURATOR' => 'Curator',
                 'ROLE_ADMIN' => 'Admin',
             ];
+
             return isset($roleMap[$role]) ? $roleMap[$role] : $role;
         }, $user->getRoles());
 
-        return implode(", ", $roles);
+        return implode(', ', $roles);
     }
 
     public function bool2str($boolean)
     {
-        if ($boolean === null) {
+        if (null === $boolean) {
             return 'Unknown';
         }
 
@@ -92,12 +96,11 @@ class AppExtension extends AbstractExtension
     }
 
     /**
-     * @param string|null $url
      * @return null
      */
     public function addAffiliateCode(string $url = null)
     {
-        if ($url === null) {
+        if (null === $url) {
             return null;
         }
 
