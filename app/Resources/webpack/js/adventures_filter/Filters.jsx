@@ -1,5 +1,6 @@
 import * as React from "react";
 import { isFilterValueEmpty } from "./field-util";
+import { StringFilter } from "./StringFilter";
 
 export const Filters = React.memo(function Filters({
   fields,
@@ -105,7 +106,7 @@ const FieldFilter = React.memo(function FieldFilter({
       </div>
       <div className="options-list">
         {field.type === "string" && (
-          <StringOptions
+          <StringFilter
             field={field}
             initialFilter={initialFilter}
             filter={filter}
@@ -144,170 +145,6 @@ const FieldFilter = React.memo(function FieldFilter({
     </div>
   );
 });
-
-function filterBuckets(bucket, searchString, selectedValues = []) {
-  const stringToSearch = (bucket.key || "").toLowerCase();
-  const match = stringToSearch.includes(searchString.toLowerCase());
-  const alreadySelected = selectedValues.includes(bucket.key);
-  return match || alreadySelected;
-}
-
-function StringOptions({
-  field,
-  fieldValues,
-  initialFilter,
-  filter,
-  setFilter,
-  onIsDirty,
-}) {
-  const values = filter.v;
-
-  // Whether to show the full list of options or only first few.
-  const showMoreAfter = 5;
-  const [filterString, setFilterString] = React.useState("");
-  const [showAll, setShowAll] = React.useState(false);
-
-  // ElasticSearch statistics on which options are available.
-  const buckets = fieldValues.buckets;
-
-  const bucketsToShow = filterString
-    ? buckets.filter((b) => filterBuckets(b, filterString, values))
-    : buckets;
-
-  const showUnknownOption =
-    (initialFilter.includeUnknown || fieldValues.countUnknown > 0) &&
-    filterString === "";
-  const noOptionsAvailable =
-    buckets.length === 0 && !showUnknownOption && values.length === 0;
-
-  const valuesUsed = new Set();
-  return (
-    <>
-      <div className="string-options">
-        {!noOptionsAvailable && (
-          <div className="option">
-            <input
-              className="filter-searchbar"
-              type="text"
-              placeholder="Find Option"
-              onChange={(e) => setFilterString(e.target.value)}
-              value={filterString}
-              title="Find Option"
-            />
-          </div>
-        )}
-        {showUnknownOption && (
-          <StringCheckbox
-            field={field}
-            label={<em>{field.multiple ? "none" : "unknown"}</em>}
-            checked={filter.includeUnknown}
-            count={fieldValues.countUnknown}
-            hidden={false}
-            onChange={(selected) => {
-              setFilter((filter) => ({
-                ...filter,
-                includeUnknown: selected,
-              }));
-              onIsDirty(true);
-            }}
-          />
-        )}
-        {bucketsToShow.map((bucket, i) => {
-          valuesUsed.add(bucket.key);
-          return (
-            <StringCheckbox
-              key={bucket.key}
-              field={field}
-              label={bucket.key}
-              checked={values.includes(bucket.key)}
-              count={bucket.doc_count}
-              hidden={!showAll && i >= showMoreAfter}
-              onChange={(selected) => {
-                setFilter((filter) => ({
-                  ...filter,
-                  v: selected
-                    ? [...filter.v, bucket.key]
-                    : filter.v.filter((each) => each !== bucket.key),
-                }));
-                onIsDirty(true);
-              }}
-            />
-          );
-        })}
-        {values
-          .filter((value) => !valuesUsed.has(value))
-          .map((value) => (
-            <StringCheckbox
-              key={value}
-              field={field}
-              label={value}
-              checked={true}
-              count={0}
-              hidden={false}
-              onChange={(selected) => {
-                setFilter((filter) => ({
-                  ...filter,
-                  v: selected
-                    ? [...filter.v, value]
-                    : filter.v.filter((each) => each !== value),
-                }));
-                onIsDirty(true);
-              }}
-            />
-          ))}
-      </div>
-      {bucketsToShow.length > showMoreAfter && (
-        <>
-          {!showAll && (
-            <div
-              className="option show-more"
-              onClick={() => setShowAll(true)}
-              title="show more"
-            >
-              <i className="fa fa-arrow-down"></i>
-            </div>
-          )}
-          {showAll && (
-            <div
-              className="option show-less"
-              onClick={() => setShowAll(false)}
-              title="show less"
-            >
-              <i className="fa fa-arrow-up"></i>
-            </div>
-          )}
-        </>
-      )}
-      {noOptionsAvailable && (
-        <div className="option">
-          <em>
-            No options available. Remove some search filters to show more
-            options.
-          </em>
-        </div>
-      )}
-    </>
-  );
-}
-
-function StringCheckbox({ field, label, checked, count, hidden, onChange }) {
-  return (
-    <label
-      className={`option${hidden ? " d-none" : ""}${
-        checked ? " filter-marked" : ""
-      }`}
-    >
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-      />
-      {label}
-      <div className="spacer" />
-      <span className="badge-pill badge badge-info">{count}</span>
-    </label>
-  );
-}
 
 function BooleanOptions({
   field,
