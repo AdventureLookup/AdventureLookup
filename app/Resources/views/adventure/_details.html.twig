@@ -114,7 +114,19 @@
             </div>
             <div class="col-12">
                 <div class="label">Link</div>
-                <a href="{{ adventure.link|add_affiliate_code|e('html_attr') }}">{{ adventure.link|add_affiliate_code }}</a>
+                {% if adventure.link %}
+                    {% set tmp = adventure.link|add_affiliate_code %}
+                    {% set link, affiliateCodeAdded = tmp[0], tmp[1] %}
+                    <a href="{{ link|e('html_attr') }}" rel="nofollow noopener">{{ link }}</a>
+                    {% if affiliateCodeAdded %}
+                        <sup>
+                            <a href="#affiliate-link-info">1</a>
+                        </sup>
+                    {% endif %}
+                {% else %}
+                    {% set affiliateCodeAdded = false %}
+                    Unknown
+                {% endif %}
             </div>
         </div>
 
@@ -188,5 +200,16 @@
                 </ul>
             </div>
         </div>
+        {% if affiliateCodeAdded %}
+            <div class="detail-row">
+                <div class="col">
+                    <p id="affiliate-link-info" class="text-muted">
+                        <sup>1</sup> This is an affiliate link.
+                        We may get a small comission if you buy something using that link.
+                        There are no additional costs for you.
+                    </p>
+                </div>
+            </div>
+        {% endif %}
     </div>
 </div>

@@ -10,6 +10,7 @@ use AppBundle\Entity\Item;
 use AppBundle\Entity\Monster;
 use AppBundle\Entity\Publisher;
 use AppBundle\Entity\Setting;
+use AppBundle\Service\AffiliateLinkHandler;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -29,6 +30,16 @@ use Symfony\Component\Validator\Constraints\Valid;
 
 class AdventureType extends AbstractType
 {
+    /**
+     * @var string[]
+     */
+    private $affiliateDomains = [];
+
+    public function __construct(AffiliateLinkHandler $affiliateLinkHandler)
+    {
+        $this->affiliateDomains = $affiliateLinkHandler->getDomains();
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -177,7 +188,7 @@ class AdventureType extends AbstractType
             ])
             ->add('link', UrlType::class, [
                 'required' => false,
-                'help' => 'Links to legitimate sites where the module can be procured.',
+                'help' => 'Links to legitimate sites where the module can be procured. Using affiliate links is not allowed. Links to the following domains will automatically be transformed into affiliate links: '.implode(', ', $this->affiliateDomains),
             ])
             ->add('thumbnailUrl', UrlType::class, [
                 'required' => false,

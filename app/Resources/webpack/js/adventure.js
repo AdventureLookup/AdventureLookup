@@ -48,6 +48,7 @@ function debounce(func, wait, immediate) {
             const link = $("<a></a>");
             link.text(adventure.title);
             link.attr("target", "_blank");
+            link.attr("rel", "noopener");
             // TODO: We should not hardcode the URL here!
             link.attr("href", "/adventures/" + adventure["slug"]);
             similarAdventuresList.append($("<li></li>").append(link));
