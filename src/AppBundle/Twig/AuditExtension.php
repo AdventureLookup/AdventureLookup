@@ -53,17 +53,19 @@ class AuditExtension extends AbstractExtension
     {
         switch (true) {
             case is_bool($val):
-                return $val ? 'true' : 'false';
+                return '<em>'.($val ? 'true' : 'false').'</em>';
             case is_array($val) && isset($val['fk']):
                 return $this->assoc($twig, $val);
             case is_array($val):
-                return json_encode($val);
+                return twig_escape_filter($twig, json_encode($val), 'html');
             case is_string($val):
-                return strlen($val) > 60 ? substr($val, 0, 60).'...' : $val;
+                $val = mb_strlen($val) > 200 ? mb_substr($val, 0, 200).'...' : $val;
+
+                return twig_escape_filter($twig, $val, 'html');
             case is_null($val):
-                return 'NULL';
+                return '<em>NULL</em>';
             default:
-                return $val;
+                return twig_escape_filter($twig, $val, 'html');
         }
     }
 }
