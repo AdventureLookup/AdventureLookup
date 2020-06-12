@@ -48,23 +48,27 @@ export function Root({
             if (filter.v.max !== "") {
               args.push(`≤${filter.v.max}`);
             }
-            if (filter.includeUnknown === true) {
-              args.push("?");
+            if (args.length > 0 && filter.includeUnknown === true) {
+              args.push("unknown");
             }
             addParam(field.name, args.join("~"));
             break;
           case "string": {
-            const args = filter.v.map((value) =>
-              value.replace(/~/g, "~~").replace(/\?/g, "??")
-            );
-            if (filter.includeUnknown) {
-              args.push("?");
+            let value = filter.v
+              .map((value) => value.replace(/~/g, "~~"))
+              .join("~");
+            if (value !== "" && filter.includeUnknown) {
+              value += "~unknown~";
             }
-            addParam(field.name, args.join("~"));
+            addParam(field.name, value);
             break;
           }
           case "boolean":
-            addParam(field.name, filter.v);
+            let value = filter.v;
+            if (value !== "" && filter.includeUnknown) {
+              value += "~unknown";
+            }
+            addParam(field.name, value);
             break;
           case "text":
           case "url":

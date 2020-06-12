@@ -58,28 +58,10 @@ class AdventureSearch
 
         $filters = [];
         foreach ($this->fieldProvider->getFieldsAvailableAsFilter() as $field) {
+            $value = $request->get($field->getName(), '');
             switch ($field->getType()) {
                 case 'integer':
-                    $valueMin = '';
-                    $valueMax = '';
-                    $includeUnknown = false;
-                    $parts = explode('~', $request->get($field->getName(), ''));
-                    foreach ($parts as $part) {
-                        if ('?' === $part) {
-                            $includeUnknown = true;
-                        } elseif (0 === mb_strpos($part, '≥')) {
-                            $n = mb_substr($part, 1);
-                            if ($this->isValidIntFilterValue($n)) {
-                                $valueMin = $n;
-                            }
-                        } elseif (0 === mb_strpos($part, '≤')) {
-                            $n = mb_substr($part, 1);
-                            if ($this->isValidIntFilterValue($n)) {
-                                $valueMax = $n;
-                            }
-                        }
-                    }
-
+                    list($valueMin, $valueMax, $includeUnknown) = $this->parseIntFilterValue($value);
                     $filters[$field->getName()] = [
                         'v' => [
                             'min' => $valueMin,
@@ -89,7 +71,6 @@ class AdventureSearch
                     ];
                     break;
                 case 'string':
-                    $value = $request->get($field->getName(), '');
                     list($values, $includeUnknown) = $this->parseStringFilterValue($value);
                     $filters[$field->getName()] = [
                         'v' => $values,
@@ -97,12 +78,10 @@ class AdventureSearch
                     ];
                     break;
                 case 'boolean':
-                    $value = $request->get($field->getName(), '');
-                    if (!in_array($value, ['', '0', '1'], true)) {
-                        $value = '';
-                    }
+                    list($value, $includeUnknown) = $this->parseBooleanFilterValue($value);
                     $filters[$field->getName()] = [
                         'v' => $value,
+                        'includeUnknown' => $includeUnknown,
                     ];
                     break;
                 case 'text':
@@ -115,6 +94,62 @@ class AdventureSearch
         }
 
         return [$q, $filters, $page, $sortBy, $seed];
+    }
+
+    private function parseStringFilterValue(string $value): array
+    {
+        $includeUnknown = false;
+
+        preg_match('#^(.*?)([^~]+)~$#', $value, $matches);
+        if (!empty($matches)) {
+            // If the value ends with "~" preceded by something else than a "~", then the
+            // last argument is special and includes additional options.
+            $value = $matches[1];
+            $additionalOptions = $matches[2];
+
+            if ('unknown' === $additionalOptions) {
+                $includeUnknown = true;
+            }
+        }
+
+        // Split the string on all "~" that are neither preceded nor followed by another "~".
+        $values = preg_split('#(?<!~)~(?!~)#', $value, -1, PREG_SPLIT_NO_EMPTY);
+
+        $values = array_map(function (string $value): string {
+            // Undo escaping of '~' character.
+            return str_replace('~~', '~', $value);
+        }, $values);
+
+        return [$values, $includeUnknown];
+    }
+
+    public function parseIntFilterValue(string $value): array
+    {
+        $valueMin = '';
+        $valueMax = '';
+        $includeUnknown = false;
+        $parts = explode('~', $value);
+        foreach ($parts as $part) {
+            if ('unknown' === $part) {
+                $includeUnknown = true;
+            } elseif (0 === mb_strpos($part, '≥')) {
+                $n = mb_substr($part, 1);
+                if ($this->isValidIntFilterValue($n)) {
+                    $valueMin = $n;
+                }
+            } elseif (0 === mb_strpos($part, '≤')) {
+                $n = mb_substr($part, 1);
+                if ($this->isValidIntFilterValue($n)) {
+                    $valueMax = $n;
+                }
+            }
+        }
+
+        if ('' === $valueMin && '' === $valueMax) {
+            $includeUnknown = false;
+        }
+
+        return [$valueMin, $valueMax, $includeUnknown];
     }
 
     private function isValidIntFilterValue(string $value): bool
@@ -143,29 +178,24 @@ class AdventureSearch
         ]);
     }
 
-    private function parseStringFilterValue(string $value): array
+    private function parseBooleanFilterValue(string $values): array
     {
-        // Split the string on all "~" that are neither preceded nor followed by another "~".
-        $values = preg_split('#(?<!~)~(?!~)#', $value, -1, PREG_SPLIT_NO_EMPTY);
-
-        // Check if any element is "?", the indicator for including adventures where this
-        // value is "unknown".
+        $values = explode('~', $values);
         $includeUnknown = false;
-        if (in_array('?', $values, true)) {
-            // Remove all "?" elements from $values
-            $values = array_diff($values, ['?']);
-            $includeUnknown = true;
+        $value = '';
+        foreach ($values as $each) {
+            if ('unknown' === $each) {
+                $includeUnknown = true;
+            } elseif ('1' === $each || '0' === $each) {
+                $value = $each;
+            }
         }
 
-        $values = array_map(function (string $value): string {
-            // Undo escaping of '?' and '~' characters.
-            return strtr($value, [
-                '~~' => '~',
-                '??' => '?',
-            ]);
-        }, $values);
+        if ('' === $value) {
+            $includeUnknown = false;
+        }
 
-        return [$values, $includeUnknown];
+        return [$value, $includeUnknown];
     }
 
     /**
@@ -692,7 +722,29 @@ class AdventureSearch
                 break;
                 case 'boolean':
                     if ('' !== $filter['v']) {
-                        $matches[] = ['term' => [$fieldName => '1' === $filter['v']]];
+                        $match = ['term' => [$fieldName => '1' === $filter['v']]];
+                        if (true === $filter['includeUnknown']) {
+                            $match = [
+                                'bool' => [
+                                    'should' => [
+                                        // either field is as defined
+                                        $match,
+                                        // or field is null
+                                        [
+                                            'bool' => [
+                                                'must_not' => [
+                                                    'exists' => [
+                                                        'field' => $field->getName(),
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                    'minimum_should_match' => 1,
+                                ],
+                            ];
+                        }
+                        $matches[] = $match;
                     }
                 break;
                 case 'string':

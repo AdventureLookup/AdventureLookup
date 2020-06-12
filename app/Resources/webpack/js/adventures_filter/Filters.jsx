@@ -154,83 +154,99 @@ function BooleanOptions({
   setFilter,
   onIsDirty,
 }) {
-  // Only display number of adventures that selected "no"/"yes" if the user
-  // doesn't filter by this field. If the user filters by all adventures that
+  // Only display number of adventures that selected "no"/"yes" if the option
+  // matches the user's selection. If the user filters by all adventures that
   // selected "no", the "yes" bucket is always empty and displaying a 0 for
   // "yes" could be confusing.
-  const noCount = initialFilter.v === "" ? fieldValues.countNo : undefined;
-  const yesCount = initialFilter.v === "" ? fieldValues.countYes : undefined;
+  const noCount =
+    initialFilter.v === "" || initialFilter.v === "0"
+      ? fieldValues.countNo
+      : undefined;
+  const yesCount =
+    initialFilter.v === "" || initialFilter.v === "1"
+      ? fieldValues.countYes
+      : undefined;
   const allCount = initialFilter.v === "" ? fieldValues.countAll : undefined;
 
   return (
-    <div className="option option-boolean">
-      <div className="form-check form-check-inline">
-        <input
-          className="form-check-input"
-          type="radio"
-          value=""
-          id={`sidebar-filter-${field.name}-all`}
-          checked={filter.v === ""}
-          onChange={() => {
-            setFilter({ ...filter, v: "" });
-            onIsDirty(true);
-          }}
-        />
-        <label
-          className="form-check-label"
-          htmlFor={`sidebar-filter-${field.name}-all`}
-        >
-          All{" "}
-          {allCount !== undefined && (
-            <span className="badge-pill badge badge-info">{allCount}</span>
-          )}
-        </label>
+    <>
+      <div className="option option-boolean">
+        <div className="form-check form-check-inline">
+          <input
+            className="form-check-input"
+            type="radio"
+            value=""
+            id={`sidebar-filter-${field.name}-all`}
+            checked={filter.v === ""}
+            onChange={() => {
+              setFilter({ ...filter, v: "" });
+              onIsDirty(true);
+            }}
+          />
+          <label
+            className="form-check-label"
+            htmlFor={`sidebar-filter-${field.name}-all`}
+          >
+            All{" "}
+            {allCount !== undefined && (
+              <span className="badge-pill badge badge-info">{allCount}</span>
+            )}
+          </label>
+        </div>
+        <div className="form-check form-check-inline">
+          <input
+            className="form-check-input"
+            type="radio"
+            value="1"
+            id={`sidebar-filter-${field.name}-yes`}
+            checked={filter.v === "1"}
+            onChange={() => {
+              setFilter({ ...filter, v: "1" });
+              onIsDirty(true);
+            }}
+          />
+          <label
+            className="form-check-label"
+            htmlFor={`sidebar-filter-${field.name}-yes`}
+          >
+            Yes{" "}
+            {yesCount !== undefined && (
+              <span className="badge-pill badge badge-info">{yesCount}</span>
+            )}
+          </label>
+        </div>
+        <div className="form-check form-check-inline">
+          <input
+            className="form-check-input"
+            type="radio"
+            value="0"
+            id={`sidebar-filter-${field.name}-no`}
+            checked={filter.v === "0"}
+            onChange={() => {
+              setFilter({ ...filter, v: "0" });
+              onIsDirty(true);
+            }}
+          />
+          <label
+            className="form-check-label"
+            htmlFor={`sidebar-filter-${field.name}-no`}
+          >
+            No{" "}
+            {noCount !== undefined && (
+              <span className="badge-pill badge badge-info">{noCount}</span>
+            )}
+          </label>
+        </div>
       </div>
-      <div className="form-check form-check-inline">
-        <input
-          className="form-check-input"
-          type="radio"
-          value="1"
-          id={`sidebar-filter-${field.name}-yes`}
-          checked={filter.v === "1"}
-          onChange={() => {
-            setFilter({ ...filter, v: "1" });
-            onIsDirty(true);
-          }}
-        />
-        <label
-          className="form-check-label"
-          htmlFor={`sidebar-filter-${field.name}-yes`}
-        >
-          Yes{" "}
-          {yesCount !== undefined && (
-            <span className="badge-pill badge badge-info">{yesCount}</span>
-          )}
-        </label>
-      </div>
-      <div className="form-check form-check-inline">
-        <input
-          className="form-check-input"
-          type="radio"
-          value="0"
-          id={`sidebar-filter-${field.name}-no`}
-          checked={filter.v === "0"}
-          onChange={() => {
-            setFilter({ ...filter, v: "0" });
-            onIsDirty(true);
-          }}
-        />
-        <label
-          className="form-check-label"
-          htmlFor={`sidebar-filter-${field.name}-no`}
-        >
-          No{" "}
-          {noCount !== undefined && (
-            <span className="badge-pill badge badge-info">{noCount}</span>
-          )}
-        </label>
-      </div>
-    </div>
+      <IncludeUnknownOption
+        field={field}
+        fieldValues={fieldValues}
+        initialFilter={initialFilter}
+        filter={filter}
+        setFilter={setFilter}
+        onIsDirty={onIsDirty}
+      />
+    </>
   );
 }
 
@@ -279,33 +295,54 @@ function IntegerOptions({
           onKeyPress={(key) => key.which === 13 && onSubmit()}
         />
       </div>
-      {!isFilterValueEmpty(field, filter) && (
-        <label
-          className="option"
-          title="Include adventures where this field is unknown, regardless of the filter set above."
-        >
-          <input
-            type="checkbox"
-            onChange={(e) => {
-              const value = e.target.checked;
-              setFilter((filter) => ({
-                ...filter,
-                includeUnknown: value,
-              }));
-              onIsDirty(true);
-            }}
-            checked={filter.includeUnknown}
-          />
-          Include when unknown
-          <div className="spacer" />
-          {(initialFilter.includeUnknown ||
-            (initialFilter.v.min === "" && initialFilter.v.max === "")) && (
-            <span className="badge-pill badge badge-info">
-              {fieldValues.countUnknown}
-            </span>
-          )}
-        </label>
-      )}
+      <IncludeUnknownOption
+        field={field}
+        fieldValues={fieldValues}
+        initialFilter={initialFilter}
+        filter={filter}
+        setFilter={setFilter}
+        onIsDirty={onIsDirty}
+      />
     </>
+  );
+}
+
+function IncludeUnknownOption({
+  field,
+  fieldValues,
+  initialFilter,
+  filter,
+  setFilter,
+  onIsDirty,
+}) {
+  if (isFilterValueEmpty(field, filter)) {
+    return null;
+  }
+  return (
+    <label
+      className="option"
+      title="Include adventures where this field is unknown, regardless of the filter set above."
+    >
+      <input
+        type="checkbox"
+        onChange={(e) => {
+          const value = e.target.checked;
+          setFilter((filter) => ({
+            ...filter,
+            includeUnknown: value,
+          }));
+          onIsDirty(true);
+        }}
+        checked={filter.includeUnknown}
+      />
+      Include when unknown
+      <div className="spacer" />
+      {(initialFilter.includeUnknown ||
+        isFilterValueEmpty(field, initialFilter)) && (
+        <span className="badge-pill badge badge-info">
+          {fieldValues.countUnknown}
+        </span>
+      )}
+    </label>
   );
 }

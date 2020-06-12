@@ -18,10 +18,12 @@ export function getEmptyFilter(field) {
     case "string":
       return {
         v: [],
+        includeUnknown: false,
       };
     case "boolean":
       return {
         v: "",
+        includeUnknown: false,
       };
     case "integer":
       return {
@@ -29,6 +31,7 @@ export function getEmptyFilter(field) {
           min: "",
           max: "",
         },
+        includeUnknown: false,
       };
     case "text":
     case "url":
@@ -60,11 +63,11 @@ export function getTagValuesFromFilter(field, filter) {
       }
       return tags;
     }
-    case "boolean":
+    case "boolean": {
       if (filter.v === "") {
         return [];
       }
-      return [
+      const tags = [
         {
           label: filter.v === "1" ? "yes" : "no",
           operator: "OR",
@@ -74,6 +77,18 @@ export function getTagValuesFromFilter(field, filter) {
           }),
         },
       ];
+      if (filter.includeUnknown === true) {
+        tags.push({
+          label: "unknown",
+          operator: "OR",
+          without: (filter) => ({
+            ...filter,
+            includeUnknown: false,
+          }),
+        });
+      }
+      return tags;
+    }
     case "integer":
       const tags = [];
       if (filter.v.min !== "") {
@@ -104,7 +119,7 @@ export function getTagValuesFromFilter(field, filter) {
           }),
         });
       }
-      if (filter.includeUnknown === true) {
+      if (tags.length > 0 && filter.includeUnknown === true) {
         tags.push({
           label: "unknown",
           operator: "OR",
