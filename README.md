@@ -122,6 +122,22 @@ php bin/console cache:clear --env test
 php vendor/symfony/phpunit-bridge/bin/simple-phpunit --testsuite browser
 ```
 
+### Debugging
+
+If you want to dump the contents of a variable, the simplest way is to call `dump($var)`.
+`dump()` is a function [provided by Symfony](https://symfony.com/doc/3.4/components/var_dumper.html).
+The result is displayed in the web debug toolbar.
+
+You can also debug your code using XDebug by setting breakpoints.
+- For Gitpod, select "Debug" in the left toolbar and then run the `[gitpod] Debug PHP Server`
+  task.
+- For Vagrant+VSCode, install the
+  [PHP Debug](https://marketplace.visualstudio.com/items?itemName=felixfbecker.php-debug)
+  extension and run the `[vagrant] Debug PHP Server` launch configuration.
+
+Then set a breakpoint and refresh your browser. The code should halt at the breakpoint.
+You do *not* need to install a browser extension to enable XDebug.
+
 ### Ports used in development
 
 | Port | Forwarded to host machine | Purpose                                           |
@@ -132,8 +148,12 @@ php vendor/symfony/phpunit-bridge/bin/simple-phpunit --testsuite browser
 | 8001 | yes                       | Webpack dev server if run from within Vagrant     |
 | 8002 | no                        | Webpack dev server if run from outside Vagrant    |
 | 8003 | no                        | Application test server                           |
+| 9000 | no *                      | XDebug                                            |
 | 9200 | yes                       | ElasticSearch                                     |
 | 9222 | no                        | Chrome Remote Debugging                           |
+
+\* debugging from your host works *without* forwarding the port, since XDebug connects
+to your host (in contrast to your host connecting to xdebug).
 
 ## Contributing
 

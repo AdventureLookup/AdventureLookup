@@ -6,7 +6,8 @@
 	"recommendations": [
 		"whatwedo.twig",
 		"syler.sass-indented",
-		"bmewburn.vscode-intelephense-client"
+		"bmewburn.vscode-intelephense-client",
+		"felixfbecker.php-debug"
 	],
 	// List of extensions recommended by VS Code that should not be recommended for users of this workspace.
 	"unwantedRecommendations": [

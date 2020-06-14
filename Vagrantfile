@@ -150,6 +150,15 @@ Vagrant.configure("2") do |config|
      echo "http.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
   SHELL
 
+  # Upload the xdebug.ini file and move it into the correct location.
+  # We cannot directly upload to /etc, because that would require sudo,
+  # which the file provisioner does not support.
+  # https://github.com/hashicorp/vagrant/issues/6917
+  config.vm.provision "xdebug-ini-upload", type: "file", source: "scripts/xdebug-vagrant.ini", destination: "/tmp/xdebug.ini"
+  config.vm.provision "xdebug-ini-install", type: "shell", inline: <<-SHELL
+    sudo mv /tmp/xdebug.ini /etc/php/7.4/cli/conf.d/30-adl-xdebug.ini
+  SHELL
+
   # This provisioner must be below the other provisioner. Otherwise it would
   # try to start services before they are installed.
   config.vm.provision "always", type: "shell", run: "always", inline: <<-SHELL
