@@ -12,8 +12,29 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider "virtualbox" do |vb, override|
     override.vm.box = "ubuntu/bionic64"
-    vb.memory = "2048"
     vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+
+    # Based on https://stackoverflow.com/a/40249377/2560557
+    # by Frederic Henri
+    host = RbConfig::CONFIG['host_os']
+    if host =~ /darwin/
+      cpus = `sysctl -n hw.ncpu`.to_i
+      # sysctl returns Bytes and we need to convert to MB
+      mem = `sysctl -n hw.memsize`.to_i / 1024 / 1024
+    elsif host =~ /linux/
+      cpus = `nproc`.to_i
+      # meminfo shows KB and we need to convert to MB
+      mem = `grep 'MemTotal' /proc/meminfo | sed -e 's/MemTotal://' -e 's/ kB//'`.to_i / 1024
+    else
+      cpus = `wmic cpu get NumberOfCores`.split("\n")[2].to_i
+      mem = `wmic OS get TotalVisibleMemorySize`.split("\n")[2].to_i / 1024
+    end
+
+    # Use a quarter of available memory, but at least 2GB
+    vb.memory = [mem / 4, 2048].max
+    # Allow using all CPUs, but at most 70% per CPU
+    vb.cpus = cpus
+    vb.customize ["modifyvm", :id, "--cpuexecutioncap", "70"]
   end
 
   config.vm.provider "docker" do |d, override|
