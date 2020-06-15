@@ -66,6 +66,9 @@ npm install
 php bin/console doctrine:migrations:migrate
 
 # Create Elasticsearch index
+# This command will log a warning when run for the very first time.
+# You can safely ignore it.
+# WARNING   [elasticsearch] Request Failure: ...
 php bin/console app:elasticsearch:reindex
 
 # Import dummy adventures (confirm with 'y')
