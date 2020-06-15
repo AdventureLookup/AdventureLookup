@@ -1,11 +1,11 @@
 export function isFilterValueEmpty(field, value) {
   switch (field.type) {
     case "string":
-      return value.length === 0;
+      return value.v.length === 0 && !value.includeUnknown;
     case "boolean":
-      return value === "";
+      return value.v === "";
     case "integer":
-      return value.min === "" && value.max === "";
+      return value.v.min === "" && value.v.max === "";
     case "text":
     case "url":
     default:
@@ -18,10 +18,12 @@ export function getEmptyFilter(field) {
     case "string":
       return {
         v: [],
+        includeUnknown: false,
       };
     case "boolean":
       return {
         v: "",
+        includeUnknown: false,
       };
     case "integer":
       return {
@@ -29,6 +31,7 @@ export function getEmptyFilter(field) {
           min: "",
           max: "",
         },
+        includeUnknown: false,
       };
     case "text":
     case "url":
@@ -39,27 +42,65 @@ export function getEmptyFilter(field) {
 
 export function getTagValuesFromFilter(field, filter) {
   switch (field.type) {
-    case "string":
-      return filter.v.map((value) => ({
+    case "string": {
+      const tags = filter.v.map((value) => ({
         label: value,
-        without: () => ({ v: filter.v.filter((each) => each !== value) }),
+        operator: "OR",
+        without: (filter) => ({
+          ...filter,
+          v: filter.v.filter((each) => each !== value),
+        }),
       }));
-    case "boolean":
+      if (filter.includeUnknown === true) {
+        tags.push({
+          label: field.multiple ? "none" : "unknown",
+          operator: "OR",
+          without: (filter) => ({
+            ...filter,
+            includeUnknown: false,
+          }),
+        });
+      }
+      return tags;
+    }
+    case "boolean": {
       if (filter.v === "") {
         return [];
       }
-      return [
-        { label: filter.v === "1" ? "yes" : "no", without: () => ({ v: "" }) },
+      const tags = [
+        {
+          label: filter.v === "1" ? "yes" : "no",
+          operator: "OR",
+          without: (filter) => ({
+            ...filter,
+            v: "",
+          }),
+        },
       ];
+      if (filter.includeUnknown === true) {
+        tags.push({
+          label: "unknown",
+          operator: "OR",
+          without: (filter) => ({
+            ...filter,
+            includeUnknown: false,
+          }),
+        });
+      }
+      return tags;
+    }
     case "integer":
       const tags = [];
       if (filter.v.min !== "") {
         tags.push({
           label: `≥ ${filter.v.min}`,
-          without: () => ({
+          operator: "AND",
+          without: (filter) => ({
+            // set includeUnknown to false if both min and max are now ""
+            includeUnknown: filter.v.max === "" ? false : filter.includeUnknown,
             v: {
-              ...filter,
-              max: "",
+              ...filter.v,
+              min: "",
             },
           }),
         });
@@ -67,11 +108,24 @@ export function getTagValuesFromFilter(field, filter) {
       if (filter.v.max !== "") {
         tags.push({
           label: `≤ ${filter.v.max}`,
-          without: () => ({
+          operator: "AND",
+          without: (filter) => ({
+            // set includeUnknown to false if both min and max are now ""
+            includeUnknown: filter.v.min === "" ? false : filter.includeUnknown,
             v: {
-              ...filter,
-              min: "",
+              ...filter.v,
+              max: "",
             },
+          }),
+        });
+      }
+      if (tags.length > 0 && filter.includeUnknown === true) {
+        tags.push({
+          label: "unknown",
+          operator: "OR",
+          without: (filter) => ({
+            ...filter,
+            includeUnknown: false,
           }),
         });
       }

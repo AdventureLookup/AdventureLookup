@@ -58,37 +58,30 @@ class AdventureSearch
 
         $filters = [];
         foreach ($this->fieldProvider->getFieldsAvailableAsFilter() as $field) {
+            $value = $request->get($field->getName(), '');
             switch ($field->getType()) {
                 case 'integer':
-                    $valueMin = $request->get($field->getName().'-min', '');
-                    $valueMax = $request->get($field->getName().'-max', '');
-                    if (!$this->isValidIntFilterValue($valueMin)) {
-                        $valueMin = '';
-                    }
-                    if (!$this->isValidIntFilterValue($valueMax)) {
-                        $valueMax = '';
-                    }
-
+                    list($valueMin, $valueMax, $includeUnknown) = $this->parseIntFilterValue($value);
                     $filters[$field->getName()] = [
                         'v' => [
                             'min' => $valueMin,
                             'max' => $valueMax,
                         ],
+                        'includeUnknown' => $includeUnknown,
                     ];
                     break;
                 case 'string':
-                    $value = $request->get($field->getName(), '');
+                    list($values, $includeUnknown) = $this->parseStringFilterValue($value);
                     $filters[$field->getName()] = [
-                        'v' => $this->parseStringFilterValue($value),
+                        'v' => $values,
+                        'includeUnknown' => $includeUnknown,
                     ];
                     break;
                 case 'boolean':
-                    $value = $request->get($field->getName(), '');
-                    if (!in_array($value, ['', '0', '1'], true)) {
-                        $value = '';
-                    }
+                    list($value, $includeUnknown) = $this->parseBooleanFilterValue($value);
                     $filters[$field->getName()] = [
                         'v' => $value,
+                        'includeUnknown' => $includeUnknown,
                     ];
                     break;
                 case 'text':
@@ -103,8 +96,68 @@ class AdventureSearch
         return [$q, $filters, $page, $sortBy, $seed];
     }
 
+    private function parseStringFilterValue(string $value): array
+    {
+        $includeUnknown = false;
+
+        preg_match('#^(.*?)([^~]+)~$#', $value, $matches);
+        if (!empty($matches)) {
+            // If the value ends with "~" preceded by something else than a "~", then the
+            // last argument is special and includes additional options.
+            $value = $matches[1];
+            $additionalOptions = $matches[2];
+
+            if ('unknown' === $additionalOptions) {
+                $includeUnknown = true;
+            }
+        }
+
+        // Split the string on all "~" that are neither preceded nor followed by another "~".
+        $values = preg_split('#(?<!~)~(?!~)#', $value, -1, PREG_SPLIT_NO_EMPTY);
+
+        $values = array_map(function (string $value): string {
+            // Undo escaping of '~' character.
+            return str_replace('~~', '~', $value);
+        }, $values);
+
+        return [$values, $includeUnknown];
+    }
+
+    public function parseIntFilterValue(string $value): array
+    {
+        $valueMin = '';
+        $valueMax = '';
+        $includeUnknown = false;
+        $parts = explode('~', $value);
+        foreach ($parts as $part) {
+            if ('unknown' === $part) {
+                $includeUnknown = true;
+            } elseif (0 === mb_strpos($part, '≥')) {
+                $n = mb_substr($part, 1);
+                if ($this->isValidIntFilterValue($n)) {
+                    $valueMin = $n;
+                }
+            } elseif (0 === mb_strpos($part, '≤')) {
+                $n = mb_substr($part, 1);
+                if ($this->isValidIntFilterValue($n)) {
+                    $valueMax = $n;
+                }
+            }
+        }
+
+        if ('' === $valueMin && '' === $valueMax) {
+            $includeUnknown = false;
+        }
+
+        return [$valueMin, $valueMax, $includeUnknown];
+    }
+
     private function isValidIntFilterValue(string $value): bool
     {
+        if ('' === $value) {
+            return true;
+        }
+
         // ElasticSearch integer fields are signed 32 bit values.
         // https://www.elastic.co/guide/en/elasticsearch/reference/5.5/number.html
         // We deliberately set 2**30 as the upper bound, to make sure
@@ -114,7 +167,10 @@ class AdventureSearch
         //
         // We set 0 as the lower bound, since negative values make no
         // sense for any of the integer fields we use so far.
-        return '' === $value || false !== filter_var($value, FILTER_VALIDATE_INT, [
+        //
+        // We also have to make sure that $value does not contain leading or trailing
+        // whitespace, which filter_var accepts, but ElasticSearch doesn't.
+        return trim($value) === $value && false !== filter_var($value, FILTER_VALIDATE_INT, [
             'options' => [
                 'min_range' => 0,
                 'max_range' => 2 ** 30,
@@ -122,15 +178,24 @@ class AdventureSearch
         ]);
     }
 
-    private function parseStringFilterValue(string $value): array
+    private function parseBooleanFilterValue(string $values): array
     {
-        // Split the string on all "~" that are neither preceded nor followed by another "~".
-        $values = preg_split('#(?<!~)~(?!~)#', $value, -1, PREG_SPLIT_NO_EMPTY);
+        $values = explode('~', $values);
+        $includeUnknown = false;
+        $value = '';
+        foreach ($values as $each) {
+            if ('unknown' === $each) {
+                $includeUnknown = true;
+            } elseif ('1' === $each || '0' === $each) {
+                $value = $each;
+            }
+        }
 
-        return array_map(function (string $value): string {
-            // Revert escaping of all "~" within values by "~~"
-            return str_replace('~~', '~', $value);
-        }, $values);
+        if ('' === $value) {
+            $includeUnknown = false;
+        }
+
+        return [$value, $includeUnknown];
     }
 
     /**
@@ -265,7 +330,9 @@ class AdventureSearch
         $totalResults = $result['hits']['total']['value'];
         $hasMoreResults = $totalResults > $page * self::ADVENTURES_PER_PAGE;
 
-        return [$adventureDocuments, $totalResults, $hasMoreResults, $result['aggregations']];
+        $stats = $this->formatAggregations($result['aggregations']);
+
+        return [$adventureDocuments, $totalResults, $hasMoreResults, $stats];
     }
 
     public function similarTitles($title): array
@@ -388,31 +455,39 @@ class AdventureSearch
     private function fieldAggregations(): array
     {
         $aggregations = [];
-        $fields = $this->fieldProvider->getFields();
+        $fields = $this->fieldProvider->getFieldsAvailableAsFilter();
         foreach ($fields as $field) {
             $fieldName = $field->getFieldNameForAggregation();
+            $aggregations[$field->getName().'_missing'] = [
+                'missing' => [
+                    'field' => $fieldName,
+                ],
+            ];
             switch ($field->getType()) {
                 case 'integer':
-                    $aggregations['max_'.$field->getName()] = [
+                    $aggregations[$field->getName().'_max'] = [
                         'max' => [
                             'field' => $fieldName,
                         ],
                     ];
-                    $aggregations['min_'.$field->getName()] = [
+                    $aggregations[$field->getName().'_min'] = [
                         'min' => [
                             'field' => $fieldName,
                         ],
                     ];
-                    break;
+                break;
+
+                // We use a Terms Aggregation
+                // https://www.elastic.co/guide/en/elasticsearch/reference/5.5/search-aggregations-bucket-terms-aggregation.html
                 case 'boolean':
-                    $aggregations['vals_'.$field->getName()] = [
+                    $aggregations[$field->getName().'_terms'] = [
                         'terms' => [
                             'field' => $fieldName,
                         ],
                     ];
                     break;
                 case 'string':
-                    $aggregations['vals_'.$field->getName()] = [
+                    $aggregations[$field->getName().'_terms'] = [
                         'terms' => [
                             'field' => $fieldName,
                             // Return up to 1000 different values.
@@ -420,11 +495,57 @@ class AdventureSearch
                         ],
                     ];
                     break;
-                // Other field types are not supported
+                default:
+                    throw new \LogicException('Field '.$field->getName().' has unsupported type for aggregation: '.$field->getType());
             }
         }
 
         return $aggregations;
+    }
+
+    private function formatAggregations(array $aggregations): array
+    {
+        $stats = [];
+        $fields = $this->fieldProvider->getFieldsAvailableAsFilter();
+        foreach ($fields as $field) {
+            switch ($field->getType()) {
+                case 'integer':
+                    $stats[$field->getName()] = [
+                        'min' => (int) $aggregations[$field->getName().'_min']['value'],
+                        'max' => (int) $aggregations[$field->getName().'_max']['value'],
+                        'countUnknown' => $aggregations[$field->getName().'_missing']['doc_count'],
+                    ];
+                break;
+                case 'boolean':
+                    $countUnknown = $aggregations[$field->getName().'_missing']['doc_count'];
+                    $countYes = 0;
+                    $countNo = 0;
+                    foreach ($aggregations[$field->getName().'_terms']['buckets'] as $bucket) {
+                        if (0 === $bucket['key']) {
+                            $countNo = $bucket['doc_count'];
+                        } elseif (1 === $bucket['key']) {
+                            $countYes = $bucket['doc_count'];
+                        }
+                    }
+                    $stats[$field->getName()] = [
+                        'countAll' => $countUnknown + $countNo + $countYes,
+                        'countUnknown' => $countUnknown,
+                        'countNo' => $countNo,
+                        'countYes' => $countYes,
+                    ];
+                break;
+                case 'string':
+                    $stats[$field->getName()] = [
+                        'countUnknown' => $aggregations[$field->getName().'_missing']['doc_count'],
+                        'buckets' => $aggregations[$field->getName().'_terms']['buckets'],
+                    ];
+                break;
+                default:
+                    throw new \LogicException('Field '.$field->getName().' has unsupported type for aggregation: '.$field->getType());
+            }
+        }
+
+        return $stats;
     }
 
     /**
@@ -547,49 +668,112 @@ class AdventureSearch
                 continue;
             }
 
-            $values = isset($filter['v']) ? (array) $filter['v'] : [];
-            if (0 == count($values)) {
-                // Apparently no filter value provided
-                continue;
-            }
-
-            $filterMatches = [];
-            foreach ($values as $key => $value) {
-                if ('' === $value) {
-                    continue;
-                }
-
-                if ('integer' === $field->getType() && in_array($key, ['min', 'max'], true) && is_numeric($value)) {
-                    $filterMatches[] = [
-                        'range' => [
-                            $field->getName() => [
-                                'min' == $key ? 'gte' : 'lte' => $value,
+            switch ($field->getType()) {
+                case 'integer':
+                    $filterMatches = [];
+                    if ('' !== $filter['v']['min']) {
+                        $filterMatches[] = [
+                            'range' => [
+                                $field->getName() => [
+                                    'gte' => $filter['v']['min'],
+                                ],
                             ],
-                        ],
-                    ];
-                } elseif ('string' === $field->getType()) {
-                    $filterMatches[] = ['term' => [$fieldName.'.keyword' => $value]];
-                } elseif ('boolean' === $field->getType()) {
-                    $filterMatches[] = ['term' => [$fieldName => '1' === $value]];
-                }
-            }
-
-            if (count($filterMatches) > 0) {
-                if ('integer' === $field->getType()) {
-                    // Integer fields must use AND, because you want e.g. the page count to be between min AND max.
-                    $matches[] = [
-                        'bool' => [
-                            'must' => $filterMatches,
-                        ],
-                    ];
-                } else {
-                    $matches[] = [
-                        'bool' => [
-                            'should' => $filterMatches,
-                            'minimum_should_match' => 1,
-                        ],
-                    ];
-                }
+                        ];
+                    }
+                    if ('' !== $filter['v']['max']) {
+                        $filterMatches[] = [
+                            'range' => [
+                                $field->getName() => [
+                                    'lte' => $filter['v']['max'],
+                                ],
+                            ],
+                        ];
+                    }
+                    if (!empty($filterMatches)) {
+                        // Integer fields must use AND, because you want e.g. the page count to be between min AND max.
+                        $match = [
+                            'bool' => [
+                                'must' => $filterMatches,
+                            ],
+                        ];
+                        if (true === $filter['includeUnknown']) {
+                            $match = [
+                                'bool' => [
+                                    'should' => [
+                                        // either field is within bounds
+                                        $match,
+                                        // or field is null
+                                        [
+                                            'bool' => [
+                                                'must_not' => [
+                                                    'exists' => [
+                                                        'field' => $field->getName(),
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                    'minimum_should_match' => 1,
+                                ],
+                            ];
+                        }
+                        $matches[] = $match;
+                    }
+                break;
+                case 'boolean':
+                    if ('' !== $filter['v']) {
+                        $match = ['term' => [$fieldName => '1' === $filter['v']]];
+                        if (true === $filter['includeUnknown']) {
+                            $match = [
+                                'bool' => [
+                                    'should' => [
+                                        // either field is as defined
+                                        $match,
+                                        // or field is null
+                                        [
+                                            'bool' => [
+                                                'must_not' => [
+                                                    'exists' => [
+                                                        'field' => $field->getName(),
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                    'minimum_should_match' => 1,
+                                ],
+                            ];
+                        }
+                        $matches[] = $match;
+                    }
+                break;
+                case 'string':
+                    $filterMatches = [];
+                    foreach ($filter['v'] as $value) {
+                        $filterMatches[] = ['term' => [$fieldName.'.keyword' => $value]];
+                    }
+                    if (true === $filter['includeUnknown']) {
+                        $filterMatches[] = [
+                            'bool' => [
+                                'must_not' => [
+                                    'exists' => [
+                                        'field' => $field->getName(),
+                                    ],
+                                ],
+                            ],
+                        ];
+                    }
+                    if (!empty($filterMatches)) {
+                        $matches[] = [
+                            'bool' => [
+                                'should' => $filterMatches,
+                                'minimum_should_match' => 1,
+                            ],
+                        ];
+                    }
+                break;
+                default:
+                    throw new \LogicException('Unsupported field type '.$field->getType());
             }
         }
 

@@ -56,15 +56,18 @@ class AdventureSearchTest extends TestCase
     public function testRequestToSearchParams()
     {
         $EMPTY_NUM_PAGES = [
+            'includeUnknown' => false,
             'v' => [
                 'min' => '',
                 'max' => '',
             ],
         ];
         $EMPTY_SOLOABLE = [
+            'includeUnknown' => false,
             'v' => '',
         ];
         $EMPTY_EDITION = [
+            'includeUnknown' => false,
             'v' => [],
         ];
 
@@ -83,11 +86,19 @@ class AdventureSearchTest extends TestCase
         $request = Request::create('/?q=foo');
         $this->assertEquals(['foo', ['numPages' => $EMPTY_NUM_PAGES, 'soloable' => $EMPTY_SOLOABLE, 'edition' => $EMPTY_EDITION], 1, '', '123'], $this->search->requestToSearchParams($request));
 
-        $request = Request::create('/?numPages-min=2&edition=foo&soloable=1');
+        $request = Request::create('/?numPages=≥2&edition=foo&soloable=1');
         $this->assertEquals(['', [
-            'numPages' => ['v' => ['min' => '2', 'max' => '']],
-            'soloable' => ['v' => '1'],
-            'edition' => ['v' => ['foo']],
+            'numPages' => [
+                'includeUnknown' => false,
+                'v' => ['min' => '2', 'max' => ''], ],
+            'soloable' => [
+                'includeUnknown' => false,
+                'v' => '1',
+            ],
+            'edition' => [
+                'includeUnknown' => false,
+                'v' => ['foo'],
+            ],
         ], 1, '', '123'], $this->search->requestToSearchParams($request));
 
         $request = Request::create('/?soloable=ok');
@@ -99,8 +110,38 @@ class AdventureSearchTest extends TestCase
         $request = Request::create('/?seed=foo');
         $this->assertEquals(['', ['numPages' => $EMPTY_NUM_PAGES, 'soloable' => $EMPTY_SOLOABLE, 'edition' => $EMPTY_EDITION], 1, '', 'foo'], $this->search->requestToSearchParams($request));
 
-        $request = Request::create('/?numPages-min=-5');
+        $request = Request::create('/?numPages=≥-5');
         $this->assertEquals(['', ['numPages' => $EMPTY_NUM_PAGES, 'soloable' => $EMPTY_SOLOABLE, 'edition' => $EMPTY_EDITION], 1, '', '123'], $this->search->requestToSearchParams($request));
+
+        $request = Request::create('/?numPages=≥ 5');
+        $this->assertEquals(['', ['numPages' => $EMPTY_NUM_PAGES, 'soloable' => $EMPTY_SOLOABLE, 'edition' => $EMPTY_EDITION], 1, '', '123'], $this->search->requestToSearchParams($request));
+    }
+
+    public function testParseStringFilterValue()
+    {
+        $parseStringFilterValue = self::getMethod(AdventureSearch::class, 'parseStringFilterValue');
+        $this->assertEquals([[], false], $parseStringFilterValue->invokeArgs($this->search, ['']));
+        $this->assertEquals([[], false], $parseStringFilterValue->invokeArgs($this->search, ['~']));
+        $this->assertEquals([['foo'], false], $parseStringFilterValue->invokeArgs($this->search, ['foo']));
+        $this->assertEquals([[], false], $parseStringFilterValue->invokeArgs($this->search, ['~foo~']));
+        $this->assertEquals([['foo~bar', 'baz'], false], $parseStringFilterValue->invokeArgs($this->search, ['foo~~bar~baz']));
+        $this->assertEquals([['foo~~bar~baz'], false], $parseStringFilterValue->invokeArgs($this->search, ['foo~~~~bar~~baz']));
+        $this->assertEquals([['fo?o?', 'bar'], false], $parseStringFilterValue->invokeArgs($this->search, ['fo?o?~bar']));
+        $this->assertEquals([['blah~'], false], $parseStringFilterValue->invokeArgs($this->search, ['blah~~']));
+        $this->assertEquals([['unknown'], false], $parseStringFilterValue->invokeArgs($this->search, ['unknown']));
+        $this->assertEquals([[], true], $parseStringFilterValue->invokeArgs($this->search, ['unknown~']));
+        $this->assertEquals([['foo'], true], $parseStringFilterValue->invokeArgs($this->search, ['foo~unknown~']));
+    }
+
+    public function testParseIntFilterValue()
+    {
+        $parseIntFilterValue = self::getMethod(AdventureSearch::class, 'parseIntFilterValue');
+        $this->assertEquals(['', '', false], $parseIntFilterValue->invokeArgs($this->search, ['']));
+        $this->assertEquals(['', '', false], $parseIntFilterValue->invokeArgs($this->search, ['~']));
+        $this->assertEquals(['', '', false], $parseIntFilterValue->invokeArgs($this->search, ['unknown']));
+        $this->assertEquals(['', '', false], $parseIntFilterValue->invokeArgs($this->search, ['~unknown']));
+        $this->assertEquals(['5', '', false], $parseIntFilterValue->invokeArgs($this->search, ['≥5']));
+        $this->assertEquals(['5', '', true], $parseIntFilterValue->invokeArgs($this->search, ['unknown~≥5']));
     }
 
     public function testIsValidIntFilterValue()
@@ -110,19 +151,21 @@ class AdventureSearchTest extends TestCase
         $this->assertTrue($isValidIntFilterValue->invokeArgs($this->search, ['42']));
         $this->assertTrue($isValidIntFilterValue->invokeArgs($this->search, [2 ** 20]));
         $this->assertFalse($isValidIntFilterValue->invokeArgs($this->search, ['02']));
+        $this->assertFalse($isValidIntFilterValue->invokeArgs($this->search, [' 2']));
         $this->assertFalse($isValidIntFilterValue->invokeArgs($this->search, ['-2']));
         $this->assertFalse($isValidIntFilterValue->invokeArgs($this->search, [2 ** 32]));
     }
 
-    public function testParseStringFilterValue()
+    public function testParseBooleanFilterValue()
     {
-        $parseStringFilterValue = self::getMethod(AdventureSearch::class, 'parseStringFilterValue');
-        $this->assertEquals([], $parseStringFilterValue->invokeArgs($this->search, ['']));
-        $this->assertEquals([], $parseStringFilterValue->invokeArgs($this->search, ['~']));
-        $this->assertEquals(['foo'], $parseStringFilterValue->invokeArgs($this->search, ['foo']));
-        $this->assertEquals(['foo'], $parseStringFilterValue->invokeArgs($this->search, ['~foo~']));
-        $this->assertEquals(['foo~bar', 'baz'], $parseStringFilterValue->invokeArgs($this->search, ['foo~~bar~baz']));
-        $this->assertEquals(['foo~~bar~baz'], $parseStringFilterValue->invokeArgs($this->search, ['foo~~~~bar~~baz']));
+        $parseBooleanFilterValue = self::getMethod(AdventureSearch::class, 'parseBooleanFilterValue');
+        $this->assertEquals(['', false], $parseBooleanFilterValue->invokeArgs($this->search, ['']));
+        $this->assertEquals(['', false], $parseBooleanFilterValue->invokeArgs($this->search, ['~']));
+        $this->assertEquals(['', false], $parseBooleanFilterValue->invokeArgs($this->search, ['unknown']));
+        $this->assertEquals(['', false], $parseBooleanFilterValue->invokeArgs($this->search, ['~unknown']));
+        $this->assertEquals(['1', false], $parseBooleanFilterValue->invokeArgs($this->search, ['1']));
+        $this->assertEquals(['0', false], $parseBooleanFilterValue->invokeArgs($this->search, ['0']));
+        $this->assertEquals(['0', true], $parseBooleanFilterValue->invokeArgs($this->search, ['0~unknown']));
     }
 
     private static function getMethod($class, $name)
