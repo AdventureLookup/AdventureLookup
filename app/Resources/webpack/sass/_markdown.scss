@@ -1,0 +1,39 @@
+.markdown {
+  blockquote {
+    display: block;
+    padding-left: 12px;
+    border-left: 4px solid $adl-grey-lightest;
+  }
+  blockquote > blockquote {
+    margin-left: -4px;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 12px;
+    margin-top: 8px;
+  }
+
+  h1 {
+    font-size: 2em;
+  }
+  h2 {
+    font-size: 1.8em;
+  }
+  h3 {
+    font-size: 1.6em;
+  }
+  h4 {
+    font-size: 1.4em;
+  }
+  h5 {
+    font-size: 1.2em;
+  }
+  h6 {
+    font-size: 1em;
+    font-weight: bold;
+  }
+
+  ul, ol {
+    padding-left: 2em;
+  }
+}

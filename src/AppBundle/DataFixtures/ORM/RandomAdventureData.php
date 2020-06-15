@@ -64,6 +64,7 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
 
         $faker = Faker\Factory::create();
         $faker->addProvider(new \Mmo\Faker\PicsumProvider($faker));
+        $faker->addProvider(new \DavidBadura\FakerMarkdownGenerator\FakerProvider($faker));
 
         $reviewCreatedByProperty = (new ReflectionClass(Review::class))->getProperty('createdBy');
         $reviewCreatedByProperty->setAccessible(true);
@@ -121,7 +122,11 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
                         $review->setThumbsDown();
                     }
                     if ($faker->boolean(70)) {
-                        $review->setComment($faker->realText($faker->numberBetween(20, 500)));
+                        if ($faker->boolean()) {
+                            $review->setComment($faker->markdown());
+                        } else {
+                            $review->setComment($faker->realText($faker->numberBetween(20, 500)));
+                        }
                     }
 
                     $reviewCreatedByProperty->setValue($review, $j.'-'.$faker->userName);
