@@ -207,13 +207,6 @@ class Adventure
     private $slug;
 
     /**
-     * @var bool
-     *
-     * @ORM\Column(name="approved", type="boolean")
-     */
-    private $approved;
-
-    /**
      * @var ChangeRequest[]|Collection
      *
      * @ORM\OneToMany(targetEntity="ChangeRequest", mappedBy="adventure", orphanRemoval=true)
@@ -262,8 +255,6 @@ class Adventure
         $this->monsters = new ArrayCollection();
         $this->changeRequests = new ArrayCollection();
         $this->reviews = new ArrayCollection();
-
-        $this->approved = false;
     }
 
     public function __toString()
@@ -537,18 +528,6 @@ class Adventure
     public function getTitle()
     {
         return $this->title;
-    }
-
-    public function isApproved(): bool
-    {
-        return $this->approved;
-    }
-
-    public function setApproved(bool $approved): Adventure
-    {
-        $this->approved = $approved;
-
-        return $this;
     }
 
     public function getSlug(): string
