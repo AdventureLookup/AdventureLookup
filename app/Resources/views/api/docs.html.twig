@@ -14,7 +14,7 @@
       You can also filter adventures by specific fields similar to using the sidebar on the search page.
       The following fields are available:
       <ul>
-        {% for field in fields if field.availableAsFilter %}
+        {% for field in fields|filter(field => field.availableAsFilter) %}
           <li>
             <strong>{{ field.name }} <span class="badge badge-primary">{{ field.type }}</span></strong>
           </li>
