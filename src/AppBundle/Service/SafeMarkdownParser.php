@@ -53,7 +53,7 @@ class SafeMarkdownParser
             $walker = $document->walker();
             while ($event = $walker->next()) {
                 $node = $event->getNode();
-                if ($event->isEntering() && $node instanceof Image) {
+                if (!$event->isEntering() && $node instanceof Image) {
                     $node->detach();
                 }
             }

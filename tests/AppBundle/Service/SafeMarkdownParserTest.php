@@ -35,6 +35,8 @@ class SafeMarkdownParserTest extends TestCase
         $parser = new SafeMarkdownParser(new RequestStack());
         $result = $parser->convert('Begin ![](https://example.com/img.png) End');
         $this->assertEquals("<p>Begin  End</p>\n", $result);
+        $result = $parser->convert('Begin ![](https://example.com/img.png) ![](https://example.com/img.png) End');
+        $this->assertEquals("<p>Begin   End</p>\n", $result);
     }
 
     public function testWrapsTables()
