@@ -19,7 +19,7 @@ export function SearchTags({
 
   const activeFilters = Object.entries(initialFilterValues)
     .map(([fieldName, filter]) => [fieldsByName[fieldName], filter])
-    .filter(([field, filter]) => !isFilterValueEmpty(field, filter.v));
+    .filter(([field, filter]) => !isFilterValueEmpty(field, filter));
 
   const removeAll = () => {
     activeFilters.forEach(([field]) => {
@@ -34,24 +34,43 @@ export function SearchTags({
   return (
     <div id="search-tags">
       {activeFilters.map(([field, filter]) => {
-        return getTagValuesFromFilter(field, filter).map((tag, i) => {
+        const tags = getTagValuesFromFilter(field, filter);
+        const tagElements = tags.map((tag, i) => {
           return (
-            <span
-              key={i}
-              className="badge badge-primary filter-tag"
-              onClick={() => {
-                setFilterValues({
-                  ...initialFilterValues,
-                  [field.name]: tag.without(),
-                });
-                onSubmit();
-              }}
-              title="Clear Filter"
-            >
-              {field.title}: {tag.label}{" "}
+            // wrap into an inline-block so that the operator is always in front of the tag,
+            // even when wrapped accross multiple lines
+            <span key={i} className="d-inline-block">
+              {i > 0 && <span className="tag-operator">{tag.operator}</span>}
+              <span
+                className="badge badge-primary"
+                onClick={() => {
+                  setFilterValues((initialFilterValues) => {
+                    return {
+                      ...initialFilterValues,
+                      [field.name]: tag.without(
+                        initialFilterValues[field.name]
+                      ),
+                    };
+                  });
+                  onSubmit();
+                }}
+                title="Clear Filter"
+              >
+                {field.title}: {tag.label}{" "}
+              </span>
             </span>
           );
         });
+
+        if (tagElements.length > 1) {
+          return (
+            <div className="tag-wrapper" key={field.name}>
+              {tagElements}
+            </div>
+          );
+        }
+
+        return tagElements;
       })}
       {activeFilters.length > 0 && (
         <span

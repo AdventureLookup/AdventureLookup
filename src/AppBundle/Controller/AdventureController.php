@@ -29,8 +29,8 @@ class AdventureController extends Controller
     /**
      * Lists all adventure entities.
      *
-     * @Route("/adventures/", name="adventure_index")
-     * @Method({"GET", "POST"})
+     * @Route("/adventures", name="adventure_index")
+     * @Method("GET")
      *
      * @return Response
      */
@@ -60,6 +60,27 @@ class AdventureController extends Controller
             'sortBy' => $sortBy,
             'seed' => $seed,
         ]);
+    }
+
+    /**
+     * Redirect from route with trailing slash to route without trailing slash.
+     * Based on https://symfony.com/doc/3.4/routing/redirect_trailing_slash.html
+     *
+     * TODO: Remove in Symfony 4.x (https://symfony.com/doc/4.4/routing.html#redirecting-urls-with-trailing-slashes)
+     *
+     * @Route("/adventures/")
+     * @Method("GET")
+     */
+    public function redirectFromURLWithTrailingSlashAction(Request $request): RedirectResponse
+    {
+        $pathInfo = $request->getPathInfo();
+        $requestUri = $request->getRequestUri();
+
+        $url = str_replace($pathInfo, rtrim($pathInfo, ' /'), $requestUri);
+
+        // 308 (Permanent Redirect) is similar to 301 (Moved Permanently) except
+        // that it does not allow changing the request method (e.g. from POST to GET)
+        return $this->redirect($url, 308);
     }
 
     /**

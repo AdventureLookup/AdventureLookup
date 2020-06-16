@@ -11,7 +11,7 @@
     }
     .option {
       display: flex;
-      &.range-option {
+      &.option-integer {
         @include media-breakpoint-down(md) {
           flex-direction: column;
         }
@@ -89,7 +89,9 @@
       cursor: pointer;
     }
 
-    &.range-option {
+    &.option-integer {
+      display: flex;
+
       input {
         border-radius: 0;
         @include media-breakpoint-up(lg) {
@@ -104,6 +106,16 @@
           margin-right: 3px;
         }
       }
+
+      @include media-breakpoint-down(md) {
+        flex-direction: column;
+      }
+    }
+
+    &.option-integer:hover,
+    &.option-boolean:hover {
+      background-color: $adl-grey-darkest;
+      cursor: default;
     }
   }
   &-searchbar {
@@ -121,20 +133,6 @@
     }
     &:hover {
       background-color: $adl-grey-dark;
-      cursor: default;
-    }
-  }
-
-  .option {
-    display: flex;
-    &.range-option {
-      @include media-breakpoint-down(md) {
-        flex-direction: column;
-      }
-    }
-
-    &:not(.apply):hover {
-      background-color: $adl-grey-darkest;
       cursor: default;
     }
   }

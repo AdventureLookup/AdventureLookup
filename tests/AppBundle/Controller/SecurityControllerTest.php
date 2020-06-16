@@ -27,7 +27,7 @@ class SecurityControllerTest extends WebTestCase
         $session = $this->makeSession();
         $this->submitUsernameAndPassword($session, 'User #1', 'user1');
 
-        $this->assertPath($session, '/adventures/');
+        $this->assertPath($session, '/adventures');
     }
 
     public function testRedirectIfAlreadyLoggedIn()

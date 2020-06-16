@@ -23,6 +23,13 @@ class ApiControllerTest extends WebTestCase
         }
     }
 
+    public function testRedirect()
+    {
+        $session = $this->makeSession();
+        $session->visit('/api/adventures/?foo=bar');
+        $this->assertPath($session, '/api/adventures?foo=bar');
+    }
+
     public function testShowAction()
     {
         $referenceRepository = $this->loadFixtures([AdventureData::class])->getReferenceRepository();
