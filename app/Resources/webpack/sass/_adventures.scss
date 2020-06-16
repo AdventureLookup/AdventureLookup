@@ -17,23 +17,23 @@ $thumbnail-height: 100px;
   > span.badge {
     margin-right: 4px;
     &::after {
-      content: '\f00d';
-      font: 1rem 'FontAwesome';
+      content: "\f00d";
+      font: 1rem "FontAwesome";
     }
     &:hover {
       cursor: pointer;
     }
 
     &.badge-primary:hover {
-        background-color: darken($adl-coral, 7.5%);
+      background-color: darken($adl-coral, 7.5%);
     }
-    &.badge-clear{
-        color: white;
-        background-color: $adl-grey-light;
+    &.badge-clear {
+      color: white;
+      background-color: $adl-grey-light;
 
-        &:hover {
-            background-color: darken($adl-grey-light, 7.5%);
-        } 
+      &:hover {
+        background-color: darken($adl-grey-light, 7.5%);
+      }
     }
   }
 }
@@ -42,7 +42,8 @@ $thumbnail-height: 100px;
   display: flex;
   margin-bottom: $element-margin-bottom;
 
-  button, input {
+  button,
+  input {
     font-size: 1.2rem;
   }
 }
@@ -99,7 +100,9 @@ $thumbnail-height: 100px;
     }
 
     @include media-breakpoint-up(sm) {
-      .title, .description, .tags-container {
+      .title,
+      .description,
+      .tags-container {
         padding-right: calc(#{$thumbnail-width} + #{$thumbnail-offset});
       }
     }

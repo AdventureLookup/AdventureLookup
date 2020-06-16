@@ -1,26 +1,26 @@
-@import 'mixins/breakpoint';
-@import '~bootstrap/scss/functions', '~bootstrap/scss/variables';
+@import "mixins/breakpoint";
+@import "~bootstrap/scss/functions", "~bootstrap/scss/variables";
 
 // adl-* variables
-@import 'variables';
+@import "variables";
 
 //// Third party / Vendor styles.
 // These files include customized vendor variables and styles.
-@import 'vendor/bootstrap';
-@import 'vendor/selectize';
-@import 'vendor/fontawesome';
+@import "vendor/bootstrap";
+@import "vendor/selectize";
+@import "vendor/fontawesome";
 // These files can be included as-is.
-@import '~toastr/toastr.scss';
-@import '~cookieconsent/build/cookieconsent.min';
+@import "~toastr/toastr.scss";
+@import "~cookieconsent/build/cookieconsent.min";
 
-@import 'adventure';
-@import 'adventures';
-@import 'tags';
-@import 'filter';
-@import 'general';
-@import 'announcement';
-@import 'header';
-@import 'login_register_forgot';
-@import 'profile';
-@import 'sidebar';
-@import 'footer';
+@import "adventure";
+@import "adventures";
+@import "tags";
+@import "filter";
+@import "general";
+@import "announcement";
+@import "header";
+@import "login_register_forgot";
+@import "profile";
+@import "sidebar";
+@import "footer";

@@ -38,7 +38,9 @@ $thumbnail-height: 100px;
     margin: $adl-card-padding;
 
     @include breakpoint($sm) {
-      margin-right: calc(#{$adl-card-padding-side} + #{$thumbnail-width} + #{$thumbnail-offset});
+      margin-right: calc(
+        #{$adl-card-padding-side} + #{$thumbnail-width} + #{$thumbnail-offset}
+      );
     }
   }
 
@@ -62,13 +64,13 @@ $thumbnail-height: 100px;
       }
 
       .label {
-        font-family: 'Roboto Condensed', sans-serif;
+        font-family: "Roboto Condensed", sans-serif;
         text-transform: uppercase;
         color: $adl-grey-light;
       }
 
       .level {
-          text-transform: capitalize;
+        text-transform: capitalize;
       }
 
       ul {
@@ -82,14 +84,14 @@ $thumbnail-height: 100px;
 #change-requests-container {
   @extend .content-container;
 
-  padding-bottom: 0!important;
+  padding-bottom: 0 !important;
 
   #change-request-content.collapse {
-      padding-bottom: 0;
+    padding-bottom: 0;
 
-      &.show {
-          padding-bottom: 15px;
-      }
+    &.show {
+      padding-bottom: 15px;
+    }
   }
 
   .no-requests {
@@ -101,19 +103,19 @@ $thumbnail-height: 100px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    cursor:pointer;
+    cursor: pointer;
 
     &:hover {
-        background-color: darken(white, 2.5%);
+      background-color: darken(white, 2.5%);
     }
 
     & .fa {
-        font-size: 2rem;
-        padding: 1rem 1.8rem;
+      font-size: 2rem;
+      padding: 1rem 1.8rem;
 
-        &:before {
-          content: "\f106";
-        }
+      &:before {
+        content: "\f106";
+      }
     }
 
     &.collapsed .fa:before {
@@ -130,22 +132,22 @@ $thumbnail-height: 100px;
     border-top: 1px solid $adl-grey-lightest;
 
     .reviewer-row {
-        align-items: center;
+      align-items: center;
     }
 
     .review-icon {
       &.review-icon--positive {
-          color: #bad272;
+        color: #bad272;
       }
 
       &.review-icon--negative {
-          color: #d27272;
+        color: #d27272;
       }
     }
 
     .review-icon-mobile-column {
-        padding-right: 0;
-        margin-bottom: 1rem;
+      padding-right: 0;
+      margin-bottom: 1rem;
     }
 
     blockquote {
@@ -175,7 +177,8 @@ $thumbnail-height: 100px;
       border-right: 1px solid $adl-grey-lightest;
     }
 
-    #review-thumbs-up, #review-thumbs-down {
+    #review-thumbs-up,
+    #review-thumbs-down {
       cursor: pointer;
       i {
         font-size: 1.5rem + $adl-card-padding-top;
@@ -197,7 +200,7 @@ $thumbnail-height: 100px;
     width: 35%;
     padding: 8px 10px;
     border-radius: 0;
-    font: 1.2rem 'Roboto Condensed';
+    font: 1.2rem "Roboto Condensed";
     text-transform: uppercase;
     margin: 0 1.8rem;
   }
