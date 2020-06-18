@@ -77,7 +77,9 @@ export function Root({
         }
       });
     addParam("sortBy", sortBy);
-    addParam("seed", seed);
+    if (sortBy === "random") {
+      addParam("seed", seed);
+    }
 
     document.location.href = newUrl;
   };

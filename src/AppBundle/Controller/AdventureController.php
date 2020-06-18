@@ -41,10 +41,7 @@ class AdventureController extends Controller
             $q,
             $filters,
             $page,
-            // Sort randomly unless there is a search query or $sortBy is not set to 'Best match'
-            // Deliberately NOT alter the $sortBy variable as passed to the template below, since
-            // the user should still see 'Best match' as selected in the sort-by dropdown.
-            '' === $q && '' === $sortBy ? 'random' : $sortBy,
+            $sortBy,
             $seed
         );
 

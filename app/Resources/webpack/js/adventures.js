@@ -17,7 +17,7 @@ import LazyLoad from "vanilla-lazyload/dist/lazyload";
     const $searchForm = $("#search-form");
     const data = $searchForm.serialize() + "&page=" + ++currentPage;
     $.ajax({
-      method: "POST",
+      method: "GET",
       url: $searchForm.attr("action"),
       data: data,
     })

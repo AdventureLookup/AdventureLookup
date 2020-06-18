@@ -19,6 +19,7 @@ class ApiControllerTest extends WebTestCase
 
         $this->assertEquals(AdventureData::NUM_ADVENTURES, $json->total_count);
         $this->assertCount(AdventureData::NUM_ADVENTURES, $json->adventures);
+        $this->assertNotEmpty($json->seed);
 
         foreach ($json->adventures as $adventure) {
             $this->stringStartsWith('Adventure #', $adventure->title);
