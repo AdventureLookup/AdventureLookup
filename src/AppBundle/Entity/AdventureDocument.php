@@ -231,6 +231,40 @@ class AdventureDocument
         );
     }
 
+    public static function fromHit(array $hit): AdventureDocument
+    {
+        return new self(
+            $hit['_source']['id'],
+            $hit['_source']['authors'],
+            $hit['_source']['edition'],
+            $hit['_source']['environments'],
+            $hit['_source']['items'],
+            $hit['_source']['publisher'],
+            $hit['_source']['setting'],
+            $hit['_source']['commonMonsters'],
+            $hit['_source']['bossMonsters'],
+            $hit['_source']['title'],
+            $hit['_source']['description'],
+            $hit['_source']['slug'],
+            $hit['_source']['minStartingLevel'],
+            $hit['_source']['maxStartingLevel'],
+            $hit['_source']['startingLevelRange'],
+            $hit['_source']['numPages'],
+            $hit['_source']['foundIn'],
+            $hit['_source']['partOf'],
+            $hit['_source']['link'],
+            $hit['_source']['thumbnailUrl'],
+            $hit['_source']['soloable'],
+            $hit['_source']['pregeneratedCharacters'],
+            $hit['_source']['tacticalMaps'],
+            $hit['_source']['handouts'],
+            $hit['_source']['year'],
+            $hit['_source']['positiveReviews'],
+            $hit['_source']['negativeReviews'],
+            $hit['_score']
+        );
+    }
+
     public function getId(): int
     {
         return $this->id;
