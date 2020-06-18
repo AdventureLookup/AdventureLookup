@@ -25,6 +25,11 @@ services:
         tags:
             - { name: monolog.logger, channel: elasticsearch }
 
+    AppBundle\Service\AffiliateLinkHandler:
+        arguments:
+            $affiliateMappings: '%affiliate_mappings%'
+            $cache: '@Symfony\Component\Cache\Simple\Psr6Cache'
+
     AppBundle\Listener\SearchIndexUpdater:
         arguments:
             $environment: "%kernel.environment%"
@@ -50,11 +55,6 @@ services:
     # see https://github.com/symfony/symfony/pull/25710
     Symfony\Component\Cache\Simple\Psr6Cache:
         arguments: ['@cache.app']
-
-    AppBundle\Twig\AppExtension:
-        arguments:
-            $affiliateMappings: '%affiliate_mappings%'
-            $cache: '@Symfony\Component\Cache\Simple\Psr6Cache'
 
     twig.extension.date:
         class: Twig_Extensions_Extension_Date

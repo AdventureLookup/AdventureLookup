@@ -4,6 +4,8 @@ $thumbnail-offset: 2rem;
 $thumbnail-width: 85px;
 $thumbnail-height: 100px;
 
+$tag-margin: 4px;
+
 #search-title {
   display: flex;
   justify-content: space-between;
@@ -14,8 +16,22 @@ $thumbnail-height: 100px;
 #search-tags {
   margin: $element-margin-bottom 0;
 
-  > span.badge {
-    margin-right: 4px;
+  .badge, .tag-operator, .tag-wrapper {
+    margin-right: $tag-margin;
+    margin-bottom: $tag-margin;
+  }
+
+  .tag-wrapper {
+    display: inline-block;
+    border: 1px solid $adl-grey-light;
+    border-radius: 2px;
+    padding-top: $tag-margin;
+    padding-bottom: 0;
+    padding-right: 0;
+    padding-left: $tag-margin;
+  }
+
+  .badge {
     &::after {
       content: '\f00d';
       font: 1rem 'FontAwesome';
@@ -33,7 +49,7 @@ $thumbnail-height: 100px;
 
         &:hover {
             background-color: darken($adl-grey-light, 7.5%);
-        } 
+        }
     }
   }
 }
