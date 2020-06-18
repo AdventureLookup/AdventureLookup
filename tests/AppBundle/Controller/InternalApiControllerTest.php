@@ -51,4 +51,28 @@ class InternalApiControllerTest extends WebTestCase
         $this->assertCount(1, $json);
         $this->assertEquals(self::ADVENTURE_NATURE_ANIMAL, $json[0]);
     }
+
+    public function testFindSimilarAdventuresAction()
+    {
+        $this->loadFixtures([SimilarTitlesData::class]);
+        $session = $this->makeSession();
+        $json = $this->jsonRequest($session, '/autocomplete/similar-adventures?id=1&fieldName=title/description');
+        $this->assertCount(1, $json['adventures']);
+        $this->assertEquals(self::ADVENTURE_NATURE_ANIMAL['id'], $json['adventures'][0]['id']);
+        $this->assertIsFloat($json['adventures'][0]['score']);
+
+        $this->assertCount(1, $json['terms']);
+        $this->assertEquals('natur' /* stemmed */, $json['terms'][0]['term']);
+        $this->assertIsFloat($json['terms'][0]['tf-idf']);
+
+        $json = $this->jsonRequest($session, '/autocomplete/similar-adventures?id=1&fieldName=blah');
+        $this->assertCount(0, $json['adventures']);
+        $this->assertCount(0, $json['terms']);
+
+        // TODO: This test could be a lot better:
+        // - test that terms are sorted by TF-IDF
+        // - test that at most 20 terms are returned
+        // - test other $fieldName|s
+        // - test that ID conversion between MySQL and ElasticSearch works correctly.
+    }
 }

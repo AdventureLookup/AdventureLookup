@@ -65,8 +65,9 @@ class InternalApiController extends Controller
         if (false === $id) {
             throw new NotFoundHttpException();
         }
+        $fieldName = $request->query->get('fieldName', '');
 
-        [$adventures, $terms] = $adventureSearch->similarAdventures($id);
+        [$adventures, $terms] = $adventureSearch->similarAdventures($id, $fieldName);
         $adventures = array_map(fn (AdventureDocument $adventure) => [
                 'id' => $adventure->getId(),
                 'title' => $adventure->getTitle(),

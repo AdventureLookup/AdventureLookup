@@ -354,8 +354,27 @@ class AdventureSearch
         }, $result['hits']['hits']);
     }
 
-    public function similarAdventures(int $id): array
+    public function similarAdventures(int $id, string $fieldName): array
     {
+        $fields = [];
+        if ('title/description' === $fieldName) {
+            $fields[] = 'title.analyzed';
+            $fields[] = 'description.analyzed';
+        }
+        if ('items' === $fieldName) {
+            $fields[] = 'items.keyword';
+        }
+        if ('bossMonsters' === $fieldName) {
+            $fields[] = 'bossMonsters.keyword';
+        }
+        if ('commonMonsters' === $fieldName) {
+            $fields[] = 'commonMonsters.keyword';
+        }
+
+        if (empty($fields)) {
+            return [[], []];
+        }
+
         // $id is the adventure id from the MySQL table.
         // We first need to convert it into the internal id used by ElasticSearch.
         $result = $this->client->search([
@@ -376,7 +395,6 @@ class AdventureSearch
         $elasticSearchId = $result['hits']['hits'][0]['_id'];
 
         // Now we need to gather statistics on all terms used in the selected adventure.
-        $fields = ['title.analyzed', 'description.analyzed'];
         $result = $this->client->termvectors([
             'index' => $this->indexName,
             'id' => $elasticSearchId,
@@ -415,9 +433,7 @@ class AdventureSearch
             }
         }
 
-        // Sort terms by higheset TF-IDF, remove terms with low TF-IDF, take at most 20 terms.
-        // 5.0 has been determined as a cutoff point by testing multiple values.
-        $terms = array_filter($terms, fn ($term) => $term['tf-idf'] >= 5.0);
+        // Take the top 20 terms with the highest TF-IDF
         usort($terms, fn ($a, $b) => $b['tf-idf'] <=> $a['tf-idf']);
         $terms = array_slice($terms, 0, 20);
 
