@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace AppBundle\Search\QueryParser;
 
-class Clause
+class Clause implements \JsonSerializable
 {
-    public $children;
+    public array $children;
 
-    public $operator;
+    public SpecialToken $operator;
 
-    public function __construct($operator, $children)
+    public function __construct(SpecialToken $operator, array $children)
     {
         $this->operator = $operator;
         $this->children = $children;
     }
 
-    public static function fromStack(\SplStack $stack)
+    public static function fromStack(\SplStack $stack): Clause
     {
         $operator = $stack->pop();
         $right = $stack->pop();
@@ -37,5 +37,14 @@ class Clause
         }
 
         return new self($operator, [$left, $right]);
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'type' => 'clause',
+            'operator' => $this->operator->content,
+            'children' => $this->children,
+        ];
     }
 }

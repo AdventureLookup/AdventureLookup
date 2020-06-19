@@ -6,4 +6,5 @@ namespace AppBundle\Search\QueryParser;
 
 class StringToken extends Token
 {
+    protected const TOKEN_KIND = 'string';
 }

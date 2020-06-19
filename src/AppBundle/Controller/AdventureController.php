@@ -38,7 +38,7 @@ class AdventureController extends Controller
     public function indexAction(Request $request, AdventureSearch $adventureSearch, FieldProvider $fieldProvider)
     {
         list($q, $filters, $page, $sortBy, $seed) = $adventureSearch->requestToSearchParams($request);
-        list($adventures, $totalNumberOfResults, $hasMoreResults, $stats) = $adventureSearch->search(
+        list($adventures, $totalNumberOfResults, $hasMoreResults, $stats, $parsedQuery) = $adventureSearch->search(
             $q,
             $filters,
             $page,
@@ -55,6 +55,7 @@ class AdventureController extends Controller
             'searchFilter' => $filters,
             'fields' => $fieldProvider->getFields(),
             'q' => $q,
+            'parsedQuery' => $parsedQuery,
             'sortBy' => $sortBy,
             'seed' => $seed,
         ]);

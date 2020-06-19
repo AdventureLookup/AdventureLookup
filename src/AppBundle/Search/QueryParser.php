@@ -32,7 +32,7 @@ class QueryParser
     ];
     private const OPERATORS = ['AND', 'OR'];
 
-    public static function parse(string $query, $fields): ?array
+    public static function parse(string $query, $fields): array
     {
         $tokens = self::parseTokens($query);
         $tokens = self::balanceParentheses($tokens);
@@ -41,7 +41,7 @@ class QueryParser
         $ast = self::buildAST($tokens);
         $query = self::toElasticSearchQuery($ast, $fields);
 
-        return $query;
+        return [$query, $ast];
     }
 
     /**

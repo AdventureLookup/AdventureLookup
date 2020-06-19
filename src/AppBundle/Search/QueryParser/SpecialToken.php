@@ -6,4 +6,5 @@ namespace AppBundle\Search\QueryParser;
 
 class SpecialToken extends Token
 {
+    protected const TOKEN_KIND = 'special';
 }
