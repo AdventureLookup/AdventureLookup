@@ -14,6 +14,6 @@ class DefaultControllerTest extends WebTestCase
 
         $session->visit('/');
 
-        $this->assertPath($session, '/adventures/');
+        $this->assertPath($session, '/adventures');
     }
 }

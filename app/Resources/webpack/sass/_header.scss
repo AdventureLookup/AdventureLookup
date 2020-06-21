@@ -1,10 +1,11 @@
-#adl-header {
+.header-container {
   @extend .container;
+}
 
+#adl-header {
   position: absolute;
   top: 0;
-  left: 50%;
-  transform: translate(-50%, 0);
+  right: $adl-body-padding;
   z-index: 100;
 
   display: flex;
@@ -27,7 +28,7 @@
   .btn {
     border-radius: 0;
     box-shadow: $adl-box-shadow;
-    font-family: 'Roboto Condensed', sans-serif;
+    font-family: "Roboto Condensed", sans-serif;
     text-transform: uppercase;
   }
 }

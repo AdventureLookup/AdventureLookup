@@ -20,9 +20,15 @@ services:
 
     AppBundle\Service\ElasticSearch:
         arguments:
-            $config: "%elasticsearch%"
+            $host: "%elasticsearch_host%"
+            $indexName: "%elasticsearch_index_name%"
         tags:
             - { name: monolog.logger, channel: elasticsearch }
+
+    AppBundle\Service\AffiliateLinkHandler:
+        arguments:
+            $affiliateMappings: '%affiliate_mappings%'
+            $cache: '@Symfony\Component\Cache\Simple\Psr6Cache'
 
     AppBundle\Listener\SearchIndexUpdater:
         arguments:
@@ -43,17 +49,15 @@ services:
             - { name: kernel.event_listener, event: kernel.exception, priority: 999 }
 
     # TODO: Remove this service once we update to Symfony 4.1
+    Symfony\Component\Security\Core\Role\RoleHierarchyInterface: '@security.role_hierarchy'
+
+    # TODO: Remove this service once we update to Symfony 4.1
     # and set the $cache argument of the AppBundle\Twig\AppExtension
     # to '@cache.app.simple'
     #
     # see https://github.com/symfony/symfony/pull/25710
     Symfony\Component\Cache\Simple\Psr6Cache:
         arguments: ['@cache.app']
-
-    AppBundle\Twig\AppExtension:
-        arguments:
-            $affiliateMappings: '%affiliate_mappings%'
-            $cache: '@Symfony\Component\Cache\Simple\Psr6Cache'
 
     twig.extension.date:
         class: Twig_Extensions_Extension_Date

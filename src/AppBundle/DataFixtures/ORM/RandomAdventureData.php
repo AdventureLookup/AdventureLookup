@@ -21,6 +21,7 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Faker;
+use Faker\Generator;
 
 class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, DependentFixtureInterface
 {
@@ -43,6 +44,8 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
      */
     public function load(ObjectManager $em)
     {
+        $isHeroku = 'heroku' === $this->container->getParameter('kernel.environment');
+
         /** @var ManagerRegistry $doctrine */
         $doctrine = $this->container->get('doctrine');
 
@@ -67,27 +70,30 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
         $reviewCreatedByProperty = (new ReflectionClass(Review::class))->getProperty('createdBy');
         $reviewCreatedByProperty->setAccessible(true);
 
-        for ($i = 0; $i < 200; ++$i) {
+        // Create less adventures on Heroku. The free tier database only allows 10000 rows
+        // and 200 adventures use more than 10000 rows.
+        $count = $isHeroku ? 50 : 200;
+        for ($i = 0; $i < $count; ++$i) {
             $adventure = new Adventure();
             $adventure
                 ->setTitle($faker->unique->catchPhrase)
-                ->setDescription($faker->realText(2000))
-                ->setNumPages($faker->numberBetween(1, 200))
-                ->setFoundIn($faker->catchPhrase)
-                ->setPartOf($faker->boolean() ? $faker->catchPhrase : null)
-                ->setLink($faker->url)
-                ->setThumbnailUrl($faker->picsumUrl(260, 300))
-                ->setSoloable($faker->boolean())
-                ->setPregeneratedCharacters($faker->boolean())
-                ->setTacticalMaps($faker->boolean())
-                ->setHandouts($faker->boolean())
-                ->setAuthors(new ArrayCollection($faker->randomElements($authors, $faker->numberBetween(1, 3))))
-                ->setEdition($faker->randomElement($editions))
-                ->setEnvironments(new ArrayCollection($faker->randomElements($environments, $faker->numberBetween(1, 2))))
+                ->setDescription($faker->boolean(95) ? $faker->realText(2000) : null)
+                ->setNumPages($faker->boolean(80) ? $faker->numberBetween(1, 200) : null)
+                ->setFoundIn($faker->boolean(20) ? $faker->catchPhrase : null)
+                ->setPartOf($faker->boolean(20) ? $faker->catchPhrase : null)
+                ->setLink($faker->boolean(70) ? $faker->url : null)
+                ->setThumbnailUrl($faker->boolean(70) ? $faker->picsumUrl(260, 300) : null)
+                ->setSoloable($this->boolOrNull($faker))
+                ->setPregeneratedCharacters($this->boolOrNull($faker))
+                ->setTacticalMaps($this->boolOrNull($faker))
+                ->setHandouts($this->boolOrNull($faker))
+                ->setAuthors(new ArrayCollection($faker->randomElements($authors, $faker->numberBetween(0, 3))))
+                ->setEdition($faker->boolean(90) ? $faker->randomElement($editions) : null)
+                ->setEnvironments(new ArrayCollection($faker->randomElements($environments, $faker->numberBetween(0, 2))))
                 ->setItems(new ArrayCollection($faker->randomElements($items, $faker->numberBetween(0, 5))))
-                ->setPublisher($faker->randomElement($publishers))
-                ->setYear($faker->numberBetween(1980, 2020))
-                ->setSetting($faker->randomElement($settings))
+                ->setPublisher($faker->boolean(80) ? $faker->randomElement($publishers) : null)
+                ->setYear($faker->boolean(90) ? $faker->numberBetween(1980, 2020) : null)
+                ->setSetting($faker->boolean(80) ? $faker->randomElement($settings) : null)
                 ->setMonsters(new ArrayCollection($faker->randomElements($monsters, $faker->numberBetween(0, 20))));
 
             if ($faker->boolean(20)) {
@@ -129,7 +135,9 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
                 }
             }
 
-            if ($faker->boolean()) {
+            if ($faker->boolean(20)) {
+                // Do not set any level parameter
+            } elseif ($faker->boolean()) {
                 $adventure->setStartingLevelRange($faker->randomElement([
                     'low', 'medium', 'high',
                 ]));
@@ -143,7 +151,20 @@ class RandomAdventureData implements FixtureInterface, ContainerAwareInterface, 
             }
 
             $em->persist($adventure);
+            if ($isHeroku && 9 === $i % 10) {
+                // Flush more often on Heroku to not run into the memory limit.
+                $em->flush();
+            }
         }
         $em->flush();
+    }
+
+    private function boolOrNull(Generator $faker)
+    {
+        switch ($faker->numberBetween(-1, 1)) {
+            case 1: return true;
+            case 0: return null;
+            case -1: return false;
+        }
     }
 }

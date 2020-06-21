@@ -14,6 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class AdventureSerializerTest extends TestCase
 {
+    const ID = 42;
     const TITLE = 'a title';
     const SLUG = 'a-title';
     const MIN_STARTING_LEVEL = 5;
@@ -48,6 +49,7 @@ class AdventureSerializerTest extends TestCase
     {
         $this->fieldProvider->method('getFields')->willReturn(new ArrayCollection([]));
         $adventure = $this->createMock(Adventure::class);
+        $adventure->method('getId')->willReturn(self::ID);
         $adventure->method('getSlug')->willReturn(self::SLUG);
         $adventure->method('getCreatedAt')->willReturn($this->CREATED_AT);
         $adventure->method('getNumberOfThumbsUp')->willReturn(self::NUM_POSITIVE_REVIEWS);
@@ -55,6 +57,7 @@ class AdventureSerializerTest extends TestCase
 
         $doc = $this->serializer->toElasticDocument($adventure);
         $this->assertSame([
+            'id' => self::ID,
             'slug' => self::SLUG,
             'createdAt' => $this->CREATED_AT->format('c'),
             'positiveReviews' => self::NUM_POSITIVE_REVIEWS,
@@ -73,6 +76,7 @@ class AdventureSerializerTest extends TestCase
         ]));
 
         $adventure = $this->createMock(Adventure::class);
+        $adventure->method('getId')->willReturn(self::ID);
         $adventure->method('getTitle')->willReturn(self::TITLE);
         $adventure->method('getSlug')->willReturn(self::SLUG);
         $adventure->method('getCreatedAt')->willReturn($this->CREATED_AT);
@@ -84,6 +88,7 @@ class AdventureSerializerTest extends TestCase
 
         $doc = $this->serializer->toElasticDocument($adventure);
         $this->assertSame([
+            'id' => self::ID,
             'slug' => self::SLUG,
             'createdAt' => $this->CREATED_AT->format('c'),
             'positiveReviews' => self::NUM_POSITIVE_REVIEWS,
@@ -112,6 +117,7 @@ class AdventureSerializerTest extends TestCase
         $publisher = (new Publisher())->setName(self::PUBLISHER);
 
         $adventure = $this->createMock(Adventure::class);
+        $adventure->method('getId')->willReturn(self::ID);
         $adventure->method('getTitle')->willReturn(self::TITLE);
         $adventure->method('getSlug')->willReturn(self::SLUG);
         $adventure->method('getCreatedAt')->willReturn($this->CREATED_AT);
@@ -127,6 +133,7 @@ class AdventureSerializerTest extends TestCase
 
         $doc = $this->serializer->toElasticDocument($adventure);
         $this->assertSame([
+            'id' => self::ID,
             'slug' => self::SLUG,
             'createdAt' => $this->CREATED_AT->format('c'),
             'positiveReviews' => self::NUM_POSITIVE_REVIEWS,

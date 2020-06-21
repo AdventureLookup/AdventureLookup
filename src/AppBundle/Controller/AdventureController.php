@@ -10,8 +10,8 @@ use AppBundle\Form\Type\AdventureType;
 use AppBundle\Form\Type\ReviewType;
 use AppBundle\Security\AdventureVoter;
 use AppBundle\Service\AdventureSearch;
+use AppBundle\Service\TimeProvider;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -29,8 +29,8 @@ class AdventureController extends Controller
     /**
      * Lists all adventure entities.
      *
-     * @Route("/adventures/", name="adventure_index")
-     * @Method({"GET", "POST"})
+     * @Route("/adventures", name="adventure_index")
+     * @Method("GET")
      *
      * @return Response
      */
@@ -41,10 +41,7 @@ class AdventureController extends Controller
             $q,
             $filters,
             $page,
-            // Sort randomly unless there is a search query or $sortBy is not set to 'Best match'
-            // Deliberately NOT alter the $sortBy variable as passed to the template below, since
-            // the user should still see 'Best match' as selected in the sort-by dropdown.
-            '' === $q && '' === $sortBy ? 'random' : $sortBy,
+            $sortBy,
             $seed
         );
 
@@ -63,6 +60,27 @@ class AdventureController extends Controller
     }
 
     /**
+     * Redirect from route with trailing slash to route without trailing slash.
+     * Based on https://symfony.com/doc/3.4/routing/redirect_trailing_slash.html
+     *
+     * TODO: Remove in Symfony 4.x (https://symfony.com/doc/4.4/routing.html#redirecting-urls-with-trailing-slashes)
+     *
+     * @Route("/adventures/")
+     * @Method("GET")
+     */
+    public function redirectFromURLWithTrailingSlashAction(Request $request): RedirectResponse
+    {
+        $pathInfo = $request->getPathInfo();
+        $requestUri = $request->getRequestUri();
+
+        $url = str_replace($pathInfo, rtrim($pathInfo, ' /'), $requestUri);
+
+        // 308 (Permanent Redirect) is similar to 301 (Moved Permanently) except
+        // that it does not allow changing the request method (e.g. from POST to GET)
+        return $this->redirect($url, 308);
+    }
+
+    /**
      * Creates a new adventure entity.
      *
      * @Route("/adventure", name="adventure_new")
@@ -74,11 +92,6 @@ class AdventureController extends Controller
     {
         $adventure = new Adventure();
         $this->denyAccessUnlessGranted(AdventureVoter::CREATE, $adventure);
-
-        $isCurator = $this->isGranted('ROLE_CURATOR');
-        if ($isCurator) {
-            $adventure->setApproved(true);
-        }
 
         $form = $this->createForm(AdventureType::class, $adventure);
         $form->handleRequest($request);
@@ -134,26 +147,14 @@ class AdventureController extends Controller
      *
      * @return Response
      */
-    public function randomAction(EntityManagerInterface $em)
+    public function randomAction(AdventureSearch $adventureSearch, TimeProvider $timeProvider)
     {
-        $rsm = new ResultSetMapping();
-        $rsm->addEntityResult(Adventure::class, 'a');
-        $rsm->addFieldResult('a', 'id', 'id');
-        $rsm->addFieldResult('a', 'slug', 'slug');
-
-        $query = $em->createNativeQuery('
-            SELECT a.id, a.slug from adventure a ORDER by RAND() limit 1
-        ', $rsm);
-
-        $randomAdventure = $query->getResult();
-
-        $a = $randomAdventure[0];
-
-        if (!$a) {
+        list($adventures) = $adventureSearch->search('', [], 1, 'random', $timeProvider->millis(), 1);
+        if (empty($adventures)) {
             throw $this->createNotFoundException('No adventure found');
         }
 
-        return $this->redirectToRoute('adventure_show', ['slug' => $a->getSlug()]);
+        return $this->redirectToRoute('adventure_show', ['slug' => $adventures[0]->getSlug()]);
     }
 
     /**

@@ -41,20 +41,34 @@ export function Root({
         const filter = filterValues[field.name];
         switch (field.type) {
           case "integer":
-            addParam(`${field.name}-min`, filter.v.min);
-            addParam(`${field.name}-max`, filter.v.max);
+            const args = [];
+            if (filter.v.min !== "") {
+              args.push(`≥${filter.v.min}`);
+            }
+            if (filter.v.max !== "") {
+              args.push(`≤${filter.v.max}`);
+            }
+            if (args.length > 0 && filter.includeUnknown === true) {
+              args.push("unknown");
+            }
+            addParam(field.name, args.join("~"));
             break;
           case "string": {
-            if (filter.v.length > 0) {
-              addParam(
-                field.name,
-                filter.v.map((value) => value.replace(/~/g, "~~")).join("~")
-              );
+            let value = filter.v
+              .map((value) => value.replace(/~/g, "~~"))
+              .join("~");
+            if (value !== "" && filter.includeUnknown) {
+              value += "~unknown~";
             }
+            addParam(field.name, value);
             break;
           }
           case "boolean":
-            addParam(field.name, filter.v);
+            let value = filter.v;
+            if (value !== "" && filter.includeUnknown) {
+              value += "~unknown";
+            }
+            addParam(field.name, value);
             break;
           case "text":
           case "url":
@@ -63,7 +77,9 @@ export function Root({
         }
       });
     addParam("sortBy", sortBy);
-    addParam("seed", seed);
+    if (sortBy === "random") {
+      addParam("seed", seed);
+    }
 
     document.location.href = newUrl;
   };
@@ -90,6 +106,7 @@ export function Root({
         </a>
         <Filters
           fields={fields}
+          initialFilterValues={initialFilterValues}
           filterValues={filterValues}
           setFilterValues={setFilterValues}
           fieldStats={fieldStats}

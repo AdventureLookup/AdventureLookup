@@ -6,16 +6,20 @@
 
   // Is open
   &.open {
-    .options-list { display: initial; }
+    .options-list {
+      display: initial;
+    }
     .option {
       display: flex;
-      &.range-option {
+      &.option-integer {
         @include media-breakpoint-down(md) {
           flex-direction: column;
         }
       }
     }
-    .title:after { content: $fa-var-caret-up; }
+    .title:after {
+      content: $fa-var-caret-up;
+    }
   }
   // Has one or more options selected
   &.filter-marked {
@@ -34,7 +38,7 @@
 
     &:after {
       content: $fa-var-caret-down;
-      font: 1.75rem 'FontAwesome';
+      font: 1.75rem "FontAwesome";
     }
     &:hover {
       background-color: darken($adl-grey-dark, 7.5%);
@@ -42,7 +46,9 @@
     }
   }
 
-  .options-list { display: none; }
+  .options-list {
+    display: none;
+  }
 
   .string-options {
     max-height: 60vh;
@@ -72,16 +78,20 @@
       margin-right: 4px;
     }
 
-    &.show-more, &.show-less, &.apply {
+    &.show-more,
+    &.show-less,
+    &.apply {
       justify-content: space-around;
-      font-size: .9rem;
+      font-size: 0.9rem;
     }
 
     &.apply:hover {
       cursor: pointer;
     }
 
-    &.range-option {
+    &.option-integer {
+      display: flex;
+
       input {
         border-radius: 0;
         @include media-breakpoint-up(lg) {
@@ -96,9 +106,19 @@
           margin-right: 3px;
         }
       }
+
+      @include media-breakpoint-down(md) {
+        flex-direction: column;
+      }
+    }
+
+    &.option-integer:hover,
+    &.option-boolean:hover {
+      background-color: $adl-grey-darkest;
+      cursor: default;
     }
   }
-  &-searchbar{
+  &-searchbar {
     width: 100%;
     padding: 0 4px;
     border-radius: 0px;
@@ -109,24 +129,10 @@
 .filter.always-open {
   .title {
     &:after {
-      content: '';
+      content: "";
     }
     &:hover {
       background-color: $adl-grey-dark;
-      cursor: default;
-    }
-  }
-
-  .option {
-    display: flex;
-    &.range-option {
-      @include media-breakpoint-down(md) {
-        flex-direction: column;
-      }
-    }
-
-    &:not(.apply):hover {
-      background-color: $adl-grey-darkest;
       cursor: default;
     }
   }
@@ -140,8 +146,8 @@
   color: #ffffff;
 
   &:after {
-    content: '\f141';
-    font: 2.5rem 'FontAwesome';
+    content: "\f141";
+    font: 2.5rem "FontAwesome";
   }
   &:hover {
     cursor: pointer;

@@ -5,34 +5,23 @@ namespace AppBundle\Twig;
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\AdventureDocument;
 use AppBundle\Entity\User;
-use League\Uri\Components\Host;
-use League\Uri\Components\Query;
-use League\Uri\Modifiers\Formatter;
-use League\Uri\Http;
-use League\Uri\PublicSuffix\CurlHttpClient;
-use League\Uri\PublicSuffix\ICANNSectionManager;
-use League\Uri\QueryParser;
-use Psr\SimpleCache\CacheInterface;
+use AppBundle\Service\AffiliateLinkHandler;
+use Symfony\Component\Security\Core\Role\Role;
+use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension
 {
-    /**
-     * @var array
-     */
-    private $affiliateMappings = [];
+    private AffiliateLinkHandler $affiliateLinkHandler;
 
-    /**
-     * @var CacheInterface
-     */
-    private $cache;
+    private RoleHierarchyInterface $roleHierarchy;
 
-    public function __construct(array $affiliateMappings, CacheInterface $cache)
+    public function __construct(AffiliateLinkHandler $affiliateLinkHandler, RoleHierarchyInterface $roleHierarchy)
     {
-        $this->affiliateMappings = $affiliateMappings;
-        $this->cache = $cache;
+        $this->affiliateLinkHandler = $affiliateLinkHandler;
+        $this->roleHierarchy = $roleHierarchy;
     }
 
     public function getFilters()
@@ -73,15 +62,22 @@ class AppExtension extends AbstractExtension
 
     public function formatRoles(User $user)
     {
-        $roles = array_map(function ($role) {
-            $roleMap = [
-                'ROLE_USER' => 'User',
-                'ROLE_CURATOR' => 'Curator',
-                'ROLE_ADMIN' => 'Admin',
-            ];
+        $roleMap = [
+            'ROLE_USER' => 'User',
+            'ROLE_CURATOR' => 'Curator',
+            'ROLE_ADMIN' => 'Admin',
+            'ROLE_ALLOWED_TO_SWITCH' => 'Impersonator',
+        ];
+        // 1. Convert string based roles into Role objects
+        // 2. Calculate all reachable roles (e.g., ROLE_ADMIN implies ROLE_USER)
+        // 3. Translate role objects using the translations defined above.
+        $roles = array_map(fn (string $role): Role => new Role($role), $user->getRoles());
+        $roles = $this->roleHierarchy->getReachableRoles($roles);
+        $roles = array_map(function (Role $role) use ($roleMap) {
+            $role = $role->getRole();
 
             return isset($roleMap[$role]) ? $roleMap[$role] : $role;
-        }, $user->getRoles());
+        }, $roles);
 
         return implode(', ', $roles);
     }
@@ -96,38 +92,10 @@ class AppExtension extends AbstractExtension
     }
 
     /**
-     * @return null
+     * @return [string, bool]
      */
-    public function addAffiliateCode(string $url = null)
+    public function addAffiliateCode(string $url = null): array
     {
-        if (null === $url) {
-            return null;
-        }
-
-        $uri = Http::createFromString($url);
-
-        if (!empty($this->affiliateMappings)) {
-            $queryParser = new QueryParser();
-            $rules = (new ICANNSectionManager($this->cache, new CurlHttpClient()))->getRules();
-
-            $domain = (new Host($uri->getHost(), $rules))->getRegistrableDomain();
-
-            foreach ($this->affiliateMappings as $affiliateMapping) {
-                foreach ($affiliateMapping['domains'] as $affiliateDomain) {
-                    if ($affiliateDomain === $domain) {
-                        $queryParameters = $queryParser->extract($uri->getQuery());
-                        $queryParameters[$affiliateMapping['param']] = $affiliateMapping['code'];
-
-                        $uri = $uri->withQuery(Query::createFromPairs($queryParameters)->getContent());
-                        break 2;
-                    }
-                }
-            }
-        }
-
-        $formatter = new Formatter();
-        $formatter->setEncoding(Formatter::RFC3987_ENCODING);
-
-        return $formatter($uri);
+        return $this->affiliateLinkHandler->addAffiliateCode($url);
     }
 }

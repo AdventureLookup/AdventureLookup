@@ -7,18 +7,26 @@
                 {% endif %}
                 <div class="title">{{ adventure.title }}</div>
                 <div class="tags-container">
-                    <div class="tag tag-edition">{{ adventure.edition }}</div>
+                    <div class="tag tag-edition">
+                        {{ adventure.edition ?: 'Unknown Edition' }}
+                    </div>
                     {% set level = format_level(adventure) %}
                     {% if level %}
                         <div class="tag tag-level">{{ level }}</div>
                     {% endif %}
-                    <div class="tag tag-length">{{ adventure.numPages }} pages</div>
+                    <div class="tag tag-length">{{ adventure.numPages ?: '?' }} pages</div>
                     <div class="tag" title="Reviews">
                         <i class="fa fa-thumbs-up"></i> {{ adventure.numPositiveReviews }}&nbsp;
                         <i class="fa fa-thumbs-down"></i> {{ adventure.numNegativeReviews }}
                     </div>
                 </div>
-                <p class="description">{{ adventure.description }}</p>
+                <p class="description">
+                    {% if adventure.description %}
+                        {{ adventure.description }}
+                    {% else %}
+                        <em>No description available.</em>
+                    {% endif %}
+                </p>
             </div>
         </a>
     {% endfor %}
