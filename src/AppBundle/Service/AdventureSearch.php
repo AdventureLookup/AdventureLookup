@@ -203,7 +203,7 @@ class AdventureSearch
      *
      * @return array
      */
-    public function search(string $q, array $filters, int $page, string $sortBy, string $seed)
+    public function search(string $q, array $filters, int $page, string $sortBy, string $seed, int $perPage = self::ADVENTURES_PER_PAGE)
     {
         if ($page < 1 || $page * self::ADVENTURES_PER_PAGE > 5000) {
             throw new BadRequestHttpException();
@@ -286,8 +286,8 @@ class AdventureSearch
             'index' => $this->indexName,
             'body' => [
                 'query' => $query,
-                'from' => self::ADVENTURES_PER_PAGE * ($page - 1),
-                'size' => self::ADVENTURES_PER_PAGE,
+                'from' => $perPage * ($page - 1),
+                'size' => $perPage,
                 // Also return aggregations for all fields, i.e. min/max for integer fields
                 // or the most common strings for string fields.
                 'aggs' => $this->fieldAggregations(),

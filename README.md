@@ -117,7 +117,7 @@ Browser tests require Google Chrome with remote debugging enabled as well as the
 To do that, execute `bash scripts/prepare-browser-tests.sh` *once* before executing the tests. There is no
 need to call the script again until you reboot. Then execute the following to run the browser tests:
 ```bash
-npm run prod
+npm run build
 php bin/console cache:clear --env test
 php vendor/symfony/phpunit-bridge/bin/simple-phpunit --testsuite browser
 ```
