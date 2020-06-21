@@ -16,7 +16,9 @@ $tag-margin: 4px;
 #search-tags {
   margin: $element-margin-bottom 0;
 
-  .badge, .tag-operator, .tag-wrapper {
+  .badge,
+  .tag-operator,
+  .tag-wrapper {
     margin-right: $tag-margin;
     margin-bottom: $tag-margin;
   }
@@ -33,23 +35,23 @@ $tag-margin: 4px;
 
   .badge {
     &::after {
-      content: '\f00d';
-      font: 1rem 'FontAwesome';
+      content: "\f00d";
+      font: 1rem "FontAwesome";
     }
     &:hover {
       cursor: pointer;
     }
 
     &.badge-primary:hover {
-        background-color: darken($adl-coral, 7.5%);
+      background-color: darken($adl-coral, 7.5%);
     }
-    &.badge-clear{
-        color: white;
-        background-color: $adl-grey-light;
+    &.badge-clear {
+      color: white;
+      background-color: $adl-grey-light;
 
-        &:hover {
-            background-color: darken($adl-grey-light, 7.5%);
-        }
+      &:hover {
+        background-color: darken($adl-grey-light, 7.5%);
+      }
     }
   }
 }
@@ -58,7 +60,8 @@ $tag-margin: 4px;
   display: flex;
   margin-bottom: $element-margin-bottom;
 
-  button, input {
+  button,
+  input {
     font-size: 1.2rem;
   }
 }
@@ -115,7 +118,9 @@ $tag-margin: 4px;
     }
 
     @include media-breakpoint-up(sm) {
-      .title, .description, .tags-container {
+      .title,
+      .description,
+      .tags-container {
         padding-right: calc(#{$thumbnail-width} + #{$thumbnail-offset});
       }
     }

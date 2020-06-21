@@ -16,7 +16,6 @@
     {% endapply %}
 {% endmacro %}
 
-{% import _self as macros %}
 <div id="adventure-container">
     <div class="thumbnail-container">
         {% if adventure.thumbnailUrl %}
@@ -27,7 +26,7 @@
     <div class="tags-container">
         <div class="tag tag-edition">
             {% if adventure.edition %}
-                {{ macros.search('edition', adventure.edition.name) }}
+                {{ _self.search('edition', adventure.edition.name) }}
             {% else %}
                 Unknown Edition
             {% endif %}
@@ -35,7 +34,7 @@
         <div class="tag tag-level">
             {% if adventure.minStartingLevel %}
                 {% if adventure.minStartingLevel is same as (adventure.maxStartingLevel) or adventure.maxStartingLevel is null %}
-                    {{ macros.search('minStartingLevel', adventure.minStartingLevel, format_level(adventure)) }}
+                    {{ _self.search('minStartingLevel', adventure.minStartingLevel, format_level(adventure)) }}
                 {% else %}
                     <a href="{{ path('adventure_index', {
                         ('minStartingLevel-min'): adventure.minStartingLevel,
@@ -44,14 +43,14 @@
                     }) }}">{{ format_level(adventure) }}</a>
                 {% endif %}
             {% elseif adventure.startingLevelRange %}
-                {{ macros.search('startingLevelRange', adventure.startingLevelRange, format_level(adventure)) }}
+                {{ _self.search('startingLevelRange', adventure.startingLevelRange, format_level(adventure)) }}
             {% else %}
                 Unknown party level
             {% endif %}
         </div>
         <div class="tag tag-length">
             {% if adventure.numPages %}
-                {{ macros.search('numPages', {
+                {{ _self.search('numPages', {
                     min: (adventure.numPages * 0.85)|round,
                     max: (adventure.numPages * 1.15)|round
                  }, adventure.numPages ~ ' pages', true) }}
@@ -73,7 +72,7 @@
             <div class="col-4">
                 <div class="label">Written By</div>
                 {% for author in adventure.authors %}
-                    {{ macros.search('authors', author.name, author.name) }}{{ not loop.last ? ', ' : '' }}
+                    {{ _self.search('authors', author.name, author.name) }}{{ not loop.last ? ', ' : '' }}
                 {% else %}
                     Unknown
                 {% endfor %}
@@ -81,7 +80,7 @@
             <div class="col-4">
                 <div class="label">Published By</div>
                 {% if adventure.publisher %}
-                    {{ macros.search('publisher', adventure.publisher.name) }}
+                    {{ _self.search('publisher', adventure.publisher.name) }}
                 {% else %}
                     Unknown
                 {% endif %}
@@ -89,7 +88,7 @@
             <div class="col-4">
                 <div class="label">Publication Year</div>
                 {% if adventure.year %}
-                    {{ macros.search('year', {min: adventure.year, max: adventure.year}, adventure.year, true) }}
+                    {{ _self.search('year', {min: adventure.year, max: adventure.year}, adventure.year, true) }}
                 {% else %}
                     Unknown
                 {% endif %}
@@ -99,7 +98,7 @@
             <div class="col-5 col-md-6">
                 <div class="label">Setting</div>
                 {% if adventure.setting %}
-                    {{ macros.search('setting', adventure.setting.name) }}
+                    {{ _self.search('setting', adventure.setting.name) }}
                 {% else %}
                     Unknown
                 {% endif %}
@@ -107,7 +106,7 @@
             <div class="col-7 col-md-6">
                 <div class="label">Environments</div>
                 {% for environment in adventure.environments %}
-                    {{ macros.search('environments', environment.name) }}{{ not loop.last ? ', ' : '' }}
+                    {{ _self.search('environments', environment.name) }}{{ not loop.last ? ', ' : '' }}
                 {% else %}
                     Unknown
                 {% endfor %}
@@ -133,15 +132,15 @@
         <div class="detail-row">
             <div class="col-4 col-md">
                 <div class="label">Handouts?</div>
-                {{ macros.search('handouts', adventure.handouts, adventure.handouts|bool2str) }}
+                {{ _self.search('handouts', adventure.handouts, adventure.handouts|bool2str) }}
             </div>
             <div class="col-4 col-md">
                 <div class="label">Battle Mats?</div>
-                {{ macros.search('tacticalMaps', adventure.tacticalMaps, adventure.tacticalMaps|bool2str) }}
+                {{ _self.search('tacticalMaps', adventure.tacticalMaps, adventure.tacticalMaps|bool2str) }}
             </div>
             <div class="col-4 col-md">
                 <div class="label">Includes Characters?</div>
-                {{ macros.search('pregeneratedCharacters', adventure.pregeneratedCharacters, adventure.pregeneratedCharacters|bool2str) }}
+                {{ _self.search('pregeneratedCharacters', adventure.pregeneratedCharacters, adventure.pregeneratedCharacters|bool2str) }}
             </div>
             <div class="col-6 col-md">
                 <div class="label">Level</div>
@@ -149,18 +148,18 @@
             </div>
             <div class="col-6 col-md">
                 <div class="label">Soloable?</div>
-                {{ macros.search('soloable', adventure.soloable, adventure.soloable|bool2str) }}
+                {{ _self.search('soloable', adventure.soloable, adventure.soloable|bool2str) }}
             </div>
         </div>
 
         <div class="detail-row">
             <div class="col-6">
                 <div class="label">Found In</div>
-                {{ macros.search('foundIn', adventure.foundIn) }}
+                {{ _self.search('foundIn', adventure.foundIn) }}
             </div>
             <div class="col-6">
                 <div class="label">Part Of</div>
-                {{ macros.search('partOf', adventure.partOf) }}
+                {{ _self.search('partOf', adventure.partOf) }}
             </div>
         </div>
 
@@ -170,7 +169,7 @@
                 <ul>
                     {% for monster in adventure.bossMonsters %}
                         <li>
-                            {{ macros.search('bossMonsters', monster.name) }}
+                            {{ _self.search('bossMonsters', monster.name) }}
                             {% for type in monster.types %}
                                 <span class="badge badge-info">{{ type.name }}</span>
                             {% endfor %}
@@ -183,7 +182,7 @@
                 <ul>
                     {% for monster in adventure.commonMonsters %}
                         <li>
-                            {{ macros.search('commonMonsters', monster.name) }}
+                            {{ _self.search('commonMonsters', monster.name) }}
                             {% for type in monster.types %}
                                 <span class="badge badge-info">{{ type.name }}</span>
                             {% endfor %}
@@ -195,7 +194,7 @@
                 <div class="label">Notable Items</div>
                 <ul>
                     {% for item in adventure.items %}
-                        <li>{{ macros.search('items', item.name) }}</li>
+                        <li>{{ _self.search('items', item.name) }}</li>
                     {% endfor %}
                 </ul>
             </div>

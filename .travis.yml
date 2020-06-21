@@ -56,7 +56,7 @@ install:
       npm install npm@^6 -g
 
       npm install;
-      npm run prod;
+      npm run build;
     fi;
 
 before_script:

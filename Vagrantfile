@@ -12,8 +12,29 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider "virtualbox" do |vb, override|
     override.vm.box = "ubuntu/bionic64"
-    vb.memory = "2048"
     vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+
+    # Based on https://stackoverflow.com/a/40249377/2560557
+    # by Frederic Henri
+    host = RbConfig::CONFIG['host_os']
+    if host =~ /darwin/
+      cpus = `sysctl -n hw.ncpu`.to_i
+      # sysctl returns Bytes and we need to convert to MB
+      mem = `sysctl -n hw.memsize`.to_i / 1024 / 1024
+    elsif host =~ /linux/
+      cpus = `nproc`.to_i
+      # meminfo shows KB and we need to convert to MB
+      mem = `grep 'MemTotal' /proc/meminfo | sed -e 's/MemTotal://' -e 's/ kB//'`.to_i / 1024
+    else
+      cpus = `wmic cpu get NumberOfCores`.split("\n")[2].to_i
+      mem = `wmic OS get TotalVisibleMemorySize`.split("\n")[2].to_i / 1024
+    end
+
+    # Use a quarter of available memory, but at least 2GB
+    vb.memory = [mem / 4, 2048].max
+    # Allow using all CPUs, but at most 70% per CPU
+    vb.cpus = cpus
+    vb.customize ["modifyvm", :id, "--cpuexecutioncap", "70"]
   end
 
   config.vm.provider "docker" do |d, override|
@@ -127,6 +148,15 @@ Vagrant.configure("2") do |config|
      sed -i -e 's/1g/256m/g' /etc/elasticsearch/jvm.options
      # Listen on 0.0.0.0
      echo "http.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
+  SHELL
+
+  # Upload the xdebug.ini file and move it into the correct location.
+  # We cannot directly upload to /etc, because that would require sudo,
+  # which the file provisioner does not support.
+  # https://github.com/hashicorp/vagrant/issues/6917
+  config.vm.provision "xdebug-ini-upload", type: "file", source: "scripts/xdebug-vagrant.ini", destination: "/tmp/xdebug.ini"
+  config.vm.provision "xdebug-ini-install", type: "shell", inline: <<-SHELL
+    sudo mv /tmp/xdebug.ini /etc/php/7.4/cli/conf.d/30-adl-xdebug.ini
   SHELL
 
   # This provisioner must be below the other provisioner. Otherwise it would

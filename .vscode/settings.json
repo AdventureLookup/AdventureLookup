@@ -1,0 +1,4 @@
+{
+  "browser-preview.startUrl": "http://localhost:8000",
+  "intelephense.environment.phpVersion": "7.4.x",
+}
