@@ -271,12 +271,16 @@ class AdventureSearch
         if ('random' === $sortBy) {
             // Sorting in a random order cannot be done using the 'sort' parameter, but requires adjusting the query
             // to use the random_score function for scoring.
-            // https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-function-score-query.html
+            // https://www.elastic.co/guide/en/elasticsearch/reference/master/query-dsl-function-score-query.html#function-random
             $query = [
                 'function_score' => [
                     'query' => $query,
                     'random_score' => [
+                        // Calculate the random score based on the $seed and an adventure's id.
+                        // Given that the $id of an adventure never changes, the random score
+                        // is only dependent on the $seed.
                         'seed' => $seed,
+                        'field' => 'id',
                     ],
                 ],
             ];
@@ -335,25 +339,44 @@ class AdventureSearch
         return [$adventureDocuments, $totalResults, $hasMoreResults, $stats];
     }
 
-    public function similarTitles($title): array
+    public function similarTitles(string $title, int $ignoreId): array
     {
         if ('' === $title) {
             return [];
         }
 
-        $result = $this->client->search([
-            'index' => $this->indexName,
-            'body' => [
-                'query' => [
-                    'match' => [
-                        'title' => [
-                            'query' => $title,
-                            'operator' => 'and',
-                            'fuzziness' => 'AUTO',
+        $query = [
+            'match' => [
+                'title' => [
+                    'query' => $title,
+                    'operator' => 'and',
+                    'fuzziness' => 'AUTO',
+                ],
+            ],
+        ];
+        if ($ignoreId >= 0) {
+            $query = [
+                'bool' => [
+                    'must' => [
+                        $query,
+                    ],
+                    'must_not' => [
+                        'term' => [
+                            'id' => [
+                                'value' => $ignoreId,
+                            ],
                         ],
                     ],
                 ],
+            ];
+        }
+
+        $result = $this->client->search([
+            'index' => $this->indexName,
+            'body' => [
+                'query' => $query,
                 '_source' => [
+                    'id',
                     'title',
                     'slug',
                 ],

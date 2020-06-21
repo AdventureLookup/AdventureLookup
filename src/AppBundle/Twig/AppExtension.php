@@ -6,20 +6,22 @@ use AppBundle\Entity\Adventure;
 use AppBundle\Entity\AdventureDocument;
 use AppBundle\Entity\User;
 use AppBundle\Service\AffiliateLinkHandler;
+use Symfony\Component\Security\Core\Role\Role;
+use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension
 {
-    /**
-     * @var AffiliateLinkHandler
-     */
-    private $affiliateLinkHandler;
+    private AffiliateLinkHandler $affiliateLinkHandler;
 
-    public function __construct(AffiliateLinkHandler $affiliateLinkHandler)
+    private RoleHierarchyInterface $roleHierarchy;
+
+    public function __construct(AffiliateLinkHandler $affiliateLinkHandler, RoleHierarchyInterface $roleHierarchy)
     {
         $this->affiliateLinkHandler = $affiliateLinkHandler;
+        $this->roleHierarchy = $roleHierarchy;
     }
 
     public function getFilters()
@@ -60,15 +62,22 @@ class AppExtension extends AbstractExtension
 
     public function formatRoles(User $user)
     {
-        $roles = array_map(function ($role) {
-            $roleMap = [
-                'ROLE_USER' => 'User',
-                'ROLE_CURATOR' => 'Curator',
-                'ROLE_ADMIN' => 'Admin',
-            ];
+        $roleMap = [
+            'ROLE_USER' => 'User',
+            'ROLE_CURATOR' => 'Curator',
+            'ROLE_ADMIN' => 'Admin',
+            'ROLE_ALLOWED_TO_SWITCH' => 'Impersonator',
+        ];
+        // 1. Convert string based roles into Role objects
+        // 2. Calculate all reachable roles (e.g., ROLE_ADMIN implies ROLE_USER)
+        // 3. Translate role objects using the translations defined above.
+        $roles = array_map(fn (string $role): Role => new Role($role), $user->getRoles());
+        $roles = $this->roleHierarchy->getReachableRoles($roles);
+        $roles = array_map(function (Role $role) use ($roleMap) {
+            $role = $role->getRole();
 
             return isset($roleMap[$role]) ? $roleMap[$role] : $role;
-        }, $user->getRoles());
+        }, $roles);
 
         return implode(', ', $roles);
     }

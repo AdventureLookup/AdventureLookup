@@ -96,11 +96,6 @@ class AdventureController extends Controller
         $adventure = new Adventure();
         $this->denyAccessUnlessGranted(AdventureVoter::CREATE, $adventure);
 
-        $isCurator = $this->isGranted('ROLE_CURATOR');
-        if ($isCurator) {
-            $adventure->setApproved(true);
-        }
-
         $form = $this->createForm(AdventureType::class, $adventure);
         $form->handleRequest($request);
 

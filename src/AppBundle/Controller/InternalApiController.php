@@ -46,7 +46,8 @@ class InternalApiController extends Controller
         if (false === $q) {
             throw new NotFoundHttpException();
         }
+        $ignoreId = $request->query->getInt('ignoreId', -1);
 
-        return new JsonResponse($adventureSearch->similarTitles($q));
+        return new JsonResponse($adventureSearch->similarTitles($q, $ignoreId));
     }
 }

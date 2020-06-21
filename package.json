@@ -5,8 +5,8 @@
     "dev-server-guest": "encore dev-server --hot --host 0.0.0.0 --port 8001",
     "dev-server-host": "encore dev-server --hot --port 8002",
     "dev-server-gitpod": "encore dev-server --hot --port 8002 --public $(gp url 8002) --disable-host-check",
-    "format": "prettier --write app/Resources/**/*.{js,jsx}",
-    "lint": "prettier --check app/Resources/**/*.{js,jsx}",
+    "format": "prettier --write app/Resources/**/*.{js,jsx,scss}",
+    "lint": "prettier --check app/Resources/**/*.{js,jsx,scss}",
     "build": "encore production"
   },
   "dependencies": {
@@ -40,7 +40,7 @@
     }
   },
   "lint-staged": {
-    "app/Resources/**/*.{js,jsx}": "prettier --write",
+    "app/Resources/**/*.{js,jsx,scss}": "prettier --write",
     "{src,tests}/**/*.php": "composer run format --"
   },
   "browserslist": [

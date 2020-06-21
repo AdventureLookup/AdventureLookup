@@ -49,6 +49,9 @@ services:
             - { name: kernel.event_listener, event: kernel.exception, priority: 999 }
 
     # TODO: Remove this service once we update to Symfony 4.1
+    Symfony\Component\Security\Core\Role\RoleHierarchyInterface: '@security.role_hierarchy'
+
+    # TODO: Remove this service once we update to Symfony 4.1
     # and set the $cache argument of the AppBundle\Twig\AppExtension
     # to '@cache.app.simple'
     #
