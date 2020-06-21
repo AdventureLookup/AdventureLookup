@@ -2,13 +2,18 @@ $container-max-widths: (
   sm: 540px,
   md: 720px,
   lg: 960px,
-  xl: 1250px
+  xl: 1250px,
 );
 
-$theme-colors: map-merge($theme-colors, ('primary': $adl-coral));
+$theme-colors: map-merge(
+  $theme-colors,
+  (
+    "primary": $adl-coral,
+  )
+);
 $alert-margin-bottom: 0;
 $badge-font-weight: 400;
-$badge-font-size: .9rem;
+$badge-font-size: 0.9rem;
 
 button.dropdown-toggle {
   display: flex;
@@ -25,14 +30,15 @@ button.dropdown-toggle {
   }
 }
 
-@import '~bootstrap/scss/bootstrap';
+@import "~bootstrap/scss/bootstrap";
 
 // Override bootstrap behavior
 button.dropdown-item:not(.disabled):hover {
   cursor: pointer;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   background-color: $adl-grey-lightest;

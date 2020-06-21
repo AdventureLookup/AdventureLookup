@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Tests\Twig;
 
 use AppBundle\Service\AffiliateLinkHandler;
+use AppBundle\Entity\User;
 use AppBundle\Twig\AppExtension;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Simple\FilesystemCache;
+use Symfony\Component\Security\Core\Role\RoleHierarchy;
 
 class AppExtensionTest extends TestCase
 {
@@ -18,11 +20,15 @@ class AppExtensionTest extends TestCase
 
     public function setUp(): void
     {
-        $this->extension = new AppExtension(new AffiliateLinkHandler([[
+        $affiliateLinkHandler = new AffiliateLinkHandler([[
             'domains' => ['example.com'],
             'param' => 'aff_id',
             'code' => 'aff_code',
-        ]], new FilesystemCache()));
+        ]], new FilesystemCache());
+        $roleHierarchy = new RoleHierarchy([
+            'ROLE_ADMIN' => ['ROLE_USER'],
+        ]);
+        $this->extension = new AppExtension($affiliateLinkHandler, $roleHierarchy);
     }
 
     /**
@@ -39,6 +45,17 @@ class AppExtensionTest extends TestCase
             ['https://example.com?aff_id=aff_code', true],
             $this->extension->addAffiliateCode('https://example.com')
         );
+    }
+
+    public function testFormatRoles()
+    {
+        $user = $this->createMock(User::class);
+        $user->method('getRoles')->willReturn(['ROLE_USER']);
+        $this->assertEquals('User', $this->extension->formatRoles($user));
+
+        $user = $this->createMock(User::class);
+        $user->method('getRoles')->willReturn(['ROLE_ADMIN']);
+        $this->assertEquals('Admin, User', $this->extension->formatRoles($user));
     }
 
     public function bool2strDataProvider()

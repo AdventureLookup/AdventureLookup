@@ -10,8 +10,8 @@ use Psr\Log\LoggerInterface;
 
 class ElasticSearchTest extends TestCase
 {
+    const HOST = 'localhost:9200';
     const INDEX_NAME = 'some_index';
-    const TYPE_NAME = 'some_type';
 
     /**
      * @var ElasticSearch
@@ -33,13 +33,13 @@ class ElasticSearchTest extends TestCase
             ->method('setLogger')
             ->with($logger)
             ->willReturnSelf();
+        $clientBuilder
+            ->expects($this->once())
+            ->method('setHosts')
+            ->with([self::HOST])
+            ->willReturnSelf();
         $clientBuilder->method('build')->willReturn($this->client);
-        $config = [
-            'index_name' => self::INDEX_NAME,
-            'type_name' => self::TYPE_NAME,
-        ];
-
-        $this->elasticSearch = new ElasticSearch($clientBuilder, $logger, $config);
+        $this->elasticSearch = new ElasticSearch($clientBuilder, $logger, self::HOST, self::INDEX_NAME);
     }
 
     public function testGetIndexName()

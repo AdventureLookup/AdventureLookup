@@ -202,7 +202,7 @@ class AdventureSearch
      *
      * @return array
      */
-    public function search(string $q, array $filters, int $page, string $sortBy, string $seed)
+    public function search(string $q, array $filters, int $page, string $sortBy, string $seed, int $perPage = self::ADVENTURES_PER_PAGE)
     {
         if ($page < 1 || $page * self::ADVENTURES_PER_PAGE > 5000) {
             throw new BadRequestHttpException();
@@ -290,12 +290,16 @@ class AdventureSearch
             // - the query is empty (-> all adventures would have the same score).
             //
             // Note that usage of the calculated score depends on whether `_score` is part of $sort.
-            // https://www.elastic.co/guide/en/elasticsearch/reference/7.7/query-dsl-function-score-query.html
+            // https://www.elastic.co/guide/en/elasticsearch/reference/7.7/query-dsl-function-score-query.html#function-random
             $query = [
                 'function_score' => [
                     'query' => $query,
                     'random_score' => [
+                        // Calculate the random score based on the $seed and an adventure's id.
+                        // Given that the $id of an adventure never changes, the random score
+                        // is only dependent on the $seed.
                         'seed' => $seed,
+                        'field' => 'id',
                     ],
                 ],
             ];
@@ -305,8 +309,8 @@ class AdventureSearch
             'index' => $this->indexName,
             'body' => [
                 'query' => $query,
-                'from' => self::ADVENTURES_PER_PAGE * ($page - 1),
-                'size' => self::ADVENTURES_PER_PAGE,
+                'from' => $perPage * ($page - 1),
+                'size' => $perPage,
                 // Also return aggregations for all fields, i.e. min/max for integer fields
                 // or the most common strings for string fields.
                 'aggs' => $this->fieldAggregations(),
@@ -354,25 +358,44 @@ class AdventureSearch
         return [$adventureDocuments, $totalResults, $hasMoreResults, $stats];
     }
 
-    public function similarTitles($title): array
+    public function similarTitles(string $title, int $ignoreId): array
     {
         if ('' === $title) {
             return [];
         }
 
-        $result = $this->client->search([
-            'index' => $this->indexName,
-            'body' => [
-                'query' => [
-                    'match' => [
-                        'title' => [
-                            'query' => $title,
-                            'operator' => 'and',
-                            'fuzziness' => 'AUTO',
+        $query = [
+            'match' => [
+                'title' => [
+                    'query' => $title,
+                    'operator' => 'and',
+                    'fuzziness' => 'AUTO',
+                ],
+            ],
+        ];
+        if ($ignoreId >= 0) {
+            $query = [
+                'bool' => [
+                    'must' => [
+                        $query,
+                    ],
+                    'must_not' => [
+                        'term' => [
+                            'id' => [
+                                'value' => $ignoreId,
+                            ],
                         ],
                     ],
                 ],
+            ];
+        }
+
+        $result = $this->client->search([
+            'index' => $this->indexName,
+            'body' => [
+                'query' => $query,
                 '_source' => [
+                    'id',
                     'title',
                     'slug',
                 ],
