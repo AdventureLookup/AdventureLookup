@@ -47,3 +47,13 @@ a.no-underline:hover {
     padding: $adl-card-padding;
   }
 }
+
+.truncate-6 {
+  display: block;
+  display: -webkit-box;
+  max-height: 1rem * $adl-line-height * 6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+}

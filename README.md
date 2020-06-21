@@ -5,17 +5,20 @@ AdventureLookup was originally proposed by [Matt Colville](https://twitter.com/m
 in [this video](https://www.youtube.com/watch?v=PIyLvicSu78).
 
 
-| Branch | Travis CI                                        | Code Analysis                          | Link                            |
-| ------ | ------------------------------------------------ | -------------------------------------- | ------------------------------- |
-| master | [![Build Status][travis-svg-master]][travis-url] | -                                      | https://adventurelookup.com     |
-| dev    | [![Build Status][travis-svg-dev]][travis-url]    | [![codecov][codecov-svg]][codecov-url] | https://dev.adventurelookup.com |
+| Branch | CI                                                 | Code Analysis                                        | Link                            |
+| ------ | -------------------------------------------------- | ---------------------------------------------------- | ------------------------------- |
+| master | [![Build Status][actions-svg-master]][actions-url] | [![codecov][codecov-svg-master]][codecov-url-master] | https://adventurelookup.com     |
+| dev    | [![Build Status][actions-svg-dev]][actions-url]    | [![codecov][codecov-svg-dev]][codecov-url-dev]       | https://dev.adventurelookup.com |
 
-[travis-url]:        https://travis-ci.org/AdventureLookup/AdventureLookup
-[travis-svg-master]: https://travis-ci.org/AdventureLookup/AdventureLookup.svg?branch=master
-[travis-svg-dev]:    https://travis-ci.org/AdventureLookup/AdventureLookup.svg?branch=dev
 
-[codecov-url]: https://codecov.io/gh/AdventureLookup/AdventureLookup
-[codecov-svg]: https://codecov.io/gh/AdventureLookup/AdventureLookup/branch/dev/graph/badge.svg
+[actions-url]:        https://github.com/AdventureLookup/AdventureLookup/actions?query=workflow%3ACI
+[actions-svg-master]: https://github.com/AdventureLookup/AdventureLookup/workflows/CI/badge.svg?branch=master
+[actions-svg-dev]:    https://github.com/AdventureLookup/AdventureLookup/workflows/CI/badge.svg?branch=dev
+
+[codecov-url-master]: https://codecov.io/gh/AdventureLookup/AdventureLookup/branch/master
+[codecov-svg-master]: https://codecov.io/gh/AdventureLookup/AdventureLookup/branch/master/graph/badge.svg
+[codecov-url-dev]: https://codecov.io/gh/AdventureLookup/AdventureLookup/branch/dev
+[codecov-svg-dev]: https://codecov.io/gh/AdventureLookup/AdventureLookup/branch/dev/graph/badge.svg
 
 ## Contributing to Adventure Lookup
 

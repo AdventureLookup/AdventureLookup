@@ -2,9 +2,11 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\AdventureDocument;
 use AppBundle\Exception\FieldDoesNotExistException;
 use AppBundle\Field\FieldProvider;
 use AppBundle\Service\AdventureSearch;
+use AppBundle\Service\Serializer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -49,5 +51,34 @@ class InternalApiController extends Controller
         $ignoreId = $request->query->getInt('ignoreId', -1);
 
         return new JsonResponse($adventureSearch->similarTitles($q, $ignoreId));
+    }
+
+    /**
+     * @Route("/autocomplete/similar-adventures", name="similar_adventures_search")
+     * @Method("GET")
+     *
+     * @return JsonResponse
+     */
+    public function findSimilarAdventures(Request $request, AdventureSearch $adventureSearch, Serializer $serializer)
+    {
+        $id = $request->query->filter('id', null, FILTER_VALIDATE_INT);
+        if (false === $id) {
+            throw new NotFoundHttpException();
+        }
+        $fieldName = $request->query->get('fieldName', '');
+
+        [$adventures, $terms] = $adventureSearch->similarAdventures($id, $fieldName);
+        $adventures = array_map(fn (AdventureDocument $adventure) => [
+                'id' => $adventure->getId(),
+                'title' => $adventure->getTitle(),
+                'slug' => $adventure->getSlug(),
+                'description' => $adventure->getDescription(),
+                'score' => $adventure->getScore(),
+            ], $adventures);
+
+        return new JsonResponse([
+            'adventures' => $adventures,
+            'terms' => $terms,
+        ]);
     }
 }
