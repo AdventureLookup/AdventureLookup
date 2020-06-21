@@ -111,7 +111,7 @@ jobs:
 
       - name: Build JS bundle
         if: always()
-        run: npm run prod
+        run: npm run build
 
       - name: Prepare functional and browser tests
         if: always()
