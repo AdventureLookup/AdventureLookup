@@ -1,5 +1,5 @@
 .tags-container {
-  padding: .8rem $adl-card-padding-side;
+  padding: 0.8rem $adl-card-padding-side;
   border-top: $adl-border-grey-lightest-big;
   border-bottom: $adl-border-grey-lightest-big;
 
@@ -9,23 +9,31 @@
     margin-bottom: 6px;
     background-color: $adl-grey-light;
     border-radius: $adl-border-radius-big;
-    font-family: 'Roboto Condensed', sans-serif;
+    font-family: "Roboto Condensed", sans-serif;
     text-transform: uppercase;
     color: #ffffff;
     display: inline-block;
 
     &::before {
-      font: 1rem 'FontAwesome';
-      padding-right: .25rem;
+      font: 1rem "FontAwesome";
+      padding-right: 0.25rem;
     }
 
-    &.tag-edition::before { content: $fa-var-cog; }
-    &.tag-level::before { content: $fa-var-flag; }
-    &.tag-length::before { content: $fa-var-book; }
+    &.tag-edition::before {
+      content: $fa-var-cog;
+    }
+    &.tag-level::before {
+      content: $fa-var-flag;
+    }
+    &.tag-length::before {
+      content: $fa-var-book;
+    }
     &.tag-featured {
       background-color: $adl-coral;
 
-      &::before { content: $fa-var-diamond; }
+      &::before {
+        content: $fa-var-diamond;
+      }
     }
 
     a {

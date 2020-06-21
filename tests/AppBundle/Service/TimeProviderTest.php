@@ -17,4 +17,11 @@ class TimeProviderTest extends TestCase
         $this->assertGreaterThan($now - 1000, $result);
         $this->assertLessThan($now + 1000, $result);
     }
+
+    public function testYearAndWeek()
+    {
+        $timeProvider = new TimeProvider();
+        $result = $timeProvider->yearAndWeek();
+        $this->assertTrue(1 === preg_match('#^\d{4}-\d{1,2}$#', $result));
+    }
 }
