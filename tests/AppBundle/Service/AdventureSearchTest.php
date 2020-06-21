@@ -49,7 +49,7 @@ class AdventureSearchTest extends TestCase
         ]));
         $this->elasticSearch = $this->createMock(ElasticSearch::class);
         $this->timeProvider = $this->createMock(TimeProvider::class);
-        $this->timeProvider->method('millis')->willReturn(123);
+        $this->timeProvider->method('yearAndWeek')->willReturn('2020-42');
         $this->search = new AdventureSearch($this->fieldProvider, $this->elasticSearch, $this->timeProvider);
     }
 
@@ -77,14 +77,14 @@ class AdventureSearchTest extends TestCase
             ['numPages' => $EMPTY_NUM_PAGES, 'soloable' => $EMPTY_SOLOABLE, 'edition' => $EMPTY_EDITION],
             1,
             '',
-            '123',
+            '2020-42',
         ], $this->search->requestToSearchParams($request));
 
         $request = Request::create('/?page=10');
-        $this->assertEquals(['', ['numPages' => $EMPTY_NUM_PAGES, 'soloable' => $EMPTY_SOLOABLE, 'edition' => $EMPTY_EDITION], 10, '', '123'], $this->search->requestToSearchParams($request));
+        $this->assertEquals(['', ['numPages' => $EMPTY_NUM_PAGES, 'soloable' => $EMPTY_SOLOABLE, 'edition' => $EMPTY_EDITION], 10, '', '2020-42'], $this->search->requestToSearchParams($request));
 
         $request = Request::create('/?q=foo');
-        $this->assertEquals(['foo', ['numPages' => $EMPTY_NUM_PAGES, 'soloable' => $EMPTY_SOLOABLE, 'edition' => $EMPTY_EDITION], 1, '', '123'], $this->search->requestToSearchParams($request));
+        $this->assertEquals(['foo', ['numPages' => $EMPTY_NUM_PAGES, 'soloable' => $EMPTY_SOLOABLE, 'edition' => $EMPTY_EDITION], 1, '', '2020-42'], $this->search->requestToSearchParams($request));
 
         $request = Request::create('/?numPages=≥2&edition=foo&soloable=1');
         $this->assertEquals(['', [
@@ -99,22 +99,22 @@ class AdventureSearchTest extends TestCase
                 'includeUnknown' => false,
                 'v' => ['foo'],
             ],
-        ], 1, '', '123'], $this->search->requestToSearchParams($request));
+        ], 1, '', '2020-42'], $this->search->requestToSearchParams($request));
 
         $request = Request::create('/?soloable=ok');
-        $this->assertEquals(['', ['numPages' => $EMPTY_NUM_PAGES, 'soloable' => $EMPTY_SOLOABLE, 'edition' => $EMPTY_EDITION], 1, '', '123'], $this->search->requestToSearchParams($request));
+        $this->assertEquals(['', ['numPages' => $EMPTY_NUM_PAGES, 'soloable' => $EMPTY_SOLOABLE, 'edition' => $EMPTY_EDITION], 1, '', '2020-42'], $this->search->requestToSearchParams($request));
 
         $request = Request::create('/?sortBy=title');
-        $this->assertEquals(['', ['numPages' => $EMPTY_NUM_PAGES, 'soloable' => $EMPTY_SOLOABLE, 'edition' => $EMPTY_EDITION], 1, 'title', '123'], $this->search->requestToSearchParams($request));
+        $this->assertEquals(['', ['numPages' => $EMPTY_NUM_PAGES, 'soloable' => $EMPTY_SOLOABLE, 'edition' => $EMPTY_EDITION], 1, 'title', '2020-42'], $this->search->requestToSearchParams($request));
 
         $request = Request::create('/?seed=foo');
         $this->assertEquals(['', ['numPages' => $EMPTY_NUM_PAGES, 'soloable' => $EMPTY_SOLOABLE, 'edition' => $EMPTY_EDITION], 1, '', 'foo'], $this->search->requestToSearchParams($request));
 
         $request = Request::create('/?numPages=≥-5');
-        $this->assertEquals(['', ['numPages' => $EMPTY_NUM_PAGES, 'soloable' => $EMPTY_SOLOABLE, 'edition' => $EMPTY_EDITION], 1, '', '123'], $this->search->requestToSearchParams($request));
+        $this->assertEquals(['', ['numPages' => $EMPTY_NUM_PAGES, 'soloable' => $EMPTY_SOLOABLE, 'edition' => $EMPTY_EDITION], 1, '', '2020-42'], $this->search->requestToSearchParams($request));
 
         $request = Request::create('/?numPages=≥ 5');
-        $this->assertEquals(['', ['numPages' => $EMPTY_NUM_PAGES, 'soloable' => $EMPTY_SOLOABLE, 'edition' => $EMPTY_EDITION], 1, '', '123'], $this->search->requestToSearchParams($request));
+        $this->assertEquals(['', ['numPages' => $EMPTY_NUM_PAGES, 'soloable' => $EMPTY_SOLOABLE, 'edition' => $EMPTY_EDITION], 1, '', '2020-42'], $this->search->requestToSearchParams($request));
     }
 
     public function testParseStringFilterValue()

@@ -38,6 +38,7 @@ class ApiController extends Controller
             'adventures' => array_map(function (AdventureDocument $adventure) use ($serializer) {
                 return $serializer->serializeAdventureDocument($adventure);
             }, $adventures),
+            'seed' => $seed,
         ]);
     }
 

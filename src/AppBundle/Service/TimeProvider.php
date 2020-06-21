@@ -11,4 +11,9 @@ class TimeProvider
     {
         return (int) round(microtime(true) * 1000);
     }
+
+    public function yearAndWeek(): string
+    {
+        return (new \DateTime('now'))->format('Y-W');
+    }
 }

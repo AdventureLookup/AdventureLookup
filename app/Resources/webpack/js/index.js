@@ -11,6 +11,7 @@ import "./adventure";
 import "./reviews";
 import "./adventure_list";
 import "./adventures_filter";
+import "./similar_adventures/index";
 
 window.cookieconsent.initialise({
   palette: {

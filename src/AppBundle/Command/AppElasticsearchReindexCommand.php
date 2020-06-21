@@ -54,10 +54,20 @@ class AppElasticsearchReindexCommand extends Command
                 'type' => 'keyword',
                 'ignore_above' => 256,
             ],
+            'analyzed' => [
+                'type' => 'text',
+                'analyzer' => 'english',
+            ],
         ],
     ];
     private const FIELD_TEXT = [
         'type' => 'text',
+        'fields' => [
+            'analyzed' => [
+                'type' => 'text',
+                'analyzer' => 'english',
+            ],
+        ],
     ];
     private const FIELD_INTEGER = [
         'type' => 'integer',
@@ -86,6 +96,7 @@ class AppElasticsearchReindexCommand extends Command
         $output->writeln('Recreated index.');
 
         $mappings = [
+            'id' => self::FIELD_INTEGER,
             'authors' => self::FIELD_STRING,
             'edition' => self::FIELD_STRING,
             'environments' => self::FIELD_STRING,

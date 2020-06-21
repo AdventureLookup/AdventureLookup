@@ -10,11 +10,13 @@
     <div class="content">
       Returns a paginated list of all adventures.
       Use the <code>page</code> query parameter to select the page (1-indexed, default 1).
+      Note that the order of adventures is non-deterministic. The seed used for sorting changes once a week.
+      Make sure to include the <code>seed</code> parameter retrieved with the response when querying further pages.
       You can use the <code>q</code> parameter to filter adventures by a search query.
       You can also filter adventures by specific fields similar to using the sidebar on the search page.
       The following fields are available:
       <ul>
-        {% for field in fields if field.availableAsFilter %}
+        {% for field in fields|filter(field => field.availableAsFilter) %}
           <li>
             <strong>{{ field.name }} <span class="badge badge-primary">{{ field.type }}</span></strong>
           </li>
@@ -63,7 +65,7 @@
 
       The <code>sortBy</code> parameter can be used to sort the adventures. Possible values are:
       <ul>
-        <li><code>(nothing)</code>: Best matches first. Will sort randomly if no query is provided (since there really is no "best match" when not using a search query). To avoid that, provide a seed using the <code>seed</code> parameter as described below.</li>
+        <li><code>(nothing)</code>: Best matches first. Will sort randomly if no query is provided (since there really is no "best match" when not using a search query).</li>
         <li><code>reviews</code>: Adventures sorted by reviews</li>
         <li><code>title</code>: Sort by title</li>
         <li><code>numPages-desc</code> Most pages</li>

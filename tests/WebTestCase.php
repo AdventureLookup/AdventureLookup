@@ -58,4 +58,13 @@ class WebTestCase extends \Liip\FunctionalTestBundle\Test\WebTestCase
         $session->visit('/adventures');
         $this->assertTrue($session->getPage()->hasContent('A community for lazy dungeon masters'));
     }
+
+    protected function jsonRequest(Session $session, string $url): array
+    {
+        $session->visit($url);
+        $this->assertEquals('application/json', $session->getResponseHeader('Content-Type'));
+        $this->assertEquals(200, $session->getStatusCode());
+
+        return json_decode($session->getPage()->getContent(), true);
+    }
 }

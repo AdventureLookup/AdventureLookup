@@ -1,0 +1,24 @@
+imports:
+    - { resource: config.yml }
+
+parameters:
+    elasticsearch_host: "%env(BONSAI_URL)%"
+    announcement: >
+        This is a preview build of AdventureLookup running on Heroku.
+        Please be aware that this preview is using PostgreSQL rather than MySQL,
+        which may lead to bugs that you cannot reproduce in your development environment.
+
+monolog:
+    handlers:
+        nested:
+            type:  stream
+            path:  "php://stderr"
+            level: debug
+
+doctrine:
+    dbal:
+        url: "%env(DATABASE_URL)%"
+        charset: utf8
+        default_table_options:
+            charset: utf8
+            collate: utf8_unicode_ci

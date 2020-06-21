@@ -1,0 +1,16 @@
+{
+  "addons": [
+    "heroku-postgresql:hobby-dev",
+    "bonsai:sandbox-6"
+  ],
+  "buildpacks": [
+    { "url": "heroku/nodejs" },
+    { "url": "heroku/php" }
+  ],
+  "env": {
+    "SYMFONY_ENV": {
+      "description": "Symfony Environment",
+      "value": "heroku"
+    }
+  }
+}
