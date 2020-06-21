@@ -10,8 +10,8 @@ import "./adventures";
 import "./adventure";
 import "./reviews";
 import "./adventure_list";
-import "./paginated_list_group";
 import "./adventures_filter";
+import "./similar_adventures/index";
 
 window.cookieconsent.initialise({
   palette: {

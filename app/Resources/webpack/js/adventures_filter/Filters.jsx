@@ -1,94 +1,83 @@
 import * as React from "react";
-
-const visibleFieldNames = [
-  "publisher",
-  "setting",
-  "edition",
-  "environments",
-  "items",
-  "bossMonsters",
-  "commonMonsters",
-  "numPages",
-  "minStartingLevel",
-  "maxStartingLevel",
-  "startingLevelRange",
-  "soloable",
-  "pregeneratedCharacters",
-  "handouts",
-  "tacticalMaps",
-  "partOf",
-  "foundIn",
-  "year",
-];
-
-function isFilterValueEmpty(field, value) {
-  switch (field.type) {
-    case "string":
-    case "boolean":
-      return value === "" || value === undefined;
-    case "integer":
-      return value === undefined || (value.min === "" && value.max === "");
-  }
-}
-
-function areSetsEqual(a, b) {
-  if (a.size !== b.size) return false;
-  for (const entry of a) {
-    if (!b.has(entry)) return false;
-  }
-  return true;
-}
+import { isFilterValueEmpty } from "./field-util";
+import { StringFilter } from "./StringFilter";
 
 export const Filters = React.memo(function Filters({
   fields,
-  showMoreFilters,
   initialFilterValues,
+  filterValues,
+  setFilterValues,
   fieldStats,
   onSubmit,
 }) {
+  const [showMoreFilters, setShowMoreFilters] = React.useState(false);
   const showMoreAfter = 13;
-  return fields.map((field, i) => (
-    <FieldFilter
-      key={field.name}
-      field={field}
-      initialFilter={initialFilterValues[field.name] ?? {}}
-      fieldValues={fieldStats[`vals_${field.name}`]}
-      visibility={
-        !visibleFieldNames.includes(field.name)
-          ? "NEVER"
-          : i < showMoreAfter ||
-            showMoreFilters ||
-            !isFilterValueEmpty(field, initialFilterValues[field.name]?.v)
-          ? "YES"
-          : "SHOW_MORE"
-      }
-      onSubmit={onSubmit}
-    />
-  ));
+
+  return (
+    <>
+      {fields
+        .filter((field) => field.availableAsFilter)
+        .map((field, i) => {
+          // We can useCallback even though we are inside a loop, because
+          // fields is a constant. This prevents all filters from
+          // re-rendering when a single filter changes.
+          const setFilter = React.useCallback(
+            (value) => {
+              setFilterValues((filterValues) => ({
+                ...filterValues,
+                [field.name]:
+                  typeof value === "function"
+                    ? value(filterValues[field.name])
+                    : value,
+              }));
+            },
+            [field]
+          );
+          return (
+            <FieldFilter
+              key={field.name}
+              field={field}
+              initialFilter={initialFilterValues[field.name]}
+              filter={filterValues[field.name]}
+              setFilter={setFilter}
+              fieldValues={fieldStats[field.name]}
+              visibility={
+                i < showMoreAfter ||
+                showMoreFilters ||
+                !isFilterValueEmpty(field, initialFilterValues[field.name])
+                  ? "YES"
+                  : "SHOW_MORE"
+              }
+              onSubmit={onSubmit}
+            />
+          );
+        })}
+
+      {!showMoreFilters && (
+        <div
+          id="filter-more"
+          title="show more filters"
+          onClick={() => setShowMoreFilters(true)}
+        ></div>
+      )}
+    </>
+  );
 });
 
-function FieldFilter({
+const FieldFilter = React.memo(function FieldFilter({
   field,
   visibility,
   initialFilter,
+  filter,
+  setFilter,
   fieldValues,
   onSubmit,
 }) {
   const alwaysOpen = field.type === "boolean" || field.type === "integer";
-  const filterSet = !isFilterValueEmpty(field, initialFilter?.v);
+  const filterSet = !isFilterValueEmpty(field, filter);
 
   const [isOpen, setOpen] = React.useState(filterSet);
   const [isDirty, setIsDirty] = React.useState(false);
-
-  if (visibility === "NEVER") {
-    return (
-      <input
-        type="hidden"
-        name={`f[${field.name}][v]`}
-        value={initialFilter.v ?? ""}
-      />
-    );
-  }
 
   const classes = [];
   if (visibility !== "YES") {
@@ -117,9 +106,11 @@ function FieldFilter({
       </div>
       <div className="options-list">
         {field.type === "string" && (
-          <StringOptions
+          <StringFilter
             field={field}
             initialFilter={initialFilter}
+            filter={filter}
+            setFilter={setFilter}
             fieldValues={fieldValues}
             onIsDirty={setIsDirty}
           />
@@ -128,6 +119,9 @@ function FieldFilter({
           <BooleanOptions
             field={field}
             initialFilter={initialFilter}
+            filter={filter}
+            setFilter={setFilter}
+            fieldValues={fieldValues}
             onIsDirty={setIsDirty}
           />
         )}
@@ -135,6 +129,9 @@ function FieldFilter({
           <IntegerOptions
             field={field}
             initialFilter={initialFilter}
+            filter={filter}
+            setFilter={setFilter}
+            fieldValues={fieldValues}
             onSubmit={onSubmit}
             onIsDirty={setIsDirty}
           />
@@ -147,259 +144,205 @@ function FieldFilter({
       </div>
     </div>
   );
-}
+});
 
-function filterBuckets(bucket, searchString, selectedValues = []) {
-  const stringToSearch = (bucket.key || "").toLowerCase();
-  const match = stringToSearch.includes(searchString.toLowerCase());
-  const alreadySelected = selectedValues.includes(bucket.key);
-  return match || alreadySelected;
-}
+function BooleanOptions({
+  field,
+  fieldValues,
+  initialFilter,
+  filter,
+  setFilter,
+  onIsDirty,
+}) {
+  // Only display number of adventures that selected "no"/"yes" if the option
+  // matches the user's selection. If the user filters by all adventures that
+  // selected "no", the "yes" bucket is always empty and displaying a 0 for
+  // "yes" could be confusing.
+  const noCount =
+    initialFilter.v === "" || initialFilter.v === "0"
+      ? fieldValues.countNo
+      : undefined;
+  const yesCount =
+    initialFilter.v === "" || initialFilter.v === "1"
+      ? fieldValues.countYes
+      : undefined;
+  const allCount = initialFilter.v === "" ? fieldValues.countAll : undefined;
 
-function StringOptions({ field, fieldValues, initialFilter, onIsDirty }) {
-  // Whether to show the full list of options or only first few.
-  const showMoreAfter = 5;
-  const [filterString, setFilterString] = React.useState("");
-  const [showAll, setShowAll] = React.useState(false);
-
-  // ElasticSearch statistics on which options are available.
-  const buckets = fieldValues["buckets"];
-  // Normalize the initial options into an array.
-  const initialValues = React.useMemo(() => {
-    let initialValues = initialFilter.v || [];
-    if (!Array.isArray(initialValues)) {
-      if (initialValues === "") {
-        initialValues = [];
-      } else {
-        initialValues = [initialValues];
-      }
-    }
-    return initialValues;
-  }, [initialFilter]);
-
-  const [selectedValues, setSelectedValues] = React.useState(initialValues);
-
-  React.useEffect(() => {
-    onIsDirty(!areSetsEqual(new Set(initialValues), new Set(selectedValues)));
-  }, [selectedValues, initialValues]);
-
-  const bucketsToShow = filterString
-    ? buckets.filter((b) => filterBuckets(b, filterString, selectedValues))
-    : buckets;
-
-  const valuesUsed = new Set();
   return (
     <>
-      <div className="string-options">
-        <div className="option">
+      <div className="option option-boolean">
+        <div className="form-check form-check-inline">
           <input
-            className="filter-searchbar"
-            type="text"
-            placeholder="Find Option"
-            onChange={(e) => setFilterString(e.target.value)}
-            value={filterString}
-            title="Find Option"
+            className="form-check-input"
+            type="radio"
+            value=""
+            id={`sidebar-filter-${field.name}-all`}
+            checked={filter.v === ""}
+            onChange={() => {
+              setFilter({ ...filter, v: "" });
+              onIsDirty(true);
+            }}
           />
+          <label
+            className="form-check-label"
+            htmlFor={`sidebar-filter-${field.name}-all`}
+          >
+            All{" "}
+            {allCount !== undefined && (
+              <span className="badge-pill badge badge-info">{allCount}</span>
+            )}
+          </label>
         </div>
-        {bucketsToShow.map((bucket, i) => {
-          valuesUsed.add(bucket.key);
-          return (
-            <StringCheckbox
-              key={bucket.key}
-              field={field}
-              value={bucket.key}
-              checked={selectedValues.includes(bucket.key)}
-              count={bucket.doc_count}
-              hidden={!showAll && i >= showMoreAfter}
-              onChange={(selected) =>
-                selected
-                  ? setSelectedValues([...selectedValues, bucket.key])
-                  : setSelectedValues(
-                      selectedValues.filter((each) => each !== bucket.key)
-                    )
-              }
-            />
-          );
-        })}
-        {initialValues
-          .filter((value) => value !== "" && !valuesUsed.has(value))
-          .map((value) => (
-            <StringCheckbox
-              key={value}
-              field={field}
-              value={value}
-              checked={selectedValues.includes(value)}
-              count={0}
-              hidden={false}
-              onChange={(selected) =>
-                selected
-                  ? setSelectedValues([...selectedValues, value])
-                  : setSelectedValues(
-                      selectedValues.filter((each) => each !== value)
-                    )
-              }
-            />
-          ))}
+        <div className="form-check form-check-inline">
+          <input
+            className="form-check-input"
+            type="radio"
+            value="1"
+            id={`sidebar-filter-${field.name}-yes`}
+            checked={filter.v === "1"}
+            onChange={() => {
+              setFilter({ ...filter, v: "1" });
+              onIsDirty(true);
+            }}
+          />
+          <label
+            className="form-check-label"
+            htmlFor={`sidebar-filter-${field.name}-yes`}
+          >
+            Yes{" "}
+            {yesCount !== undefined && (
+              <span className="badge-pill badge badge-info">{yesCount}</span>
+            )}
+          </label>
+        </div>
+        <div className="form-check form-check-inline">
+          <input
+            className="form-check-input"
+            type="radio"
+            value="0"
+            id={`sidebar-filter-${field.name}-no`}
+            checked={filter.v === "0"}
+            onChange={() => {
+              setFilter({ ...filter, v: "0" });
+              onIsDirty(true);
+            }}
+          />
+          <label
+            className="form-check-label"
+            htmlFor={`sidebar-filter-${field.name}-no`}
+          >
+            No{" "}
+            {noCount !== undefined && (
+              <span className="badge-pill badge badge-info">{noCount}</span>
+            )}
+          </label>
+        </div>
       </div>
-      {bucketsToShow.length > showMoreAfter && (
-        <>
-          {!showAll && (
-            <div
-              className="option show-more"
-              onClick={() => setShowAll(true)}
-              title="show more"
-            >
-              <i className="fa fa-arrow-down"></i>
-            </div>
-          )}
-          {showAll && (
-            <div
-              className="option show-less"
-              onClick={() => setShowAll(false)}
-              title="show less"
-            >
-              <i className="fa fa-arrow-up"></i>
-            </div>
-          )}
-        </>
-      )}
-      {bucketsToShow.length === 0 && (
-        <div className="option">
-          <em>
-            No options available. Remove some search filters to show more
-            options.
-          </em>
-        </div>
-      )}
+      <IncludeUnknownOption
+        field={field}
+        fieldValues={fieldValues}
+        initialFilter={initialFilter}
+        filter={filter}
+        setFilter={setFilter}
+        onIsDirty={onIsDirty}
+      />
     </>
   );
 }
 
-function StringCheckbox({ field, value, checked, count, hidden, onChange }) {
+function IntegerOptions({
+  field,
+  fieldValues,
+  initialFilter,
+  filter,
+  setFilter,
+  onSubmit,
+  onIsDirty,
+}) {
+  return (
+    <>
+      <div className="option option-integer">
+        <input
+          type="number"
+          placeholder="min (inc.)"
+          className="form-control form-control-sm"
+          value={filter.v.min}
+          onChange={(e) => {
+            const value = e.target.value;
+            setFilter((filter) => ({
+              ...filter,
+              v: { ...filter.v, min: value },
+            }));
+            onIsDirty(true);
+          }}
+          title="min (inc.)"
+          onKeyPress={(key) => key.which === 13 && onSubmit()}
+        />
+        <input
+          type="number"
+          placeholder="max (inc.)"
+          className="form-control form-control-sm"
+          value={filter.v.max}
+          onChange={(e) => {
+            const value = e.target.value;
+            setFilter((filter) => ({
+              ...filter,
+              v: { ...filter.v, max: value },
+            }));
+            onIsDirty(true);
+          }}
+          title="max (inc.)"
+          onKeyPress={(key) => key.which === 13 && onSubmit()}
+        />
+      </div>
+      <IncludeUnknownOption
+        field={field}
+        fieldValues={fieldValues}
+        initialFilter={initialFilter}
+        filter={filter}
+        setFilter={setFilter}
+        onIsDirty={onIsDirty}
+      />
+    </>
+  );
+}
+
+function IncludeUnknownOption({
+  field,
+  fieldValues,
+  initialFilter,
+  filter,
+  setFilter,
+  onIsDirty,
+}) {
+  if (isFilterValueEmpty(field, filter)) {
+    return null;
+  }
   return (
     <label
-      className={`option${hidden ? " d-none" : ""}${
-        checked ? " filter-marked" : ""
-      }`}
+      className="option"
+      title="Include adventures where this field is unknown, regardless of the filter set above."
     >
       <input
         type="checkbox"
-        name={`f[${field.name}][v][]`}
-        value={value}
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
+        onChange={(e) => {
+          const value = e.target.checked;
+          setFilter((filter) => ({
+            ...filter,
+            includeUnknown: value,
+          }));
+          onIsDirty(true);
+        }}
+        checked={filter.includeUnknown}
       />
-      {value}
+      Include when unknown
       <div className="spacer" />
-      <span className="badge-pill badge badge-info">{count}</span>
+      {(initialFilter.includeUnknown ||
+        isFilterValueEmpty(field, initialFilter)) && (
+        <span className="badge-pill badge badge-info">
+          {fieldValues.countUnknown}
+        </span>
+      )}
     </label>
-  );
-}
-
-function BooleanOptions({ field, initialFilter, onIsDirty }) {
-  const initialValue = initialFilter.v ?? "";
-  const [value, setValue] = React.useState(initialValue);
-
-  return (
-    <div className="option">
-      <div className="form-check form-check-inline">
-        <input
-          className="form-check-input"
-          type="radio"
-          name={`f[${field.name}][v]`}
-          value=""
-          id={`sidebar-filter-${field.name}-all`}
-          checked={value === ""}
-          onChange={() => {
-            setValue("");
-            onIsDirty("" !== initialValue);
-          }}
-        />
-        <label
-          className="form-check-label"
-          htmlFor={`sidebar-filter-${field.name}-all`}
-        >
-          All
-        </label>
-      </div>
-      <div className="form-check form-check-inline">
-        <input
-          className="form-check-input"
-          type="radio"
-          name={`f[${field.name}][v]`}
-          value="1"
-          id={`sidebar-filter-${field.name}-yes`}
-          checked={value === "1"}
-          onChange={() => {
-            setValue("1");
-            onIsDirty("1" !== initialValue);
-          }}
-        />
-        <label
-          className="form-check-label"
-          htmlFor={`sidebar-filter-${field.name}-yes`}
-        >
-          Yes
-        </label>
-      </div>
-      <div className="form-check form-check-inline">
-        <input
-          className="form-check-input"
-          type="radio"
-          name={`f[${field.name}][v]`}
-          value="0"
-          id={`sidebar-filter-${field.name}-no`}
-          checked={value === "0"}
-          onChange={() => {
-            setValue("0");
-            onIsDirty("0" !== initialValue);
-          }}
-        />
-        <label
-          className="form-check-label"
-          htmlFor={`sidebar-filter-${field.name}-no`}
-        >
-          No
-        </label>
-      </div>
-    </div>
-  );
-}
-
-function IntegerOptions({ field, initialFilter, onSubmit, onIsDirty }) {
-  const initialMin = initialFilter.v?.min ?? "";
-  const initialMax = initialFilter.v?.max ?? "";
-  const [min, setMin] = React.useState(initialMin);
-  const [max, setMax] = React.useState(initialMax);
-
-  return (
-    <div className="option range-option">
-      <input
-        type="number"
-        name={`f[${field.name}][v][min]`}
-        placeholder="min (inc.)"
-        className="form-control form-control-sm"
-        value={min}
-        onChange={(e) => {
-          setMin(e.target.value);
-          onIsDirty(e.target.value !== initialMin);
-        }}
-        title="min (inc.)"
-        onKeyPress={(key) => key.which === 13 && onSubmit()}
-      />
-      <input
-        type="number"
-        name={`f[${field.name}][v][max]`}
-        placeholder="max (inc.)"
-        className="form-control form-control-sm"
-        value={max}
-        onChange={(e) => {
-          setMax(e.target.value);
-          onIsDirty(e.target.value !== initialMax);
-        }}
-        title="max (inc.)"
-        onKeyPress={(key) => key.which === 13 && onSubmit()}
-      />
-    </div>
   );
 }

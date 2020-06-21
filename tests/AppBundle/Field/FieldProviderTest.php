@@ -5,15 +5,16 @@ namespace Tests\AppBundle\Field;
 use AppBundle\Exception\FieldDoesNotExistException;
 use AppBundle\Field\FieldProvider;
 use Doctrine\Common\Collections\Collection;
+use PHPUnit\Framework\TestCase;
 
-class FieldProviderTest extends \PHPUnit_Framework_TestCase
+class FieldProviderTest extends TestCase
 {
     /**
      * @var FieldProvider
      */
     private $fieldProvider;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->fieldProvider = new FieldProvider();
     }
@@ -26,6 +27,13 @@ class FieldProviderTest extends \PHPUnit_Framework_TestCase
         foreach ($fields as $name => $field) {
             $this->assertSame($name, $field->getName());
         }
+    }
+
+    public function testGetFieldsAvailbleAsFilter()
+    {
+        $fields = $this->fieldProvider->getFieldsAvailableAsFilter();
+        $this->assertInstanceOf(Collection::class, $fields);
+        $this->assertCount(19, $fields);
     }
 
     public function testGetInvalidField()

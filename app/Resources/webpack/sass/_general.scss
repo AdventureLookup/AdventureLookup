@@ -16,8 +16,12 @@
     padding: 0 $adl-card-padding-side;
   }
 
-  & > .alert {
+  .alert {
     border-radius: 0;
+    border-left: none;
+    border-right: none;
+    padding-left: $adl-card-padding-side;
+    padding-right: $adl-card-padding-side;
   }
 }
 
@@ -27,7 +31,8 @@ a.no-underline:hover {
 }
 
 %secondaryFont {
-  font: $adl-secondary-font-weight $adl-secondary-font-height $adl-secondary-font-name;
+  font: $adl-secondary-font-weight $adl-secondary-font-height
+    $adl-secondary-font-name;
   line-height: $adl-secondary-font-height;
   color: #333333;
   text-transform: uppercase;
@@ -41,4 +46,14 @@ a.no-underline:hover {
   .card-body {
     padding: $adl-card-padding;
   }
+}
+
+.truncate-6 {
+  display: block;
+  display: -webkit-box;
+  max-height: 1rem * $adl-line-height * 6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
 }

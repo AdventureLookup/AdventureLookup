@@ -14,30 +14,22 @@ class ElasticSearch
     private $indexName;
 
     /**
-     * @var string
-     */
-    private $typeName;
-
-    /**
      * @var Client
      */
     private $client;
 
-    public function __construct(ClientBuilder $clientBuilder, LoggerInterface $logger, array $config)
+    public function __construct(ClientBuilder $clientBuilder, LoggerInterface $logger, string $host, string $indexName)
     {
-        $this->client = $clientBuilder->setLogger($logger)->build();
-        $this->indexName = $config['index_name'];
-        $this->typeName = $config['type_name'];
+        $this->client = $clientBuilder
+            ->setLogger($logger)
+            ->setHosts([$host])
+            ->build();
+        $this->indexName = $indexName;
     }
 
     public function getIndexName(): string
     {
         return $this->indexName;
-    }
-
-    public function getTypeName(): string
-    {
-        return $this->typeName;
     }
 
     public function getClient(): Client

@@ -29,11 +29,6 @@ class AdventureSearch
     private $indexName;
 
     /**
-     * @var string
-     */
-    private $typeName;
-
-    /**
      * @var TimeProvider
      */
     private $timeProvider;
@@ -43,7 +38,6 @@ class AdventureSearch
         $this->fieldProvider = $fieldProvider;
         $this->client = $elasticSearch->getClient();
         $this->indexName = $elasticSearch->getIndexName();
-        $this->typeName = $elasticSearch->getTypeName();
         $this->timeProvider = $timeProvider;
     }
 
@@ -54,19 +48,153 @@ class AdventureSearch
     {
         $q = $request->get('q', '');
         $sortBy = $request->get('sortBy', '');
-        // Use a timestamp with millisecond precision as the seed when none is provided.
-        // We deliberately do not use time() for two reasons
-        // 1. We use Date.now() in JS, which also returns a timestamp in milliseconds
-        // 2. Simply using time() to get a timestamp in seconds sometimes leads to the same seed
-        //    when you refresh the browser too quickly.
-        $seed = (string) $request->get('seed', $this->timeProvider->millis());
+        // Change the seed once per week to give the frontpage a fresh look once in a while.
+        // We don't want to change the seed every single day/minute/second, because it
+        // might be confusing for users that go back and forth between the adventure
+        // search and an adventure details page if the order suddenly is completely different.
+        $seed = (string) $request->get('seed', $this->timeProvider->yearAndWeek());
         $page = (int) $request->get('page', 1);
-        $filters = $request->get('f', []);
-        if (!is_array($filters)) {
-            $filters = [];
+
+        $filters = [];
+        foreach ($this->fieldProvider->getFieldsAvailableAsFilter() as $field) {
+            $value = $request->get($field->getName(), '');
+            switch ($field->getType()) {
+                case 'integer':
+                    list($valueMin, $valueMax, $includeUnknown) = $this->parseIntFilterValue($value);
+                    $filters[$field->getName()] = [
+                        'v' => [
+                            'min' => $valueMin,
+                            'max' => $valueMax,
+                        ],
+                        'includeUnknown' => $includeUnknown,
+                    ];
+                    break;
+                case 'string':
+                    list($values, $includeUnknown) = $this->parseStringFilterValue($value);
+                    $filters[$field->getName()] = [
+                        'v' => $values,
+                        'includeUnknown' => $includeUnknown,
+                    ];
+                    break;
+                case 'boolean':
+                    list($value, $includeUnknown) = $this->parseBooleanFilterValue($value);
+                    $filters[$field->getName()] = [
+                        'v' => $value,
+                        'includeUnknown' => $includeUnknown,
+                    ];
+                    break;
+                case 'text':
+                case 'url':
+                    // Not supported as filters
+                    break;
+                default:
+                    throw new \LogicException('Cannot handle field of type '.$field->getType());
+            }
         }
 
         return [$q, $filters, $page, $sortBy, $seed];
+    }
+
+    private function parseStringFilterValue(string $value): array
+    {
+        $includeUnknown = false;
+
+        preg_match('#^(.*?)([^~]+)~$#', $value, $matches);
+        if (!empty($matches)) {
+            // If the value ends with "~" preceded by something else than a "~", then the
+            // last argument is special and includes additional options.
+            $value = $matches[1];
+            $additionalOptions = $matches[2];
+
+            if ('unknown' === $additionalOptions) {
+                $includeUnknown = true;
+            }
+        }
+
+        // Split the string on all "~" that are neither preceded nor followed by another "~".
+        $values = preg_split('#(?<!~)~(?!~)#', $value, -1, PREG_SPLIT_NO_EMPTY);
+
+        $values = array_map(function (string $value): string {
+            // Undo escaping of '~' character.
+            return str_replace('~~', '~', $value);
+        }, $values);
+
+        return [$values, $includeUnknown];
+    }
+
+    public function parseIntFilterValue(string $value): array
+    {
+        $valueMin = '';
+        $valueMax = '';
+        $includeUnknown = false;
+        $parts = explode('~', $value);
+        foreach ($parts as $part) {
+            if ('unknown' === $part) {
+                $includeUnknown = true;
+            } elseif (0 === mb_strpos($part, '≥')) {
+                $n = mb_substr($part, 1);
+                if ($this->isValidIntFilterValue($n)) {
+                    $valueMin = $n;
+                }
+            } elseif (0 === mb_strpos($part, '≤')) {
+                $n = mb_substr($part, 1);
+                if ($this->isValidIntFilterValue($n)) {
+                    $valueMax = $n;
+                }
+            }
+        }
+
+        if ('' === $valueMin && '' === $valueMax) {
+            $includeUnknown = false;
+        }
+
+        return [$valueMin, $valueMax, $includeUnknown];
+    }
+
+    private function isValidIntFilterValue(string $value): bool
+    {
+        if ('' === $value) {
+            return true;
+        }
+
+        // ElasticSearch integer fields are signed 32 bit values.
+        // https://www.elastic.co/guide/en/elasticsearch/reference/5.5/number.html
+        // We deliberately set 2**30 as the upper bound, to make sure
+        // this code works correctly, even on 32 bit machines, without
+        // having to think about what happens when you go 1 over
+        // PHP_INT_MAX.
+        //
+        // We set 0 as the lower bound, since negative values make no
+        // sense for any of the integer fields we use so far.
+        //
+        // We also have to make sure that $value does not contain leading or trailing
+        // whitespace, which filter_var accepts, but ElasticSearch doesn't.
+        return trim($value) === $value && false !== filter_var($value, FILTER_VALIDATE_INT, [
+            'options' => [
+                'min_range' => 0,
+                'max_range' => 2 ** 30,
+            ],
+        ]);
+    }
+
+    private function parseBooleanFilterValue(string $values): array
+    {
+        $values = explode('~', $values);
+        $includeUnknown = false;
+        $value = '';
+        foreach ($values as $each) {
+            if ('unknown' === $each) {
+                $includeUnknown = true;
+            } elseif ('1' === $each || '0' === $each) {
+                $value = $each;
+            }
+        }
+
+        if ('' === $value) {
+            $includeUnknown = false;
+        }
+
+        return [$value, $includeUnknown];
     }
 
     /**
@@ -74,7 +202,7 @@ class AdventureSearch
      *
      * @return array
      */
-    public function search(string $q, array $filters, int $page, string $sortBy, string $seed)
+    public function search(string $q, array $filters, int $page, string $sortBy, string $seed, int $perPage = self::ADVENTURES_PER_PAGE)
     {
         if ($page < 1 || $page * self::ADVENTURES_PER_PAGE > 5000) {
             throw new BadRequestHttpException();
@@ -85,6 +213,7 @@ class AdventureSearch
         // First generate ES search query from free-text searchbar at the top.
         // This will only search string and text fields.
         $matches = $this->qMatches($q, $matches);
+        $hasQuery = !empty($matches);
 
         // Now apply filters from the sidebar.
         $matches = $this->filterMatches($filters, $matches);
@@ -105,13 +234,23 @@ class AdventureSearch
             case 'title':
                 $sort = 'title.keyword';
             break;
-            case 'numPages-desc':
-                $sort = ['numPages' => 'desc'];
-            break;
             case 'numPages-asc':
-                $sort = ['numPages' => 'asc'];
+                // Sort by the number of pages, but use the score as a tie breaker
+                // if the number of pages is the same for two adventures.
+                $sort = [
+                    ['numPages' => 'asc'],
+                    '_score',
+                ];
+            break;
+            case 'numPages-desc':
+                $sort = [
+                    ['numPages' => 'desc'],
+                    '_score',
+                ];
             break;
             case 'createdAt-asc':
+                // No need to use the score as a tie breaker, since two adventures
+                // will almost never be created at the exact same second.
                 $sort = ['createdAt' => 'asc'];
             break;
             case 'createdAt-desc':
@@ -120,34 +259,47 @@ class AdventureSearch
             case 'reviews':
                 // We use the Wilson Score instead of the average of positive and negative reviews
                 // https://www.elastic.co/de/blog/better-than-average-sort-by-best-rating-with-elasticsearch
+                // We use the score as a tie breaker just like with all the other sortings.
                 $sort = [
-                    '_script' => [
-                        'order' => 'desc',
-                        'type' => 'number',
-                        'script' => [
-                            'inline' => "
-                                long p = doc['positiveReviews'].value;
-                                long n = doc['negativeReviews'].value;
-                                return p + n > 0 ? ((p + 1.9208) / (p + n) - 1.96 * Math.sqrt((p * n) / (p + n) + 0.9604) / (p + n)) / (1 + 3.8416 / (p + n)) : 0;
-                            ",
+                    [
+                        '_script' => [
+                            'order' => 'desc',
+                            'type' => 'number',
+                            'script' => [
+                                'inline' => "
+                                    long p = doc['positiveReviews'].value;
+                                    long n = doc['negativeReviews'].value;
+                                    return p + n > 0 ? ((p + 1.9208) / (p + n) - 1.96 * Math.sqrt((p * n) / (p + n) + 0.9604) / (p + n)) / (1 + 3.8416 / (p + n)) : 0;
+                                ",
+                            ],
                         ],
                     ],
+                    '_score',
                 ];
             break;
+            // Sorting in a random order cannot be done using the 'sort' parameter, but requires adjusting the query
+            // to use the random_score function for scoring.
             default:
                 $sort = ['_score'];
             break;
         }
 
-        if ('random' === $sortBy) {
-            // Sorting in a random order cannot be done using the 'sort' parameter, but requires adjusting the query
-            // to use the random_score function for scoring.
-            // https://www.elastic.co/guide/en/elasticsearch/reference/5.5/query-dsl-function-score-query.html
+        if ('random' === $sortBy || !$hasQuery) {
+            // Calculate a random score per adventure if
+            // - sortBy is 'random' or
+            // - the query is empty (-> all adventures would have the same score).
+            //
+            // Note that usage of the calculated score depends on whether `_score` is part of $sort.
+            // https://www.elastic.co/guide/en/elasticsearch/reference/7.7/query-dsl-function-score-query.html#function-random
             $query = [
                 'function_score' => [
                     'query' => $query,
                     'random_score' => [
+                        // Calculate the random score based on the $seed and an adventure's id.
+                        // Given that the $id of an adventure never changes, the random score
+                        // is only dependent on the $seed.
                         'seed' => $seed,
+                        'field' => 'id',
                     ],
                 ],
             ];
@@ -155,11 +307,10 @@ class AdventureSearch
 
         $result = $this->client->search([
             'index' => $this->indexName,
-            'type' => $this->typeName,
             'body' => [
                 'query' => $query,
-                'from' => self::ADVENTURES_PER_PAGE * ($page - 1),
-                'size' => self::ADVENTURES_PER_PAGE,
+                'from' => $perPage * ($page - 1),
+                'size' => $perPage,
                 // Also return aggregations for all fields, i.e. min/max for integer fields
                 // or the most common strings for string fields.
                 'aggs' => $this->fieldAggregations(),
@@ -167,64 +318,53 @@ class AdventureSearch
             ],
         ]);
 
-        $adventureDocuments = array_map(function ($hit) {
-            return new AdventureDocument(
-                $hit['_id'],
-                $hit['_source']['authors'],
-                $hit['_source']['edition'],
-                $hit['_source']['environments'],
-                $hit['_source']['items'],
-                $hit['_source']['publisher'],
-                $hit['_source']['setting'],
-                $hit['_source']['commonMonsters'],
-                $hit['_source']['bossMonsters'],
-                $hit['_source']['title'],
-                $hit['_source']['description'],
-                $hit['_source']['slug'],
-                $hit['_source']['minStartingLevel'],
-                $hit['_source']['maxStartingLevel'],
-                $hit['_source']['startingLevelRange'],
-                $hit['_source']['numPages'],
-                $hit['_source']['foundIn'],
-                $hit['_source']['partOf'],
-                $hit['_source']['link'],
-                $hit['_source']['thumbnailUrl'],
-                $hit['_source']['soloable'],
-                $hit['_source']['pregeneratedCharacters'],
-                $hit['_source']['tacticalMaps'],
-                $hit['_source']['handouts'],
-                $hit['_source']['year'],
-                $hit['_source']['positiveReviews'],
-                $hit['_source']['negativeReviews'],
-                $hit['_score']
-            );
-        }, $result['hits']['hits']);
-        $totalResults = $result['hits']['total'];
+        $adventureDocuments = array_map(fn ($hit) => AdventureDocument::fromHit($hit), $result['hits']['hits']);
+        $totalResults = $result['hits']['total']['value'];
         $hasMoreResults = $totalResults > $page * self::ADVENTURES_PER_PAGE;
 
-        return [$adventureDocuments, $totalResults, $hasMoreResults, $result['aggregations']];
+        $stats = $this->formatAggregations($result['aggregations']);
+
+        return [$adventureDocuments, $totalResults, $hasMoreResults, $stats];
     }
 
-    public function similarTitles($title): array
+    public function similarTitles(string $title, int $ignoreId): array
     {
         if ('' === $title) {
             return [];
         }
 
-        $result = $this->client->search([
-            'index' => $this->indexName,
-            'type' => $this->typeName,
-            'body' => [
-                'query' => [
-                    'match' => [
-                        'title' => [
-                            'query' => $title,
-                            'operator' => 'and',
-                            'fuzziness' => 'AUTO',
+        $query = [
+            'match' => [
+                'title' => [
+                    'query' => $title,
+                    'operator' => 'and',
+                    'fuzziness' => 'AUTO',
+                ],
+            ],
+        ];
+        if ($ignoreId >= 0) {
+            $query = [
+                'bool' => [
+                    'must' => [
+                        $query,
+                    ],
+                    'must_not' => [
+                        'term' => [
+                            'id' => [
+                                'value' => $ignoreId,
+                            ],
                         ],
                     ],
                 ],
+            ];
+        }
+
+        $result = $this->client->search([
+            'index' => $this->indexName,
+            'body' => [
+                'query' => $query,
                 '_source' => [
+                    'id',
                     'title',
                     'slug',
                 ],
@@ -235,6 +375,139 @@ class AdventureSearch
         return array_map(function ($hit) {
             return $hit['_source'];
         }, $result['hits']['hits']);
+    }
+
+    public function similarAdventures(int $id, string $fieldName): array
+    {
+        $fields = [];
+        if ('title/description' === $fieldName) {
+            $fields[] = 'title.analyzed';
+            $fields[] = 'description.analyzed';
+        }
+        if ('items' === $fieldName) {
+            $fields[] = 'items.keyword';
+        }
+        if ('bossMonsters' === $fieldName) {
+            $fields[] = 'bossMonsters.keyword';
+        }
+        if ('commonMonsters' === $fieldName) {
+            $fields[] = 'commonMonsters.keyword';
+        }
+
+        if (empty($fields)) {
+            return [[], []];
+        }
+
+        // $id is the adventure id from the MySQL table.
+        // We first need to convert it into the internal id used by ElasticSearch.
+        $result = $this->client->search([
+            'index' => $this->indexName,
+            'body' => [
+                'query' => [
+                    'term' => [
+                        'id' => $id,
+                    ],
+                ],
+                '_source' => [],
+                'size' => 1,
+            ],
+        ]);
+        if (1 !== count($result['hits']['hits'])) {
+            return [[], []];
+        }
+        $elasticSearchId = $result['hits']['hits'][0]['_id'];
+
+        // Now we need to gather statistics on all terms used in the selected adventure.
+        $result = $this->client->termvectors([
+            'index' => $this->indexName,
+            'id' => $elasticSearchId,
+            'fields' => $fields,
+            'positions' => false,
+            'offsets' => false,
+            'payloads' => false,
+            'term_statistics' => true,
+            'realtime' => false,
+        ]);
+
+        // Given these statistics, we now calculated TF-IDF per term.
+        $terms = [];
+        foreach ($fields as $field) {
+            if (!isset($result['term_vectors'][$field])) {
+                // Field is empty
+                continue;
+            }
+            $fieldData = $result['term_vectors'][$field];
+            $docCount = $fieldData['field_statistics']['doc_count'];
+
+            foreach ($fieldData['terms'] as $term => $termStatistics) {
+                if (mb_strlen($term) < 3) {
+                    continue;
+                }
+                // TF-IDF is calculated based on the formula from here:
+                // https://www.elastic.co/guide/en/elasticsearch/reference/7.6/index-modules-similarity.html#scripted_similarity
+                // TF-IDF is higher the more unique a term is across all documents.
+                $tf = sqrt($termStatistics['term_freq']);
+                $idf = log(($docCount + 1.0) / ($termStatistics['doc_freq'] + 1.0)) + 1.0;
+                $terms[] = [
+                    'field' => $field,
+                    'term' => $term,
+                    'tf-idf' => $tf * $idf,
+                ];
+            }
+        }
+
+        // Take the top 20 terms with the highest TF-IDF
+        usort($terms, fn ($a, $b) => $b['tf-idf'] <=> $a['tf-idf']);
+        $terms = array_slice($terms, 0, 20);
+
+        if (empty($terms)) {
+            return [[], []];
+        }
+
+        // Search for the top 6 adventures that contain at least 25% of the given terms.
+        $result = $this->client->search([
+            'index' => $this->indexName,
+            'body' => [
+                'query' => [
+                    'bool' => [
+                        'must' => [
+                            [
+                                'bool' => [
+                                    'should' => array_map(function ($term) {
+                                        return [
+                                            'match' => [
+                                                $term['field'] => [
+                                                    'query' => $term['term'],
+                                                    // Boost adventures that contain terms with a high TF-IDF.
+                                                    'boost' => $term['tf-idf'],
+                                                ],
+                                            ],
+                                        ];
+                                    }, $terms),
+                                    'minimum_should_match' => '25%',
+                                ],
+                            ],
+                            // Exclude the adventure itself
+                            [
+                                'bool' => [
+                                    'must_not' => [
+                                        'term' => [
+                                            'id' => $id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'size' => 6,
+            ],
+        ]);
+
+        return [
+            array_map(fn ($hit) => AdventureDocument::fromHit($hit), $result['hits']['hits']),
+            $terms,
+        ];
     }
 
     /**
@@ -252,7 +525,6 @@ class AdventureSearch
         $fieldName = $field->getName();
         $response = $this->client->search([
             'index' => $this->indexName,
-            'type' => $this->typeName,
             'body' => [
                 'query' => [
                     'match_phrase_prefix' => [
@@ -309,7 +581,6 @@ class AdventureSearch
 
         $response = $this->client->search([
             'index' => $this->indexName,
-            'type' => $this->typeName,
             'body' => [
                 'size' => 0,
                 'aggregations' => $aggregations,
@@ -328,31 +599,39 @@ class AdventureSearch
     private function fieldAggregations(): array
     {
         $aggregations = [];
-        $fields = $this->fieldProvider->getFields();
+        $fields = $this->fieldProvider->getFieldsAvailableAsFilter();
         foreach ($fields as $field) {
             $fieldName = $field->getFieldNameForAggregation();
+            $aggregations[$field->getName().'_missing'] = [
+                'missing' => [
+                    'field' => $fieldName,
+                ],
+            ];
             switch ($field->getType()) {
                 case 'integer':
-                    $aggregations['max_'.$field->getName()] = [
+                    $aggregations[$field->getName().'_max'] = [
                         'max' => [
                             'field' => $fieldName,
                         ],
                     ];
-                    $aggregations['min_'.$field->getName()] = [
+                    $aggregations[$field->getName().'_min'] = [
                         'min' => [
                             'field' => $fieldName,
                         ],
                     ];
-                    break;
+                break;
+
+                // We use a Terms Aggregation
+                // https://www.elastic.co/guide/en/elasticsearch/reference/5.5/search-aggregations-bucket-terms-aggregation.html
                 case 'boolean':
-                    $aggregations['vals_'.$field->getName()] = [
+                    $aggregations[$field->getName().'_terms'] = [
                         'terms' => [
                             'field' => $fieldName,
                         ],
                     ];
                     break;
                 case 'string':
-                    $aggregations['vals_'.$field->getName()] = [
+                    $aggregations[$field->getName().'_terms'] = [
                         'terms' => [
                             'field' => $fieldName,
                             // Return up to 1000 different values.
@@ -360,11 +639,57 @@ class AdventureSearch
                         ],
                     ];
                     break;
-                // Other field types are not supported
+                default:
+                    throw new \LogicException('Field '.$field->getName().' has unsupported type for aggregation: '.$field->getType());
             }
         }
 
         return $aggregations;
+    }
+
+    private function formatAggregations(array $aggregations): array
+    {
+        $stats = [];
+        $fields = $this->fieldProvider->getFieldsAvailableAsFilter();
+        foreach ($fields as $field) {
+            switch ($field->getType()) {
+                case 'integer':
+                    $stats[$field->getName()] = [
+                        'min' => (int) $aggregations[$field->getName().'_min']['value'],
+                        'max' => (int) $aggregations[$field->getName().'_max']['value'],
+                        'countUnknown' => $aggregations[$field->getName().'_missing']['doc_count'],
+                    ];
+                break;
+                case 'boolean':
+                    $countUnknown = $aggregations[$field->getName().'_missing']['doc_count'];
+                    $countYes = 0;
+                    $countNo = 0;
+                    foreach ($aggregations[$field->getName().'_terms']['buckets'] as $bucket) {
+                        if (0 === $bucket['key']) {
+                            $countNo = $bucket['doc_count'];
+                        } elseif (1 === $bucket['key']) {
+                            $countYes = $bucket['doc_count'];
+                        }
+                    }
+                    $stats[$field->getName()] = [
+                        'countAll' => $countUnknown + $countNo + $countYes,
+                        'countUnknown' => $countUnknown,
+                        'countNo' => $countNo,
+                        'countYes' => $countYes,
+                    ];
+                break;
+                case 'string':
+                    $stats[$field->getName()] = [
+                        'countUnknown' => $aggregations[$field->getName().'_missing']['doc_count'],
+                        'buckets' => $aggregations[$field->getName().'_terms']['buckets'],
+                    ];
+                break;
+                default:
+                    throw new \LogicException('Field '.$field->getName().' has unsupported type for aggregation: '.$field->getType());
+            }
+        }
+
+        return $stats;
     }
 
     /**
@@ -487,51 +812,112 @@ class AdventureSearch
                 continue;
             }
 
-            $values = isset($filter['v']) ? (array) $filter['v'] : [];
-            if (0 == count($values)) {
-                // Apparently no filter value provided
-                continue;
-            }
-
-            $filterMatches = [];
-            foreach ($values as $key => $value) {
-                if ('' === $value) {
-                    continue;
-                }
-
-                if ('integer' === $field->getType() && in_array($key, ['min', 'max'], true) && is_numeric($value)) {
-                    $filterMatches[] = [
-                        'range' => [
-                            $field->getName() => [
-                                'min' == $key ? 'gte' : 'lte' => $value,
+            switch ($field->getType()) {
+                case 'integer':
+                    $filterMatches = [];
+                    if ('' !== $filter['v']['min']) {
+                        $filterMatches[] = [
+                            'range' => [
+                                $field->getName() => [
+                                    'gte' => $filter['v']['min'],
+                                ],
                             ],
-                        ],
-                    ];
-                } else {
-                    $fieldNameForSearch = $fieldName;
-                    if ('string' == $field->getType()) {
-                        $fieldNameForSearch .= '.keyword';
+                        ];
                     }
-                    $filterMatches[] = ['term' => [$fieldNameForSearch => $value]];
-                }
-            }
-
-            if (count($filterMatches) > 0) {
-                if ('integer' === $field->getType()) {
-                    // Integer fields must use AND, because you want e.g. the page count to be between min AND max.
-                    $matches[] = [
-                        'bool' => [
-                            'must' => $filterMatches,
-                        ],
-                    ];
-                } else {
-                    $matches[] = [
-                        'bool' => [
-                            'should' => $filterMatches,
-                            'minimum_should_match' => 1,
-                        ],
-                    ];
-                }
+                    if ('' !== $filter['v']['max']) {
+                        $filterMatches[] = [
+                            'range' => [
+                                $field->getName() => [
+                                    'lte' => $filter['v']['max'],
+                                ],
+                            ],
+                        ];
+                    }
+                    if (!empty($filterMatches)) {
+                        // Integer fields must use AND, because you want e.g. the page count to be between min AND max.
+                        $match = [
+                            'bool' => [
+                                'must' => $filterMatches,
+                            ],
+                        ];
+                        if (true === $filter['includeUnknown']) {
+                            $match = [
+                                'bool' => [
+                                    'should' => [
+                                        // either field is within bounds
+                                        $match,
+                                        // or field is null
+                                        [
+                                            'bool' => [
+                                                'must_not' => [
+                                                    'exists' => [
+                                                        'field' => $field->getName(),
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                    'minimum_should_match' => 1,
+                                ],
+                            ];
+                        }
+                        $matches[] = $match;
+                    }
+                break;
+                case 'boolean':
+                    if ('' !== $filter['v']) {
+                        $match = ['term' => [$fieldName => '1' === $filter['v']]];
+                        if (true === $filter['includeUnknown']) {
+                            $match = [
+                                'bool' => [
+                                    'should' => [
+                                        // either field is as defined
+                                        $match,
+                                        // or field is null
+                                        [
+                                            'bool' => [
+                                                'must_not' => [
+                                                    'exists' => [
+                                                        'field' => $field->getName(),
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                    'minimum_should_match' => 1,
+                                ],
+                            ];
+                        }
+                        $matches[] = $match;
+                    }
+                break;
+                case 'string':
+                    $filterMatches = [];
+                    foreach ($filter['v'] as $value) {
+                        $filterMatches[] = ['term' => [$fieldName.'.keyword' => $value]];
+                    }
+                    if (true === $filter['includeUnknown']) {
+                        $filterMatches[] = [
+                            'bool' => [
+                                'must_not' => [
+                                    'exists' => [
+                                        'field' => $field->getName(),
+                                    ],
+                                ],
+                            ],
+                        ];
+                    }
+                    if (!empty($filterMatches)) {
+                        $matches[] = [
+                            'bool' => [
+                                'should' => $filterMatches,
+                                'minimum_should_match' => 1,
+                            ],
+                        ];
+                    }
+                break;
+                default:
+                    throw new \LogicException('Unsupported field type '.$field->getType());
             }
         }
 

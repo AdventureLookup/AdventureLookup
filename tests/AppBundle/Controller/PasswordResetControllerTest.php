@@ -72,15 +72,15 @@ class PasswordResetControllerTest extends WebTestCase
 
         // Asserting email data
         $this->assertInstanceOf('Swift_Message', $message);
-        $this->assertContains('Password Reset', $message->getSubject());
+        $this->assertStringContainsString('Password Reset', $message->getSubject());
         $this->assertEquals('noreply@adventurelookup.com', key($message->getFrom()));
         $this->assertEquals('user1@example.com', key($message->getTo()));
-        $this->assertContains(
+        $this->assertStringContainsString(
             self::USERNAME,
             $message->getBody()
         );
 
-        preg_match('#http://localhost/reset-password/reset/[\w-_]{40,}#', $message->getBody(), $matches);
+        preg_match('#http://localhost/reset-password/reset/[\w_-]{40,}#', $message->getBody(), $matches);
         $this->assertCount(1, $matches);
 
         return $matches[0];
@@ -119,17 +119,17 @@ class PasswordResetControllerTest extends WebTestCase
 
         $session->visit('/reset-password/reset/'.self::VALID_RESET_TOKEN);
         $this->assertPath($session, '/reset-password/request');
-        $this->assertContains('try to request a new password reset link', $session->getPage()->getContent());
+        $this->assertStringContainsString('try to request a new password reset link', $session->getPage()->getContent());
 
         $user->setPasswordResetRequestedAt(new \DateTime('61 minutes ago'));
         $em->flush();
         $session->visit('/reset-password/reset/'.self::VALID_RESET_TOKEN);
         $this->assertPath($session, '/reset-password/request');
-        $this->assertContains('reset link is no longer valid', $session->getPage()->getContent());
+        $this->assertStringContainsString('reset link is no longer valid', $session->getPage()->getContent());
 
         $user->setPasswordResetRequestedAt(new \DateTime('55 minutes ago'));
         $em->flush();
         $session->visit('/reset-password/reset/'.self::VALID_RESET_TOKEN);
-        $this->assertContains('new account password', $session->getPage()->getContent());
+        $this->assertStringContainsString('new account password', $session->getPage()->getContent());
     }
 }

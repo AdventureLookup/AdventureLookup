@@ -10,9 +10,11 @@ use AppBundle\Field\Field;
 use AppBundle\Field\FieldProvider;
 use AppBundle\Service\AdventureSerializer;
 use Doctrine\Common\Collections\ArrayCollection;
+use PHPUnit\Framework\TestCase;
 
-class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
+class AdventureSerializerTest extends TestCase
 {
+    const ID = 42;
     const TITLE = 'a title';
     const SLUG = 'a-title';
     const MIN_STARTING_LEVEL = 5;
@@ -36,7 +38,7 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
 
     private $CREATED_AT;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->fieldProvider = $this->createMock(FieldProvider::class);
         $this->serializer = new AdventureSerializer($this->fieldProvider);
@@ -47,6 +49,7 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
     {
         $this->fieldProvider->method('getFields')->willReturn(new ArrayCollection([]));
         $adventure = $this->createMock(Adventure::class);
+        $adventure->method('getId')->willReturn(self::ID);
         $adventure->method('getSlug')->willReturn(self::SLUG);
         $adventure->method('getCreatedAt')->willReturn($this->CREATED_AT);
         $adventure->method('getNumberOfThumbsUp')->willReturn(self::NUM_POSITIVE_REVIEWS);
@@ -54,6 +57,7 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
 
         $doc = $this->serializer->toElasticDocument($adventure);
         $this->assertSame([
+            'id' => self::ID,
             'slug' => self::SLUG,
             'createdAt' => $this->CREATED_AT->format('c'),
             'positiveReviews' => self::NUM_POSITIVE_REVIEWS,
@@ -64,14 +68,15 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
     public function testSerializeSimpleFields()
     {
         $this->fieldProvider->method('getFields')->willReturn(new ArrayCollection([
-            new Field('title', 'string', false, false, 'title'),
-            new Field('link', 'url', false, false, 'link'),
-            new Field('foundIn', 'url', false, false, 'foundIn'),
-            new Field('minStartingLevel', 'integer', false, false, 'minStartingLevel'),
-            new Field('tacticalMaps', 'boolean', false, false, 'tacticalMaps'),
+            new Field('title', 'string', false, false, false, 'title'),
+            new Field('link', 'url', false, false, false, 'link'),
+            new Field('foundIn', 'url', false, false, true, 'foundIn'),
+            new Field('minStartingLevel', 'integer', false, false, true, 'minStartingLevel'),
+            new Field('tacticalMaps', 'boolean', false, false, true, 'tacticalMaps'),
         ]));
 
         $adventure = $this->createMock(Adventure::class);
+        $adventure->method('getId')->willReturn(self::ID);
         $adventure->method('getTitle')->willReturn(self::TITLE);
         $adventure->method('getSlug')->willReturn(self::SLUG);
         $adventure->method('getCreatedAt')->willReturn($this->CREATED_AT);
@@ -83,6 +88,7 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
 
         $doc = $this->serializer->toElasticDocument($adventure);
         $this->assertSame([
+            'id' => self::ID,
             'slug' => self::SLUG,
             'createdAt' => $this->CREATED_AT->format('c'),
             'positiveReviews' => self::NUM_POSITIVE_REVIEWS,
@@ -98,10 +104,10 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
     public function testSerializeRelatedEntities()
     {
         $this->fieldProvider->method('getFields')->willReturn(new ArrayCollection([
-            new Field('title', 'string', false, false, 'title'),
-            new Field('authors', 'string', true, false, 'authors', null, 1, Author::class),
-            new Field('publisher', 'string', false, false, 'publisher', null, 1, Publisher::class),
-            new Field('edition', 'string', false, false, 'edition', null, 1, Edition::class),
+            new Field('title', 'string', false, false, false, 'title'),
+            new Field('authors', 'string', true, false, true, 'authors', null, 1, Author::class),
+            new Field('publisher', 'string', false, false, true, 'publisher', null, 1, Publisher::class),
+            new Field('edition', 'string', false, false, true, 'edition', null, 1, Edition::class),
         ]));
 
         $author1 = new Author();
@@ -111,6 +117,7 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
         $publisher = (new Publisher())->setName(self::PUBLISHER);
 
         $adventure = $this->createMock(Adventure::class);
+        $adventure->method('getId')->willReturn(self::ID);
         $adventure->method('getTitle')->willReturn(self::TITLE);
         $adventure->method('getSlug')->willReturn(self::SLUG);
         $adventure->method('getCreatedAt')->willReturn($this->CREATED_AT);
@@ -126,6 +133,7 @@ class AdventureSerializerTest extends \PHPUnit_Framework_TestCase
 
         $doc = $this->serializer->toElasticDocument($adventure);
         $this->assertSame([
+            'id' => self::ID,
             'slug' => self::SLUG,
             'createdAt' => $this->CREATED_AT->format('c'),
             'positiveReviews' => self::NUM_POSITIVE_REVIEWS,

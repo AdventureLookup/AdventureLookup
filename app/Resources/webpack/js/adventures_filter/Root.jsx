@@ -13,20 +13,83 @@ export function Root({
   initialSeed,
   fieldStats,
 }) {
-  const [showMoreFilters, setShowMoreFilters] = React.useState(false);
   const [query, setQuery] = React.useState(initialQuery);
   const [sortBy, setSortBy] = React.useState(initialSortBy);
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [seed, setSeed] = React.useState(initialSeed);
-  const formRef = React.useRef(null);
+  const [filterValues, setFilterValues] = React.useState(initialFilterValues);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const onSubmit = React.useCallback(() => setIsSubmitting(true), []);
 
-  const onSubmit = React.useCallback(() => {
-    if (!formRef.current) {
+  const doSubmit = () => {
+    let newUrl = `${url}`;
+    const addParam = (key, value) => {
+      if (value === "" || value === undefined) {
+        return;
+      }
+      if (newUrl.indexOf("?") === -1) {
+        newUrl += "?";
+      } else {
+        newUrl += "&";
+      }
+      newUrl += `${key}=${encodeURIComponent(value)}`;
+    };
+
+    addParam("q", query);
+    fields
+      .filter((field) => field.availableAsFilter)
+      .forEach((field) => {
+        const filter = filterValues[field.name];
+        switch (field.type) {
+          case "integer":
+            const args = [];
+            if (filter.v.min !== "") {
+              args.push(`≥${filter.v.min}`);
+            }
+            if (filter.v.max !== "") {
+              args.push(`≤${filter.v.max}`);
+            }
+            if (args.length > 0 && filter.includeUnknown === true) {
+              args.push("unknown");
+            }
+            addParam(field.name, args.join("~"));
+            break;
+          case "string": {
+            let value = filter.v
+              .map((value) => value.replace(/~/g, "~~"))
+              .join("~");
+            if (value !== "" && filter.includeUnknown) {
+              value += "~unknown~";
+            }
+            addParam(field.name, value);
+            break;
+          }
+          case "boolean":
+            let value = filter.v;
+            if (value !== "" && filter.includeUnknown) {
+              value += "~unknown";
+            }
+            addParam(field.name, value);
+            break;
+          case "text":
+          case "url":
+          default:
+            throw new Error(`Unknown field type ${field.type}`);
+        }
+      });
+    addParam("sortBy", sortBy);
+    if (sortBy === "random") {
+      addParam("seed", seed);
+    }
+
+    document.location.href = newUrl;
+  };
+
+  React.useEffect(() => {
+    if (!isSubmitting) {
       return;
     }
-    setIsSubmitting(true);
-    formRef.current.submit();
-  }, [formRef.current]);
+    doSubmit();
+  }, [isSubmitting, doSubmit]);
 
   // Automatically submit the form whenever sortBy or the seed changes.
   React.useEffect(() => {
@@ -41,25 +104,14 @@ export function Root({
         <a className="sidebar-title" href={url}>
           Adventure Lookup
         </a>
-        <form method="post" action={url} id="search-form" ref={formRef}>
-          <input type="hidden" value={query} name="q" />
-          <input type="hidden" value={sortBy} name="sortBy" />
-          <input type="hidden" value={seed} name="seed" />
-          <Filters
-            fields={fields}
-            showMoreFilters={showMoreFilters}
-            initialFilterValues={initialFilterValues}
-            fieldStats={fieldStats}
-            onSubmit={onSubmit}
-          />
-        </form>
-        {!showMoreFilters && (
-          <div
-            id="filter-more"
-            title="show more filters"
-            onClick={() => setShowMoreFilters(true)}
-          ></div>
-        )}
+        <Filters
+          fields={fields}
+          initialFilterValues={initialFilterValues}
+          filterValues={filterValues}
+          setFilterValues={setFilterValues}
+          fieldStats={fieldStats}
+          onSubmit={onSubmit}
+        />
       </div>
       {createPortal(
         <>
@@ -73,7 +125,10 @@ export function Root({
             setSeed={setSeed}
           />
           <SearchTags
+            // Pass initialFilterValues, not filterValues, so that the search tags always reflect the filters
+            // that were used for the current search results
             initialFilterValues={initialFilterValues}
+            setFilterValues={setFilterValues}
             fields={fields}
             onSubmit={onSubmit}
           />

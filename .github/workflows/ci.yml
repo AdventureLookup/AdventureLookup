@@ -3,34 +3,180 @@ on:
   push:
   pull_request:
 
+env:
+  SYMFONY_ENV: test
+  PHPUNIT: vendor/symfony/phpunit-bridge/bin/simple-phpunit
+
 jobs:
-  lint:
-    name: Lint Code
+  lintAndTest:
+    name: Lint and Test
     runs-on: "ubuntu-latest"
     strategy:
       matrix:
         php-version:
-          - "7.0"
+          - "7.4"
+        node-version:
+          - "12.x"
     steps:
-      - name: "Checkout"
-        uses: "actions/checkout@v2"
-
-      - name: "Install PHP"
-        uses: "shivammathur/setup-php@v2"
+      # ElasticSearch
+      # https://github.com/elastic/elastic-github-actions/tree/master/elasticsearch
+      - name: Configure sysctl limits for ElasticSearch
+        run: |
+          sudo swapoff -a
+          sudo sysctl -w vm.swappiness=1
+          sudo sysctl -w fs.file-max=262144
+          sudo sysctl -w vm.max_map_count=262144
+      - name: Run Elasticsearch
+        uses: elastic/elastic-github-actions/elasticsearch@master
         with:
-          coverage: "none"
-          php-version: "${{ matrix.php-version }}"
-          tools: "cs2pr"
+          stack-version: 7.6.2
 
-      - name: "Cache dependencies installed with composer"
-        uses: "actions/cache@v1"
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
         with:
-          path: "~/.composer/cache"
-          key: "php-${{ matrix.php-version }}-composer-locked-${{ hashFiles('composer.lock') }}"
-          restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
+          node-version: ${{ matrix.node-version }}
 
-      - name: "Install dependencies with composer"
-        run: "composer install --no-interaction --no-progress --no-suggest"
+      - name: Use PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          coverage: pcov
+          php-version: ${{ matrix.php-version }}
+          tools: cs2pr
+          extensions: sqlite
+      - name: Setup problem matchers for PHPUnit
+        run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
-      - name: "Check PHP code style with php-cs-fixer"
-        run: "composer run lint -- --format=checkstyle | cs2pr"
+      # https://github.com/shivammathur/setup-php#cache-composer-dependencies
+      # https://github.com/shivammathur/setup-php#cache-nodejs-dependencies
+      - name: Get cache directories
+        id: cache-directories
+        run: |
+          echo "::set-output name=php-dir::$(composer config cache-files-dir)"
+          echo "::set-output name=node-dir::$(npm config get cache)" # Use $(yarn cache dir) for yarn
+
+      - name: Cache PHP dependencies
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.cache-directories.outputs.php-dir }}
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-php-
+
+      - name: Cache Node.js dependencies
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.cache-directories.outputs.node-dir }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }} # Use '**/yarn.lock' for yarn
+          restore-keys: ${{ runner.os }}-node-
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --no-progress --no-suggest --prefer-dist
+
+      - name: Install Node.js dependencies
+        run: npm install
+
+      # All steps below should specify 'if: always()'.
+      # This makes sure that, e.g., unit tests still run when linting fails.
+
+      # Lint
+
+      - name: Check PHP code style
+        if: always()
+        run: composer run lint -- --format=checkstyle | cs2pr
+
+      - name: Check Twig files for syntax errors
+        if: always()
+        run: php bin/console lint:twig app
+
+      - name: Check Yaml files for syntax errors
+        if: always()
+        run: php bin/console lint:yaml app
+
+      - name: Check JS code style
+        if: always()
+        run: npm run lint
+
+      # Tests
+
+      - name: Run unittests
+        if: always()
+        run: $PHPUNIT --testsuite unittests --coverage-clover=coverage.xml
+      - name: Upload coverage
+        uses: codecov/codecov-action@v1
+        if: always()
+        with:
+          flags: unittests
+
+      - name: Build JS bundle
+        if: always()
+        run: npm run build
+
+      - name: Prepare functional and browser tests
+        if: always()
+        run: |
+          php bin/console doctrine:schema:create -n
+          php bin/console app:elasticsearch:reindex
+
+      - name: Run functional tests
+        if: always()
+        run: $PHPUNIT --testsuite functional --coverage-clover=coverage.xml
+      - name: Upload coverage
+        uses: codecov/codecov-action@v1
+        if: always()
+        with:
+          flags: functional
+
+      - name: Run browser tests
+        if: always()
+        run: |
+          bash scripts/prepare-browser-tests.sh
+          sleep 5
+          $PHPUNIT --testsuite browser
+
+      # Deploy
+
+      - name: Deploy to dev.adventurelookup.com
+        if: github.ref == 'refs/heads/dev' && github.event_name == 'push' && success()
+        uses: appleboy/ssh-action@v0.1.1
+        with:
+          host: dev.adventurelookup.com
+          username: deploy
+          key: ${{ secrets.DEV_SSH_KEY }}
+          port: ${{ secrets.DEV_SSH_PORT }}
+          script_stop: true
+          script: |
+            cd /var/www/dev.adventurelookup.com/html
+            bash ./scripts/update.sh origin/dev
+
+  audit:
+    name: Security Audit
+    runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        php-version:
+          - "7.4"
+        node-version:
+          - "12.x"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Use PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: symfony
+
+      - name: Check PHP dependencies for security issues
+        if: always()
+        run: symfony security:check
+      - name: Check Node.js dependencies for security issues
+        if: always()
+        run: npm audit

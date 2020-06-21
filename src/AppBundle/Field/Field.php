@@ -25,6 +25,11 @@ class Field implements \JsonSerializable
     private $freetextSearchable;
 
     /**
+     * @var bool
+     */
+    private $availableAsFilter;
+
+    /**
      * @var int
      */
     private $searchBoost;
@@ -44,7 +49,7 @@ class Field implements \JsonSerializable
      */
     private $relatedEntityClass;
 
-    public function __construct(string $name, string $type, bool $multiple, bool $freetextSearchable, string $title, string $description = null, int $searchBoost = 1, string $relatedEntityClass = null)
+    public function __construct(string $name, string $type, bool $multiple, bool $freetextSearchable, bool $availableAsFilter, string $title, string $description = null, int $searchBoost = 1, string $relatedEntityClass = null)
     {
         $this->name = $name;
         $this->type = $type;
@@ -52,6 +57,7 @@ class Field implements \JsonSerializable
         $this->title = $title;
         $this->description = $description;
         $this->freetextSearchable = $freetextSearchable;
+        $this->availableAsFilter = $availableAsFilter;
         $this->searchBoost = $searchBoost;
         $this->relatedEntityClass = $relatedEntityClass;
     }
@@ -74,6 +80,11 @@ class Field implements \JsonSerializable
     public function isFreetextSearchable(): bool
     {
         return $this->freetextSearchable;
+    }
+
+    public function isAvailableAsFilter(): bool
+    {
+        return $this->availableAsFilter;
     }
 
     public function getSearchBoost(): int
@@ -125,6 +136,7 @@ class Field implements \JsonSerializable
             'multiple' => $this->multiple,
             'title' => $this->title,
             'description' => $this->description,
+            'availableAsFilter' => $this->availableAsFilter,
         ];
     }
 }

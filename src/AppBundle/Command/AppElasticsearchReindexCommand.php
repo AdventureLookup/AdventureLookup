@@ -6,7 +6,6 @@ use AppBundle\Entity\Adventure;
 use AppBundle\Listener\SearchIndexUpdater;
 use AppBundle\Service\ElasticSearch;
 use Doctrine\ORM\EntityManagerInterface;
-use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -41,30 +40,39 @@ class AppElasticsearchReindexCommand extends Command
     {
         $this
             ->setName('app:elasticsearch:reindex')
-            ->setDescription('Reindex the whole Elasticsearch index')
+            ->setDescription('Drop, create and reindex the whole Elasticsearch index')
         ;
     }
 
-    // TODO: Add when using PHP 7.1
-    /* private */ const FIELD_NON_SEARCHABLE = [
+    private const FIELD_NON_SEARCHABLE = [
         'enabled' => false,
     ];
-    const FIELD_STRING = [
+    private const FIELD_STRING = [
         'type' => 'text',
         'fields' => [
             'keyword' => [
                 'type' => 'keyword',
                 'ignore_above' => 256,
             ],
+            'analyzed' => [
+                'type' => 'text',
+                'analyzer' => 'english',
+            ],
         ],
     ];
-    const FIELD_TEXT = [
+    private const FIELD_TEXT = [
         'type' => 'text',
+        'fields' => [
+            'analyzed' => [
+                'type' => 'text',
+                'analyzer' => 'english',
+            ],
+        ],
     ];
-    const FIELD_INTEGER = [
+    private const FIELD_INTEGER = [
         'type' => 'integer',
     ];
-    const FIELD_BOOLEAN = [
+    private const FIELD_BOOLEAN = [
         'type' => 'boolean',
     ];
     const FIELD_DATE = [
@@ -75,22 +83,20 @@ class AppElasticsearchReindexCommand extends Command
     {
         $client = $this->elasticSearch->getClient();
         $indexName = $this->elasticSearch->getIndexName();
-        $typeName = $this->elasticSearch->getTypeName();
 
-        try {
+        if ($client->indices()->exists(['index' => $indexName])) {
             $client->indices()->delete([
                 'index' => $indexName,
             ]);
             $output->writeln('Deleted index.');
-        } catch (Missing404Exception $e) {
         }
-
         $client->indices()->create([
             'index' => $indexName,
         ]);
         $output->writeln('Recreated index.');
 
         $mappings = [
+            'id' => self::FIELD_INTEGER,
             'authors' => self::FIELD_STRING,
             'edition' => self::FIELD_STRING,
             'environments' => self::FIELD_STRING,
@@ -124,11 +130,8 @@ class AppElasticsearchReindexCommand extends Command
 
         $client->indices()->putMapping([
             'index' => $indexName,
-            'type' => $typeName,
             'body' => [
-                SearchIndexUpdater::TYPE => [
-                    'properties' => $mappings,
-                ],
+                'properties' => $mappings,
             ],
         ]);
         $output->writeln('Created mappings');

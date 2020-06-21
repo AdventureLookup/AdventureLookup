@@ -1,8 +1,8 @@
 tasks:
-  - command: /home/gitpod/elasticsearch-5.5.3/bin/elasticsearch
+  - command: /home/gitpod/elasticsearch-7.6.2/bin/elasticsearch
     # Run ElasticSearch when prebuilding the workspace, so that adventures can be indexed.
     # It has to run in the background so that the prebuild does not wait for it to exit.
-    prebuild: /home/gitpod/elasticsearch-5.5.3/bin/elasticsearch &
+    prebuild: /home/gitpod/elasticsearch-7.6.2/bin/elasticsearch &
   - before: gp await-port 9200
     init: |
       mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';"
@@ -24,6 +24,9 @@ ports:
   - port: 8002
     onOpen: ignore
   - port: 8003
+    onOpen: ignore
+  # XDebug
+  - port: 9000
     onOpen: ignore
   - port: 9200
     onOpen: ignore
@@ -57,3 +60,4 @@ github:
 vscode:
   extensions:
     - bmewburn.vscode-intelephense-client@1.3.11:w7xbYI5q5Cfv+1GBejftKg==
+    - felixfbecker.php-debug@1.13.0:WX8Y3EpQk3zgahy41yJtNQ==

@@ -10,6 +10,7 @@ use AppBundle\Entity\Item;
 use AppBundle\Entity\Monster;
 use AppBundle\Entity\Publisher;
 use AppBundle\Entity\Setting;
+use AppBundle\Service\AffiliateLinkHandler;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -29,6 +30,16 @@ use Symfony\Component\Validator\Constraints\Valid;
 
 class AdventureType extends AbstractType
 {
+    /**
+     * @var string[]
+     */
+    private $affiliateDomains = [];
+
+    public function __construct(AffiliateLinkHandler $affiliateLinkHandler)
+    {
+        $this->affiliateDomains = $affiliateLinkHandler->getDomains();
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -121,8 +132,9 @@ class AdventureType extends AbstractType
             'Common Monsters',
             'The common monsters featured in the module.',
             function (EntityRepository $er) {
-                return $er->createQueryBuilder('e')
-                    ->where('e.isUnique = 0');
+                $qb = $er->createQueryBuilder('e');
+
+                return $qb->where('e.isUnique = FALSE');
             }
         );
         $this->createAppendableEntityCollection(
@@ -134,8 +146,9 @@ class AdventureType extends AbstractType
             'Boss Monsters',
             'The boss monsters and villains featured in the module.',
             function (EntityRepository $er) {
-                return $er->createQueryBuilder('e')
-                    ->where('e.isUnique = 1');
+                $qb = $er->createQueryBuilder('e');
+
+                return $qb->where('e.isUnique = TRUE');
             }
         );
         $builder
@@ -175,7 +188,7 @@ class AdventureType extends AbstractType
             ])
             ->add('link', UrlType::class, [
                 'required' => false,
-                'help' => 'Links to legitimate sites where the module can be procured.',
+                'help' => 'Links to legitimate sites where the module can be procured. Using affiliate links is not allowed. Links to the following domains will automatically be transformed into affiliate links: '.implode(', ', $this->affiliateDomains),
             ])
             ->add('thumbnailUrl', UrlType::class, [
                 'required' => false,

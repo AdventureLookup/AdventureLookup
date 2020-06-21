@@ -16,9 +16,6 @@ use Elasticsearch\Common\Exceptions\Missing404Exception;
 
 class SearchIndexUpdater implements EventSubscriber
 {
-    const INDEX = 'adventure';
-    const TYPE = 'all';
-
     /**
      * @var Client
      */
@@ -33,11 +30,6 @@ class SearchIndexUpdater implements EventSubscriber
      * @var string
      */
     private $indexName;
-
-    /**
-     * @var string
-     */
-    private $typeName;
 
     /**
      * @var int[]
@@ -57,7 +49,6 @@ class SearchIndexUpdater implements EventSubscriber
         $this->serializer = $serializer;
         $this->client = $elasticSearch->getClient();
         $this->indexName = $elasticSearch->getIndexName();
-        $this->typeName = $elasticSearch->getTypeName();
         $this->adventureIdsToRemove = [];
         $this->isTestEnvironment = 'test' === $environment;
     }
@@ -204,7 +195,6 @@ class SearchIndexUpdater implements EventSubscriber
             $body[] = [
                 'index' => [
                     '_index' => $this->indexName,
-                    '_type' => $this->typeName,
                     '_id' => $id,
                 ],
             ];
@@ -212,7 +202,6 @@ class SearchIndexUpdater implements EventSubscriber
         }
         $this->client->bulk([
             'index' => $this->indexName,
-            'type' => $this->typeName,
             'body' => $body,
             'refresh' => $this->isTestEnvironment,
         ]);
@@ -227,7 +216,6 @@ class SearchIndexUpdater implements EventSubscriber
         try {
             $this->client->delete([
                 'index' => $this->indexName,
-                'type' => $this->typeName,
                 'id' => $adventureId,
                 'refresh' => $this->isTestEnvironment,
             ]);

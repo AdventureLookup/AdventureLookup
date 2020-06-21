@@ -21,18 +21,22 @@
         ]
     },
     "require": {
-        "php": ">=7",
+        "php": "7.4.x",
+        "cweagans/composer-patches": "^1.6",
         "data-dog/audit-bundle": "^v0.1.5",
+        "davidbadura/faker-markdown-generator": "^1.0",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/doctrine-cache-bundle": "^1.2",
+        "doctrine/doctrine-fixtures-bundle": "^2.3",
         "doctrine/doctrine-migrations-bundle": "^1.0",
         "doctrine/orm": "^2.5",
         "easycorp/easyadmin-bundle": "^1.16",
-        "elasticsearch/elasticsearch": "^5.2",
+        "elasticsearch/elasticsearch": "^7.6",
         "excelwebzone/recaptcha-bundle": "^1.4",
         "fzaninotto/faker": "^1.6",
         "incenteev/composer-parameter-handler": "^2.0",
         "knplabs/knp-paginator-bundle": "^2.7.2",
+        "league/commonmark": "^1.4",
         "league/uri": "^5.0",
         "mmo/faker-images": "^0.1.0",
         "sensio/distribution-bundle": "^5.0",
@@ -48,11 +52,10 @@
         "behat/mink": "^1.7",
         "behat/mink-browserkit-driver": "^1.3",
         "dmore/chrome-mink-driver": "^2.6",
-        "doctrine/doctrine-fixtures-bundle": "^2.3",
         "friendsofphp/php-cs-fixer": "^2.16",
         "liip/functional-test-bundle": "^1.8",
         "symfony/maker-bundle": "^1.1",
-        "symfony/phpunit-bridge": "^3.0",
+        "symfony/phpunit-bridge": "^5.0",
         "symfony/web-server-bundle": "^3.3"
     },
     "scripts": {
@@ -74,6 +77,13 @@
         ],
         "lint": [
             "php-cs-fixer fix --config=.php_cs.dist --dry-run -v --diff"
+        ],
+        "compile": [
+            "[ \"$SYMFONY_ENV\" = \"heroku\" ]",
+            "php bin/console doctrine:schema:drop --no-interaction --full-database --force",
+            "php bin/console doctrine:schema:create --no-interaction",
+            "php bin/console doctrine:fixtures:load --no-interaction --fixtures src/AppBundle/DataFixtures/ORM/RandomAdventureData.php --fixtures src/AppBundle/DataFixtures/ORM/TestUserData.php",
+            "php bin/console app:elasticsearch:reindex --no-interaction"
         ]
     },
     "config": {
@@ -89,6 +99,12 @@
         "incenteev-parameters": {
             "file": "app/config/parameters.yml"
         },
-        "branch-alias": null
+        "branch-alias": null,
+        "patches": {
+            "easycorp/easyadmin-bundle": {
+                "Fix PHP 7.4 compatibility": "scripts/easyadmin.patch"
+            }
+        },
+        "composer-exit-on-patch-failure": true
     }
 }

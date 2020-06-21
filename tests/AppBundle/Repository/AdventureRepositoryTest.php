@@ -29,7 +29,7 @@ class AdventureRepositoryTest extends WebTestCase
      */
     private $propertyAccessor;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -196,7 +196,7 @@ class AdventureRepositoryTest extends WebTestCase
     /**
      * @dataProvider updateRelatedFieldSingleProvider
      */
-    public function testUpdateRelatedFieldSingle(Field $field, string $oldValue, string $newValue = null,
+    public function testUpdateRelatedFieldSingle(Field $field, int $oldValue, int $newValue = null,
         int $expectedAffected, $expectedValues)
     {
         $adventures = $this->doTestUpdateRelatedField($field, $oldValue, $newValue, $expectedAffected);
@@ -226,7 +226,7 @@ class AdventureRepositoryTest extends WebTestCase
     /**
      * @dataProvider updateRelatedFieldMultipleProvider
      */
-    public function testUpdateRelatedFieldMultiple(Field $field, string $oldValue, string $newValue = null,
+    public function testUpdateRelatedFieldMultiple(Field $field, int $oldValue, int $newValue = null,
         int $expectedAffected, $expectedValues)
     {
         $adventures = $this->doTestUpdateRelatedField($field, $oldValue, $newValue, $expectedAffected);

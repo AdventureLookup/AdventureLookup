@@ -9,6 +9,7 @@
                 <i class="fa fa-fw fa-thumbs-down"></i>
             </div>
         </div>
+        <div class="alert alert-info">Reviews support some Markdown formatting like <code>**bold**</code>, <code>*italics*</code>, numbered and dashed lists (<code>- list item</code>, <code>1. list item</code>), and <code># Headings</code>.</div>
         {{ form_start(review_form, {'attr': {'id': 'review_form'}}) }}
         {{ form_widget(review_form.rating) }}
         {{ form_widget(review_form.comment) }}
@@ -61,7 +62,9 @@
                         <i class="fa fa-3x review-icon {{ review.thumbsDown ? 'fa-thumbs-o-down review-icon--negative' : 'fa-thumbs-o-up review-icon--positive' }}"></i>
                     </div>
                     <div class="col">
-                        {{ review.comment|nl2br }}
+                        <div class="markdown">
+                            {{ review.comment|user_provided_markdown_to_safe_html }}
+                        </div>
                     </div>
                 </div>
             </blockquote>

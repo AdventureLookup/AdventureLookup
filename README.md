@@ -2,17 +2,20 @@
 
 Repository of Adventure Lookup, proposed by [/u/mattcolville](https://www.reddit.com/user/mattcolville).
 
-| Branch | Travis CI                                        | Code Analysis                          | Link                            |
-| ------ | ------------------------------------------------ | -------------------------------------- | ------------------------------- |
-| master | [![Build Status][travis-svg-master]][travis-url] | -                                      | https://adventurelookup.com     |
-| dev    | [![Build Status][travis-svg-dev]][travis-url]    | [![codecov][codecov-svg]][codecov-url] | https://dev.adventurelookup.com |
+| Branch | CI                                                 | Code Analysis                                        | Link                            |
+| ------ | -------------------------------------------------- | ---------------------------------------------------- | ------------------------------- |
+| master | [![Build Status][actions-svg-master]][actions-url] | [![codecov][codecov-svg-master]][codecov-url-master] | https://adventurelookup.com     |
+| dev    | [![Build Status][actions-svg-dev]][actions-url]    | [![codecov][codecov-svg-dev]][codecov-url-dev]       | https://dev.adventurelookup.com |
 
-[travis-url]:        https://travis-ci.org/AdventureLookup/AdventureLookup
-[travis-svg-master]: https://travis-ci.org/AdventureLookup/AdventureLookup.svg?branch=master
-[travis-svg-dev]:    https://travis-ci.org/AdventureLookup/AdventureLookup.svg?branch=dev
 
-[codecov-url]: https://codecov.io/gh/AdventureLookup/AdventureLookup
-[codecov-svg]: https://codecov.io/gh/AdventureLookup/AdventureLookup/branch/dev/graph/badge.svg
+[actions-url]:        https://github.com/AdventureLookup/AdventureLookup/actions?query=workflow%3ACI
+[actions-svg-master]: https://github.com/AdventureLookup/AdventureLookup/workflows/CI/badge.svg?branch=master
+[actions-svg-dev]:    https://github.com/AdventureLookup/AdventureLookup/workflows/CI/badge.svg?branch=dev
+
+[codecov-url-master]: https://codecov.io/gh/AdventureLookup/AdventureLookup/branch/master
+[codecov-svg-master]: https://codecov.io/gh/AdventureLookup/AdventureLookup/branch/master/graph/badge.svg
+[codecov-url-dev]: https://codecov.io/gh/AdventureLookup/AdventureLookup/branch/dev
+[codecov-svg-dev]: https://codecov.io/gh/AdventureLookup/AdventureLookup/branch/dev/graph/badge.svg
 
 ## Setting up a development environment
 
@@ -66,10 +69,23 @@ npm install
 php bin/console doctrine:migrations:migrate
 
 # Create Elasticsearch index
+# This command will log a warning when run for the very first time.
+# You can safely ignore it.
+# WARNING   [elasticsearch] Request Failure: ...
 php bin/console app:elasticsearch:reindex
 
-# Import dummy adventures (confirm with 'y')
+# You can either generate random adventures or load real adventures from adventurelookup.com.
+# Please note that loading real adventures might not always work, since the development version
+# might expect a different API response than the version on adventurelookup.com provides.
+# In addition, adventures fetched from adventurelookup.com don't include change requests or reviews.
+
+# Either load random adventures (confirm with 'y')
 php bin/console doctrine:fixtures:load --fixtures src/AppBundle/DataFixtures/ORM/RandomAdventureData.php
+
+# Or load real adventures (confirm with 'y')
+php bin/console doctrine:fixtures:load --fixtures src/AppBundle/DataFixtures/ORM/RealAdventureData.php
+
+# Re-create the search index after loading adventures.
 php bin/console app:elasticsearch:reindex
 ```
 
@@ -117,10 +133,26 @@ Browser tests require Google Chrome with remote debugging enabled as well as the
 To do that, execute `bash scripts/prepare-browser-tests.sh` *once* before executing the tests. There is no
 need to call the script again until you reboot. Then execute the following to run the browser tests:
 ```bash
-npm run prod
+npm run build
 php bin/console cache:clear --env test
 php vendor/symfony/phpunit-bridge/bin/simple-phpunit --testsuite browser
 ```
+
+### Debugging
+
+If you want to dump the contents of a variable, the simplest way is to call `dump($var)`.
+`dump()` is a function [provided by Symfony](https://symfony.com/doc/3.4/components/var_dumper.html).
+The result is displayed in the web debug toolbar.
+
+You can also debug your code using XDebug by setting breakpoints.
+- For Gitpod, select "Debug" in the left toolbar and then run the `[gitpod] Debug PHP Server`
+  task.
+- For Vagrant+VSCode, install the
+  [PHP Debug](https://marketplace.visualstudio.com/items?itemName=felixfbecker.php-debug)
+  extension and run the `[vagrant] Debug PHP Server` launch configuration.
+
+Then set a breakpoint and refresh your browser. The code should halt at the breakpoint.
+You do *not* need to install a browser extension to enable XDebug.
 
 ### Ports used in development
 
@@ -132,8 +164,12 @@ php vendor/symfony/phpunit-bridge/bin/simple-phpunit --testsuite browser
 | 8001 | yes                       | Webpack dev server if run from within Vagrant     |
 | 8002 | no                        | Webpack dev server if run from outside Vagrant    |
 | 8003 | no                        | Application test server                           |
+| 9000 | no *                      | XDebug                                            |
 | 9200 | yes                       | ElasticSearch                                     |
 | 9222 | no                        | Chrome Remote Debugging                           |
+
+\* debugging from your host works *without* forwarding the port, since XDebug connects
+to your host (in contrast to your host connecting to xdebug).
 
 ## Contributing
 
@@ -145,10 +181,10 @@ checkout the [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
 ## Tools used
 
-- Ubuntu 16.04 as the server
+- Ubuntu 18.04 as the server
 - MySQL 5.7 to store the adventures
-- Elasticsearch 5.5 to search the adventures
-- PHP7.0 to run the application
+- Elasticsearch 7.6.2 to search the adventures
+- PHP7.4 to run the application
 - Symfony 3 as the web framework
 - Composer as PHP package manager
 - Node.js 12 and npm 6 for frontend package management

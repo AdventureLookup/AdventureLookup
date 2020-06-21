@@ -59,7 +59,7 @@ class BulkEditFormProviderTest extends TestCase
      */
     private $formBuilder;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->repository = $this->createMock(AdventureRepository::class);
         $this->em = $this->createMock(EntityManagerInterface::class);
@@ -224,8 +224,8 @@ class BulkEditFormProviderTest extends TestCase
     {
         return [
             ['field1', null, self::RELATED_ENTITY_CLASS],
-            ['commonMonsters', 'tbl.isUnique = 0', Monster::class],
-            ['bossMonsters', 'tbl.isUnique = 1', Monster::class],
+            ['commonMonsters', 'tbl.isUnique = FALSE', Monster::class],
+            ['bossMonsters', 'tbl.isUnique = TRUE', Monster::class],
         ];
     }
 

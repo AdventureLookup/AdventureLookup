@@ -100,8 +100,10 @@ class ReviewController extends Controller
 
     private function redirectToAdventureForReview(Review $review): RedirectResponse
     {
-        return $this->redirectToRoute('adventure_show',
-            ['slug' => $review->getAdventure()->getSlug()]);
+        return $this->redirectToRoute('adventure_show', [
+            'slug' => $review->getAdventure()->getSlug(),
+            '_fragment' => 'review-container',
+        ]);
     }
 
     private function showErrors(FormInterface $form): void

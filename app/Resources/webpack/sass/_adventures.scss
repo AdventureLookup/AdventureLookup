@@ -4,6 +4,8 @@ $thumbnail-offset: 2rem;
 $thumbnail-width: 85px;
 $thumbnail-height: 100px;
 
+$tag-margin: 4px;
+
 #search-title {
   display: flex;
   justify-content: space-between;
@@ -14,26 +16,42 @@ $thumbnail-height: 100px;
 #search-tags {
   margin: $element-margin-bottom 0;
 
-  > span.badge {
-    margin-right: 4px;
+  .badge,
+  .tag-operator,
+  .tag-wrapper {
+    margin-right: $tag-margin;
+    margin-bottom: $tag-margin;
+  }
+
+  .tag-wrapper {
+    display: inline-block;
+    border: 1px solid $adl-grey-light;
+    border-radius: 2px;
+    padding-top: $tag-margin;
+    padding-bottom: 0;
+    padding-right: 0;
+    padding-left: $tag-margin;
+  }
+
+  .badge {
     &::after {
-      content: '\f00d';
-      font: 1rem 'FontAwesome';
+      content: "\f00d";
+      font: 1rem "FontAwesome";
     }
     &:hover {
       cursor: pointer;
     }
 
     &.badge-primary:hover {
-        background-color: darken($adl-coral, 7.5%);
+      background-color: darken($adl-coral, 7.5%);
     }
-    &.badge-clear{
-        color: white;
-        background-color: $adl-grey-light;
+    &.badge-clear {
+      color: white;
+      background-color: $adl-grey-light;
 
-        &:hover {
-            background-color: darken($adl-grey-light, 7.5%);
-        } 
+      &:hover {
+        background-color: darken($adl-grey-light, 7.5%);
+      }
     }
   }
 }
@@ -42,7 +60,8 @@ $thumbnail-height: 100px;
   display: flex;
   margin-bottom: $element-margin-bottom;
 
-  button, input {
+  button,
+  input {
     font-size: 1.2rem;
   }
 }
@@ -99,7 +118,9 @@ $thumbnail-height: 100px;
     }
 
     @include media-breakpoint-up(sm) {
-      .title, .description, .tags-container {
+      .title,
+      .description,
+      .tags-container {
         padding-right: calc(#{$thumbnail-width} + #{$thumbnail-offset});
       }
     }
