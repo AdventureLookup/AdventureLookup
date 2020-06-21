@@ -2,7 +2,7 @@
   align-self: flex-start;
   margin-top: 20px;
   padding: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   text-transform: uppercase;
   text-align: center;
 
@@ -21,7 +21,7 @@
       color: #ffffff;
       font-size: 1.5rem;
       font-weight: 600;
-      letter-spacing: .2rem;
+      letter-spacing: 0.2rem;
       text-align: center;
 
       &:hover {
@@ -40,7 +40,7 @@
 
     .sidebar-title-big i.fa {
       @extend .sidebar-title-big;
-  
+
       line-height: inherit;
       display: inline-flex;
       justify-content: space-around;
@@ -61,7 +61,7 @@
       @extend .sidebar-title-big;
       color: $adl-grey-dark;
       background-color: $adl-offwhite;
-  
+
       &:hover {
         background-color: darken($adl-offwhite, 7.5%);
       }
@@ -93,7 +93,7 @@
     margin-top: 12px;
     padding: 8px 10px;
     border-radius: 0;
-    font: 1.2rem 'Roboto Condensed';
+    font: 1.2rem "Roboto Condensed";
     text-transform: uppercase;
     box-shadow: $adl-box-shadow;
 

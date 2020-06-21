@@ -121,7 +121,7 @@ class PasswordResetController extends Controller
     private function sendPasswordResetMail(User $user)
     {
         $mailer = $this->get('mailer');
-        $message = (new \Swift_Message('Hello Email'))
+        $message = (new \Swift_Message())
             ->setFrom('noreply@adventurelookup.com')
             ->setTo($user->getEmail())
             ->setSubject('Password Reset for AdventureLookup')
