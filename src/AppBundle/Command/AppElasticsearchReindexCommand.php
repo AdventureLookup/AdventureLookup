@@ -54,10 +54,20 @@ class AppElasticsearchReindexCommand extends Command
                 'type' => 'keyword',
                 'ignore_above' => 256,
             ],
+            'analyzed' => [
+                'type' => 'text',
+                'analyzer' => 'english',
+            ],
         ],
     ];
     private const FIELD_TEXT = [
         'type' => 'text',
+        'fields' => [
+            'analyzed' => [
+                'type' => 'text',
+                'analyzer' => 'english',
+            ],
+        ],
     ];
     private const FIELD_INTEGER = [
         'type' => 'integer',

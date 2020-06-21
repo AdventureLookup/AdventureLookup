@@ -318,38 +318,7 @@ class AdventureSearch
             ],
         ]);
 
-        $adventureDocuments = array_map(function ($hit) {
-            return new AdventureDocument(
-                $hit['_id'],
-                $hit['_source']['authors'],
-                $hit['_source']['edition'],
-                $hit['_source']['environments'],
-                $hit['_source']['items'],
-                $hit['_source']['publisher'],
-                $hit['_source']['setting'],
-                $hit['_source']['commonMonsters'],
-                $hit['_source']['bossMonsters'],
-                $hit['_source']['title'],
-                $hit['_source']['description'],
-                $hit['_source']['slug'],
-                $hit['_source']['minStartingLevel'],
-                $hit['_source']['maxStartingLevel'],
-                $hit['_source']['startingLevelRange'],
-                $hit['_source']['numPages'],
-                $hit['_source']['foundIn'],
-                $hit['_source']['partOf'],
-                $hit['_source']['link'],
-                $hit['_source']['thumbnailUrl'],
-                $hit['_source']['soloable'],
-                $hit['_source']['pregeneratedCharacters'],
-                $hit['_source']['tacticalMaps'],
-                $hit['_source']['handouts'],
-                $hit['_source']['year'],
-                $hit['_source']['positiveReviews'],
-                $hit['_source']['negativeReviews'],
-                $hit['_score']
-            );
-        }, $result['hits']['hits']);
+        $adventureDocuments = array_map(fn ($hit) => AdventureDocument::fromHit($hit), $result['hits']['hits']);
         $totalResults = $result['hits']['total']['value'];
         $hasMoreResults = $totalResults > $page * self::ADVENTURES_PER_PAGE;
 
@@ -406,6 +375,139 @@ class AdventureSearch
         return array_map(function ($hit) {
             return $hit['_source'];
         }, $result['hits']['hits']);
+    }
+
+    public function similarAdventures(int $id, string $fieldName): array
+    {
+        $fields = [];
+        if ('title/description' === $fieldName) {
+            $fields[] = 'title.analyzed';
+            $fields[] = 'description.analyzed';
+        }
+        if ('items' === $fieldName) {
+            $fields[] = 'items.keyword';
+        }
+        if ('bossMonsters' === $fieldName) {
+            $fields[] = 'bossMonsters.keyword';
+        }
+        if ('commonMonsters' === $fieldName) {
+            $fields[] = 'commonMonsters.keyword';
+        }
+
+        if (empty($fields)) {
+            return [[], []];
+        }
+
+        // $id is the adventure id from the MySQL table.
+        // We first need to convert it into the internal id used by ElasticSearch.
+        $result = $this->client->search([
+            'index' => $this->indexName,
+            'body' => [
+                'query' => [
+                    'term' => [
+                        'id' => $id,
+                    ],
+                ],
+                '_source' => [],
+                'size' => 1,
+            ],
+        ]);
+        if (1 !== count($result['hits']['hits'])) {
+            return [[], []];
+        }
+        $elasticSearchId = $result['hits']['hits'][0]['_id'];
+
+        // Now we need to gather statistics on all terms used in the selected adventure.
+        $result = $this->client->termvectors([
+            'index' => $this->indexName,
+            'id' => $elasticSearchId,
+            'fields' => $fields,
+            'positions' => false,
+            'offsets' => false,
+            'payloads' => false,
+            'term_statistics' => true,
+            'realtime' => false,
+        ]);
+
+        // Given these statistics, we now calculated TF-IDF per term.
+        $terms = [];
+        foreach ($fields as $field) {
+            if (!isset($result['term_vectors'][$field])) {
+                // Field is empty
+                continue;
+            }
+            $fieldData = $result['term_vectors'][$field];
+            $docCount = $fieldData['field_statistics']['doc_count'];
+
+            foreach ($fieldData['terms'] as $term => $termStatistics) {
+                if (mb_strlen($term) < 3) {
+                    continue;
+                }
+                // TF-IDF is calculated based on the formula from here:
+                // https://www.elastic.co/guide/en/elasticsearch/reference/7.6/index-modules-similarity.html#scripted_similarity
+                // TF-IDF is higher the more unique a term is across all documents.
+                $tf = sqrt($termStatistics['term_freq']);
+                $idf = log(($docCount + 1.0) / ($termStatistics['doc_freq'] + 1.0)) + 1.0;
+                $terms[] = [
+                    'field' => $field,
+                    'term' => $term,
+                    'tf-idf' => $tf * $idf,
+                ];
+            }
+        }
+
+        // Take the top 20 terms with the highest TF-IDF
+        usort($terms, fn ($a, $b) => $b['tf-idf'] <=> $a['tf-idf']);
+        $terms = array_slice($terms, 0, 20);
+
+        if (empty($terms)) {
+            return [[], []];
+        }
+
+        // Search for the top 6 adventures that contain at least 25% of the given terms.
+        $result = $this->client->search([
+            'index' => $this->indexName,
+            'body' => [
+                'query' => [
+                    'bool' => [
+                        'must' => [
+                            [
+                                'bool' => [
+                                    'should' => array_map(function ($term) {
+                                        return [
+                                            'match' => [
+                                                $term['field'] => [
+                                                    'query' => $term['term'],
+                                                    // Boost adventures that contain terms with a high TF-IDF.
+                                                    'boost' => $term['tf-idf'],
+                                                ],
+                                            ],
+                                        ];
+                                    }, $terms),
+                                    'minimum_should_match' => '25%',
+                                ],
+                            ],
+                            // Exclude the adventure itself
+                            [
+                                'bool' => [
+                                    'must_not' => [
+                                        'term' => [
+                                            'id' => $id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'size' => 6,
+            ],
+        ]);
+
+        return [
+            array_map(fn ($hit) => AdventureDocument::fromHit($hit), $result['hits']['hits']),
+            $terms,
+        ];
     }
 
     /**
