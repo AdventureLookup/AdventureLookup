@@ -71,8 +71,18 @@ php bin/console doctrine:migrations:migrate
 # WARNING   [elasticsearch] Request Failure: ...
 php bin/console app:elasticsearch:reindex
 
-# Import dummy adventures (confirm with 'y')
+# You can either generate random adventures or load real adventures from adventurelookup.com.
+# Please note that loading real adventures might not always work, since the development version
+# might expect a different API response than the version on adventurelookup.com provides.
+# In addition, adventures fetched from adventurelookup.com don't include change requests or reviews.
+
+# Either load random adventures (confirm with 'y')
 php bin/console doctrine:fixtures:load --fixtures src/AppBundle/DataFixtures/ORM/RandomAdventureData.php
+
+# Or load real adventures (confirm with 'y')
+php bin/console doctrine:fixtures:load --fixtures src/AppBundle/DataFixtures/ORM/RealAdventureData.php
+
+# Re-create the search index after loading adventures.
 php bin/console app:elasticsearch:reindex
 ```
 
@@ -120,7 +130,7 @@ Browser tests require Google Chrome with remote debugging enabled as well as the
 To do that, execute `bash scripts/prepare-browser-tests.sh` *once* before executing the tests. There is no
 need to call the script again until you reboot. Then execute the following to run the browser tests:
 ```bash
-npm run prod
+npm run build
 php bin/console cache:clear --env test
 php vendor/symfony/phpunit-bridge/bin/simple-phpunit --testsuite browser
 ```

@@ -8,8 +8,6 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
-    elasticsearch:
-        index_name: 'adventure'
     container.dumper.inline_class_loader: true
     container.autowiring.strict_mode: true
 
@@ -53,7 +51,7 @@ twig:
 # Doctrine Configuration
 doctrine:
     dbal:
-        driver: pdo_mysql
+        driver: '%database_driver%'
         host: '%database_host%'
         port: '%database_port%'
         dbname: '%database_name%'
