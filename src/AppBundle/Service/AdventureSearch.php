@@ -48,12 +48,11 @@ class AdventureSearch
     {
         $q = $request->get('q', '');
         $sortBy = $request->get('sortBy', '');
-        // Use a timestamp with millisecond precision as the seed when none is provided.
-        // We deliberately do not use time() for two reasons
-        // 1. We use Date.now() in JS, which also returns a timestamp in milliseconds
-        // 2. Simply using time() to get a timestamp in seconds sometimes leads to the same seed
-        //    when you refresh the browser too quickly.
-        $seed = (string) $request->get('seed', $this->timeProvider->millis());
+        // Change the seed once per week to give the frontpage a fresh look once in a while.
+        // We don't want to change the seed every single day/minute/second, because it
+        // might be confusing for users that go back and forth between the adventure
+        // search and an adventure details page if the order suddenly is completely different.
+        $seed = (string) $request->get('seed', $this->timeProvider->yearAndWeek());
         $page = (int) $request->get('page', 1);
 
         $filters = [];
@@ -214,6 +213,7 @@ class AdventureSearch
         // First generate ES search query from free-text searchbar at the top.
         // This will only search string and text fields.
         $matches = $this->qMatches($q, $matches);
+        $hasQuery = !empty($matches);
 
         // Now apply filters from the sidebar.
         $matches = $this->filterMatches($filters, $matches);
@@ -234,13 +234,23 @@ class AdventureSearch
             case 'title':
                 $sort = 'title.keyword';
             break;
-            case 'numPages-desc':
-                $sort = ['numPages' => 'desc'];
-            break;
             case 'numPages-asc':
-                $sort = ['numPages' => 'asc'];
+                // Sort by the number of pages, but use the score as a tie breaker
+                // if the number of pages is the same for two adventures.
+                $sort = [
+                    ['numPages' => 'asc'],
+                    '_score',
+                ];
+            break;
+            case 'numPages-desc':
+                $sort = [
+                    ['numPages' => 'desc'],
+                    '_score',
+                ];
             break;
             case 'createdAt-asc':
+                // No need to use the score as a tie breaker, since two adventures
+                // will almost never be created at the exact same second.
                 $sort = ['createdAt' => 'asc'];
             break;
             case 'createdAt-desc':
@@ -249,29 +259,38 @@ class AdventureSearch
             case 'reviews':
                 // We use the Wilson Score instead of the average of positive and negative reviews
                 // https://www.elastic.co/de/blog/better-than-average-sort-by-best-rating-with-elasticsearch
+                // We use the score as a tie breaker just like with all the other sortings.
                 $sort = [
-                    '_script' => [
-                        'order' => 'desc',
-                        'type' => 'number',
-                        'script' => [
-                            'inline' => "
-                                long p = doc['positiveReviews'].value;
-                                long n = doc['negativeReviews'].value;
-                                return p + n > 0 ? ((p + 1.9208) / (p + n) - 1.96 * Math.sqrt((p * n) / (p + n) + 0.9604) / (p + n)) / (1 + 3.8416 / (p + n)) : 0;
-                            ",
+                    [
+                        '_script' => [
+                            'order' => 'desc',
+                            'type' => 'number',
+                            'script' => [
+                                'inline' => "
+                                    long p = doc['positiveReviews'].value;
+                                    long n = doc['negativeReviews'].value;
+                                    return p + n > 0 ? ((p + 1.9208) / (p + n) - 1.96 * Math.sqrt((p * n) / (p + n) + 0.9604) / (p + n)) / (1 + 3.8416 / (p + n)) : 0;
+                                ",
+                            ],
                         ],
                     ],
+                    '_score',
                 ];
             break;
+            // Sorting in a random order cannot be done using the 'sort' parameter, but requires adjusting the query
+            // to use the random_score function for scoring.
             default:
                 $sort = ['_score'];
             break;
         }
 
-        if ('random' === $sortBy) {
-            // Sorting in a random order cannot be done using the 'sort' parameter, but requires adjusting the query
-            // to use the random_score function for scoring.
-            // https://www.elastic.co/guide/en/elasticsearch/reference/master/query-dsl-function-score-query.html#function-random
+        if ('random' === $sortBy || !$hasQuery) {
+            // Calculate a random score per adventure if
+            // - sortBy is 'random' or
+            // - the query is empty (-> all adventures would have the same score).
+            //
+            // Note that usage of the calculated score depends on whether `_score` is part of $sort.
+            // https://www.elastic.co/guide/en/elasticsearch/reference/7.7/query-dsl-function-score-query.html#function-random
             $query = [
                 'function_score' => [
                     'query' => $query,
