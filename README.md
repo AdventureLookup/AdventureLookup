@@ -1,6 +1,9 @@
-# Adventure Lookup
+# AdventureLookup
 
-Repository of Adventure Lookup, proposed by [/u/mattcolville](https://www.reddit.com/user/mattcolville).
+Repository of AdventureLookup, a search engine for tabletop adventures.
+AdventureLookup was originally proposed by [Matt Colville](https://twitter.com/mattcolville)
+in [this video](https://www.youtube.com/watch?v=PIyLvicSu78).
+
 
 | Branch | CI                                                 | Code Analysis                                        | Link                            |
 | ------ | -------------------------------------------------- | ---------------------------------------------------- | ------------------------------- |
@@ -17,9 +20,18 @@ Repository of Adventure Lookup, proposed by [/u/mattcolville](https://www.reddit
 [codecov-url-dev]: https://codecov.io/gh/AdventureLookup/AdventureLookup/branch/dev
 [codecov-svg-dev]: https://codecov.io/gh/AdventureLookup/AdventureLookup/branch/dev/graph/badge.svg
 
+## Contributing to Adventure Lookup
+
+AdventureLookup is an Open Source project.
+You do *not* need programming experience to contribute to the project!
+Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information
+on how to contribute.
+
 ## Setting up a development environment
 
-
+We are trying to make contributing as easy as possible by providing the Gitpod and Vagrant setups described
+in this section. If you run into any issues while setting up your development environment, please let us
+know by opening an issue.
 
 To get you up and running quickly, you have three options to set up your development environment:
 
@@ -170,14 +182,6 @@ You do *not* need to install a browser extension to enable XDebug.
 
 \* debugging from your host works *without* forwarding the port, since XDebug connects
 to your host (in contrast to your host connecting to xdebug).
-
-## Contributing
-
-AdventureLookup is an open-source project. We are trying to make contributing as easy
-as possible by providing the Vagrant image described above. If you run into any issues
-while setting up your development environment, please let us know by opening an issue.
-If you're ready to work on your first issue or create your first pull request, please
-checkout the [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
 ## Tools used
 
