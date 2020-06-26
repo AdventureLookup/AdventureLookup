@@ -1,3 +1,5 @@
+import autosize from "autosize";
+
 $(function () {
   const $addReviewBtn = $("#add-review-btn");
   const $confirmReviewBtn = $("#confirm-review-btn");
@@ -22,9 +24,13 @@ $(function () {
     $confirmReviewBtn.removeClass("d-none");
     $cancelReviewBtn.removeClass("d-none");
     $createReviewContainer.removeClass("d-none");
+
+    autosize(document.getElementById("review_comment"));
   });
 
   $cancelReviewBtn.click(function () {
+    autosize.destroy(document.getElementById("review_comment"));
+
     $addReviewBtn.removeClass("d-none");
     $confirmReviewBtn.addClass("d-none");
     $cancelReviewBtn.addClass("d-none");
