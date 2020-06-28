@@ -54,13 +54,11 @@ export function Root({
             addParam(field.name, args.join("~"));
             break;
           case "string": {
-            let value = filter.v
-              .map((value) => value.replace(/~/g, "~~"))
-              .join("~");
-            if (value !== "" && filter.includeUnknown) {
-              value += "~unknown~";
+            const args = filter.v.map((value) => value.replace(/~/g, "~~"));
+            if (filter.includeUnknown) {
+              args.push("unknown~");
             }
-            addParam(field.name, value);
+            addParam(field.name, args.join("~"));
             break;
           }
           case "boolean":
