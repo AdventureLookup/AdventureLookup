@@ -1,4 +1,4 @@
-{% macro search(fieldName, value, content, isInteger = false) %}
+{% macro search(fieldName, value, content, isInteger = false, classes = "") %}
     {% apply spaceless %}
         {% if isInteger %}
             {% set path = path('adventure_index', {
@@ -12,11 +12,13 @@
                 seed: 'now'|date('U') * 1000
             }) %}
         {% endif %}
-        <a href="{{ path }}" title="Search for similar adventures">{{ content ?: value }}</a>
+        <a class="{{ classes }}" href="{{ path }}" title="Search for similar adventures">
+            {{ content ?: value }}
+        </a>
     {% endapply %}
 {% endmacro %}
 
-<div id="adventure-container">
+<div class="adventure-container">
     <div class="thumbnail-container">
         {% if adventure.thumbnailUrl %}
             <img alt="Cover of {{ adventure.title }}" src="{{ adventure.thumbnailUrl }}" class="thumbnail d-none d-sm-block" />
@@ -24,40 +26,40 @@
     </div>
     <h2 class="title">{{ adventure.title }}</h2>
     <div class="tags-container">
-        <div class="tag tag-edition">
-            {% if adventure.edition %}
-                {{ _self.search('edition', adventure.edition.name) }}
-            {% else %}
+        {% if adventure.edition %}
+            {{ _self.search('edition', adventure.edition.name, null, false, "tag tag-edition") }}
+        {% else %}
+            <div class="tag tag-edition">
                 Unknown Edition
-            {% endif %}
-        </div>
-        <div class="tag tag-level">
-            {% if adventure.minStartingLevel %}
-                {% if adventure.minStartingLevel is same as (adventure.maxStartingLevel) or adventure.maxStartingLevel is null %}
-                    {{ _self.search('minStartingLevel', adventure.minStartingLevel, format_level(adventure)) }}
-                {% else %}
-                    <a href="{{ path('adventure_index', {
-                        ('minStartingLevel-min'): adventure.minStartingLevel,
-                        ('maxStartingLevel-max'): adventure.maxStartingLevel,
-                        seed: 'now'|date('U') * 1000
-                    }) }}">{{ format_level(adventure) }}</a>
-                {% endif %}
-            {% elseif adventure.startingLevelRange %}
-                {{ _self.search('startingLevelRange', adventure.startingLevelRange, format_level(adventure)) }}
+            </div>
+        {% endif %}
+        {% if adventure.minStartingLevel %}
+            {% if adventure.minStartingLevel is same as (adventure.maxStartingLevel) or adventure.maxStartingLevel is null %}
+                {{ _self.search('minStartingLevel', adventure.minStartingLevel, format_level(adventure), false, "tag tag-level") }}
             {% else %}
-                Unknown party level
+                <a class="tag tag-level" href="{{ path('adventure_index', {
+                    ('minStartingLevel-min'): adventure.minStartingLevel,
+                    ('maxStartingLevel-max'): adventure.maxStartingLevel,
+                    seed: 'now'|date('U') * 1000
+                }) }}">{{ format_level(adventure) }}</a>
             {% endif %}
-        </div>
-        <div class="tag tag-length">
-            {% if adventure.numPages %}
+        {% elseif adventure.startingLevelRange %}
+            {{ _self.search('startingLevelRange', adventure.startingLevelRange, format_level(adventure), "tag tag-level") }}
+        {% else %}
+            <div class="tag tag-level">
+                Unknown party level
+            </div>
+        {% endif %}
+        {% if adventure.numPages %}
                 {{ _self.search('numPages', {
                     min: (adventure.numPages * 0.85)|round,
                     max: (adventure.numPages * 1.15)|round
-                 }, adventure.numPages ~ ' pages', true) }}
-            {% else %}
+                 }, adventure.numPages ~ ' pages', true, "tag tag-length") }}
+        {% else %}
+            <div class="tag tag-length">
                 ? pages
-            {% endif %}
-        </div>
+            </div>
+        {% endif %}
     </div>
     <p class="description">
         {% if adventure.description %}
@@ -171,7 +173,7 @@
                         <li>
                             {{ _self.search('bossMonsters', monster.name) }}
                             {% for type in monster.types %}
-                                <span class="badge badge-info">{{ type.name }}</span>
+                                <span class="badge badge-primary">{{ type.name }}</span>
                             {% endfor %}
                         </li>
                     {% endfor %}
@@ -184,7 +186,7 @@
                         <li>
                             {{ _self.search('commonMonsters', monster.name) }}
                             {% for type in monster.types %}
-                                <span class="badge badge-info">{{ type.name }}</span>
+                                <span class="badge badge-primary">{{ type.name }}</span>
                             {% endfor %}
                         </li>
                     {% endfor %}

@@ -1,25 +1,11 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_with_collapsed_sidebar.html.twig' %}
 
 {% block body %}
     <div class="container">
         <div class="row">
             {# ADL sidebar #}
             <div class="col-3 mt-5 col-sm-2 col-lg-1">
-                <div class="adl-sidebar">
-                    <div class="content">
-                        <a class="no-underline" href="{{ path('adventure_index') }}" title="AdventureLookup.com">
-                            <div class="sidebar-title-big">A</div>
-                        </a>
-
-                        <a class="no-underline" href="{{ path('adventure_index') }}" title="AdventureLookup.com">
-                            <div class="sidebar-title-big-secondary"><i class="fa fa-search"></i></div>
-                        </a>
-
-                        <a class="no-underline" href="{{ path('adventure_random') }}" title="Random Adventure">
-                            <div class="sidebar-title-big-offwhite"><i class="fa fa-random"></i></div>
-                        </a>
-                    </div>
-                </div>
+                {{ block('collapsed_sidebar') }}
             </div>
             {# Content #}
             <div class="col-12 order-last col-lg-9 order-lg-2">
@@ -78,7 +64,7 @@
                         {% if is_granted('delete', adventure) %}
                             <div class="col-sm-6 col-md-4 col-lg-12">
                                 {{ form_start(delete_form) }}
-                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                <button type="submit" class="btn btn-sm btn-danger"
                                         onclick="return confirm('Do you really want to delete this adventure?')">
                                     <i class="fa fa-trash"></i> Delete
                                 </button>
@@ -96,7 +82,7 @@
         </div>
         <div class="row">
             <div class="col-xs-12 order-last col-lg-9 order-lg-1 offset-lg-1 mb-5" id="change-requests">
-                <div id="change-requests-container" class="mt-0">
+                <div class="change-requests-container" class="mt-0">
                     {{ render(controller('AppBundle:ChangeRequest:show', {adventure: adventure})) }}
                 </div>
             </div>
@@ -117,7 +103,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-xs-12 order-last col-lg-9 order-lg-1 offset-lg-1 mb-5" id="change-requests">
+            <div class="col-xs-12 order-last col-lg-9 order-lg-1 offset-lg-1 mb-5">
                 <div id="similar-adventures-container" data-url="{{ url('similar_adventures_search', { id: adventure.id }) }}">
                 </div>
             </div>

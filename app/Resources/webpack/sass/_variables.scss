@@ -32,3 +32,25 @@ $adl-filter-min-height: 36px;
 $adl-filter-padding-top: 8px;
 $adl-filter-padding-side: 8px;
 $adl-filter-padding: $adl-filter-padding-top $adl-filter-padding-side;
+
+// Color combinations that at least have a 4:5:1 contrast ratio.
+$grey-darkest--background-color: $adl-grey-darkest;
+$grey-darkest--font-color: $adl-offwhite;
+$grey-darkest--font-color-highlight: #f7876e;
+
+$grey-dark--background-color: $adl-grey-dark;
+$grey-dark--font-color: #ededed;
+
+$grey-light--background-color: #71747f;
+$grey-light--font-color: #ffffff;
+
+$grey-lightest--background-color: $adl-grey-lightest;
+$grey-lightest--font-color: inherit; // TODO
+
+$white--background-color: #ffffff;
+$white--font-color: #000000;
+$white--font-color-highlight: #71747f;
+$white--font-color-link: #0065d2;
+
+$red--background-color: #911313;
+$red--font-color: #ffffff;

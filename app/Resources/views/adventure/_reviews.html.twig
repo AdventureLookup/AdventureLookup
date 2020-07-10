@@ -1,5 +1,5 @@
 {% if app.user %}
-    <div id="create-review-container" class="mt-0 mb-3 d-none" data-has-reviewed="{{ adventure.reviewBy(app.user) ? '1' : '0' }}">
+    <div class="create-review-container" id="create-review-container" class="mt-0 mb-3 d-none" data-has-reviewed="{{ adventure.reviewBy(app.user) ? '1' : '0' }}">
         <div class="row" id="review-thumbs-row">
             <div class="col-auto d-flex align-items-center" id="review-thumbs-up">
                 <i class="fa fa-fw fa-thumbs-up fa-flip-horizontal"></i>
@@ -9,7 +9,11 @@
                 <i class="fa fa-fw fa-thumbs-down"></i>
             </div>
         </div>
-        <div class="alert alert-info">Reviews support some Markdown formatting like <code>**bold**</code>, <code>*italics*</code>, numbered and dashed lists (<code>- list item</code>, <code>1. list item</code>), and <code># Headings</code>.</div>
+        <div class="alert alert-info">
+            Reviews support some Markdown formatting like <span class="text-monospace">**bold**</span>,
+            <span class="text-monospace">*italics*</span>,
+            numbered and dashed lists (<span class="text-monospace">- list item</span> or <span class="text-monospace">1. list item</span>),
+            and <span class="text-monospace"># Headings</span>.</div>
         {{ form_start(review_form, {'attr': {'id': 'review_form'}}) }}
         {{ form_widget(review_form.rating) }}
         {{ form_widget(review_form.comment) }}
@@ -27,7 +31,7 @@
     </div>
 {% endif %}
 
-<div id="review-container" class="mt-0">
+<div class="review-container" id="reviews" class="mt-0">
     <div class="row">
         <div class="col">
             <h3 class="title">Reviews</h3>

@@ -10,7 +10,10 @@
         </p>
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <a class="nav-link active" id="adventures-tab" data-toggle="tab" href="#adventures" role="tab" aria-controls="home" aria-selected="true"><span class="d-none d-sm-inline">Your </span>Adventures</a>
+                <a class="nav-link active" id="adventures-tab"
+                    data-toggle="tab" href="#adventures" role="tab" aria-controls="adventures"
+                    aria-selected="true"><span class="d-none d-sm-inline">
+                    Your </span>Adventures</a>
             </li>
             <li class="nav-item" role="presentation">
                 <a class="nav-link" id="reviews-tab" data-toggle="tab" href="#reviews" role="tab" aria-controls="profile" aria-selected="false"><span class="d-none d-sm-inline">Your </span>Reviews</a>
@@ -69,7 +72,7 @@
             <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
                 <div class="list-group list-group-flush">
                     {% for review in reviews %}
-                        <a href="{{ path('adventure_show', {slug: review.adventure.slug}) }}#review-container"
+                        <a href="{{ path('adventure_show', {slug: review.adventure.slug}) }}#reviews"
                         class="list-group-item list-group-item-action"
                         id="review-{{ review.id }}">
                             <div class="d-flex w-100 justify-content-between">

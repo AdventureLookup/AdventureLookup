@@ -2,7 +2,6 @@
   position: relative;
   min-height: $adl-filter-min-height;
   border-bottom: $adl-border-grey-lightest-big;
-  color: $adl-offwhite;
 
   // Is open
   &.open {
@@ -33,7 +32,8 @@
     display: flex;
     justify-content: space-between;
     padding: $adl-filter-padding;
-    background-color: $adl-grey-dark;
+    background-color: $grey-dark--background-color;
+    color: $grey-dark--font-color;
     font-size: 1.2rem;
 
     &:after {

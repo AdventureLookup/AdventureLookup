@@ -102,7 +102,7 @@ class ReviewController extends Controller
     {
         return $this->redirectToRoute('adventure_show', [
             'slug' => $review->getAdventure()->getSlug(),
-            '_fragment' => 'review-container',
+            '_fragment' => 'reviews',
         ]);
     }
 

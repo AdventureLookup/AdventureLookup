@@ -1,33 +1,24 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_with_collapsed_sidebar.html.twig' %}
 
 {% block body %}
-    <div class="container" id="page--create-adventure" data-similar-titles-url="{{ path('similar_titles_search') }}" data-search-url="{{ path('api_autocomplete_field', {fieldName: '__FIELD__'}) }}">
-        <div class="row">
-            <div class="col">
-                <div class="adl-sidebar">
-                    <div class="content">
-                        <a class="no-underline" href="{{ path('adventure_index') }}">
-                            <div class="sidebar-title-big">A</div>
-                        </a>
+    {{ parent() }}
+    {% include 'adventure/_new_content_modal.html.twig' %}
+{% endblock %}
 
-                        <a class="no-underline" href="{{ path('adventure_index') }}">
-                            <div class="sidebar-title-big-secondary"><i class="fa fa-search"></i></div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div id="adventure-container" class="col-11">
-                <div class="title">New adventure</div>
-                <div class="alert alert-warning">AdventureLookup is for D&D and its clones. Not other systems/genres.</div>
+{% block content_without_container %}
+    <div class="adventure-container"  id="page--create-adventure"
+        data-similar-titles-url="{{ path('similar_titles_search') }}"
+        data-search-url="{{ path('api_autocomplete_field', {fieldName: '__FIELD__'}) }}">
+        <div class="title">New adventure</div>
+        <div class="alert alert-warning">AdventureLookup is for D&D and its clones. Not other systems/genres.</div>
+        <div class="content">
 
-                {{ form_start(form) }}
+            {{ form_start(form) }}
 
-                {% include 'adventure/_form.html.twig' %}
+            {% include 'adventure/_form.html.twig' %}
 
-                <input type="submit" value="Save" class="btn btn-primary" role="button" />
-                {{ form_end(form) }}
-            </div>
+            <input type="submit" value="Save" class="btn btn-primary" role="button" />
+            {{ form_end(form) }}
         </div>
     </div>
-    {% include 'adventure/_new_content_modal.html.twig' %}
 {% endblock %}

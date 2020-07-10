@@ -46,11 +46,11 @@ $tag-margin: 4px;
       background-color: darken($adl-coral, 7.5%);
     }
     &.badge-clear {
-      color: white;
-      background-color: $adl-grey-light;
+      color: $grey-light--font-color;
+      background-color: $grey-light--background-color;
 
       &:hover {
-        background-color: darken($adl-grey-light, 7.5%);
+        background-color: $grey-dark--background-color;
       }
     }
   }
