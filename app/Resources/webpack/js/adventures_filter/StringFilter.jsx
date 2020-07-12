@@ -1,7 +1,19 @@
 import * as React from "react";
+import matchSorter from "match-sorter";
 
-function filterOption(option, searchString) {
-  return option.toLowerCase().includes(searchString.toLowerCase());
+function filterOption(option, search) {
+  return option.toLowerCase().includes(search.toLowerCase());
+}
+
+function filterAndSortBySearch(options, search) {
+  if (search === "") {
+    return options;
+  }
+  return matchSorter(
+    options.filter((option) => filterOption(option.key, search)),
+    search,
+    { keys: ["key"] }
+  );
 }
 
 export function StringFilter({
@@ -66,24 +78,20 @@ export function StringFilter({
   // Let's re-calculate the available options from the `filterString` now.
 
   // 1.
-  const filteredInitialOptions =
-    filterString.length === 0
-      ? initialOptions
-      : initialOptions.filter((option) =>
-          filterOption(option.key, filterString)
-        );
+  const filteredInitialOptions = filterAndSortBySearch(
+    initialOptions,
+    filterString
+  );
 
   // 2.
   const filteredShowUnknownOption =
     showUnknownOption && filterOption(unknownLabel, filterString);
 
   // 3.
-  const filteredAdditionalOptions =
-    filterString.length === 0
-      ? additionalOptions
-      : additionalOptions.filter((option) =>
-          filterOption(option.key, filterString)
-        );
+  const filteredAdditionalOptions = filterAndSortBySearch(
+    additionalOptions,
+    filterString
+  );
 
   // Initially, only the first `showMoreAfter` `filteredAdditionalOptions` are shown (`showAll` = `false`).
   // We always show all `filteredInitialOptions` though.
