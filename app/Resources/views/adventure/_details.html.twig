@@ -44,7 +44,7 @@
                 }) }}">{{ format_level(adventure) }}</a>
             {% endif %}
         {% elseif adventure.startingLevelRange %}
-            {{ _self.search('startingLevelRange', adventure.startingLevelRange, format_level(adventure), "tag tag-level") }}
+            {{ _self.search('startingLevelRange', adventure.startingLevelRange, format_level(adventure), false, "tag tag-level") }}
         {% else %}
             <div class="tag tag-level">
                 Unknown party level
