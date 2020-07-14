@@ -15,7 +15,7 @@ class AppBundleTest extends TestCase
         $str = '🔥🔥🔥';
         $this->assertEquals('🔥🔥…', AppBundle::truncate($str, 2));
 
-        $str = '🔥🔥🔥 '; // ends with whitespace, which should be trimmed
-        $this->assertEquals('🔥🔥…', AppBundle::truncate($str, 2));
+        $str = '🔥 🔥'; // trimmed version would end with whitespace
+        $this->assertEquals('🔥…', AppBundle::truncate($str, 2));
     }
 }
