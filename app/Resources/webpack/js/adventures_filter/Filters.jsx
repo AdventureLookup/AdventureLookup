@@ -189,7 +189,7 @@ function BooleanOptions({
           >
             All{" "}
             {allCount !== undefined && (
-              <span className="badge-pill badge badge-info">{allCount}</span>
+              <span className="badge-pill badge badge-primary">{allCount}</span>
             )}
           </label>
         </div>
@@ -211,7 +211,7 @@ function BooleanOptions({
           >
             Yes{" "}
             {yesCount !== undefined && (
-              <span className="badge-pill badge badge-info">{yesCount}</span>
+              <span className="badge-pill badge badge-primary">{yesCount}</span>
             )}
           </label>
         </div>
@@ -233,7 +233,7 @@ function BooleanOptions({
           >
             No{" "}
             {noCount !== undefined && (
-              <span className="badge-pill badge badge-info">{noCount}</span>
+              <span className="badge-pill badge badge-primary">{noCount}</span>
             )}
           </label>
         </div>
@@ -339,7 +339,7 @@ function IncludeUnknownOption({
       <div className="spacer" />
       {(initialFilter.includeUnknown ||
         isFilterValueEmpty(field, initialFilter)) && (
-        <span className="badge-pill badge badge-info">
+        <span className="badge-pill badge badge-primary">
           {fieldValues.countUnknown}
         </span>
       )}

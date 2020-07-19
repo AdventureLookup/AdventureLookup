@@ -124,7 +124,7 @@ class NewAdventureTest extends BrowserTestCase
         }
 
         $this->assertPath($session, '/adventures/'.self::SLUG);
-        $adventureContainer = $page->findById('adventure-container');
+        $adventureContainer = $page->find('css', '.adventure-container');
         $this->assertStringContainsString(self::TITLE, $adventureContainer->getText());
         $this->assertStringContainsString(self::DESCRIPTION, $adventureContainer->getText());
 

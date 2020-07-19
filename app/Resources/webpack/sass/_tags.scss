@@ -7,11 +7,11 @@
     padding: 3px 12px;
     margin-right: 6px;
     margin-bottom: 6px;
-    background-color: $adl-grey-light;
+    background-color: $grey-light--background-color;
+    color: $grey-light--font-color;
     border-radius: $adl-border-radius-big;
     font-family: "Roboto Condensed", sans-serif;
     text-transform: uppercase;
-    color: #ffffff;
     display: inline-block;
 
     &::before {
@@ -28,21 +28,15 @@
     &.tag-length::before {
       content: $fa-var-book;
     }
-    &.tag-featured {
-      background-color: $adl-coral;
+  }
 
-      &::before {
-        content: $fa-var-diamond;
-      }
-    }
-
-    a {
-      color: #ffffff;
-    }
-
-    a:hover {
-      color: lightgrey;
+  a.tag {
+    transition: 100ms;
+    &:hover {
       text-decoration: none;
+
+      background-color: $grey-dark--background-color;
+      color: $grey-dark--font-color;
     }
   }
 }

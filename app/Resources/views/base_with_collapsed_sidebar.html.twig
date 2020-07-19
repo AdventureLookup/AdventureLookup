@@ -1,24 +1,36 @@
 {% extends 'base.html.twig' %}
 
+{% block collapsed_sidebar %}
+    <div class="adl-sidebar">
+        <div class="content">
+            <a class="no-underline" href="{{ path('adventure_index') }}"
+                title="Back to all adventures" aria-label="Back to all adventures">
+                <div class="sidebar-title-big">A</div>
+            </a>
+            <a class="no-underline" href="{{ path('adventure_index') }}"
+                title="Search for another adventure" aria-label="Search for another adventure">
+                <div class="sidebar-title-big-secondary"><i class="fa fa-search"></i></div>
+            </a>
+            <a class="no-underline" href="{{ path('adventure_random') }}"
+                title="Jump to random adventure" aria-label="Jump to random adventure">
+                <div class="sidebar-title-big-offwhite"><i class="fa fa-random"></i></div>
+            </a>
+        </div>
+    </div>
+{% endblock %}
+
 {% block body %}
     <div class="container">
         <div class="row">
             <div class="col">
-                <div class="adl-sidebar">
-                    <div class="content">
-                        <a class="no-underline" href="{{ path('adventure_index') }}">
-                            <div class="sidebar-title-big">A</div>
-                        </a>
-                        <a class="no-underline" href="{{ path('adventure_index') }}">
-                            <div class="sidebar-title-big-secondary"><i class="fa fa-home"></i></div>
-                        </a>
-                    </div>
-                </div>
+                {{ block('collapsed_sidebar') }}
             </div>
             <div class="col-11">
-                <div class="content-container">
-                    {% block content %}{% endblock %}
-                </div>
+                {% block content_without_container %}
+                    <div class="content-container">
+                        {% block content %}{% endblock %}
+                    </div>
+                {% endblock %}
             </div>
         </div>
     </div>

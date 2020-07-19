@@ -277,7 +277,7 @@ function StringCheckbox({ label, checked, count, onChange }) {
       />
       {label}
       <div className="spacer" />
-      <span className="badge-pill badge badge-info">{count}</span>
+      <span className="badge-pill badge badge-primary">{count}</span>
     </label>
   );
 }

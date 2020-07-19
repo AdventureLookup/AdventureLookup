@@ -30,6 +30,9 @@ button.dropdown-toggle {
   }
 }
 
+$card-bg: $white--background-color;
+$card-color: $white--font-color;
+
 @import "~bootstrap/scss/bootstrap";
 
 // Override bootstrap behavior
@@ -41,7 +44,8 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background-color: $adl-grey-lightest;
+  color: $grey-lightest--font-color;
+  background-color: $grey-lightest--background-color;
   font-size: 12px;
 
   > .container {

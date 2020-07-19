@@ -137,6 +137,26 @@ class AdventureTest extends TestCase
         $this->assertSame($setting, $this->subject->getSetting());
     }
 
+    public function testSEO()
+    {
+        $title = 'Hello World';
+        $description = "An adventure were you greet everyone you see by saying 'Hello World'.";
+        $this->subject->setTitle($title);
+        $this->subject->setDescription($description);
+
+        $this->assertSame($title, $this->subject->getSeoTitle());
+        $this->assertSame($description, $this->subject->getSeoDescription());
+
+        $longDescription = str_repeat('A', 399).'BC';
+        $this->subject->setDescription($longDescription);
+        $this->assertSame(str_repeat('A', 399).'B…', $this->subject->getSeoDescription());
+
+        $this->subject->setTitle(null);
+        $this->subject->setDescription(null);
+        $this->assertNull($this->subject->getSeoTitle());
+        $this->assertNull($this->subject->getSeoDescription());
+    }
+
     private function makeCommonMonster(): Monster
     {
         $monster = new Monster();

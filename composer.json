@@ -38,6 +38,7 @@
         "knplabs/knp-paginator-bundle": "^2.7.2",
         "league/commonmark": "^1.4",
         "league/uri": "^5.0",
+        "leogout/seo-bundle": "^1.2",
         "mmo/faker-images": "^0.1.0",
         "sensio/distribution-bundle": "^5.0",
         "sensio/framework-extra-bundle": "^3.0.2",

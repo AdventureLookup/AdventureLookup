@@ -28,6 +28,7 @@ export function SearchBox({
           <input
             type="text"
             className="form-control"
+            aria-label="Search query"
             placeholder="SEARCH FOR"
             value={query}
             disabled={isSubmitting}
@@ -46,7 +47,7 @@ export function SearchBox({
         </div>
         <div className="dropdown">
           <button
-            className="btn btn-outline-secondary dropdown-toggle"
+            className="btn btn-secondary dropdown-toggle"
             type="button"
             id="sortButton"
             data-toggle="dropdown"
