@@ -2,11 +2,14 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\AppBundle;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Leogout\Bundle\SeoBundle\Seo\DescriptionSeoInterface;
+use Leogout\Bundle\SeoBundle\Seo\TitleSeoInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -18,7 +21,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @UniqueEntity("title")
  * @Gedmo\Loggable
  */
-class Adventure
+class Adventure implements TitleSeoInterface, DescriptionSeoInterface
 {
     /**
      * @var int
@@ -900,6 +903,16 @@ class Adventure
     public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
+    }
+
+    public function getSeoTitle()
+    {
+        return $this->getTitle();
+    }
+
+    public function getSeoDescription()
+    {
+        return null !== $this->description ? AppBundle::truncate($this->getDescription(), 400) : null;
     }
 
     /**

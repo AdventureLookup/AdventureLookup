@@ -10,6 +10,7 @@ use AppBundle\Form\Type\AdventureType;
 use AppBundle\Form\Type\ReviewType;
 use AppBundle\Security\AdventureVoter;
 use AppBundle\Service\AdventureSearch;
+use AppBundle\Service\MetaTags;
 use AppBundle\Service\TimeProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -121,7 +122,7 @@ class AdventureController extends Controller
      * @return Response
      */
     public function showAction(Adventure $adventure, EntityManagerInterface $em,
-                               UserInterface $user = null)
+                               MetaTags $metaTags, UserInterface $user = null)
     {
         $this->denyAccessUnlessGranted(AdventureVoter::VIEW, $adventure);
 
@@ -129,6 +130,8 @@ class AdventureController extends Controller
         $reviewForm = $this->createReviewForm($adventure);
         $reviewDeleteForm = $this->createdReviewDeleteFormTemplate();
         $adventureListRepository = $em->getRepository(AdventureList::class);
+
+        $metaTags->fromResource($adventure);
 
         return $this->render('adventure/index.html.twig', [
             'adventure' => $adventure,

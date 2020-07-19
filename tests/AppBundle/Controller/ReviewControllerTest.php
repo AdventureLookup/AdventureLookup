@@ -34,7 +34,7 @@ class ReviewControllerTest extends WebTestCase
         }
         $session->getPage()->findById('review_form')->submit();
 
-        $this->assertPath($session, "/adventures/{$adventure->getSlug()}#review-container");
+        $this->assertPath($session, "/adventures/{$adventure->getSlug()}#reviews");
         if (null !== $comment) {
             $this->assertTrue($session->getPage()->hasContent($comment));
         }
@@ -102,7 +102,7 @@ class ReviewControllerTest extends WebTestCase
         $session->getPage()->checkField('review_rating');
         $session->getPage()->findById('review_form')->submit();
 
-        $this->assertPath($session, "/adventures/{$adventure->getSlug()}#review-container");
+        $this->assertPath($session, "/adventures/{$adventure->getSlug()}#reviews");
         $this->assertTrue($session->getPage()->hasContent('already created a review'));
 
         /** @var Review[] $reviews */
@@ -141,7 +141,7 @@ class ReviewControllerTest extends WebTestCase
         $session->getPage()->uncheckField('review_rating');
         $session->getPage()->findById('review_form')->submit();
 
-        $this->assertPath($session, "/adventures/{$adventure->getSlug()}#review-container");
+        $this->assertPath($session, "/adventures/{$adventure->getSlug()}#reviews");
         $this->assertTrue($session->getPage()->hasContent(self::REVIEW_TEXT_2));
 
         /** @var Review[] $reviews */
@@ -178,7 +178,7 @@ class ReviewControllerTest extends WebTestCase
 
         $session->getPage()->findButton('Delete Review')->click();
 
-        $this->assertPath($session, "/adventures/{$adventure->getSlug()}#review-container");
+        $this->assertPath($session, "/adventures/{$adventure->getSlug()}#reviews");
         $this->assertFalse($session->getPage()->hasContent(self::REVIEW_TEXT));
     }
 }

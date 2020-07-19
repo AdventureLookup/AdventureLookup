@@ -70,15 +70,15 @@
     .sidebar-block {
       min-height: $adl-filter-min-height;
       border-bottom: $adl-border-grey-lightest-big;
-      color: $adl-offwhite;
+      background-color: $grey-dark--background-color;
+      color: $grey-dark--font-color;
 
       .block-title {
         padding: $adl-filter-padding;
-        background-color: $adl-grey-dark;
         font-size: 1.2rem;
 
         &:hover {
-          background-color: darken($adl-grey-dark, 7.5%);
+          background-color: $grey-darkest--background-color;
           cursor: pointer;
         }
       }

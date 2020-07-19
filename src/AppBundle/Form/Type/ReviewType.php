@@ -28,6 +28,7 @@ class ReviewType extends AbstractType
             ->add('comment', TextareaType::class, [
                 'required' => false,
                 'attr' => [
+                    'aria-label' => 'Review Comment',
                     'rows' => '5',
                     'placeholder' => 'If you like, click here to type a few words about your experience with this adventure.',
                 ],

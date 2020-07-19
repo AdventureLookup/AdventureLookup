@@ -1,10 +1,10 @@
 #adl-announcement {
   .announcement-bar {
     text-align: center;
-    color: white;
+    background-color: $red--background-color;
+    color: $red--font-color;
     padding: 5px;
     font-size: 1.2rem;
-    background-color: #911313;
     box-shadow: 4px 2px 2px #aaa;
     margin-bottom: 5px;
   }

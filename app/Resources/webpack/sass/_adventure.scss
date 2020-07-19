@@ -8,9 +8,8 @@ $thumbnail-height: 100px;
   @extend %secondaryFont;
 }
 
-#adventure-container {
+.adventure-container {
   @extend .content-container;
-  padding-bottom: 0 !important;
 
   .thumbnail-container {
     position: absolute;
@@ -66,7 +65,7 @@ $thumbnail-height: 100px;
       .label {
         font-family: "Roboto Condensed", sans-serif;
         text-transform: uppercase;
-        color: $adl-grey-light;
+        color: $white--font-color-highlight;
       }
 
       .level {
@@ -81,7 +80,7 @@ $thumbnail-height: 100px;
   }
 }
 
-#change-requests-container {
+.change-requests-container {
   @extend .content-container;
 
   padding-bottom: 0 !important;
@@ -124,7 +123,7 @@ $thumbnail-height: 100px;
   }
 }
 
-#review-container {
+.review-container {
   @extend .content-container;
 
   .review {
@@ -156,7 +155,7 @@ $thumbnail-height: 100px;
   }
 }
 
-#create-review-container {
+.create-review-container {
   @extend .content-container;
 
   #review-thumbs-row {

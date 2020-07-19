@@ -21,13 +21,14 @@ class RealAdventureData implements FixtureInterface
     public function load(ObjectManager $em)
     {
         $seed = time();
-        $baseUrl = 'https://adventurelookup.com/api/adventures/';
+        $baseUrl = 'https://adventurelookup.com/api/adventures';
         $adventures = [];
         for ($page = 1; count($adventures) < 200; ++$page) {
             $url = $baseUrl.'?page='.$page.'&sort=random&seed='.$seed;
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
             $result = curl_exec($ch);
             curl_close($ch);
             $adventures = array_merge($adventures, (json_decode($result))->adventures);
