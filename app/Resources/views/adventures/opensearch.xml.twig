@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/"
+                       xmlns:moz="http://www.mozilla.org/2006/browser/search/">
+  <ShortName>AdventureLookup</ShortName>
+  <Description>Search AdventureLookup</Description>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Image width="16" height="16" type="image/x-icon">{{ absolute_url(asset('favicon.ico')) }}</Image>
+  <Url type="text/html" method="get" template="{{ url('adventure_opensearch', {q: '{searchTerms}'}) }}"/>
+  <moz:SearchForm>{{ url('adventure_index') }}</moz:SearchForm>
+</OpenSearchDescription>
