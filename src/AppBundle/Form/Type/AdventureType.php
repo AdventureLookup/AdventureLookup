@@ -189,10 +189,12 @@ class AdventureType extends AbstractType
             ->add('link', UrlType::class, [
                 'required' => false,
                 'help' => 'Links to legitimate sites where the module can be procured. Using affiliate links is not allowed. Links to the following domains will automatically be transformed into affiliate links: '.implode(', ', $this->affiliateDomains),
+                'default_protocol' => 'https',
             ])
             ->add('thumbnailUrl', UrlType::class, [
                 'required' => false,
                 'help' => 'URL of the thumbnail image.',
+                'default_protocol' => 'https',
             ])
             ->add('soloable', ChoiceType::class, [
                 'help' => 'Whether or not this is suited to be played solo.',

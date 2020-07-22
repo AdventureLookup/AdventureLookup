@@ -2,14 +2,13 @@
 
 {% block curation_content %}
     <div class="alert alert-info mb-4">
-        This page provides an overview of the links used by adventures.
-        Links are sorted by domain name.
+        {{description}}
     </div>
     <div class="table-responsive">
         <table class="table table-sm table-striped">
             <thead>
             <tr>
-                <th>Download Link</th>
+                <th>{{fieldTitle}}</th>
                 <th>Adventure</th>
             </tr>
             </thead>
@@ -18,15 +17,15 @@
             {% for link in links %}
                 {% if link.domain != lastDomain %}
                     {% set lastDomain = link.domain %}
-                    <tr>
+                    <tr class="{% if link.blocked %}table-danger{% endif %}">
                         <td colspan="2">
                             <strong>{{ link.domain }}</strong>
                         </td>
                     </tr>
                 {% endif %}
-                <tr>
+                <tr class="{% if link.blocked %}table-danger{% endif %}">
                     <td style="word-break: break-all">
-                        <a href="{{ link.link }}">{{ link.link }}</a>
+                        <a href="{{ link[field] }}">{{ link[field] }}</a>
                     </td>
                     <td>
                         <a href="{{ path('adventure_show', {slug: link.slug}) }}"
@@ -37,7 +36,7 @@
                 </tr>
             {% else %}
                 <tr class="table-success text-center">
-                    <td colspan="2">There isn't a single adventure with a link.</td>
+                    <td colspan="2">Nothing found.</td>
                 </tr>
             {% endfor %}
             </tbody>

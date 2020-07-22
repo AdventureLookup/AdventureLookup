@@ -25,6 +25,10 @@
                 <a class="nav-link{% if app.request.attributes.get('_route') == 'curation_review_image_urls' %} active{% endif %}"
                     href="{{ path('curation_review_image_urls') }}">Adventure Thumbnails</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link{% if app.request.attributes.get('_route') starts with('curated_domain_') %} active{% endif %}"
+                    href="{{ path('curated_domain_index') }}">Manage blocked and verified domains</a>
+            </li>
         </ul>
 
         {% block curation_content %}{% endblock %}

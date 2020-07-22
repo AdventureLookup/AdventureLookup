@@ -6,6 +6,7 @@ use AppBundle\Curation\BulkEditFormHandler;
 use AppBundle\Curation\BulkEditFormProvider;
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\ChangeRequest;
+use AppBundle\Entity\CuratedDomain;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Knp\Component\Pager\PaginatorInterface;
@@ -138,41 +139,34 @@ class CurationController extends Controller
     /**
      * @Route("/links", name="curation_review_links")
      * @Method("GET")
-     *
-     * @return Response
      */
-    public function reviewLinksAction(EntityManagerInterface $em)
+    public function reviewLinksAction(EntityManagerInterface $em): Response
     {
-        $adventureRepository = $em->getRepository(Adventure::class);
-        $qb = $adventureRepository->createQueryBuilder('a');
-        $qb
-            ->select('a.id')
-            ->addSelect('a.title')
-            ->addSelect('a.slug')
-            ->addSelect('a.link')
-            ->where($qb->expr()->isNotNull('a.link'))
-            ->orderBy($qb->expr()->asc('a.link'));
-
-        $links = $qb->getQuery()->execute();
-        $links = array_map(function ($link) {
-            $link['domain'] = parse_url($link['link'], PHP_URL_HOST);
-
-            return $link;
-        }, $links);
-        usort($links, fn ($a, $b) => $a['domain'] <=> $b['domain']);
-
-        return $this->render('curation/review_links.html.twig', [
-            'links' => $links,
+        return $this->render('curation/review_urls.html.twig', [
+            'links' => $this->getUrls($em, 'link'),
+            'field' => 'link',
+            'description' => 'This page provides an overview of the links used by adventures.
+            Links are sorted by domain name.',
+            'fieldTitle' => 'Download Link',
         ]);
     }
 
     /**
      * @Route("/image-urls", name="curation_review_image_urls")
      * @Method("GET")
-     *
-     * @return Response
      */
-    public function reviewImageURLsAction(EntityManagerInterface $em)
+    public function reviewImageURLsAction(EntityManagerInterface $em): Response
+    {
+        return $this->render('curation/review_urls.html.twig', [
+            'links' => $this->getUrls($em, 'thumbnailUrl'),
+            'field' => 'thumbnailUrl',
+            'description' => 'This page provides an overview of the thumbnail URLs used by adventures.
+            URLS are sorted by domain name.',
+            'fieldTitle' => 'Thumbnail URL',
+        ]);
+    }
+
+    private function getUrls(EntityManagerInterface $em, string $field): array
     {
         $adventureRepository = $em->getRepository(Adventure::class);
         $qb = $adventureRepository->createQueryBuilder('a');
@@ -180,20 +174,30 @@ class CurationController extends Controller
             ->select('a.id')
             ->addSelect('a.title')
             ->addSelect('a.slug')
-            ->addSelect('a.thumbnailUrl')
-            ->where($qb->expr()->isNotNull('a.thumbnailUrl'))
-            ->orderBy($qb->expr()->asc('a.thumbnailUrl'));
+            ->addSelect('a.'.$field)
+            ->where($qb->expr()->isNotNull('a.'.$field))
+            ->orderBy($qb->expr()->asc('a.'.$field));
+
+        $blockedDomains = $em->getRepository(CuratedDomain::class)->findBy([
+            'type' => 'B',
+        ]);
 
         $links = $qb->getQuery()->execute();
-        $links = array_map(function ($link) {
-            $link['domain'] = parse_url($link['thumbnailUrl'], PHP_URL_HOST);
+        $links = array_map(function ($link) use ($blockedDomains, $field) {
+            $link['domain'] = parse_url($link[$field], PHP_URL_HOST);
+            $blocked = false;
+            foreach ($blockedDomains as $blockedDomain) {
+                if ($blockedDomain->matchesDomain($link['domain'])) {
+                    $blocked = true;
+                    break;
+                }
+            }
+            $link['blocked'] = $blocked;
 
             return $link;
         }, $links);
         usort($links, fn ($a, $b) => $a['domain'] <=> $b['domain']);
 
-        return $this->render('curation/review_image_urls.html.twig', [
-            'links' => $links,
-        ]);
+        return $links;
     }
 }
