@@ -5,6 +5,6 @@
   <Description>Search AdventureLookup</Description>
   <InputEncoding>UTF-8</InputEncoding>
   <Image width="16" height="16" type="image/x-icon">{{ absolute_url(asset('favicon.ico')) }}</Image>
-  <Url type="text/html" method="get" template="{{ url('adventure_opensearch', {q: '{searchTerms}'}) }}"/>
+  <Url type="text/html" method="get" template="{{ url('adventure_index', {q: 'QQQ'}) | replace({'QQQ': '{searchTerms}'}) }}"/>
   <moz:SearchForm>{{ url('adventure_index') }}</moz:SearchForm>
 </OpenSearchDescription>
