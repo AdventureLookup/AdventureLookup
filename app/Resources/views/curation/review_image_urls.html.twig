@@ -1,0 +1,47 @@
+{% extends 'curation/base.html.twig' %}
+
+{% block curation_content %}
+    <div class="alert alert-info mb-4">
+        This page provides an overview of the thumbnail URLs used by adventures.
+        URLS are sorted by domain name.
+    </div>
+    <div class="table-responsive">
+        <table class="table table-sm table-striped">
+            <thead>
+            <tr>
+                <th>Thumbnail URL</th>
+                <th>Adventure</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% set lastDomain = '' %}
+            {% for link in links %}
+                {% if link.domain != lastDomain %}
+                    {% set lastDomain = link.domain %}
+                    <tr>
+                        <td colspan="2">
+                            <strong>{{ link.domain }}</strong>
+                        </td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td style="word-break: break-all">
+                        <a href="{{ link.thumbnailUrl }}">{{ link.thumbnailUrl }}</a>
+                    </td>
+                    <td>
+                        <a href="{{ path('adventure_show', {slug: link.slug}) }}"
+                            title="Show adventure" tabindex="-1">
+                            {{ link.title | truncate(30) }}
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr class="table-success text-center">
+                    <td colspan="2">There isn't a single adventure with a link.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+

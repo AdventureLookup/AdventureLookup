@@ -17,6 +17,14 @@
                 <a class="nav-link{% if app.request.attributes.get('_route') == 'curation_bulk_edit_adventures' %} active{% endif %}"
                     href="{{ path('curation_bulk_edit_adventures') }}">Bulk edit adventures</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link{% if app.request.attributes.get('_route') == 'curation_review_links' %} active{% endif %}"
+                    href="{{ path('curation_review_links') }}">Adventure Links</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link{% if app.request.attributes.get('_route') == 'curation_review_image_urls' %} active{% endif %}"
+                    href="{{ path('curation_review_image_urls') }}">Adventure Thumbnails</a>
+            </li>
         </ul>
 
         {% block curation_content %}{% endblock %}

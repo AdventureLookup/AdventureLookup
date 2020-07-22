@@ -134,4 +134,66 @@ class CurationController extends Controller
 
         return $this->redirectToRoute('curation_pending_change_requests');
     }
+
+    /**
+     * @Route("/links", name="curation_review_links")
+     * @Method("GET")
+     *
+     * @return Response
+     */
+    public function reviewLinksAction(EntityManagerInterface $em)
+    {
+        $adventureRepository = $em->getRepository(Adventure::class);
+        $qb = $adventureRepository->createQueryBuilder('a');
+        $qb
+            ->select('a.id')
+            ->addSelect('a.title')
+            ->addSelect('a.slug')
+            ->addSelect('a.link')
+            ->where($qb->expr()->isNotNull('a.link'))
+            ->orderBy($qb->expr()->asc('a.link'));
+
+        $links = $qb->getQuery()->execute();
+        $links = array_map(function ($link) {
+            $link['domain'] = parse_url($link['link'], PHP_URL_HOST);
+
+            return $link;
+        }, $links);
+        usort($links, fn ($a, $b) => $a['domain'] <=> $b['domain']);
+
+        return $this->render('curation/review_links.html.twig', [
+            'links' => $links,
+        ]);
+    }
+
+    /**
+     * @Route("/image-urls", name="curation_review_image_urls")
+     * @Method("GET")
+     *
+     * @return Response
+     */
+    public function reviewImageURLsAction(EntityManagerInterface $em)
+    {
+        $adventureRepository = $em->getRepository(Adventure::class);
+        $qb = $adventureRepository->createQueryBuilder('a');
+        $qb
+            ->select('a.id')
+            ->addSelect('a.title')
+            ->addSelect('a.slug')
+            ->addSelect('a.thumbnailUrl')
+            ->where($qb->expr()->isNotNull('a.thumbnailUrl'))
+            ->orderBy($qb->expr()->asc('a.thumbnailUrl'));
+
+        $links = $qb->getQuery()->execute();
+        $links = array_map(function ($link) {
+            $link['domain'] = parse_url($link['thumbnailUrl'], PHP_URL_HOST);
+
+            return $link;
+        }, $links);
+        usort($links, fn ($a, $b) => $a['domain'] <=> $b['domain']);
+
+        return $this->render('curation/review_image_urls.html.twig', [
+            'links' => $links,
+        ]);
+    }
 }
