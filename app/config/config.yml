@@ -10,6 +10,12 @@ parameters:
     locale: en
     container.dumper.inline_class_loader: true
     container.autowiring.strict_mode: true
+    disclaimer: |
+        Disclaimer: All information listed on this website comes with absolutely no warranty and may be incomplete or outright wrong.
+        We rely on contributors from the community to add and curate adventure data.
+        The publisher and original adventure authors are not usually involved in the process.
+        In many cases, we have no way to verify that the data we show for an adventure accurately represents the adventure's content.
+        If you find incomplete or wrong data, please login and create a change request on the adventure details page.
 
 framework:
     #esi: ~
@@ -47,6 +53,7 @@ twig:
     globals:
         google_analytics_code: '%google_analytics_code%'
         announcement: '%announcement%'
+        disclaimer: '%disclaimer%'
 
 # Doctrine Configuration
 doctrine:

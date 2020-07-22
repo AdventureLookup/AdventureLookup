@@ -201,16 +201,17 @@
                 </ul>
             </div>
         </div>
-        {% if affiliateCodeAdded %}
-            <div class="detail-row">
-                <div class="col">
-                    <p id="affiliate-link-info" class="text-muted">
+        <div class="detail-row">
+            <div class="col meta">
+                {% if affiliateCodeAdded %}
+                    <p id="affiliate-link-info">
                         <sup>1</sup> This is an affiliate link.
                         We may get a small comission if you buy something using that link.
                         There are no additional costs for you.
                     </p>
-                </div>
+                {% endif %}
+                <em>{{ disclaimer }}</em>
             </div>
-        {% endif %}
+        </div>
     </div>
 </div>
