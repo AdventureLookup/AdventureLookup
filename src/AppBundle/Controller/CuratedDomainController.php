@@ -18,7 +18,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 class CuratedDomainController extends Controller
 {
     /**
-     * @Route("/", name="curated_domain_index", methods={"GET"})
+     * @Route("", name="curated_domain_index", methods={"GET"})
      */
     public function index(Request $request, PaginatorInterface $paginator): Response
     {

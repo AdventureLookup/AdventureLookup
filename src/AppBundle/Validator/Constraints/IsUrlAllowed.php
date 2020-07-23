@@ -9,5 +9,5 @@ use Symfony\Component\Validator\Constraint;
  */
 class IsUrlAllowed extends Constraint
 {
-    public $message = 'The url "{{ string }}" is not allowed to be used on AdventureLookup. Reason: {{ reason }}';
+    public $message = 'The url "{{ url }}" is not allowed to be used on AdventureLookup. Reason: {{ reason }}';
 }

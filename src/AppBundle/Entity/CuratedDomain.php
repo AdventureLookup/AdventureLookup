@@ -132,8 +132,6 @@ class CuratedDomain
     }
 
     /**
-     * Get the value of reason
-     *
      * @return string
      */
     public function getReason()
@@ -142,8 +140,6 @@ class CuratedDomain
     }
 
     /**
-     * Set the value of reason
-     *
      * @return self
      */
     public function setReason(string $reason)
@@ -154,8 +150,6 @@ class CuratedDomain
     }
 
     /**
-     * Get the value of createdBy
-     *
      * @return string
      */
     public function getCreatedBy()
@@ -164,8 +158,6 @@ class CuratedDomain
     }
 
     /**
-     * Get the value of updatedBy
-     *
      * @return string
      */
     public function getUpdatedBy()
@@ -174,8 +166,6 @@ class CuratedDomain
     }
 
     /**
-     * Get the value of createdAt
-     *
      * @return \DateTime
      */
     public function getCreatedAt()
@@ -184,8 +174,6 @@ class CuratedDomain
     }
 
     /**
-     * Get the value of updatedAt
-     *
      * @return \DateTime
      */
     public function getUpdatedAt()
@@ -193,14 +181,14 @@ class CuratedDomain
         return $this->updatedAt;
     }
 
-    public function matchesUrl(string $url)
+    public function matchesUrl(string $url): bool
     {
         $domain = parse_url($url, PHP_URL_HOST);
 
         return $this->matchesDomain($domain);
     }
 
-    public function matchesDomain(string $domain)
+    public function matchesDomain(string $domain): bool
     {
         if ($domain === $this->domain) {
             return true;

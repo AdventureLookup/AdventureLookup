@@ -38,7 +38,7 @@ class IsUrlAllowedValidator extends ConstraintValidator
         foreach ($blockedDomains as $blockedDomain) {
             if ($blockedDomain->matchesUrl($value)) {
                 $this->context->buildViolation($constraint->message)
-                    ->setParameter('{{ string }}', $value)
+                    ->setParameter('{{ url }}', $value)
                     ->setParameter('{{ reason }}', $blockedDomain->getReason())
                     ->addViolation();
                 break;
