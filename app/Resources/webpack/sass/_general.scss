@@ -1,9 +1,9 @@
+a {
+  color: $white--font-color-link;
+}
+
 .content-container {
   @extend .card;
-
-  a {
-    color: $white--font-color-link;
-  }
 
   padding-bottom: $adl-body-padding;
   margin-top: $adl-body-margin-top;
