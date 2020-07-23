@@ -8,7 +8,8 @@ import { Root } from "./adventures_filter/Root";
   }
 
   const root = document.getElementById("sidebar-react-root");
-  const fieldData = Object.values(JSON.parse(root.dataset.fields));
+  const fields = Object.values(JSON.parse(root.dataset.fields));
+  fields.sort((a, b) => b.filterbarSort - a.filterbarSort);
   const initialFilterValues = JSON.parse(root.dataset.initialFilterValues);
   const url = root.dataset.url;
   const initialQuery = root.dataset.initialQuery;
@@ -17,7 +18,7 @@ import { Root } from "./adventures_filter/Root";
   const fieldStats = JSON.parse(root.dataset.fieldStats);
   ReactDOM.render(
     <Root
-      fields={fieldData}
+      fields={fields}
       url={url}
       initialFilterValues={initialFilterValues}
       initialQuery={initialQuery}

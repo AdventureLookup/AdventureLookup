@@ -51,6 +51,7 @@ class FieldProvider
                 'Authors',
                 'Names of people with writing or story credits on the module. Do not include editors or designers.',
                 1,
+                10,
                 Author::class
             ),
             'edition' => new Field(
@@ -62,6 +63,7 @@ class FieldProvider
                 'System / Edition',
                 'The system the game was designed for and the edition of that system if there is one.',
                 1,
+                300,
                 Edition::class
             ),
             'environments' => new Field(
@@ -73,6 +75,7 @@ class FieldProvider
                 'Environments',
                 'The different types of environments the module will take place in.',
                 2,
+                290,
                 Environment::class
             ),
             'items' => new Field(
@@ -84,6 +87,7 @@ class FieldProvider
                 'Notable Items',
                 "The notable magic or non-magic items that are obtained in the module. Only include named items, don't include a +1 sword.",
                 2,
+                250,
                 Item::class
             ),
             'publisher' => new Field(
@@ -95,6 +99,7 @@ class FieldProvider
                 'Publisher',
                 'Publisher of the adventure.',
                 1,
+                30,
                 Publisher::class
             ),
             'setting' => new Field(
@@ -106,6 +111,7 @@ class FieldProvider
                 'Setting',
                 'The narrative universe the module is set in.',
                 1,
+                280,
                 Setting::class
             ),
             'commonMonsters' => new Field(
@@ -117,6 +123,7 @@ class FieldProvider
                 'Common Monsters',
                 'The common monsters featured in the module.',
                 2,
+                260,
                 Monster::class
             ),
             'bossMonsters' => new Field(
@@ -128,6 +135,7 @@ class FieldProvider
                 'Boss Monsters',
                 'The boss monsters and villains featured in the module.',
                 2,
+                270,
                 Monster::class
             ),
 
@@ -138,7 +146,9 @@ class FieldProvider
                 false,
                 true,
                 'Length (# of Pages)',
-                'Total page count of all written material in the module or at least primary string.'
+                'Total page count of all written material in the module or at least primary string.',
+                1,
+                160
             ),
             'minStartingLevel' => new Field(
                 'minStartingLevel',
@@ -147,7 +157,9 @@ class FieldProvider
                 false,
                 true,
                 'Min. Starting Level',
-                'The minimum level characters are expected to be when taking part in the module.'
+                'The minimum level characters are expected to be when taking part in the module.',
+                1,
+                190
             ),
             'maxStartingLevel' => new Field(
                 'maxStartingLevel',
@@ -156,7 +168,9 @@ class FieldProvider
                 false,
                 true,
                 'Max. Starting Level',
-                'The maximum level characters are expected to be when taking part in the module.'
+                'The maximum level characters are expected to be when taking part in the module.',
+                1,
+                180
             ),
             'startingLevelRange' => new Field(
                 'startingLevelRange',
@@ -165,7 +179,9 @@ class FieldProvider
                 false,
                 true,
                 'Starting Level Range',
-                'In case no min. / max. starting levels but rather low/medium/high are given.'
+                'In case no min. / max. starting levels but rather low/medium/high are given.',
+                1,
+                170
             ),
 
             'soloable' => new Field(
@@ -174,7 +190,10 @@ class FieldProvider
                 false,
                 false,
                 true,
-                'Suitable for Solo Play'
+                'Suitable for Solo Play',
+                null,
+                1,
+                70
             ),
             'pregeneratedCharacters' => new Field(
                 'pregeneratedCharacters',
@@ -182,7 +201,10 @@ class FieldProvider
                 false,
                 false,
                 true,
-                'Includes Pregenerated Characters'
+                'Has Pregenerated Characters',
+                'Whether or not this contains character sheets.',
+                1,
+                100
             ),
             'handouts' => new Field(
                 'handouts',
@@ -190,7 +212,10 @@ class FieldProvider
                 false,
                 false,
                 true,
-                'Handouts'
+                'Handouts',
+                'Whether or not handouts are provided.',
+                1,
+                90
             ),
             'tacticalMaps' => new Field(
                 'tacticalMaps',
@@ -198,7 +223,10 @@ class FieldProvider
                 false,
                 false,
                 true,
-                'Battle Mats'
+                'Battle Mats',
+                'Whether or not battle mats are provided.',
+                1,
+                80
             ),
 
             'foundIn' => new Field(
@@ -208,7 +236,9 @@ class FieldProvider
                 true,
                 true,
                 'Found In',
-                'If the adventure is part of a larger product, like a magazine or anthology, list it here.'
+                'If the adventure is part of a larger product, like a magazine or anthology, list it here.',
+                1,
+                5
             ),
             'partOf' => new Field(
                 'partOf',
@@ -217,7 +247,9 @@ class FieldProvider
                 true,
                 true,
                 'Part Of',
-                'The series of adventures that the module is a part of, if applicable.'
+                'The series of adventures that the module is a part of, if applicable.',
+                1,
+                5
             ),
             'year' => new Field(
                 'year',
@@ -226,7 +258,9 @@ class FieldProvider
                 false,
                 true,
                 'Publication Year',
-                'The year this adventure was first published.'
+                'The year this adventure was first published.',
+                1,
+                20
             ),
 
             'link' => new Field(

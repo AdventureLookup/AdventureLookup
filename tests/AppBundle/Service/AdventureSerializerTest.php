@@ -105,9 +105,9 @@ class AdventureSerializerTest extends TestCase
     {
         $this->fieldProvider->method('getFields')->willReturn(new ArrayCollection([
             new Field('title', 'string', false, false, false, 'title'),
-            new Field('authors', 'string', true, false, true, 'authors', null, 1, Author::class),
-            new Field('publisher', 'string', false, false, true, 'publisher', null, 1, Publisher::class),
-            new Field('edition', 'string', false, false, true, 'edition', null, 1, Edition::class),
+            new Field('authors', 'string', true, false, true, 'authors', null, 1, 1, Author::class),
+            new Field('publisher', 'string', false, false, true, 'publisher', null, 1, 1, Publisher::class),
+            new Field('edition', 'string', false, false, true, 'edition', null, 1, 1, Edition::class),
         ]));
 
         $author1 = new Author();
