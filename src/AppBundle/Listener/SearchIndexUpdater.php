@@ -13,6 +13,7 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Elasticsearch\Client;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
+use Psr\Log\LoggerInterface;
 
 class SearchIndexUpdater implements EventSubscriber
 {
@@ -36,6 +37,8 @@ class SearchIndexUpdater implements EventSubscriber
      */
     private $adventureIdsToRemove;
 
+    private LoggerInterface $logger;
+
     /**
      * If true, force immediate ElasticSearch refresh.
      * This is useful for tests, so they don't continue when the index isn't yet refreshed.
@@ -44,12 +47,13 @@ class SearchIndexUpdater implements EventSubscriber
      */
     private $isTestEnvironment;
 
-    public function __construct(ElasticSearch $elasticSearch, AdventureSerializer $serializer, $environment)
+    public function __construct(ElasticSearch $elasticSearch, AdventureSerializer $serializer, LoggerInterface $logger, $environment)
     {
         $this->serializer = $serializer;
         $this->client = $elasticSearch->getClient();
         $this->indexName = $elasticSearch->getIndexName();
         $this->adventureIdsToRemove = [];
+        $this->logger = $logger;
         $this->isTestEnvironment = 'test' === $environment;
     }
 
@@ -200,11 +204,16 @@ class SearchIndexUpdater implements EventSubscriber
             ];
             $body[] = $this->serializer->toElasticDocument($adventure);
         }
-        $this->client->bulk([
+        $response = $this->client->bulk([
             'index' => $this->indexName,
             'body' => $body,
             'refresh' => $this->isTestEnvironment,
         ]);
+        if ($response['errors']) {
+            $this->logger->critical('An error occurred while updating the search index.');
+            $error = $response['items'][0]['index']['error'];
+            $this->logger->warning($error['type'].': '.$error['reason']);
+        }
     }
 
     /**
