@@ -1,0 +1,33 @@
+{% extends 'base_with_collapsed_sidebar.html.twig' %}
+
+{% block content %}
+  <div class="title">Statistics</div>
+
+  <div class="title"><small>Adventures</small></div>
+  <canvas
+    data-chart
+    data-chart-data="{{ adventures | json_encode | e('html_attr') }}"
+    data-chart-label="Total number of adventures"></canvas>
+
+  <div class="title"><small>Change Requests</small></div>
+  <canvas
+    data-chart
+    data-chart-data="{{ changeRequests | json_encode | e('html_attr') }}"
+    data-chart-label="Total number of change requests"></canvas>
+
+  <div class="title"><small>Reviews</small></div>
+  <canvas
+    data-chart
+    data-chart-data="{{ reviews | json_encode | e('html_attr') }}"
+    data-chart-label="Total number of reviews"></canvas>
+
+  <div class="title"><small>Users</small></div>
+  <div class="content">
+    AdventureLookup currently has <strong>{{ userCount }}</strong> registered users.
+  </div>
+
+  <div class="title"><small>Bookmarked Adventures</small></div>
+  <div class="content">
+    Users have created a total of <strong>{{ adventureListCount }}</strong> adventure bookmark lists that each contain about <strong>{{ medianAdventuresPerList }}</strong> adventures.
+  </div>
+{% endblock %}
