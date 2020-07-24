@@ -13,6 +13,10 @@ import "./adventure_list";
 import "./adventures_filter";
 import "./similar_adventures/index";
 
+if (document.location.pathname === "/statistics") {
+  import("./statistics");
+}
+
 window.cookieconsent.initialise({
   palette: {
     popup: { background: "#fff" },
