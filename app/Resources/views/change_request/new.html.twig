@@ -1,16 +1,18 @@
 {% extends 'base_with_collapsed_sidebar.html.twig' %}
 
 {% block content %}
-    <div class="title">{{ adventure.title }} Change Request</div>
-    <div class="content">
-        {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <button type="submit" class="btn btn-success" role="button">
-            Submit change request
-        </button>
-        <a href="{{ path('adventure_show', { slug: adventure.slug }) }}" class="btn btn-secondary" role="button">
-            Cancel
-        </a>
-        {{ form_end(form) }}
+    <div class="adl-card">
+        <div class="adl-card-body">
+            <h1 class="adl-card-title">Create change request for "{{ adventure.title }}"</h1>
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <button type="submit" class="btn btn-success" role="button">
+                Submit change request
+            </button>
+            <a href="{{ path('adventure_show', { slug: adventure.slug }) }}" class="btn btn-secondary" role="button">
+                Cancel
+            </a>
+            {{ form_end(form) }}
+        </div>
     </div>
 {% endblock %}

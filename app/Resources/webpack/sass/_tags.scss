@@ -1,21 +1,30 @@
+$tag-margin: 6px;
+
 .tags-container {
-  padding: 0.8rem $adl-card-padding-side;
+  margin-bottom: 8px;
+  margin-left: -$adl-card-padding-horizontal;
+  margin-right: -$adl-card-padding-horizontal;
+
+  padding: 8px $adl-card-padding-horizontal 8px-$tag-margin
+    $adl-card-padding-horizontal;
+
   border-top: $adl-border-grey-lightest-big;
   border-bottom: $adl-border-grey-lightest-big;
 
   .tag {
-    padding: 3px 12px;
-    margin-right: 6px;
-    margin-bottom: 6px;
+    padding: 4px 12px;
+    margin-right: $tag-margin;
+    margin-bottom: $tag-margin;
+
     background-color: $grey-light--background-color;
     color: $grey-light--font-color;
-    border-radius: $adl-border-radius-big;
-    font-family: "Roboto Condensed", sans-serif;
-    text-transform: uppercase;
+
+    border-radius: 20px;
+    @extend %font-roboto-condensed;
     display: inline-block;
 
     &::before {
-      font: 1rem "FontAwesome";
+      font-family: "FontAwesome";
       padding-right: 0.25rem;
     }
 

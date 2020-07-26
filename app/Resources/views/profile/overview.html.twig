@@ -1,101 +1,99 @@
 {% extends 'profile/base.html.twig' %}
 
 {% block profile_content %}
-    <div class="title">Profile Overview</div>
-    <div class="content">
-        <p>
-            Your username is <em>{{ app.user.username }}</em><br/>
-            Your email address is <em>{{ app.user.email }}</em><br/>
-            You currently have the following roles: <em>{{ format_roles(app.user) }}</em><br/>
-        </p>
-        <ul class="nav nav-tabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <a class="nav-link active" id="adventures-tab"
-                    data-toggle="tab" href="#adventures" role="tab" aria-controls="adventures"
-                    aria-selected="true"><span class="d-none d-sm-inline">
-                    Your </span>Adventures</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" id="reviews-tab" data-toggle="tab" href="#reviews" role="tab" aria-controls="profile" aria-selected="false"><span class="d-none d-sm-inline">Your </span>Reviews</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" id="change-requests-tab" data-toggle="tab" href="#change-requests" role="tab" aria-controls="contact" aria-selected="false"><span class="d-none d-sm-inline">Your </span>Change Requests</a>
-            </li>
-        </ul>
-        <div class="tab-content">
-            <div class="tab-pane fade show active" id="adventures" role="tabpanel" aria-labelledby="adventures-tab">
-                <div class="list-group list-group-flush">
-                    {% for adventure in adventures %}
-                        <a href="{{ path('adventure_show', {slug: adventure.slug}) }}"
-                        class="list-group-item list-group-item-action{% if adventure.changeRequests|length > 0 %} list-group-item-warning{% endif %}">
-                            {{ adventure.title }}
-                            {% if adventure.changeRequests|length > 0 %}
-                                &nbsp;<span class="badge badge-default">{{ adventure.changeRequests|length }} pending change request(s)</span>
-                            {% endif %}
-                        </a>
-                    {% else %}
-                        <a href="{{ path('adventure_new') }}" class="list-group-item list-group-item-action">
-                            You haven't created any adventures yet. Click here to add your first adventure.
-                        </a>
-                    {% endfor %}
-                </div>
+    <h1 class="adl-card-title">Profile Overview</h1>
+    <p>
+        Your username is <em>{{ app.user.username }}</em><br/>
+        Your email address is <em>{{ app.user.email }}</em><br/>
+        You currently have the following roles: <em>{{ format_roles(app.user) }}</em><br/>
+    </p>
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link active" id="adventures-tab"
+                data-toggle="tab" href="#adventures" role="tab" aria-controls="adventures"
+                aria-selected="true"><span class="d-none d-sm-inline">
+                Your </span>Adventures</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="reviews-tab" data-toggle="tab" href="#reviews" role="tab" aria-controls="profile" aria-selected="false"><span class="d-none d-sm-inline">Your </span>Reviews</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="change-requests-tab" data-toggle="tab" href="#change-requests" role="tab" aria-controls="contact" aria-selected="false"><span class="d-none d-sm-inline">Your </span>Change Requests</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="adventures" role="tabpanel" aria-labelledby="adventures-tab">
+            <div class="list-group list-group-flush">
+                {% for adventure in adventures %}
+                    <a href="{{ path('adventure_show', {slug: adventure.slug}) }}"
+                    class="list-group-item list-group-item-action{% if adventure.changeRequests|length > 0 %} list-group-item-warning{% endif %}">
+                        {{ adventure.title }}
+                        {% if adventure.changeRequests|length > 0 %}
+                            &nbsp;<span class="badge badge-default">{{ adventure.changeRequests|length }} pending change request(s)</span>
+                        {% endif %}
+                    </a>
+                {% else %}
+                    <a href="{{ path('adventure_new') }}" class="list-group-item list-group-item-action">
+                        You haven't created any adventures yet. Click here to add your first adventure.
+                    </a>
+                {% endfor %}
             </div>
-            <div class="tab-pane fade" id="change-requests" role="tabpanel" aria-labelledby="change-requests-tab">
-                <div class="list-group list-group-flush">
-                    {% for changeRequest in changeRequests %}
-                        <a href="{{ path('adventure_show', {slug: changeRequest.adventure.slug}) }}"
-                        class="list-group-item list-group-item-action {% if changeRequest.resolved %}list-group-item-success{% endif %}"
-                        id="change-request-{{ changeRequest.id }}">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h6 class="mb-1">
-                                    {% if changeRequest.fieldName %}
-                                        Request to change "{{ changeRequest.fieldName }}"
-                                    {% else %}
-                                        General change request
-                                    {% endif %}
-                                    {% if changeRequest.resolved %}
-                                        <small>RESOLVED</small>
-                                    {% endif %}
-                                </h6>
-                                <small>{{ changeRequest.createdAt|time_diff }}</small>
-                            </div>
-                            <p class="mb-1">{{ changeRequest.comment|nl2br }}</p>
-                            {% if changeRequest.curatorRemarks is not empty %}
-                                <p class="mb-1"><em>Curator remarks: {{ changeRequest.curatorRemarks }}</em></p>
-                            {% endif %}
-                        </a>
-                    {% else %}
-                        <button disabled class="list-group-item">You don't have any pending change requests</button>
-                    {% endfor %}
-                </div>
+        </div>
+        <div class="tab-pane fade" id="change-requests" role="tabpanel" aria-labelledby="change-requests-tab">
+            <div class="list-group list-group-flush">
+                {% for changeRequest in changeRequests %}
+                    <a href="{{ path('adventure_show', {slug: changeRequest.adventure.slug}) }}"
+                    class="list-group-item list-group-item-action {% if changeRequest.resolved %}list-group-item-success{% endif %}"
+                    id="change-request-{{ changeRequest.id }}">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">
+                                {% if changeRequest.fieldName %}
+                                    Request to change "{{ changeRequest.fieldName }}"
+                                {% else %}
+                                    General change request
+                                {% endif %}
+                                {% if changeRequest.resolved %}
+                                    <small>RESOLVED</small>
+                                {% endif %}
+                            </h6>
+                            <small>{{ changeRequest.createdAt|time_diff }}</small>
+                        </div>
+                        <p class="mb-1">{{ changeRequest.comment|nl2br }}</p>
+                        {% if changeRequest.curatorRemarks is not empty %}
+                            <p class="mb-1"><em>Curator remarks: {{ changeRequest.curatorRemarks }}</em></p>
+                        {% endif %}
+                    </a>
+                {% else %}
+                    <button disabled class="list-group-item">You don't have any pending change requests</button>
+                {% endfor %}
             </div>
-            <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
-                <div class="list-group list-group-flush">
-                    {% for review in reviews %}
-                        <a href="{{ path('adventure_show', {slug: review.adventure.slug}) }}#reviews"
-                        class="list-group-item list-group-item-action"
-                        id="review-{{ review.id }}">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h6 class="mb-1">
-                                    {{ review.adventure.title }}
-                                    {% if review.isThumbsUp %}
-                                        <i class="fa fa-fw fa-thumbs-o-up"></i>
-                                    {% else %}
-                                        <i class="fa fa-fw fa-thumbs-o-down"></i>
-                                    {% endif %}
-                                </h6>
-                                <small>{{ review.createdAt|time_diff }}</small>
-                            </div>
-                            {% if review.comment is empty %}
-                                <p class="mb-1"><em>Review contains no comment</em></p>
-                            {% else %}
-                                <p class="mb-1">{{ review.comment|nl2br }}</p>
-                            {% endif %}
-                        </a>
-                    {% else %}
-                        <button disabled class="list-group-item">You haven't left any reviews</button>
-                    {% endfor %}
-                </div>
+        </div>
+        <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+            <div class="list-group list-group-flush">
+                {% for review in reviews %}
+                    <a href="{{ path('adventure_show', {slug: review.adventure.slug}) }}#reviews"
+                    class="list-group-item list-group-item-action"
+                    id="review-{{ review.id }}">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">
+                                {{ review.adventure.title }}
+                                {% if review.isThumbsUp %}
+                                    <i class="fa fa-fw fa-thumbs-o-up"></i>
+                                {% else %}
+                                    <i class="fa fa-fw fa-thumbs-o-down"></i>
+                                {% endif %}
+                            </h6>
+                            <small>{{ review.createdAt|time_diff }}</small>
+                        </div>
+                        {% if review.comment is empty %}
+                            <p class="mb-1"><em>Review contains no comment</em></p>
+                        {% else %}
+                            <p class="mb-1">{{ review.comment|nl2br }}</p>
+                        {% endif %}
+                    </a>
+                {% else %}
+                    <button disabled class="list-group-item">You haven't left any reviews</button>
+                {% endfor %}
             </div>
         </div>
     </div>

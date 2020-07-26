@@ -1,36 +1,58 @@
 {% extends 'base.html.twig' %}
 
-{% block collapsed_sidebar %}
-    <div class="adl-sidebar">
-        <div class="content">
-            <a class="no-underline" href="{{ path('adventure_index') }}"
-                title="Back to all adventures" aria-label="Back to all adventures">
-                <div class="sidebar-title-big">A</div>
-            </a>
-            <a class="no-underline" href="{{ path('adventure_index') }}"
-                title="Search for another adventure" aria-label="Search for another adventure">
-                <div class="sidebar-title-big-secondary"><i class="fa fa-search"></i></div>
-            </a>
-            <a class="no-underline" href="{{ path('adventure_random') }}"
-                title="Jump to random adventure" aria-label="Jump to random adventure">
-                <div class="sidebar-title-big-offwhite"><i class="fa fa-random"></i></div>
-            </a>
-        </div>
-    </div>
-{% endblock %}
+{# Overwrite flash message position #}
+{% block flashes %}{% endblock %}
 
 {% block body %}
     <div class="container">
-        <div class="row">
-            <div class="col">
-                {{ block('collapsed_sidebar') }}
-            </div>
-            <div class="col-11">
-                {% block content_without_container %}
-                    <div class="content-container">
-                        {% block content %}{% endblock %}
+        <div class="row adl-layout-collapsed-sidebar">
+            <div class="sidebar">
+                <form method="get" action="{{ path('adventure_index') }}">
+                    <div>
+                        <a class="icon-btn" href="{{ path('adventure_index') }}"
+                            title="Back to all adventures" aria-label="Back to all adventures">
+                            A<span class="sr-only">dventureLookup</span>
+                        </a>
+                        {# Search bar on small screens including submit button #}
+                        <input name="q" type="text" class="form-control"
+                            aria-label="Search query" placeholder="Search adventures..." />
+                        <button type="submit" class="d-md-none icon-btn secondary" href="{{ path('adventure_index') }}"
+                            title="Search for another adventure" aria-label="Search for another adventure">
+                            <i class="fa fa-search"></i>
+                        </button>
+
+                        {# Search button on large screens #}
+                        <button type="button" class="d-none d-md-block icon-btn secondary" href="{{ path('adventure_index') }}"
+                            title="Search for another adventure" aria-label="Search for another adventure"
+                            onclick="
+                                const $element = $('.extended-search-bar');
+                                $element.removeClass('d-none');
+                                $element.find('input').focus();
+                                $element.addClass('active');">
+                            <i class="fa fa-search"></i>
+                        </button>
+
+                        <a class="icon-btn offwhite" href="{{ path('adventure_random') }}"
+                            style="z-index: 2" {# So that the box-shadow from the extended search bar does not overlap this button #}
+                            title="Jump to random adventure" aria-label="Jump to random adventure">
+                            <i class="fa fa-random"></i>
+                        </a>
                     </div>
-                {% endblock %}
+                </form>
+            </div>
+            <div class="content">
+                <form method="get" action="{{ path('adventure_index') }}" class="d-none extended-search-bar">
+                    <input name="q" type="text" class="form-control"
+                        aria-label="Search query" placeholder="Search adventures..." />
+                    <button type="submit" class="icon-btn secondary" href="{{ path('adventure_index') }}"
+                        title="Search for another adventure" aria-label="Search for another adventure">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </form>
+                <main>
+                    {% include 'flashes.html.twig' %}
+                    {% block content %}{% endblock %}
+                </main>
             </div>
         </div>
     </div>

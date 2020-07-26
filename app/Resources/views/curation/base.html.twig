@@ -1,25 +1,26 @@
 {% extends 'base_with_collapsed_sidebar.html.twig' %}
 
 {% block content %}
-    <div class="title">Curation</div>
+    <div class="adl-card">
+        <div class="adl-card-body">
+            <h1 class="adl-card-title">Curation</h1>
+            <ul class="nav nav-tabs mb-3">
+                <li class="nav-item">
+                    <a class="nav-link{% if app.request.attributes.get('_route') == 'curation_adventures_with_change_requests' %} active{% endif %}"
+                        href="{{ path('curation_adventures_with_change_requests') }}">Adventures with the most unresolved change requests</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link{% if app.request.attributes.get('_route') == 'curation_pending_change_requests' %} active{% endif %}"
+                        href="{{ path('curation_pending_change_requests') }}">Newest unresolved Change Requests</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link{% if app.request.attributes.get('_route') == 'curation_bulk_edit_adventures' %} active{% endif %}"
+                        href="{{ path('curation_bulk_edit_adventures') }}">Bulk edit adventures</a>
+                </li>
+            </ul>
 
-    <div class="content">
-        <ul class="nav nav-tabs mb-3">
-            <li class="nav-item">
-                <a class="nav-link{% if app.request.attributes.get('_route') == 'curation_adventures_with_change_requests' %} active{% endif %}"
-                    href="{{ path('curation_adventures_with_change_requests') }}">Adventures with the most unresolved change requests</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link{% if app.request.attributes.get('_route') == 'curation_pending_change_requests' %} active{% endif %}"
-                    href="{{ path('curation_pending_change_requests') }}">Newest unresolved Change Requests</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link{% if app.request.attributes.get('_route') == 'curation_bulk_edit_adventures' %} active{% endif %}"
-                    href="{{ path('curation_bulk_edit_adventures') }}">Bulk edit adventures</a>
-            </li>
-        </ul>
-
-        {% block curation_content %}{% endblock %}
+            {% block curation_content %}{% endblock %}
+        </div>
     </div>
 {% endblock %}
 

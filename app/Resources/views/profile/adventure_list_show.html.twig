@@ -16,21 +16,21 @@
         <button type="button" class="btn btn-link ml-2" id="adventure_list-cancel-btn">Cancel</button>
         {{ form_end(edit_form) }}
 
-        <div id="adventure_list-title" class="title">{{ list.name }}</div>
-        <div class="content">
-            <div class="list-group">
-                {% for adventure in list.adventures %}
-                    <a href="{{ path('adventure_show', {slug: adventure.slug}) }}" class="list-group-item">
-                        {{ adventure.title }}
-                    </a>
-                {% else %}
-                    <div class="list-group-item list-group-item-info">
-                        You haven't added any adventures yet. To do so,
-                        search for your favourite adventure and use the
-                        "Bookmark" button.
-                    </div>
-                {% endfor %}
-            </div>
+        <h1 id="adventure_list-title" class="adl-card-title">{{ list.name }}</h1>
+        <div class="clearfix"></div>
+
+        <div class="list-group">
+            {% for adventure in list.adventures %}
+                <a href="{{ path('adventure_show', {slug: adventure.slug}) }}" class="list-group-item">
+                    {{ adventure.title }}
+                </a>
+            {% else %}
+                <div class="list-group-item list-group-item-info">
+                    You haven't added any adventures yet. To do so,
+                    search for your favourite adventure and use the
+                    "Bookmark" button.
+                </div>
+            {% endfor %}
         </div>
     </div>
 {% endblock %}

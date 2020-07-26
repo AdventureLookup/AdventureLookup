@@ -6,7 +6,7 @@ export function SearchTips() {
   if (!expanded) {
     return (
       <a
-        id="search-tips"
+        id="search-tips-link"
         href="#"
         onClick={(e) => {
           e.preventDefault();
@@ -20,9 +20,9 @@ export function SearchTips() {
 
   return (
     <div className="adl-card">
-      <div className="card-body">
-        <h5 className="card-title">Advanced search tips</h5>
-        <p className="card-text">
+      <div className="adl-card-body">
+        <p className="adl-card-title">Advanced search tips</p>
+        <p className="adl-card-text">
           If you enter <strong>magic ghoul party</strong> above, only adventures
           that contain all three terms will be found. If you want to search for
           adventures with either <strong>magic</strong>, <strong>ghoul</strong>,

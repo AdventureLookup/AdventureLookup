@@ -1,0 +1,21 @@
+{% if app.session.flashbag.peekAll is not empty %}
+    {% if wrap|default(false) %}
+        <div class="container adl-flashes-standalone">
+            <div class="row">
+                <div class="col">
+    {% endif %}
+    <div class="adl-flashes">
+        {% for label, messages in app.session.flashbag.all %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+    {% if wrap|default(false) %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endif %}

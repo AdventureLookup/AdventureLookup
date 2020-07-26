@@ -245,21 +245,21 @@ export function StringFilter({
       {filteredAdditionalOptions.length > showMoreAfter && (
         <>
           {!showAll ? (
-            <div
+            <button
               className="option show-more"
               onClick={() => setShowAll(true)}
               title="show more"
             >
               <i className="fa fa-arrow-down"></i>
-            </div>
+            </button>
           ) : (
-            <div
+            <button
               className="option show-less"
               onClick={() => setShowAll(false)}
               title="show less"
             >
               <i className="fa fa-arrow-up"></i>
-            </div>
+            </button>
           )}
         </>
       )}
@@ -269,7 +269,7 @@ export function StringFilter({
 
 function StringCheckbox({ label, checked, count, onChange }) {
   return (
-    <label className="option">
+    <label className="option option-string">
       <input
         type="checkbox"
         checked={checked}

@@ -18,61 +18,60 @@
     {% endapply %}
 {% endmacro %}
 
-<div class="adventure-container">
-    <div class="thumbnail-container">
-        {% if adventure.thumbnailUrl %}
-            <img alt="Cover of {{ adventure.title }}" src="{{ adventure.thumbnailUrl }}" class="thumbnail d-none d-sm-block" />
-        {% endif %}
-    </div>
-    <h2 class="title">{{ adventure.title }}</h2>
-    <div class="tags-container">
-        {% if adventure.edition %}
-            {{ _self.search('edition', adventure.edition.name, null, false, "tag tag-edition") }}
-        {% else %}
-            <div class="tag tag-edition">
-                Unknown Edition
-            </div>
-        {% endif %}
-        {% if adventure.minStartingLevel %}
-            {% if adventure.minStartingLevel is same as (adventure.maxStartingLevel) or adventure.maxStartingLevel is null %}
-                {{ _self.search('minStartingLevel', adventure.minStartingLevel, format_level(adventure), false, "tag tag-level") }}
+<div class="adl-card adventure-details">
+    {% if adventure.thumbnailUrl %}
+        <img alt="Cover of {{ adventure.title }}" src="{{ adventure.thumbnailUrl }}" class="adl-card-thumbnail" />
+    {% endif %}
+    <div class="adl-card-body{% if adventure.thumbnailUrl %} adl-card-body-thumbnail{% endif %}">
+        <h1 class="adl-card-title">{{ adventure.title }}</h2>
+        <div class="tags-container">
+            {% if adventure.edition %}
+                {{ _self.search('edition', adventure.edition.name, null, false, "tag tag-edition") }}
             {% else %}
-                <a class="tag tag-level" href="{{ path('adventure_index', {
-                    ('minStartingLevel-min'): adventure.minStartingLevel,
-                    ('maxStartingLevel-max'): adventure.maxStartingLevel,
-                    seed: 'now'|date('U') * 1000
-                }) }}">{{ format_level(adventure) }}</a>
+                <div class="tag tag-edition">
+                    Unknown Edition
+                </div>
             {% endif %}
-        {% elseif adventure.startingLevelRange %}
-            {{ _self.search('startingLevelRange', adventure.startingLevelRange, format_level(adventure), false, "tag tag-level") }}
-        {% else %}
-            <div class="tag tag-level">
-                Unknown party level
-            </div>
-        {% endif %}
-        {% if adventure.numPages %}
-                {{ _self.search('numPages', {
-                    min: (adventure.numPages * 0.85)|round,
-                    max: (adventure.numPages * 1.15)|round
-                 }, adventure.numPages ~ ' pages', true, "tag tag-length") }}
-        {% else %}
-            <div class="tag tag-length">
-                ? pages
-            </div>
-        {% endif %}
+            {% if adventure.minStartingLevel %}
+                {% if adventure.minStartingLevel is same as (adventure.maxStartingLevel) or adventure.maxStartingLevel is null %}
+                    {{ _self.search('minStartingLevel', adventure.minStartingLevel, format_level(adventure), false, "tag tag-level") }}
+                {% else %}
+                    <a class="tag tag-level" href="{{ path('adventure_index', {
+                        ('minStartingLevel-min'): adventure.minStartingLevel,
+                        ('maxStartingLevel-max'): adventure.maxStartingLevel,
+                        seed: 'now'|date('U') * 1000
+                    }) }}">{{ format_level(adventure) }}</a>
+                {% endif %}
+            {% elseif adventure.startingLevelRange %}
+                {{ _self.search('startingLevelRange', adventure.startingLevelRange, format_level(adventure), false, "tag tag-level") }}
+            {% else %}
+                <div class="tag tag-level">
+                    Unknown party level
+                </div>
+            {% endif %}
+            {% if adventure.numPages %}
+                    {{ _self.search('numPages', {
+                        min: (adventure.numPages * 0.85)|round,
+                        max: (adventure.numPages * 1.15)|round
+                    }, adventure.numPages ~ ' pages', true, "tag tag-length") }}
+            {% else %}
+                <div class="tag tag-length">
+                    ? pages
+                </div>
+            {% endif %}
+        </div>
+        <p class="adl-card-text description">
+            {% if adventure.description %}
+                {{ adventure.description|nl2br }}
+            {% else %}
+                <em>No description available.</em>
+            {% endif %}
+        </p>
     </div>
-    <p class="description">
-        {% if adventure.description %}
-            {{ adventure.description|nl2br }}
-        {% else %}
-            <em>No description available.</em>
-        {% endif %}
-    </p>
-
     <div class="container">
         <div class="detail-row">
-            <div class="col-4">
-                <div class="label">Written By</div>
+            <div class="col-4 first">
+                <h2 class="label">Written By</h2>
                 {% for author in adventure.authors %}
                     {{ _self.search('authors', author.name, author.name) }}{{ not loop.last ? ', ' : '' }}
                 {% else %}
@@ -80,7 +79,7 @@
                 {% endfor %}
             </div>
             <div class="col-4">
-                <div class="label">Published By</div>
+                <h2 class="label">Published By</h2>
                 {% if adventure.publisher %}
                     {{ _self.search('publisher', adventure.publisher.name) }}
                 {% else %}
@@ -88,7 +87,7 @@
                 {% endif %}
             </div>
             <div class="col-4">
-                <div class="label">Publication Year</div>
+                <h2 class="label">Publication Year</h2>
                 {% if adventure.year %}
                     {{ _self.search('year', {min: adventure.year, max: adventure.year}, adventure.year, true) }}
                 {% else %}
@@ -97,8 +96,8 @@
             </div>
         </div>
         <div class="detail-row">
-            <div class="col-5 col-md-6">
-                <div class="label">Setting</div>
+            <div class="col-5 col-md-6 first">
+                <h2 class="label">Setting</h2>
                 {% if adventure.setting %}
                     {{ _self.search('setting', adventure.setting.name) }}
                 {% else %}
@@ -106,15 +105,15 @@
                 {% endif %}
             </div>
             <div class="col-7 col-md-6">
-                <div class="label">Environments</div>
+                <h2 class="label">Environments</h2>
                 {% for environment in adventure.environments %}
                     {{ _self.search('environments', environment.name) }}{{ not loop.last ? ', ' : '' }}
                 {% else %}
                     Unknown
                 {% endfor %}
             </div>
-            <div class="col-12">
-                <div class="label">Link</div>
+            <div class="col-12 first">
+                <h2 class="label">Link</h2>
                 {% if adventure.link %}
                     {% set tmp = adventure.link|add_affiliate_code %}
                     {% set link, affiliateCodeAdded = tmp[0], tmp[1] %}
@@ -132,78 +131,90 @@
         </div>
 
         <div class="detail-row">
-            <div class="col-4 col-md">
-                <div class="label">Handouts?</div>
+            <div class="col-4 col-md first">
+                <h2 class="label">Includes Handouts</h2>
                 {{ _self.search('handouts', adventure.handouts, adventure.handouts|bool2str) }}
             </div>
             <div class="col-4 col-md">
-                <div class="label">Battle Mats?</div>
+                <h2 class="label">Has Battle Mats</h2>
                 {{ _self.search('tacticalMaps', adventure.tacticalMaps, adventure.tacticalMaps|bool2str) }}
             </div>
             <div class="col-4 col-md">
-                <div class="label">Includes Characters?</div>
+                <h2 class="label">Has Character Sheets</h2>
                 {{ _self.search('pregeneratedCharacters', adventure.pregeneratedCharacters, adventure.pregeneratedCharacters|bool2str) }}
             </div>
-            <div class="col-6 col-md">
-                <div class="label">Level</div>
-                    <span class="level">{{ format_level(adventure)|default('Unknown party level') }}</span>
+            <div class="col-6 col-md first-sm-down">
+                <h2 class="label">Level</h2>
+                {{ format_level(adventure)|default('Unknown party level')|capitalize }}
             </div>
             <div class="col-6 col-md">
-                <div class="label">Soloable?</div>
+                <h2 class="label">Is Soloable</h2>
                 {{ _self.search('soloable', adventure.soloable, adventure.soloable|bool2str) }}
             </div>
         </div>
 
         <div class="detail-row">
-            <div class="col-6">
-                <div class="label">Found In</div>
+            <div class="col-6 first">
+                <h2 class="label">Found In</h2>
                 {{ _self.search('foundIn', adventure.foundIn) }}
             </div>
             <div class="col-6">
-                <div class="label">Part Of</div>
+                <h2 class="label">Part Of</h2>
                 {{ _self.search('partOf', adventure.partOf) }}
             </div>
         </div>
 
         <div class="detail-row">
-            <div class="col-12 col-sm-6 col-lg">
-                <div class="label">Boss Monsters and Villains</div>
-                <ul>
-                    {% for monster in adventure.bossMonsters %}
-                        <li>
-                            {{ _self.search('bossMonsters', monster.name) }}
-                            {% for type in monster.types %}
-                                <span class="badge badge-primary">{{ type.name }}</span>
-                            {% endfor %}
-                        </li>
-                    {% endfor %}
-                </ul>
+            <div class="col-12 col-sm-6 col-lg first">
+                <h2 class="label">Boss Monsters and Villains</h2>
+                {% if adventure.bossMonsters|length %}
+                    <ul>
+                        {% for monster in adventure.bossMonsters %}
+                            <li>
+                                {{ _self.search('bossMonsters', monster.name) }}
+                                {% for type in monster.types %}
+                                    <span class="badge badge-primary">{{ type.name }}</span>
+                                {% endfor %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    None
+                {% endif %}
             </div>
-            <div class="col-12 col-sm-6 col-lg">
-                <div class="label">Common Monsters</div>
-                <ul>
-                    {% for monster in adventure.commonMonsters %}
-                        <li>
-                            {{ _self.search('commonMonsters', monster.name) }}
-                            {% for type in monster.types %}
-                                <span class="badge badge-primary">{{ type.name }}</span>
-                            {% endfor %}
-                        </li>
-                    {% endfor %}
-                </ul>
+            <div class="col-12 col-sm-6 col-lg first-xs">
+                <h2 class="label">Common Monsters</h2>
+                {% if adventure.commonMonsters|length %}
+                    <ul>
+                        {% for monster in adventure.commonMonsters %}
+                            <li>
+                                {{ _self.search('commonMonsters', monster.name) }}
+                                {% for type in monster.types %}
+                                    <span class="badge badge-primary">{{ type.name }}</span>
+                                {% endfor %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    None
+                {% endif %}
             </div>
-            <div class="col-12 col-lg">
-                <div class="label">Notable Items</div>
-                <ul>
-                    {% for item in adventure.items %}
-                        <li>{{ _self.search('items', item.name) }}</li>
-                    {% endfor %}
-                </ul>
+            <div class="col-12 col-lg first-md-down">
+                <h2 class="label">Notable Items</h2>
+                {% if adventure.items|length %}
+                    <ul>
+                        {% for item in adventure.items %}
+                            <li>{{ _self.search('items', item.name) }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    None
+                {% endif %}
             </div>
         </div>
         {% if affiliateCodeAdded %}
             <div class="detail-row">
-                <div class="col">
+                <div class="col first">
                     <p id="affiliate-link-info" class="text-muted">
                         <sup>1</sup> This is an affiliate link.
                         We may get a small comission if you buy something using that link.

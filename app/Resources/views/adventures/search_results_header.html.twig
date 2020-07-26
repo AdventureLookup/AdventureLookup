@@ -1,9 +1,12 @@
 <div id="search-title">
-    <div>
-        <span class="d-none d-lg-block">A community for lazy dungeon masters</span>
-    </div>
-    <div>
+    {# Wrap tagline into additional <span> so that the total number of adventures is always right-aligned, even if the tagline is hidden. #}
+    <span>
+        <span class="d-none d-lg-block">
+            A community for lazy dungeon masters
+        </span>
+    </span>
+    <span>
         {{ totalNumberOfResults }} {{ totalNumberOfResults == 1 ? 'adventure' : 'adventures' }} found
-    </div>
+    </span>
 </div>
 <div id="search-results-header-react-root"></div>

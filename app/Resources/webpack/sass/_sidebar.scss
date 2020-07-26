@@ -1,108 +1,57 @@
 .adl-sidebar {
-  align-self: flex-start;
-  margin-top: 20px;
-  padding: 0;
-  font-family: "Roboto", sans-serif;
-  text-transform: uppercase;
-  text-align: center;
+  @extend %font-roboto;
+  box-shadow: $adl-box-shadow;
+  margin-bottom: $layout-gutter;
 
-  @include media-breakpoint-down(md) {
-    margin-top: 0;
+  button {
+    border: none;
+    text-transform: inherit;
   }
 
-  > .content {
-    box-shadow: $adl-box-shadow;
-    margin-bottom: 8px;
+  .sidebar-title {
+    display: block;
+    padding: $adl-filter-padding;
 
-    .sidebar-title {
-      display: block;
-      padding: $adl-filter-padding;
-      background-color: $adl-coral;
-      color: #ffffff;
-      font-size: 1.5rem;
-      font-weight: 600;
-      letter-spacing: 0.2rem;
-      text-align: center;
+    @extend %background--coral--hoverable;
 
-      &:hover {
-        cursor: pointer;
-        background-color: darken($adl-coral, 7.5%);
-        text-decoration: none;
-      }
-    }
-
-    .sidebar-title-big {
-      @extend .sidebar-title;
-
-      padding: $adl-filter-padding-top $adl-filter-padding-side/2;
-      font-size: 2rem;
-    }
-
-    .sidebar-title-big i.fa {
-      @extend .sidebar-title-big;
-
-      line-height: inherit;
-      display: inline-flex;
-      justify-content: space-around;
-      align-items: center;
-    }
-
-    .sidebar-title-big-secondary {
-      @extend .sidebar-title-big;
-      background-color: $adl-grey-dark;
-
-      &:hover {
-        background-color: darken($adl-grey-dark, 7.5%);
-        cursor: pointer;
-      }
-    }
-
-    .sidebar-title-big-offwhite {
-      @extend .sidebar-title-big;
-      color: $adl-grey-dark;
-      background-color: $adl-offwhite;
-
-      &:hover {
-        background-color: darken($adl-offwhite, 7.5%);
-      }
-    }
-
-    .sidebar-block {
-      min-height: $adl-filter-min-height;
-      border-bottom: $adl-border-grey-lightest-big;
-      background-color: $grey-dark--background-color;
-      color: $grey-dark--font-color;
-
-      .block-title {
-        padding: $adl-filter-padding;
-        font-size: 1.2rem;
-
-        &:hover {
-          background-color: $grey-darkest--background-color;
-          cursor: pointer;
-        }
-      }
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.2rem;
+    text-align: center;
+    @include media-breakpoint-only(md) {
+      // Otherwise the text does not fit into a single line.
+      letter-spacing: normal;
     }
   }
 
-  .btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%; // for buttons and inputs
-    margin-top: 12px;
-    padding: 8px 10px;
+  .btn-sidebar {
+    display: block;
+    padding: $adl-filter-padding;
+
     border-radius: 0;
-    font: 1.2rem "Roboto Condensed";
-    text-transform: uppercase;
-    box-shadow: $adl-box-shadow;
-
-    &:not(.disabled):hover {
-      cursor: pointer;
+    border-bottom: $adl-border-grey-lightest-big;
+    &:last-child {
+      border-bottom: none;
     }
 
-    > :first-child {
-      margin-right: 3px;
-    }
+    font-size: 1.2rem;
+    text-align: left;
+
+    @extend %background--grey-dark--hoverable;
   }
 }
+
+.adl-sidebar-standalone-btn {
+  padding: 8px 10px;
+  margin-bottom: $layout-gutter / 2;
+  border-radius: 0;
+  box-shadow: $adl-box-shadow;
+  font-size: 1.2rem;
+  @extend %font-roboto-condensed;
+
+  > i:first-child {
+    margin-right: 3px;
+  }
+}
+
+@import "sidebar-filters";

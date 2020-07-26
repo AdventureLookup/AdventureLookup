@@ -5,13 +5,13 @@
     {% include 'adventure/_new_content_modal.html.twig' %}
 {% endblock %}
 
-{% block content_without_container %}
-    <div class="adventure-container"  id="page--create-adventure"
+{% block content %}
+    <div class="adl-card" id="page--create-adventure"
         data-similar-titles-url="{{ path('similar_titles_search') }}"
         data-search-url="{{ path('api_autocomplete_field', {fieldName: '__FIELD__'}) }}">
-        <div class="title">New adventure</div>
-        <div class="alert alert-warning">AdventureLookup is for D&D and its clones. Not other systems/genres.</div>
-        <div class="content">
+        <div class="adl-card-body">
+            <h1 class="adl-card-title">Create new adventure</h1>
+            <div class="alert alert-warning mb-4">AdventureLookup is for D&D and its clones. Not other systems/genres.</div>
 
             {{ form_start(form) }}
 

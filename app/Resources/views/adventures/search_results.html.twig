@@ -1,11 +1,11 @@
 <div id="search-results">
     {% for adventure in adventures %}
-        <a href="{{ path('adventure_show', { 'slug': adventure.slug }) }}">
-            <div class="adventure">
-                {% if adventure.thumbnailUrl %}
-                    <img alt="Cover of {{ adventure.title }}" data-src="{{ adventure.thumbnailUrl }}" class="thumbnail d-none d-sm-block" />
-                {% endif %}
-                <div class="title">{{ adventure.title }}</div>
+        <a href="{{ path('adventure_show', { 'slug': adventure.slug }) }}" class="adl-card">
+            {% if adventure.thumbnailUrl %}
+                <img alt="Cover of {{ adventure.title }}" data-src="{{ adventure.thumbnailUrl }}" class="adl-card-thumbnail" />
+            {% endif %}
+            <div class="adl-card-body{% if adventure.thumbnailUrl %} adl-card-body-thumbnail{% endif %}">
+                <h2 class="adl-card-title">{{ adventure.title }}</h2>
                 <div class="tags-container">
                     <div class="tag tag-edition">
                         {{ adventure.edition ?: 'Unknown Edition' }}
@@ -20,7 +20,7 @@
                         <i class="fa fa-thumbs-down"></i> {{ adventure.numNegativeReviews }}
                     </div>
                 </div>
-                <p class="description">
+                <p class="adl-card-text truncate-3">
                     {% if adventure.description %}
                         {{ adventure.description }}
                     {% else %}
@@ -31,9 +31,9 @@
         </a>
     {% endfor %}
     {% if totalNumberOfResults == 0 %}
-        <div class="no-results">No adventures match your search criteria</div>
+        <div class="no-results">No adventures match your search criteria.</div>
     {% elseif not hasMoreResults %}
-        <div class="no-more-results">No more results match your search criteria</div>
+        <div class="no-more-results">No more results match your search criteria.</div>
     {% endif %}
 </div>
 

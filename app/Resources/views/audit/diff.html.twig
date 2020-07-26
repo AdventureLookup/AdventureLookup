@@ -1,50 +1,40 @@
-{% extends "base.html.twig" %}
+{% extends "base_with_collapsed_sidebar.html.twig" %}
 
-{% block body %}
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <h1>{{ audit_assoc(log.source) }}
-                    <small>audit diff</small>
-                </h1>
-
-                <div class="card">
-                    <div class="card-block">
-                        <h4 class="card-title">
-                            <i class="fa fa-archive"></i> {{ audit_assoc(log.source) }}
-                        </h4>
-                    </div>
-                    {% if log.action == 'insert' %}
-                        <table class="table table-striped">
-                            <tr>
-                                <th>Field</th>
-                                <th>Value</th>
-                            </tr>
-                            {% for field, change in log.diff %}
-                                <tr>
-                                    <td>{{ field }}</td>
-                                    <td>{{ audit_value(change.new) }}</td>
-                                </tr>
-                            {% endfor %}
-                        </table>
-                    {% else %}
-                        <table class="table table-striped">
-                            <tr>
-                                <th>Field</th>
-                                <th>Old</th>
-                                <th>New</th>
-                            </tr>
-                            {% for field, change in log.diff %}
-                                <tr>
-                                    <td>{{ field }}</td>
-                                    <td>{{ audit_value(change.old) }}</td>
-                                    <td>{{ audit_value(change.new) }}</td>
-                                </tr>
-                            {% endfor %}
-                        </table>
-                    {% endif %}
-                </div>
-            </div>
+{% block content %}
+    <div class="adl-card">
+        <div class="adl-card-body">
+            <h1 class="adl-card-title">{{ audit_assoc(log.source) }}
+                <small>audit diff</small>
+            </h1>
+            {% if log.action == 'insert' %}
+                <table class="table table-striped">
+                    <tr>
+                        <th>Field</th>
+                        <th>Value</th>
+                    </tr>
+                    {% for field, change in log.diff %}
+                        <tr>
+                            <td>{{ field }}</td>
+                            <td>{{ audit_value(change.new) }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <table class="table table-striped">
+                    <tr>
+                        <th>Field</th>
+                        <th>Old</th>
+                        <th>New</th>
+                    </tr>
+                    {% for field, change in log.diff %}
+                        <tr>
+                            <td>{{ field }}</td>
+                            <td>{{ audit_value(change.old) }}</td>
+                            <td>{{ audit_value(change.new) }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

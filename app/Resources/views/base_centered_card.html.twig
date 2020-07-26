@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}{% endblock %}
+{% block body %}
+    <div class="adl-layout-centered">
+        <div class="adl-card">
+            <div class="adl-card-body">
+                <h1 class="adl-card-title text-center text-uppercase">{% block title %}{% endblock %}</h1>
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,124 @@
+.filter {
+  border-bottom: $adl-border-grey-lightest-big;
+  position: relative;
+
+  .filter-title {
+    display: flex;
+    justify-content: space-between;
+
+    &:after {
+      content: $fa-var-caret-down;
+      font: 1.75rem "FontAwesome";
+    }
+  }
+  &.open {
+    .filter-title:after {
+      content: $fa-var-caret-up;
+    }
+  }
+  &.in-use {
+    .filter-title:after {
+      content: $fa-var-filter;
+      color: $adl-coral;
+    }
+  }
+  &.always-open {
+    // Don't suggest that the always-open filters can be collapsed
+    .filter-title {
+      &:after {
+        content: "";
+      }
+      &:hover {
+        background-color: $adl-grey-dark;
+        cursor: default;
+      }
+    }
+  }
+
+  .filter-options {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $adl-filter-padding;
+
+    background-color: $grey-darkest--background-color;
+    color: $grey-darkest--font-color;
+
+    border-bottom: 1px solid $adl-grey-light;
+
+    .spacer {
+      flex-grow: 1;
+    }
+
+    &.option-string:hover,
+    &.show-more:hover,
+    &.show-less:hover,
+    &.apply:hover {
+      background-color: darken($adl-grey-darkest, 7.5%);
+      cursor: pointer;
+    }
+
+    > input[type="checkbox"] {
+      margin-right: 4px;
+    }
+
+    &.show-more,
+    &.show-less,
+    &.apply {
+      width: 100%;
+      justify-content: space-around;
+      font-size: 0.9rem;
+    }
+
+    &.option-integer {
+      display: flex;
+
+      input {
+        border-radius: 0;
+        @include media-breakpoint-up(lg) {
+          width: 50%;
+        }
+      }
+
+      input:first-child {
+        margin-bottom: 3px;
+        @include media-breakpoint-up(lg) {
+          margin-bottom: 0;
+          margin-right: 3px;
+        }
+      }
+
+      @include media-breakpoint-down(md) {
+        flex-direction: column;
+      }
+    }
+  }
+
+  &-searchbar {
+    width: 100%;
+    padding: 0 4px;
+    border-radius: 0px;
+    border: none;
+  }
+}
+
+#filter-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-height: 30px;
+
+  @extend %background--coral--hoverable;
+
+  &:after {
+    content: "\f141";
+    font: 2.5rem "FontAwesome";
+  }
+}

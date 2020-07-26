@@ -1,67 +1,72 @@
-<div data-toggle="collapse" data-target="#change-request-content" aria-expanded="true" aria-controls="change-request-content">
-  <h3 class="title">Change Requests</h3>
-  <i class="fa"></i>
-</div>
-<div id="change-request-content" class="collapse show">
-<div class="alert alert-info">
-    You can use change requests to report missing, wrong or new information for this adventure.
-    Curators and the adventure's author will then be able to incorporate your requested changes into the adventure.
-    Once that's done, you and they can mark your change request as resolved.
-    {% if is_granted('create', newChangeRequest) %}
-        <a class="alert-link" href="{{ path('changerequest_new', {adventure_id: adventure.id}) }}">Click here to submit a new change request.</a>
-    {% else %}
-        <a class="alert-link" href="{{ path('login') }}">Login to submit a change request.</a>
-    {% endif %}
-</div>
-<ul class="list-group">
-    {% for changeRequest in changeRequests %}
-        <li class="list-group-item flex-column align-items-start{% if changeRequest.resolved %} list-group-item-success{% endif %}">
-            <div class="d-flex w-100 justify-content-between">
-                <h6 class="mb-1">
-                    {% if changeRequest.fieldName %}
-                        Request to change "{{ changeRequest.fieldName }}"
-                    {% else %}
-                        General change request
-                    {% endif %}
-                    <small>by @{{ changeRequest.createdBy }}.</small>
-                    {% if changeRequest.resolved %}
-                        <small>RESOLVED</small>
-                    {% endif %}
-                </h6>
-                <small>{{ changeRequest.createdAt|time_diff }}</small>
-            </div>
-            <p class="mb-1">{{ changeRequest.comment|nl2br }}</p>
-            {% if changeRequest.curatorRemarks is not empty %}
-                <p class="mb-1"><em>Curator remarks: {{ changeRequest.curatorRemarks }}</em></p>
+<div class="adl-card" id="change-requests">
+    <div class="adl-card-body pb-0"
+        data-toggle="collapse" data-target="#change-request-content" aria-expanded="true" aria-controls="change-request-content">
+        <h2 class="adl-card-title">Change Requests</h2>
+        <i class="fa"></i>
+    </div>
+    <div id="change-request-content" class="collapse show">
+        <div class="alert alert-info">
+            You can use change requests to report missing, wrong or new information for this adventure.
+            Curators and the adventure's author will then be able to incorporate your requested changes into the adventure.
+            Once that's done, you and they can mark your change request as resolved.
+            {% if is_granted('create', newChangeRequest) %}
+                <a class="alert-link" href="{{ path('changerequest_new', {adventure_id: adventure.id}) }}">Click here to submit a new change request.</a>
+            {% else %}
+                <a class="alert-link" href="{{ path('login') }}">Login to submit a change request.</a>
             {% endif %}
-            <div class="d-flex w-100 justify-content-between">
-                {% if is_granted('toggle_resolved', changeRequest) %}
-                    <form action="{{ path('changerequest_resolve', {id: changeRequest.id}) }}" method="post">
-                        <div>
-                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('resolveChangeRequest') }}" />
-                            <input type="hidden" name="resolve" value="{{ not changeRequest.resolved }}" />
-                            <input type="submit" value="{% if changeRequest.resolved %}Unresolve{% else %}Resolve{% endif %}" class="btn btn-sm btn-primary" role="button" />
-                        </div>
-                    </form>
-                {% endif %}
-                {% if is_granted('edit_curator_remarks', changeRequest) %}
-                    <form action="{{ path('changerequest_curator_remarks', {id: changeRequest.id}) }}" method="post" class="w-100 ml-3">
-                        <div>
-                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('curatorRemarksForChangeRequest') }}" />
-                            <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" placeholder="Publicly comment on this change request (i.e. if invalid)" name="remarks" maxlength="512" value="{{ changeRequest.curatorRemarks }}">
-                                <div class="input-group-append">
-                                    <button class="btn btn-secondary" type="submit" role="button">Update Remarks</button>
+        </div>
+        <ul class="list-group">
+            {% for changeRequest in changeRequests %}
+                <li class="list-group-item flex-column align-items-start{% if changeRequest.resolved %} list-group-item-success{% endif %}">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">
+                            {% if changeRequest.fieldName %}
+                                Request to change "{{ changeRequest.fieldName }}"
+                            {% else %}
+                                General change request
+                            {% endif %}
+                            <small>by @{{ changeRequest.createdBy }}.</small>
+                            {% if changeRequest.resolved %}
+                                <small>RESOLVED</small>
+                            {% endif %}
+                        </h6>
+                        <small>{{ changeRequest.createdAt|time_diff }}</small>
+                    </div>
+                    <p class="mb-1">{{ changeRequest.comment|nl2br }}</p>
+                    {% if changeRequest.curatorRemarks is not empty %}
+                        <p class="mb-1"><em>Curator remarks: {{ changeRequest.curatorRemarks }}</em></p>
+                    {% endif %}
+                    <div class="d-flex w-100 justify-content-between">
+                        {% if is_granted('toggle_resolved', changeRequest) %}
+                            <form action="{{ path('changerequest_resolve', {id: changeRequest.id}) }}" method="post">
+                                <div>
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('resolveChangeRequest') }}" />
+                                    <input type="hidden" name="resolve" value="{{ not changeRequest.resolved }}" />
+                                    <input type="submit" value="{% if changeRequest.resolved %}Unresolve{% else %}Resolve{% endif %}" class="btn btn-sm btn-primary" role="button" />
                                 </div>
-                            </div>
-                        </div>
-                    </form>
-                {% endif %}
+                            </form>
+                        {% endif %}
+                        {% if is_granted('edit_curator_remarks', changeRequest) %}
+                            <form action="{{ path('changerequest_curator_remarks', {id: changeRequest.id}) }}" method="post" class="w-100 ml-3">
+                                <div>
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('curatorRemarksForChangeRequest') }}" />
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" class="form-control" placeholder="Publicly comment on this change request (i.e. if invalid)" name="remarks" maxlength="512" value="{{ changeRequest.curatorRemarks }}">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-secondary" type="submit" role="button">Update Remarks</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        {% endif %}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        {% if changeRequests|length == 0 %}
+            <div class="adl-card-body">
+                <p class="adl-card-text">This adventure doesn't have any pending change requests.</p>
             </div>
-        </li>
-    {% endfor %}
-</ul>
-{% if changeRequests|length == 0 %}
-    <p class="no-requests">This adventure doesn't have any pending change requests.</p>
-{% endif %}
+        {% endif %}
+    </div>
 </div>

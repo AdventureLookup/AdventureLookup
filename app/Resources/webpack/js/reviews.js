@@ -21,8 +21,8 @@ $(function () {
 
   $addReviewBtn.click(function () {
     $addReviewBtn.addClass("d-none");
-    $confirmReviewBtn.removeClass("d-none");
-    $cancelReviewBtn.removeClass("d-none");
+    // $confirmReviewBtn.removeClass("d-none");
+    // $cancelReviewBtn.removeClass("d-none");
     $createReviewContainer.removeClass("d-none");
 
     autosize(document.getElementById("review_comment"));
@@ -32,8 +32,8 @@ $(function () {
     autosize.destroy(document.getElementById("review_comment"));
 
     $addReviewBtn.removeClass("d-none");
-    $confirmReviewBtn.addClass("d-none");
-    $cancelReviewBtn.addClass("d-none");
+    // $confirmReviewBtn.addClass("d-none");
+    // $cancelReviewBtn.addClass("d-none");
     $createReviewContainer.addClass("d-none");
   });
 

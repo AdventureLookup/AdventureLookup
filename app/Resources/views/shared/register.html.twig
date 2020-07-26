@@ -1,19 +1,15 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_centered_card.html.twig' %}
 
-{% block header %}{% endblock %}
-{% block body %}
-    <div class="lrf-container">
-        <div id="lrf">
-            <div class="title">Create Account</div>
+{% block title %}
+    Create Account
+{% endblock %}
+{% block content %}
+    {{ form_start(form) }}
+    {{ form_row(form.username) }}
+    {{ form_row(form.email) }}
+    {{ form_row(form.plainPassword.first) }}
+    {{ form_row(form.plainPassword.second) }}
 
-            {{ form_start(form) }}
-            {{ form_row(form.username) }}
-            {{ form_row(form.email) }}
-            {{ form_row(form.plainPassword.first) }}
-            {{ form_row(form.plainPassword.second) }}
-
-            <button class="btn btn-primary" type="submit" role="button">Register!</button>
-            {{ form_end(form) }}
-        </div>
-    </div>
+    <button class="btn btn-primary" type="submit" role="button">Register!</button>
+    {{ form_end(form) }}
 {% endblock %}

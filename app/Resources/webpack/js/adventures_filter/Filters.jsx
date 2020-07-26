@@ -54,11 +54,11 @@ export const Filters = React.memo(function Filters({
         })}
 
       {!showMoreFilters && (
-        <div
+        <button
           id="filter-more"
           title="show more filters"
           onClick={() => setShowMoreFilters(true)}
-        ></div>
+        />
       )}
     </>
   );
@@ -90,7 +90,7 @@ const FieldFilter = React.memo(function FieldFilter({
     classes.push("always-open");
   }
   if (filterSet) {
-    classes.push("filter-marked");
+    classes.push("in-use");
   }
 
   const toggleOpen = () => {
@@ -101,47 +101,53 @@ const FieldFilter = React.memo(function FieldFilter({
 
   return (
     <div className={`filter ${classes.join(" ")}`}>
-      <div className="title" title={field.description} onClick={toggleOpen}>
+      <button
+        className="btn btn-block btn-sidebar filter-title"
+        title={field.description}
+        onClick={toggleOpen}
+      >
         {field.title}
-      </div>
-      <div className="options-list">
-        {field.type === "string" && (
-          <StringFilter
-            field={field}
-            initialFilter={initialFilter}
-            filter={filter}
-            setFilter={setFilter}
-            fieldValues={fieldValues}
-            onIsDirty={setIsDirty}
-          />
-        )}
-        {field.type === "boolean" && (
-          <BooleanOptions
-            field={field}
-            initialFilter={initialFilter}
-            filter={filter}
-            setFilter={setFilter}
-            fieldValues={fieldValues}
-            onIsDirty={setIsDirty}
-          />
-        )}
-        {field.type === "integer" && (
-          <IntegerOptions
-            field={field}
-            initialFilter={initialFilter}
-            filter={filter}
-            setFilter={setFilter}
-            fieldValues={fieldValues}
-            onSubmit={onSubmit}
-            onIsDirty={setIsDirty}
-          />
-        )}
-        {isDirty && (
-          <div className="option apply" onClick={onSubmit}>
-            Apply Filter
-          </div>
-        )}
-      </div>
+      </button>
+      {(isOpen || alwaysOpen) && (
+        <div className="filter-options">
+          {field.type === "string" && (
+            <StringFilter
+              field={field}
+              initialFilter={initialFilter}
+              filter={filter}
+              setFilter={setFilter}
+              fieldValues={fieldValues}
+              onIsDirty={setIsDirty}
+            />
+          )}
+          {field.type === "boolean" && (
+            <BooleanOptions
+              field={field}
+              initialFilter={initialFilter}
+              filter={filter}
+              setFilter={setFilter}
+              fieldValues={fieldValues}
+              onIsDirty={setIsDirty}
+            />
+          )}
+          {field.type === "integer" && (
+            <IntegerOptions
+              field={field}
+              initialFilter={initialFilter}
+              filter={filter}
+              setFilter={setFilter}
+              fieldValues={fieldValues}
+              onSubmit={onSubmit}
+              onIsDirty={setIsDirty}
+            />
+          )}
+          {isDirty && (
+            <button className="option apply" onClick={onSubmit}>
+              Apply Filter
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 });

@@ -1,0 +1,79 @@
+$adl-card-padding-vertical: 12px;
+$adl-card-padding-horizontal: 24px;
+$adl-card-padding: $adl-card-padding-vertical $adl-card-padding-horizontal;
+
+$thumbnail-offset-top: 12px;
+$thumbnail-offset-right: 24px;
+$thumbnail-max-width: 85px;
+$thumbnail-max-height: 100px;
+
+.adl-card {
+  position: relative;
+  box-shadow: $adl-box-shadow;
+  background-color: $white--background-color;
+
+  .adl-card-body {
+    padding: $adl-card-padding;
+  }
+
+  .adl-card-body-thumbnail {
+    $padding: 4px;
+    @include media-breakpoint-up(sm) {
+      padding-right: calc(
+        #{$adl-card-padding-horizontal} + #{$thumbnail-max-width} + #{$padding}
+      );
+    }
+
+    .tags-container {
+      margin-right: -$padding;
+    }
+  }
+
+  .adl-card-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .adl-card-text:last-child {
+    margin-bottom: 0;
+  }
+
+  .adl-card-thumbnail {
+    position: absolute;
+    top: $thumbnail-offset-top;
+    right: $thumbnail-offset-right;
+    max-width: $thumbnail-max-width;
+    max-height: $thumbnail-max-height;
+    border: $adl-border-grey-lightest-big;
+
+    display: none;
+    @include breakpoint($sm) {
+      display: block;
+    }
+  }
+
+  .alert {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    padding-left: $adl-card-padding-horizontal;
+    padding-right: $adl-card-padding-horizontal;
+  }
+
+  .adl-card-body .alert {
+    margin-left: -$adl-card-padding-horizontal;
+    margin-right: -$adl-card-padding-horizontal;
+  }
+}
+
+a.adl-card {
+  display: block;
+  color: $white--font-color;
+
+  &:hover {
+    // don't show underline for the entire card
+    text-decoration: none;
+    color: initial;
+  }
+}

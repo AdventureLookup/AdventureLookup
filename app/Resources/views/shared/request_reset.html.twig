@@ -1,19 +1,15 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_centered_card.html.twig' %}
 
-{% block header %}{% endblock %}
-{% block body %}
-    <div class="lrf-container">
-        <div id="lrf">
-            <div class="title">Reset Password</div>
+{% block title %}
+    Reset Password
+{% endblock %}
+{% block content %}
+    <p class="mb-3">
+        If you forgot your account's password, you can request a password reset link to be sent to your email address.
+    </p>
 
-            <p class="mb-3">
-                If you forgot your account's password, you can request a password reset link to be sent to your email address.
-            </p>
-
-            {{ form_start(form) }}
-            {{ form_widget(form) }}
-            <button class="btn btn-primary" type="submit" role="button">Send Password Reset Link</button>
-            {{ form_end(form) }}
-        </div>
-    </div>
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button class="btn btn-primary" type="submit" role="button">Send Password Reset Link</button>
+    {{ form_end(form) }}
 {% endblock %}

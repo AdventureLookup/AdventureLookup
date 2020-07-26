@@ -98,19 +98,14 @@ export function Root({
 
   return (
     <>
-      <div className="content">
-        <a className="sidebar-title" href={url}>
-          Adventure Lookup
-        </a>
-        <Filters
-          fields={fields}
-          initialFilterValues={initialFilterValues}
-          filterValues={filterValues}
-          setFilterValues={setFilterValues}
-          fieldStats={fieldStats}
-          onSubmit={onSubmit}
-        />
-      </div>
+      <Filters
+        fields={fields}
+        initialFilterValues={initialFilterValues}
+        filterValues={filterValues}
+        setFilterValues={setFilterValues}
+        fieldStats={fieldStats}
+        onSubmit={onSubmit}
+      />
       {createPortal(
         <>
           <SearchBox

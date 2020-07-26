@@ -208,6 +208,8 @@ class AdventureController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->remove($adventure);
             $em->flush();
+
+            $this->addFlash('danger', 'The adventure has been deleted successfully.');
         }
 
         return $this->redirectToRoute('adventure_index');

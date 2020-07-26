@@ -1,86 +1,90 @@
 {% extends 'base_with_collapsed_sidebar.html.twig' %}
 
 {% block content %}
-    <div class="title">API Docs</div>
-    <div class="content">
-      The API provides readonly access to the adventure data hosted at this site.
-      There are two API endpoints, both of which are described below.
-    </div>
-    <div class="title"><a href="{{ path('api_adventures') }}">/api/adventures</a></div>
-    <div class="content">
-      Returns a paginated list of all adventures.
-      Use the <code>page</code> query parameter to select the page (1-indexed, default 1).
-      Note that the order of adventures is non-deterministic. The seed used for sorting changes once a week.
-      Make sure to include the <code>seed</code> parameter retrieved with the response when querying further pages.
-      You can use the <code>q</code> parameter to filter adventures by a search query.
-      You can also filter adventures by specific fields similar to using the sidebar on the search page.
-      The following fields are available:
-      <ul>
-        {% for field in fields|filter(field => field.availableAsFilter) %}
+  <div class="adl-card">
+    <div class="adl-card-body">
+      <h1>API Docs</h1>
+      <p>
+        The API provides readonly access to the adventure data hosted at this site.
+        There are two API endpoints, both of which are described below.
+      </p>
+      <h2><a href="{{ path('api_adventures') }}">/api/adventures</a></h2>
+      <p>
+        Returns a paginated list of all adventures.
+        Use the <code>page</code> query parameter to select the page (1-indexed, default 1).
+        Note that the order of adventures is non-deterministic. The seed used for sorting changes once a week.
+        Make sure to include the <code>seed</code> parameter retrieved with the response when querying further pages.
+        You can use the <code>q</code> parameter to filter adventures by a search query.
+        You can also filter adventures by specific fields similar to using the sidebar on the search page.
+        The following fields are available:
+        <ul>
+          {% for field in fields|filter(field => field.availableAsFilter) %}
+            <li>
+              <strong>{{ field.name }} <span class="badge badge-primary">{{ field.type }}</span></strong>
+            </li>
+          {% endfor %}
+        </ul>
+        The type of the field determines the filter parameter format.
+        <ul>
           <li>
-            <strong>{{ field.name }} <span class="badge badge-primary">{{ field.type }}</span></strong>
+            <span class="badge badge-primary">string</span>
+            You can specify multiple values by joining them with a <code>~</code>.
+            If a value itself contains a <code>~</code>, escape it by <code>~~</code>.
+            You also have to escape <code>?</code> by <code>??</code>.
+            <br />
+            Example: Adventures with Gnolls or Pegasuses: <a href="{{ path('api_adventures', { commonMonsters: 'Gnoll~Pegasus' })}}">
+              {{ url('api_adventures', { commonMonsters: 'Gnoll~Pegasus' })}}
+            </a>
+            <br />
+            For some adventures, the value might be unknown. To also include these when using the filter, append <code>~?</code>
+            to the parameter: <a href="{{ path('api_adventures', { commonMonsters: 'Gnoll~Pegasus~?' })}}">
+              {# We add the query string manually so that it is not URL encoded and easier to read #}
+              {{ url('api_adventures')}}?commonMonsters=Gnoll~Pegasus~?
+            </a>
           </li>
-        {% endfor %}
-      </ul>
-      The type of the field determines the filter parameter format.
-      <ul>
-        <li>
-          <span class="badge badge-primary">string</span>
-          You can specify multiple values by joining them with a <code>~</code>.
-          If a value itself contains a <code>~</code>, escape it by <code>~~</code>.
-          You also have to escape <code>?</code> by <code>??</code>.
-          <br />
-          Example: Adventures with Gnolls or Pegasuses: <a href="{{ path('api_adventures', { commonMonsters: 'Gnoll~Pegasus' })}}">
-            {{ url('api_adventures', { commonMonsters: 'Gnoll~Pegasus' })}}
-          </a>
-          <br />
-          For some adventures, the value might be unknown. To also include these when using the filter, append <code>~?</code>
-          to the parameter: <a href="{{ path('api_adventures', { commonMonsters: 'Gnoll~Pegasus~?' })}}">
-            {# We add the query string manually so that it is not URL encoded and easier to read #}
-            {{ url('api_adventures')}}?commonMonsters=Gnoll~Pegasus~?
-          </a>
-        </li>
-        <li>
-          <span class="badge badge-primary">integer</span>
-          You can specify the minimum (inclusive) and maximum (inclusive).
-          <br />
-          Example: Adventures written between 1990 and 2005: <a href="{{ path('api_adventures', { year: '≥1990~≤2005' })}}">
-            {# We add the query string manually so that it is not URL encoded and easier to read #}
-            {{ url('api_adventures') }}?year=≥1990~≤2005
-          </a>
-          <br />
-          For some adventures, the value might be unknown. To also include these when using the filter, append <code>~?</code>
-          to the parameter: <a href="{{ path('api_adventures', { year: '≥1990~≤2005~?' })}}">
-            {# We add the query string manually so that it is not URL encoded and easier to read #}
-            {{ url('api_adventures')}}?year=≥1990~≤2005~?
-          </a>
-        </li>
-        <li>
-          <span class="badge badge-primary">boolean</span>
-          Use <code>1</code> for "yes" and <code>0</code> for "no".
-          <br />
-          Example: Adventures that include handouts: <a href="{{ path('api_adventures', { handouts: 1 })}}">{{ url('api_adventures', { handouts: 1 })}}</a>
-        </li>
-      </ul>
+          <li>
+            <span class="badge badge-primary">integer</span>
+            You can specify the minimum (inclusive) and maximum (inclusive).
+            <br />
+            Example: Adventures written between 1990 and 2005: <a href="{{ path('api_adventures', { year: '≥1990~≤2005' })}}">
+              {# We add the query string manually so that it is not URL encoded and easier to read #}
+              {{ url('api_adventures') }}?year=≥1990~≤2005
+            </a>
+            <br />
+            For some adventures, the value might be unknown. To also include these when using the filter, append <code>~?</code>
+            to the parameter: <a href="{{ path('api_adventures', { year: '≥1990~≤2005~?' })}}">
+              {# We add the query string manually so that it is not URL encoded and easier to read #}
+              {{ url('api_adventures')}}?year=≥1990~≤2005~?
+            </a>
+          </li>
+          <li>
+            <span class="badge badge-primary">boolean</span>
+            Use <code>1</code> for "yes" and <code>0</code> for "no".
+            <br />
+            Example: Adventures that include handouts: <a href="{{ path('api_adventures', { handouts: 1 })}}">{{ url('api_adventures', { handouts: 1 })}}</a>
+          </li>
+        </ul>
 
-      The <code>sortBy</code> parameter can be used to sort the adventures. Possible values are:
-      <ul>
-        <li><code>(nothing)</code>: Best matches first. Will sort randomly if no query is provided (since there really is no "best match" when not using a search query).</li>
-        <li><code>reviews</code>: Adventures sorted by reviews</li>
-        <li><code>title</code>: Sort by title</li>
-        <li><code>numPages-desc</code> Most pages</li>
-        <li><code>numPages-asc</code> Least pages</li>
-        <li><code>createdAt-desc</code> Recently added</li>
-        <li><code>createdAt-asc</code> Least recently added</li>
-        <li><code>random</code> Random sorting. To seed the random generator and make pagination possible, provide a seed in the <code>seed</code> parameter. The seed can be any string, e.g. the current date.</li>
-      </ul>
+        The <code>sortBy</code> parameter can be used to sort the adventures. Possible values are:
+        <ul>
+          <li><code>(nothing)</code>: Best matches first. Will sort randomly if no query is provided (since there really is no "best match" when not using a search query).</li>
+          <li><code>reviews</code>: Adventures sorted by reviews</li>
+          <li><code>title</code>: Sort by title</li>
+          <li><code>numPages-desc</code> Most pages</li>
+          <li><code>numPages-asc</code> Least pages</li>
+          <li><code>createdAt-desc</code> Recently added</li>
+          <li><code>createdAt-asc</code> Least recently added</li>
+          <li><code>random</code> Random sorting. To seed the random generator and make pagination possible, provide a seed in the <code>seed</code> parameter. The seed can be any string, e.g. the current date.</li>
+        </ul>
+      </p>
+      <h2><a href="{{ path('api_adventure', {id: 'ADVENTURE-ID-HERE'}) }}">/api/adventure/{id}</a></h2>
+      <p>
+        Returns detailed data for an adventure specified by its <code>id</code>. In contrast to the other endpoint, this also includes reviews for the adventure.
+      </p>
+      <h2>Feedback welcome!</h2>
+      <p>
+        This API is quite new. Please create an issue in the AdventureLookup GitHub repository if you have any feedback or want to expand this documentation.
+      </p>
     </div>
-    <div class="title"><a href="{{ path('api_adventure', {id: 'ADVENTURE-ID-HERE'}) }}">/api/adventure/{id}</a></div>
-    <div class="content">
-      Returns detailed data for an adventure specified by its <code>id</code>. In contrast to the other endpoint, this also includes reviews for the adventure.
-    </div>
-    <div class="title">Feedback welcome!</div>
-    <div class="content">
-      This API is quite new. Please create an issue in the AdventureLookup GitHub repository if you have any feedback or want to expand this documentation.
-    </div>
+  </div>
 {% endblock %}

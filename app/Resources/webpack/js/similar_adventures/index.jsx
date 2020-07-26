@@ -69,46 +69,46 @@ function SimilarAdventuresRoot({ apiUrl }) {
   };
 
   return (
-    <div className="content-container mt-0">
-      <h3 className="title">
-        Similar and Related Adventures{" "}
-        <span className="badge badge-warning">beta</span>
-      </h3>
-      <FieldSelector
-        availableFields={availableFields}
-        selectedField={selectedField}
-        setSelectedField={(field) => setSelectedField(field)}
-      />
-      {ajaxState === "INITIAL" && (
-        <div className="alert alert-info">Fetching similar adventures...</div>
-      )}
-      {ajaxState === "FAILED" && (
-        <div className="alert alert-danger">
-          Something went wrong while trying to fetch similar adventures.
-        </div>
-      )}
-      {ajaxState === "DONE" && (
-        <>
-          {data.terms.length > 0 && (
-            <p className="mx-4">
-              We looked for adventures with the following keywords in{" "}
-              {availableFields[selectedField]}, of which at least 25% must
-              match:
-              <br />
-              {data.terms.map((term, i) => (
-                <React.Fragment key={i}>
-                  <span className="badge badge-secondary">
-                    {term.term}{" "}
-                    {debug && `(${Math.round(term["tf-idf"] * 10) / 10})`}
-                  </span>{" "}
-                </React.Fragment>
-              ))}
-            </p>
-          )}
-          <div className="mx-5">
+    <div className="adl-card">
+      <div className="adl-card-body">
+        <h3 className="adl-card-title">
+          Similar and Related Adventures{" "}
+          <span className="badge badge-warning">beta</span>
+        </h3>
+        <FieldSelector
+          availableFields={availableFields}
+          selectedField={selectedField}
+          setSelectedField={(field) => setSelectedField(field)}
+        />
+        {ajaxState === "INITIAL" && (
+          <div className="alert alert-info">Fetching similar adventures...</div>
+        )}
+        {ajaxState === "FAILED" && (
+          <div className="alert alert-danger">
+            Something went wrong while trying to fetch similar adventures.
+          </div>
+        )}
+        {ajaxState === "DONE" && (
+          <>
+            {data.terms.length > 0 && (
+              <p>
+                We looked for adventures with the following keywords in{" "}
+                {availableFields[selectedField]}, of which at least 25% must
+                match:
+                <br />
+                {data.terms.map((term, i) => (
+                  <React.Fragment key={i}>
+                    <span className="badge badge-secondary">
+                      {term.term}{" "}
+                      {debug && `(${Math.round(term["tf-idf"] * 10) / 10})`}
+                    </span>{" "}
+                  </React.Fragment>
+                ))}
+              </p>
+            )}
             <div className="row">
               {data.adventures.map((adventure) => (
-                <div className="col-12 col-lg-6 px-2 py-2" key={adventure.id}>
+                <div className="col-12 col-lg-6 py-2" key={adventure.id}>
                   <div className="list-group">
                     <a
                       href={`/adventures/${adventure.slug}`}
@@ -131,23 +131,23 @@ function SimilarAdventuresRoot({ apiUrl }) {
                 </div>
               ))}
             </div>
-          </div>
-          {data.adventures.length === 0 && (
-            <div className="alert alert-info">
-              We couldn't find any similar adventures. Don't worry though: You
-              can often find similar adventures on your own by searching for the
-              most relevant keywords.
-            </div>
-          )}
-        </>
-      )}
+            {data.adventures.length === 0 && (
+              <div className="alert alert-info">
+                We couldn't find any similar adventures. Don't worry though: You
+                can often find similar adventures on your own by searching for
+                the most relevant keywords.
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }
 
 function FieldSelector({ availableFields, selectedField, setSelectedField }) {
   return (
-    <div className="d-flex mx-4 mb-2">
+    <div className="d-flex mb-2">
       {Object.entries(availableFields).map(([name, label]) => (
         <div className="form-check form-check-inline" key={name}>
           <input

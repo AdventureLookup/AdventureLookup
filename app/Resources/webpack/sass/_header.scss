@@ -1,18 +1,30 @@
-.header-container {
-  @extend .container;
+#adl-announcement {
+  text-align: center;
+  background-color: $red--background-color;
+  color: $red--font-color;
+
+  margin-bottom: $layout-gutter / 2;
+  padding: 5px;
+  font-size: 1.2rem;
+  box-shadow: $adl-box-shadow;
 }
 
 #adl-header {
-  position: absolute;
-  top: 0;
-  right: $adl-body-padding;
-  z-index: 100;
+  @extend .container;
+  position: relative;
 
-  display: flex;
-  justify-content: flex-end;
-  height: 30px;
+  & > div {
+    position: absolute;
+    top: 0;
+    right: $adl-body-padding;
 
-  #adl-header-login-dropdown {
+    display: flex;
+    justify-content: flex-end;
+    height: $right-header-height;
+  }
+
+  #adl-header-login-dropdown,
+  .dropdown-menu {
     min-width: 125px;
   }
 
@@ -20,15 +32,14 @@
     background-color: $adl-grey-darkest;
     color: $adl-offwhite;
 
-    &:not(a) {
-      margin-left: 15px;
-    }
-  }
+    height: 30px;
 
-  .btn {
+    &.dropdown-toggle {
+      margin-left: $layout-gutter / 2;
+    }
+
     border-radius: 0;
     box-shadow: $adl-box-shadow;
-    font-family: "Roboto Condensed", sans-serif;
-    text-transform: uppercase;
+    @extend %font-roboto-condensed;
   }
 }

@@ -32,7 +32,7 @@ class AdventureListController extends Controller
     /**
      * @Route("/", name="adventure_lists_index")
      * @Method("GET")
-     * @Template("profile/adventure_list.html.twig")
+     * @Template("profile/adventure_list_index.html.twig")
      *
      * @return array
      */
@@ -88,7 +88,7 @@ class AdventureListController extends Controller
     /**
      * @Route("/{id}", name="adventure_lists_show", requirements={"id"="\d+"})
      * @Method("GET")
-     * @Template("profile/adventure_show.html.twig")
+     * @Template("profile/adventure_list_show.html.twig")
      *
      * @return array
      */

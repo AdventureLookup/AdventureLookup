@@ -1,0 +1,36 @@
+#change-requests {
+  #change-request-content.collapse {
+    padding-bottom: 0;
+  }
+
+  .list-group-item {
+    padding-left: $adl-card-padding-horizontal;
+    padding-right: $adl-card-padding-horizontal;
+    border-left: none;
+    border-right: none;
+  }
+
+  [data-toggle="collapse"] {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
+      background-color: darken(white, 2.5%);
+    }
+
+    & .fa {
+      font-size: 20px;
+      margin-top: -$adl-card-padding-vertical;
+
+      &:before {
+        content: "\f106";
+      }
+    }
+
+    &.collapsed .fa:before {
+      content: "\f107";
+    }
+  }
+}

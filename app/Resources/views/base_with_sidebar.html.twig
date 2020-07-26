@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{# Overwrite flash message position #}
+{% block flashes %}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row adl-layout-full-sidebar">
+            <div class="sidebar col-md-4 col-xl-3">
+                <div class="adl-sidebar">
+                    <div class="content text-left">
+                        <a class="no-underline" href="{{ path('adventure_index') }}">
+                            <div class="sidebar-title">Adventure Lookup</div>
+                        </a>
+                        {% block sidebar_content %}{% endblock %}
+                    </div>
+                </div>
+                {% block below_sidebar_content %}{% endblock %}
+            </div>
+            <main class="content col-md-8 col-xl-9">
+                {% include 'flashes.html.twig' %}
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+{% endblock %}
+

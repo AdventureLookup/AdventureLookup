@@ -1,71 +1,31 @@
-$element-margin-bottom: 10px;
+$border: 1px solid $adl-grey-lightest;
 
-$thumbnail-offset: 1.5rem;
-$thumbnail-width: 85px;
-$thumbnail-height: 100px;
-
-.subheading {
-  @extend %secondaryFont;
-}
-
-.adventure-container {
-  @extend .content-container;
-
-  .thumbnail-container {
-    position: absolute;
-    top: $thumbnail-offset;
-    right: $thumbnail-offset;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 100px;
-
-    .thumbnail {
-      max-width: $thumbnail-width;
-      max-height: $thumbnail-height;
-      border: $adl-border-grey-lightest-big;
-    }
-
-    #adventure_list-bookmark-menu {
-      margin-top: 8px;
-    }
-  }
-
-  .description {
-    display: block;
-    display: -webkit-box;
-    margin: $adl-card-padding;
-
-    @include breakpoint($sm) {
-      margin-right: calc(
-        #{$adl-card-padding-side} + #{$thumbnail-width} + #{$thumbnail-offset}
-      );
-    }
-  }
-
+.adventure-details {
   .detail-row {
     @extend .row;
 
     display: flex;
 
     &:first-child {
-      border-top: 1px solid $adl-grey-lightest;
+      border-top: $border;
     }
 
     > div {
-      flex-grow: 1;
-      padding: $adl-card-padding-top $adl-card-padding-side/2;
+      padding: 10px 12px;
 
-      border-bottom: 1px solid $adl-grey-lightest;
-
+      border-bottom: $border;
       &:not(:last-child) {
-        border-right: 1px solid $adl-grey-lightest;
+        border-right: $border;
       }
 
       .label {
-        font-family: "Roboto Condensed", sans-serif;
-        text-transform: uppercase;
+        margin-bottom: 4px;
         color: $white--font-color-highlight;
+
+        font-size: inherit;
+        font-weight: normal;
+
+        @extend %font-roboto-condensed;
       }
 
       .level {
@@ -73,134 +33,36 @@ $thumbnail-height: 100px;
       }
 
       ul {
-        padding-left: 30px;
+        padding-left: 20px;
         margin-bottom: 0;
+        list-style-type: square;
+      }
+
+      // Change padding of first element in each row to match the card padding.
+      // There is no automated way to achieve this with pure CSS -> We have to
+      // apply the .first class manually depending on the current breakpoint.
+      &.first {
+        padding-left: $adl-card-padding-horizontal;
+      }
+      &.first-sm-down {
+        @include media-breakpoint-down(sm) {
+          padding-left: $adl-card-padding-horizontal;
+        }
+      }
+      &.first-md-down {
+        @include media-breakpoint-down(md) {
+          padding-left: $adl-card-padding-horizontal;
+        }
+      }
+      &.first-xs {
+        @include media-breakpoint-only(xs) {
+          padding-left: $adl-card-padding-horizontal;
+        }
       }
     }
   }
 }
 
-.change-requests-container {
-  @extend .content-container;
-
-  padding-bottom: 0 !important;
-
-  #change-request-content.collapse {
-    padding-bottom: 0;
-
-    &.show {
-      padding-bottom: 15px;
-    }
-  }
-
-  .no-requests {
-    padding: $adl-card-padding;
-    border-top: 1px solid $adl-grey-lightest;
-  }
-
-  [data-toggle="collapse"] {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-
-    &:hover {
-      background-color: darken(white, 2.5%);
-    }
-
-    & .fa {
-      font-size: 2rem;
-      padding: 1rem 1.8rem;
-
-      &:before {
-        content: "\f106";
-      }
-    }
-
-    &.collapsed .fa:before {
-      content: "\f107";
-    }
-  }
-}
-
-.review-container {
-  @extend .content-container;
-
-  .review {
-    padding: $adl-card-padding;
-    border-top: 1px solid $adl-grey-lightest;
-
-    .reviewer-row {
-      align-items: center;
-    }
-
-    .review-icon {
-      &.review-icon--positive {
-        color: #bad272;
-      }
-
-      &.review-icon--negative {
-        color: #d27272;
-      }
-    }
-
-    .review-icon-mobile-column {
-      padding-right: 0;
-      margin-bottom: 1rem;
-    }
-
-    blockquote {
-      font-size: 1.2rem;
-    }
-  }
-}
-
-.create-review-container {
-  @extend .content-container;
-
-  #review-thumbs-row {
-    padding-left: $adl-card-padding-side;
-    padding-right: $adl-card-padding-side;
-    color: $adl-grey-dark;
-
-    #review-thumbs-message {
-      text-transform: uppercase;
-      border-right: 1px solid $adl-grey-lightest;
-      font-size: 1.5rem;
-      font-weight: 600;
-      padding-top: $adl-card-padding-top;
-      padding-bottom: $adl-card-padding-top;
-    }
-
-    #review-thumbs-up {
-      border-right: 1px solid $adl-grey-lightest;
-    }
-
-    #review-thumbs-up,
-    #review-thumbs-down {
-      cursor: pointer;
-      i {
-        font-size: 1.5rem + $adl-card-padding-top;
-      }
-
-      &.active i {
-        color: $adl-coral;
-      }
-    }
-  }
-
-  #review_comment {
-    border: none;
-    border-top: 1px solid $adl-grey-lightest;
-    padding: $adl-card-padding-side;
-  }
-
-  .btn {
-    width: 35%;
-    padding: 8px 10px;
-    border-radius: 0;
-    font: 1.2rem "Roboto Condensed";
-    text-transform: uppercase;
-    margin: 0 1.8rem;
-  }
+.from-the-community {
+  @extend %secondaryFont;
 }

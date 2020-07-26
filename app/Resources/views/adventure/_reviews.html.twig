@@ -1,5 +1,5 @@
 {% if app.user %}
-    <div class="create-review-container" id="create-review-container" class="mt-0 mb-3 d-none" data-has-reviewed="{{ adventure.reviewBy(app.user) ? '1' : '0' }}">
+    <div id="create-review-container" class="adl-card d-none" data-has-reviewed="{{ adventure.reviewBy(app.user) ? '1' : '0' }}">
         <div class="row" id="review-thumbs-row">
             <div class="col-auto d-flex align-items-center" id="review-thumbs-up">
                 <i class="fa fa-fw fa-thumbs-up fa-flip-horizontal"></i>
@@ -13,17 +13,20 @@
             Reviews support some Markdown formatting like <span class="text-monospace">**bold**</span>,
             <span class="text-monospace">*italics*</span>,
             numbered and dashed lists (<span class="text-monospace">- list item</span> or <span class="text-monospace">1. list item</span>),
-            and <span class="text-monospace"># Headings</span>.</div>
+            and <span class="text-monospace"># Headings</span>.
+        </div>
+
         {{ form_start(review_form, {'attr': {'id': 'review_form'}}) }}
         {{ form_widget(review_form.rating) }}
         {{ form_widget(review_form.comment) }}
         {{ form_end(review_form) }}
-        <div>
-            <a href="javascript:void(0)" class="btn btn-primary d-none" role="button" id="confirm-review-btn">
+
+        <div class="adl-card-body d-flex justify-content-between">
+            <a href="javascript:void(0)" class="btn btn-primary" role="button" id="confirm-review-btn">
                 <i class="fa fa-check"></i>
                 Save Review
             </a>
-            <a href="javascript:void(0)" class="btn btn-secondary d-none pull-right" role="button" id="cancel-review-btn">
+            <a href="javascript:void(0)" class="btn btn-secondary" role="button" id="cancel-review-btn">
                 <i class="fa fa-times"></i>
                 Cancel
             </a>
@@ -31,28 +34,30 @@
     </div>
 {% endif %}
 
-<div class="review-container" id="reviews" class="mt-0">
-    <div class="row">
-        <div class="col">
-            <h3 class="title">Reviews</h3>
-        </div>
-        <div class="col-auto">
-            <div class="title">
-                <i class="fa fa-fw fa-thumbs-o-up"></i> {{ adventure.numberOfThumbsUp }}
-                <i class="fa fa-fw fa-thumbs-o-down"></i> {{ adventure.numberOfThumbsDown }}
+<div class="adl-card" id="reviews">
+    <div class="adl-card-body pb-0">
+        <div class="row">
+            <div class="col">
+                <h2 class="adl-card-title">Reviews</h2>
+            </div>
+            <div class="col-auto">
+                <div class="adl-card-title">
+                    <i class="fa fa-fw fa-thumbs-o-up"></i> {{ adventure.numberOfThumbsUp }}
+                    <i class="fa fa-fw fa-thumbs-o-down"></i> {{ adventure.numberOfThumbsDown }}
+                </div>
             </div>
         </div>
+        {% if not app.user %}
+            <div class="alert alert-info">Please sign in to rate or leave a review.</div>
+        {% elseif adventure.reviewBy(app.user) %}
+            <div class="alert alert-success">You've already rated/reviewed this adventure.</div>
+        {% endif %}
     </div>
-    {% if not app.user %}
-        <div class="alert alert-info">Please sign in to rate or leave a review.</div>
-    {% elseif adventure.reviewBy(app.user) %}
-        <div class="alert alert-success">You've already rated/reviewed this adventure.</div>
-    {% endif %}
     {% for review in adventure.reviews|filter(review => review.comment is not empty) %}
-        <div class="review">
-            <div class="row reviewer-row">
+        <div class="review adl-card-body">
+            <div class="row align-items-center">
                 <div class="col col-auto d-flex d-sm-none review-icon-mobile-column">
-                        <i class="fa fa-3x review-icon {{ review.thumbsDown ? 'fa-thumbs-o-down review-icon--negative' : 'fa-thumbs-o-up review-icon--positive' }}"></i>
+                    <i class="fa fa-3x review-icon {{ review.thumbsDown ? 'fa-thumbs-o-down review-icon--negative' : 'fa-thumbs-o-up review-icon--positive' }}"></i>
                 </div>
                 <div class="col d-flex">
                     <p>
@@ -86,8 +91,8 @@
             {% endif %}
         </div>
     {% else %}
-        <div class="review">
-            This adventure has not been reviewed yet.
+        <div class="adl-card-body">
+            <p class="adl-card-text">This adventure has not been reviewed yet.</p>
         </div>
     {% endfor %}
 </div>
