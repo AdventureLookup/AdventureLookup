@@ -8,6 +8,8 @@ RUN wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7
 # Save ElasticSearch data in a subfolder of the /workspace directory. Otherwise it is lost when
 # restarting the workspace.
 RUN echo "path.data: /workspace/elasticsearch" >> elasticsearch-7.6.2/config/elasticsearch.yml
+# Do not set indices to readonly when disk space is low
+RUN echo "cluster.routing.allocation.disk.threshold_enabled: false" >> elasticsearch-7.6.2/config/elasticsearch.yml
 # Decrease ElasticSearch memory usage
 RUN sed -i -e 's/1g/256m/g' elasticsearch-7.6.2/config/jvm.options
 

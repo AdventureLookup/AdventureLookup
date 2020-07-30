@@ -31,6 +31,7 @@ framework:
         handler_id:  session.handler.native_file
         save_path:   "%kernel.root_dir%/../var/sessions/%kernel.environment%"
         name: 'adl'
+        cookie_samesite:  'strict'
     fragments: ~
     http_method_override: true
     assets:

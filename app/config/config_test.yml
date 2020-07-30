@@ -40,8 +40,7 @@ liip_functional_test:
         password: user1
 
 parameters:
-    elasticsearch:
-        index_name: 'adventure_test'
-        type_name: 'all'
+    # Use a different index for testing
+    elasticsearch_index_name: 'adventure_test'
     # Overwrite default blame listener to be able to manually set the user to blame.
     stof_doctrine_extensions.event_listener.blame.class: Tests\ConfigurableBlameListener

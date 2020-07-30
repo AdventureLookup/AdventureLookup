@@ -148,6 +148,8 @@ Vagrant.configure("2") do |config|
      sed -i -e 's/1g/256m/g' /etc/elasticsearch/jvm.options
      # Listen on 0.0.0.0
      echo "http.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
+     # Do not set indices to readonly when disk space is low
+     echo "cluster.routing.allocation.disk.threshold_enabled: false" >> /etc/elasticsearch/elasticsearch.yml
   SHELL
 
   # Upload the xdebug.ini file and move it into the correct location.
