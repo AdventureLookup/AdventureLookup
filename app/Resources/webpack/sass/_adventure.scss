@@ -10,6 +10,7 @@ $thumbnail-height: 100px;
 
 .adventure-container {
   @extend .content-container;
+  padding-bottom: 0 !important;
 
   .thumbnail-container {
     position: absolute;
@@ -77,6 +78,11 @@ $thumbnail-height: 100px;
         margin-bottom: 0;
       }
     }
+  }
+
+  .meta {
+    font-size: 10px;
+    color: $text-muted;
   }
 }
 

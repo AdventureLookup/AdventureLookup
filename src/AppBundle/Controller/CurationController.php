@@ -6,6 +6,7 @@ use AppBundle\Curation\BulkEditFormHandler;
 use AppBundle\Curation\BulkEditFormProvider;
 use AppBundle\Entity\Adventure;
 use AppBundle\Entity\ChangeRequest;
+use AppBundle\Entity\CuratedDomain;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Knp\Component\Pager\PaginatorInterface;
@@ -133,5 +134,70 @@ class CurationController extends Controller
         }
 
         return $this->redirectToRoute('curation_pending_change_requests');
+    }
+
+    /**
+     * @Route("/links", name="curation_review_links")
+     * @Method("GET")
+     */
+    public function reviewLinksAction(EntityManagerInterface $em): Response
+    {
+        return $this->render('curation/review_urls.html.twig', [
+            'links' => $this->getUrls($em, 'link'),
+            'field' => 'link',
+            'description' => 'This page provides an overview of the links used by adventures.
+            Links are sorted by domain name.',
+            'fieldTitle' => 'Download Link',
+        ]);
+    }
+
+    /**
+     * @Route("/image-urls", name="curation_review_image_urls")
+     * @Method("GET")
+     */
+    public function reviewImageURLsAction(EntityManagerInterface $em): Response
+    {
+        return $this->render('curation/review_urls.html.twig', [
+            'links' => $this->getUrls($em, 'thumbnailUrl'),
+            'field' => 'thumbnailUrl',
+            'description' => 'This page provides an overview of the thumbnail URLs used by adventures.
+            URLS are sorted by domain name.',
+            'fieldTitle' => 'Thumbnail URL',
+        ]);
+    }
+
+    private function getUrls(EntityManagerInterface $em, string $field): array
+    {
+        $adventureRepository = $em->getRepository(Adventure::class);
+        $qb = $adventureRepository->createQueryBuilder('a');
+        $qb
+            ->select('a.id')
+            ->addSelect('a.title')
+            ->addSelect('a.slug')
+            ->addSelect('a.'.$field)
+            ->where($qb->expr()->isNotNull('a.'.$field))
+            ->orderBy($qb->expr()->asc('a.'.$field));
+
+        $blockedDomains = $em->getRepository(CuratedDomain::class)->findBy([
+            'type' => 'B',
+        ]);
+
+        $links = $qb->getQuery()->execute();
+        $links = array_map(function ($link) use ($blockedDomains, $field) {
+            $link['domain'] = parse_url($link[$field], PHP_URL_HOST);
+            $blocked = false;
+            foreach ($blockedDomains as $blockedDomain) {
+                if ($blockedDomain->matchesDomain($link['domain'])) {
+                    $blocked = true;
+                    break;
+                }
+            }
+            $link['blocked'] = $blocked;
+
+            return $link;
+        }, $links);
+        usort($links, fn ($a, $b) => $a['domain'] <=> $b['domain']);
+
+        return $links;
     }
 }

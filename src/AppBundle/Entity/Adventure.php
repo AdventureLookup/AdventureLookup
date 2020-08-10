@@ -12,6 +12,7 @@ use Leogout\Bundle\SeoBundle\Seo\DescriptionSeoInterface;
 use Leogout\Bundle\SeoBundle\Seo\TitleSeoInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use AppBundle\Validator\Constraints\IsUrlAllowed;
 
 /**
  * Adventure
@@ -153,6 +154,7 @@ class Adventure implements TitleSeoInterface, DescriptionSeoInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Length(max=255)
      * @Assert\Url()
+     * @IsUrlAllowed()
      */
     private $link;
 
@@ -162,6 +164,7 @@ class Adventure implements TitleSeoInterface, DescriptionSeoInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Length(max=255)
      * @Assert\Url()
+     * @IsUrlAllowed()
      */
     private $thumbnailUrl;
 

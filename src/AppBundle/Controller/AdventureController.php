@@ -82,6 +82,22 @@ class AdventureController extends Controller
     }
 
     /**
+     * Open Search
+     *
+     * @Route("/opensearch.xml", name="adventure_opensearch")
+     * @Method("GET")
+     *
+     * @return Response
+     */
+    public function openSearchAction()
+    {
+        $response = new Response();
+        $response->headers->set('Content-Type', 'text/xml');
+
+        return $this->render('adventures/opensearch.xml.twig', [], $response);
+    }
+
+    /**
      * Creates a new adventure entity.
      *
      * @Route("/adventure", name="adventure_new")
