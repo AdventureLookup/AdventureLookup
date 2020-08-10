@@ -49,7 +49,9 @@ class Field implements \JsonSerializable
      */
     private $relatedEntityClass;
 
-    public function __construct(string $name, string $type, bool $multiple, bool $freetextSearchable, bool $availableAsFilter, string $title, string $description = null, int $searchBoost = 1, string $relatedEntityClass = null)
+    private int $filterbarSort;
+
+    public function __construct(string $name, string $type, bool $multiple, bool $freetextSearchable, bool $availableAsFilter, string $title, string $description = null, int $searchBoost = 1, int $filterbarSort = 0, string $relatedEntityClass = null)
     {
         $this->name = $name;
         $this->type = $type;
@@ -60,6 +62,7 @@ class Field implements \JsonSerializable
         $this->availableAsFilter = $availableAsFilter;
         $this->searchBoost = $searchBoost;
         $this->relatedEntityClass = $relatedEntityClass;
+        $this->filterbarSort = $filterbarSort;
     }
 
     public function getName(): string
@@ -105,6 +108,11 @@ class Field implements \JsonSerializable
         return $this->description;
     }
 
+    public function getFilterbarSort(): int
+    {
+        return $this->filterbarSort;
+    }
+
     public function getFieldNameForAggregation(): string
     {
         $field = $this->getName();
@@ -137,6 +145,7 @@ class Field implements \JsonSerializable
             'title' => $this->title,
             'description' => $this->description,
             'availableAsFilter' => $this->availableAsFilter,
+            'filterbarSort' => $this->filterbarSort,
         ];
     }
 }

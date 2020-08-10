@@ -15,6 +15,7 @@ class FieldTest extends TestCase
     const TITLE = 'Field Title';
     const DESCRIPTION = 'Field Description';
     const SEARCH_BOOST = 42;
+    const FILTERBAR_SORT = 123;
     const RELATED_ENTITY_CLASS = 'some related class';
 
     public function testDefaults()
@@ -37,7 +38,7 @@ class FieldTest extends TestCase
     public function testWithoutDefaults()
     {
         $field = new Field(self::NAME, self::TYPE, self::MULTIPLE, self::SEARCHABLE, self::FILTERABLE, self::TITLE,
-            self::DESCRIPTION, self::SEARCH_BOOST, self::RELATED_ENTITY_CLASS);
+            self::DESCRIPTION, self::SEARCH_BOOST, self::FILTERBAR_SORT, self::RELATED_ENTITY_CLASS);
 
         $this->assertSame(self::NAME, $field->getName());
         $this->assertSame(self::NAME, $field->getFieldNameForAggregation());
@@ -47,6 +48,7 @@ class FieldTest extends TestCase
         $this->assertSame(self::FILTERABLE, $field->isAvailableAsFilter());
         $this->assertSame(self::TITLE, $field->getTitle());
         $this->assertSame(self::DESCRIPTION, $field->getDescription());
+        $this->assertSame(self::FILTERBAR_SORT, $field->getFilterbarSort());
         $this->assertSame(self::SEARCH_BOOST, $field->getSearchBoost());
         $this->assertSame(true, $field->isRelatedEntity());
         $this->assertSame(self::RELATED_ENTITY_CLASS, $field->getRelatedEntityClass());
@@ -55,7 +57,7 @@ class FieldTest extends TestCase
     public function testJSONSerialization()
     {
         $field = new Field(self::NAME, self::TYPE, self::MULTIPLE, self::SEARCHABLE, self::FILTERABLE, self::TITLE,
-        self::DESCRIPTION, self::SEARCH_BOOST, self::RELATED_ENTITY_CLASS);
+        self::DESCRIPTION, self::SEARCH_BOOST, self::FILTERBAR_SORT, self::RELATED_ENTITY_CLASS);
 
         $this->assertEquals([
             'name' => self::NAME,
@@ -64,6 +66,7 @@ class FieldTest extends TestCase
             'title' => self::TITLE,
             'description' => self::DESCRIPTION,
             'availableAsFilter' => self::FILTERABLE,
+            'filterbarSort' => self::FILTERBAR_SORT,
         ], json_decode(json_encode($field), true));
     }
 
