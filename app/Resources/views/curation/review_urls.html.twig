@@ -1,0 +1,46 @@
+{% extends 'curation/base.html.twig' %}
+
+{% block curation_content %}
+    <div class="alert alert-info mb-4">
+        {{description}}
+    </div>
+    <div class="table-responsive">
+        <table class="table table-sm table-striped">
+            <thead>
+            <tr>
+                <th>{{fieldTitle}}</th>
+                <th>Adventure</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% set lastDomain = '' %}
+            {% for link in links %}
+                {% if link.domain != lastDomain %}
+                    {% set lastDomain = link.domain %}
+                    <tr class="{% if link.blocked %}table-danger{% endif %}">
+                        <td colspan="2">
+                            <strong>{{ link.domain }}</strong>
+                        </td>
+                    </tr>
+                {% endif %}
+                <tr class="{% if link.blocked %}table-danger{% endif %}">
+                    <td style="word-break: break-all">
+                        <a href="{{ link[field] }}">{{ link[field] }}</a>
+                    </td>
+                    <td>
+                        <a href="{{ path('adventure_show', {slug: link.slug}) }}"
+                            title="Show adventure" tabindex="-1">
+                            {{ link.title | truncate(30) }}
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr class="table-success text-center">
+                    <td colspan="2">Nothing found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+

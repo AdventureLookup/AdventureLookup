@@ -1,0 +1,54 @@
+{% extends 'curation/base.html.twig' %}
+
+{% block curation_content %}
+    <div class="alert alert-info mb-4">
+        This page allows you to define "verfiied" and "blocked" domains.
+        Adventures cannot use a blocked domain in their download link or thumbnail url.
+        We use blocked domains to block known bad sites that distribute copyrighted material.
+        <br />
+        <br />
+        Verified domains are not yet used.
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>{{ knp_pagination_sortable(curated_domains, 'Domain', 'domain') }}</th>
+                    <th>{{ knp_pagination_sortable(curated_domains, 'Type', 'type') }}</th>
+                    <th>Reason</th>
+                    <th>{{ knp_pagination_sortable(curated_domains, 'Updated', 'updatedAt') }}</th>
+                    <th>{{ knp_pagination_sortable(curated_domains, 'Created', 'createdAt') }}</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for curated_domain in curated_domains %}
+                <tr>
+                    <td><strong>{{ curated_domain.domain }}</strong></td>
+                    <td>{{ curated_domain.type == 'V' ? 'Verified' : 'Blocked' }}</td>
+                    <td>{{ curated_domain.reason | nl2br }}</td>
+                    <td>
+                        by <em>@{{ curated_domain.updatedBy }}</em>
+                        {{ curated_domain.updatedAt|time_diff }}
+                    </td>
+                    <td>
+                        by <em>@{{ curated_domain.createdBy }}</em>
+                        {{ curated_domain.createdAt|time_diff }}
+                    </td>
+                    <td>
+                        <a href="{{ path('curated_domain_edit', {'id': curated_domain.id}) }}" class="btn btn-secondary btn-sm">Edit</a>
+                        {{ include('curation/curated_domain/_delete_form.html.twig') }}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6">No entries found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {{ knp_pagination_render(curated_domains) }}
+
+    <a href="{{ path('curated_domain_new') }}" class="btn btn-primary">Create new entry</a>
+{% endblock %}
