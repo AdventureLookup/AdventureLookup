@@ -44,7 +44,7 @@ jobs:
         with:
           coverage: pcov
           php-version: ${{ matrix.php-version }}
-          tools: cs2pr
+          tools: cs2pr, composer:v1
           extensions: sqlite
       - name: Setup problem matchers for PHPUnit
         run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
