@@ -7,6 +7,8 @@
     {% if is_granted('ROLE_ADMIN') %}
         <a class="d-none d-sm-inline-block header-box-dark btn btn-secondary active" href="{{ path('audit') }}">Audit</a>
     {% endif %}
+    <a class="d-none d-sm-inline-block header-box-dark btn btn-secondary active" href="{{ path('statistics') }}">Statistics</a>
+
     {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
         <div class="dropdown">
             <button class="header-box-dark btn btn-secondary dropdown-toggle" type="button" id="adl-header-login-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -22,6 +24,7 @@
                 {% if is_granted('ROLE_ADMIN') %}
                     <a class="dropdown-item d-sm-none" href="{{ path('audit') }}">Audit</a>
                 {% endif %}
+                <a class="dropdown-item d-sm-none" href="{{ path('statistics') }}">Statistics</a>
 
                 <a class="dropdown-item" href="{{ path('logout') }}">Logout</a>
             </div>
