@@ -137,19 +137,24 @@ Vagrant.configure("2") do |config|
      fi
 
      # Elasticsearch
-     wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.6.2-amd64.deb
-     dpkg -i elasticsearch-7.6.2-amd64.deb
-     systemctl enable elasticsearch.service
-     rm elasticsearch-7.6.2-amd64.deb
-     service elasticsearch start
+     wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.16.0-amd64.deb
+     dpkg -i elasticsearch-7.16.0-amd64.deb
+     rm elasticsearch-7.16.0-amd64.deb
 
      ### Development Elasticsearch settings:
      # Decrease memory to 256MB
-     sed -i -e 's/1g/256m/g' /etc/elasticsearch/jvm.options
+     echo -e "-Xms256m\n-Xmx256m\n" > /etc/elasticsearch/jvm.options.d/adventurelookup.options
      # Listen on 0.0.0.0
      echo "http.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
      # Do not set indices to readonly when disk space is low
      echo "cluster.routing.allocation.disk.threshold_enabled: false" >> /etc/elasticsearch/elasticsearch.yml
+     # Disable security features
+     echo "xpack.security.enabled: false" >> /etc/elasticsearch/elasticsearch.yml
+     # Disable discovery of other nodes
+     echo "discovery.type: single-node" >> /etc/elasticsearch/elasticsearch.yml
+
+     systemctl enable elasticsearch.service
+     service elasticsearch start
   SHELL
 
   # Upload the xdebug.ini file and move it into the correct location.

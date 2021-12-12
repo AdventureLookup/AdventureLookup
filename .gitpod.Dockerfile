@@ -2,16 +2,20 @@ FROM gitpod/workspace-mysql
 
 USER gitpod
 
-RUN wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.6.2-linux-x86_64.tar.gz \
-  && tar -xzf elasticsearch-7.6.2-linux-x86_64.tar.gz
+RUN wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.16.0-linux-x86_64.tar.gz \
+  && tar -xzf elasticsearch-7.16.0-linux-x86_64.tar.gz
 
 # Save ElasticSearch data in a subfolder of the /workspace directory. Otherwise it is lost when
 # restarting the workspace.
-RUN echo "path.data: /workspace/elasticsearch" >> elasticsearch-7.6.2/config/elasticsearch.yml
+RUN echo "path.data: /workspace/elasticsearch" >> elasticsearch-7.16.0/config/elasticsearch.yml
 # Do not set indices to readonly when disk space is low
-RUN echo "cluster.routing.allocation.disk.threshold_enabled: false" >> elasticsearch-7.6.2/config/elasticsearch.yml
+RUN echo "cluster.routing.allocation.disk.threshold_enabled: false" >> elasticsearch-7.16.0/config/elasticsearch.yml
+# Disable security features
+RUN echo "xpack.security.enabled: false" >> elasticsearch-7.16.0/config/elasticsearch.yml
+# Disable discovery of other nodes
+RUN echo "discovery.type: single-node" >> elasticsearch-7.16.0/config/elasticsearch.yml
 # Decrease ElasticSearch memory usage
-RUN sed -i -e 's/1g/256m/g' elasticsearch-7.6.2/config/jvm.options
+RUN echo -e "-Xms256m\n-Xmx256m\n" > elasticsearch-7.16.0/config/jvm.options.d/adventurelookup.options
 
 # Install and use PHP 7.4
 RUN sudo apt-get update \

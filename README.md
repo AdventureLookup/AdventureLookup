@@ -187,7 +187,7 @@ to your host (in contrast to your host connecting to xdebug).
 
 - Ubuntu 18.04 as the server
 - MySQL 5.7 to store the adventures
-- Elasticsearch 7.6.2 to search the adventures
+- Elasticsearch 7.16.0 to search the adventures
 - PHP7.4 to run the application
 - Symfony 3 as the web framework
 - Composer as PHP package manager
