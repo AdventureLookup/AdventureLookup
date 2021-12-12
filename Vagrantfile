@@ -143,7 +143,7 @@ Vagrant.configure("2") do |config|
 
      ### Development Elasticsearch settings:
      # Decrease memory to 256MB
-     echo -e "-Xms256m\n-Xmx256m\n" > /etc/elasticsearch/jvm.options.d/adventurelookup.options
+     printf '%s\n%s\n' "-Xms256m" "-Xmx256m" > /etc/elasticsearch/jvm.options.d/adventurelookup.options
      # Listen on 0.0.0.0
      echo "http.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
      # Do not set indices to readonly when disk space is low

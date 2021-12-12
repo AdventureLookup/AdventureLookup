@@ -15,7 +15,7 @@ RUN echo "xpack.security.enabled: false" >> elasticsearch-7.16.0/config/elastics
 # Disable discovery of other nodes
 RUN echo "discovery.type: single-node" >> elasticsearch-7.16.0/config/elasticsearch.yml
 # Decrease ElasticSearch memory usage
-RUN echo -e "-Xms256m\n-Xmx256m\n" > elasticsearch-7.16.0/config/jvm.options.d/adventurelookup.options
+RUN printf '%s\n%s\n' "-Xms256m" "-Xmx256m" > elasticsearch-7.16.0/config/jvm.options.d/adventurelookup.options
 
 # Install and use PHP 7.4
 RUN sudo apt-get update \
