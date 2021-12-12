@@ -29,6 +29,6 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo ap
 
 # Re-install composer, because the version shipped with GitPod depends on the pre-installed PHP version
 # that might change if Gitpod updates their containers.
-RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/bin --filename=composer
+RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/bin --filename=composer --1
 
 COPY scripts/xdebug-gitpod.ini /etc/php/7.4/cli/conf.d/30-adl-xdebug.ini
