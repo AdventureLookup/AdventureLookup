@@ -6,8 +6,8 @@
         {{ leogout_seo() }}
         <link rel="search" type="application/opensearchdescription+xml" href="{{ path('adventure_opensearch') }}" title="AdventureLookup"/>
         <link href="https://fonts.googleapis.com/css2?family=Arima+Madurai:wght@100&family=Roboto&family=Roboto+Condensed&display=swap" rel="stylesheet">
-
-        <link rel="stylesheet" href="{{ asset('assets/app.css') }}">
+        {{ encore_entry_link_tags('vendor') }}
+        {{ encore_entry_link_tags('app') }}
         {% block stylesheets %}{% endblock %}
         <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
         <link rel="icon" type="image/png" href="{{ asset('favicon-32x32.png') }}" sizes="32x32">
@@ -50,9 +50,8 @@
 
         {% include 'footer.html.twig' %}
 
-        <script src="{{ asset('assets/runtime.js') }}"></script>
-        <script src="{{ asset('assets/vendor.js') }}"></script>
-        <script src="{{ asset('assets/app.js') }}"></script>
+        {{ encore_entry_script_tags('vendor') }}
+        {{ encore_entry_script_tags('app') }}
         {% block javascripts %}{% endblock %}
         {% if app.environment == 'prod' and google_analytics_code is not empty %}
             <script async src="https://www.googletagmanager.com/gtag/js?id={{ google_analytics_code }}"></script>

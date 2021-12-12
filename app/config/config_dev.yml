@@ -5,7 +5,9 @@ framework:
     router:
         resource: '%kernel.root_dir%/config/routing_dev.yml'
         strict_requirements: true
-    profiler: { only_exceptions: false }
+    profiler:
+        enabled: true
+        only_exceptions: false
 
 web_profiler:
     toolbar: true
@@ -37,11 +39,15 @@ monolog:
         #    type: chromephp
         #    level: info
 
-#swiftmailer:
+swiftmailer:
+    disable_delivery: true
 #    delivery_addresses: ['me@example.com']
-
-ewz_recaptcha:
-    enabled: false
 
 maker:
     root_namespace: 'AppBundle'
+
+parameters:
+    # Test keys obtained from
+    # https://developers.google.com/recaptcha/docs/faq#id-like-to-run-automated-tests-with-recaptcha.-what-should-i-do
+    recaptcha_public_key: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+    recaptcha_private_key: 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe

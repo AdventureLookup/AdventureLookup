@@ -23,9 +23,8 @@ function SimilarAdventuresRoot({ apiUrl }) {
 
   // Load initial selectedField from local storage.
   React.useEffect(() => {
-    const localStorageSelectedField = window.localStorage.getItem(
-      LOCALSTORAGE_KEY
-    );
+    const localStorageSelectedField =
+      window.localStorage.getItem(LOCALSTORAGE_KEY);
     if (Object.keys(availableFields).includes(localStorageSelectedField)) {
       setSelectedField(localStorageSelectedField);
     } else {

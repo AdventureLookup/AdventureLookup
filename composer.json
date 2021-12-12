@@ -47,6 +47,7 @@
         "symfony/polyfill-apcu": "^1.0",
         "symfony/swiftmailer-bundle": "^3.2.0",
         "symfony/symfony": "3.4.*",
+        "symfony/webpack-encore-bundle": "^1.8.0",
         "twig/twig": "^1.0||^2.0"
     },
     "require-dev": {
@@ -74,10 +75,10 @@
             "@symfony-scripts"
         ],
         "format": [
-            "php-cs-fixer fix --config=.php_cs.dist --show-progress=dots -v"
+            "php-cs-fixer fix --config=.php-cs-fixer.dist.php --show-progress=dots -v"
         ],
         "lint": [
-            "php-cs-fixer fix --config=.php_cs.dist --dry-run -v --diff"
+            "php-cs-fixer fix --config=.php-cs-fixer.dist.php --dry-run -v --diff"
         ],
         "compile": [
             "[ \"$SYMFONY_ENV\" = \"heroku\" ]",
@@ -102,9 +103,6 @@
         },
         "branch-alias": null,
         "patches": {
-            "easycorp/easyadmin-bundle": {
-                "Fix PHP 7.4 compatibility": "scripts/easyadmin.patch"
-            }
         },
         "composer-exit-on-patch-failure": true
     }
