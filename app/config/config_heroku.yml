@@ -22,3 +22,6 @@ doctrine:
         default_table_options:
             charset: utf8
             collate: utf8_unicode_ci
+
+swiftmailer:
+    disable_delivery: true

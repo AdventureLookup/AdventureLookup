@@ -135,6 +135,7 @@ knp_paginator:
         sortable: 'pagination/sortable_link.html.twig'
 
 ewz_recaptcha:
+    version: 2
     public_key:  '%recaptcha_public_key%'
     private_key: '%recaptcha_private_key%'
 
