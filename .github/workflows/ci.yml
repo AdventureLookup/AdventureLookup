@@ -29,7 +29,7 @@ jobs:
       - name: Run Elasticsearch
         uses: elastic/elastic-github-actions/elasticsearch@master
         with:
-          stack-version: 7.6.2
+          stack-version: 7.16.0
 
       - name: Checkout
         uses: actions/checkout@v2
