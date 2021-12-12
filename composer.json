@@ -75,10 +75,10 @@
             "@symfony-scripts"
         ],
         "format": [
-            "php-cs-fixer fix --config=.php_cs.dist --show-progress=dots -v"
+            "php-cs-fixer fix --config=.php-cs-fixer.dist.php --show-progress=dots -v"
         ],
         "lint": [
-            "php-cs-fixer fix --config=.php_cs.dist --dry-run -v --diff"
+            "php-cs-fixer fix --config=.php-cs-fixer.dist.php --dry-run -v --diff"
         ],
         "compile": [
             "[ \"$SYMFONY_ENV\" = \"heroku\" ]",

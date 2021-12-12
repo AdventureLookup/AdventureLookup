@@ -45,7 +45,7 @@ class AdventureSearchTest extends TestCase
             new Field('numPages', 'integer', false, false, true, ''),
             new Field('soloable', 'boolean', false, false, true, ''),
             new Field('edition', 'string', false, false, true, ''),
-            new Field('non-filterable-field', 'string', false, false, false /* non-filterable */, ''),
+            new Field('non-filterable-field', 'string', false, false, false /* non-filterable */ , ''),
         ]));
         $this->elasticSearch = $this->createMock(ElasticSearch::class);
         $this->timeProvider = $this->createMock(TimeProvider::class);

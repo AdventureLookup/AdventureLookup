@@ -62,7 +62,7 @@ class InternalApiControllerTest extends WebTestCase
         $this->assertIsFloat($json['adventures'][0]['score']);
 
         $this->assertCount(1, $json['terms']);
-        $this->assertEquals('natur' /* stemmed */, $json['terms'][0]['term']);
+        $this->assertEquals('natur' /* stemmed */ , $json['terms'][0]['term']);
         $this->assertIsFloat($json['terms'][0]['tf-idf']);
 
         $json = $this->jsonRequest($session, '/autocomplete/similar-adventures?id=1&fieldName=blah');

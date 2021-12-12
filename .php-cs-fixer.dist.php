@@ -6,7 +6,9 @@ $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__.DIRECTORY_SEPARATOR.'tests')
 ;
 
-return PhpCsFixer\Config::create()
+$config = new PhpCsFixer\Config();
+
+return $config
     ->setRules([
         '@Symfony' => true,
         'phpdoc_summary' => false,
