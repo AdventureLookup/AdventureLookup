@@ -47,6 +47,7 @@
         "symfony/polyfill-apcu": "^1.0",
         "symfony/swiftmailer-bundle": "^3.2.0",
         "symfony/symfony": "3.4.*",
+        "symfony/webpack-encore-bundle": "^1.8.0",
         "twig/twig": "^1.0||^2.0"
     },
     "require-dev": {

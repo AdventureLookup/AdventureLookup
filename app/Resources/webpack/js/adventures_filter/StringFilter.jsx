@@ -1,5 +1,5 @@
 import * as React from "react";
-import matchSorter from "match-sorter";
+import { matchSorter } from "match-sorter";
 
 function filterOption(option, search) {
   return option.toLowerCase().includes(search.toLowerCase());
