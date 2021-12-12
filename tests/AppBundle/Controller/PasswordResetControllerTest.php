@@ -36,6 +36,7 @@ class PasswordResetControllerTest extends WebTestCase
         $client->enableProfiler();
         $client->followRedirects(false);
         $page->findButton('Send Password Reset Link')->click();
+        $this->assertEquals(302, $session->getStatusCode());
         $resetPasswordUrl = $this->verifyPasswordResetEmailSent($client);
         $client->followRedirect();
         $client->followRedirects(true);

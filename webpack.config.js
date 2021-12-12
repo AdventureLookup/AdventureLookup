@@ -11,7 +11,8 @@ Encore
   }))
 
   .addEntry('app', './app/Resources/webpack/js/index.js')
-  .createSharedEntry('vendor', './app/Resources/webpack/js/vendor.js')
+  .addEntry('vendor', './app/Resources/webpack/js/vendor.js')
+  .splitEntryChunks()
   .enableSingleRuntimeChunk()
 
   .enableSassLoader()
