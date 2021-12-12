@@ -103,9 +103,6 @@
         },
         "branch-alias": null,
         "patches": {
-            "easycorp/easyadmin-bundle": {
-                "Fix PHP 7.4 compatibility": "scripts/easyadmin.patch"
-            }
         },
         "composer-exit-on-patch-failure": true
     }
