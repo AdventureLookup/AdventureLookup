@@ -9,6 +9,7 @@ export function Root({
   url,
   initialFilterValues,
   initialQuery,
+  initialParsedQuery,
   initialSortBy,
   initialSeed,
   fieldStats,
@@ -115,6 +116,7 @@ export function Root({
         <>
           <SearchBox
             query={query}
+            initialParsedQuery={initialParsedQuery}
             onQueryChanged={setQuery}
             sortBy={sortBy}
             onSortByChanged={setSortBy}
